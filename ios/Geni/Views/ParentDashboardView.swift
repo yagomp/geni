@@ -1,0 +1,723 @@
+import SwiftUI
+
+struct ParentDashboardView: View {
+    @Bindable var viewModel: AppViewModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var pinVerified = false
+    @State private var showPinEntry = true
+    @State private var pinInput = ""
+    @State private var pinError = false
+    @State private var showProfileCreation = false
+    @State private var editingProfile: ChildProfile? = nil
+    @State private var newPin = ""
+    @State private var showSetPin = false
+    @State private var showSyncRestore = false
+    @State private var restoreCode = ""
+    @State private var restoreError: String? = nil
+    @State private var restoreSuccess = false
+
+    var body: some View {
+        NavigationStack {
+            if viewModel.persistence.parentPin != nil && !pinVerified {
+                pinEntryView
+            } else {
+                settingsContent
+            }
+        }
+    }
+
+    private var pinEntryView: some View {
+        ZStack {
+            GeniColor.background.ignoresSafeArea()
+
+            VStack(spacing: 24) {
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 48))
+                    .foregroundStyle(GeniColor.blue)
+
+                Text(L.s(.parentArea))
+                    .font(.system(.title, design: .rounded, weight: .black))
+                    .foregroundStyle(GeniColor.border)
+
+                Text(L.s(.pinRequired))
+                    .font(.system(.body, design: .rounded))
+                    .foregroundStyle(.secondary)
+
+                HStack(spacing: 16) {
+                    ForEach(0..<4, id: \.self) { i in
+                        Rectangle()
+                            .fill(i < pinInput.count ? GeniColor.blue : Color.gray.opacity(0.2))
+                            .frame(width: 20, height: 20)
+                            .overlay(
+                                Rectangle()
+                                    .stroke(GeniColor.border, lineWidth: 2)
+                            )
+                    }
+                }
+
+                if pinError {
+                    Text(L.s(.wrongPin))
+                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        .foregroundStyle(GeniColor.pink)
+                }
+
+                pinPad(input: $pinInput) { pin in
+                    if viewModel.persistence.verifyPin(pin) {
+                        pinVerified = true
+                        HapticManager.notification(.success)
+                    } else {
+                        pinError = true
+                        pinInput = ""
+                        HapticManager.notification(.error)
+                    }
+                }
+            }
+            .padding(24)
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(L.s(.cancel)) { dismiss() }
+                    .font(.system(.body, design: .rounded, weight: .bold))
+            }
+        }
+    }
+
+    private var settingsContent: some View {
+        ZStack {
+            GeniColor.background.ignoresSafeArea()
+
+            ScrollView {
+                VStack(spacing: 20) {
+                    profilesSection
+                    progressOverviewSection
+                    reminderSection
+                    cloudSyncSection
+                    pinSection
+                }
+                .padding(20)
+            }
+        }
+        .navigationTitle(L.s(.parentSettings))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(L.s(.done)) { dismiss() }
+                    .font(.system(.body, design: .rounded, weight: .bold))
+            }
+        }
+        .sheet(isPresented: $showProfileCreation) {
+            ProfileCreationView { profile in
+                viewModel.persistence.saveProfile(profile)
+                showProfileCreation = false
+            }
+        }
+        .sheet(item: $editingProfile) { profile in
+            ProfileCreationView(onComplete: { updated in
+                viewModel.persistence.saveProfile(updated)
+                editingProfile = nil
+            }, editingProfile: profile)
+        }
+    }
+
+    private var profilesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L.s(.profiles))
+                .font(.system(.headline, design: .rounded, weight: .bold))
+
+            ForEach(viewModel.persistence.profiles) { profile in
+                let avatar = AvatarOption.find(profile.avatarId)
+                HStack(spacing: 12) {
+                    Text(avatar.emoji)
+                        .font(.system(size: 20))
+                        .frame(width: 44, height: 44)
+                        .background(.white)
+                        .overlay(
+                            Rectangle()
+                                .stroke(GeniColor.border, lineWidth: 2)
+                        )
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(profile.nickname)
+                            .font(.system(.body, design: .rounded, weight: .bold))
+                        Text("\(L.s(.age)): \(profile.age)")
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Button {
+                        HapticManager.selection()
+                        editingProfile = profile
+                    } label: {
+                        Image(systemName: "pencil")
+                            .foregroundStyle(GeniColor.blue)
+                    }
+
+                    if viewModel.persistence.profiles.count > 1 {
+                        Button {
+                            HapticManager.selection()
+                            viewModel.persistence.deleteProfile(profile.id)
+                        } label: {
+                            Image(systemName: "trash")
+                                .foregroundStyle(GeniColor.pink)
+                        }
+                    }
+                }
+                .padding(12)
+                .brutalistCard(color: GeniColor.card, borderWidth: 3)
+            }
+
+            Button {
+                HapticManager.selection()
+                showProfileCreation = true
+            } label: {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                    Text(L.s(.addProfile))
+                }
+                .font(.system(.body, design: .rounded, weight: .bold))
+                .foregroundStyle(GeniColor.blue)
+            }
+        }
+    }
+
+    private var progressOverviewSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L.s(.progress))
+                .font(.system(.headline, design: .rounded, weight: .bold))
+
+            ForEach(viewModel.persistence.profiles) { profile in
+                let avatar = AvatarOption.find(profile.avatarId)
+                let rewards = viewModel.persistence.loadRewardState(for: profile.id)
+                let chapters = viewModel.persistence.loadAllChapters(for: profile.id)
+                let completedChapters = chapters.filter { $0.status == .completed }
+                let totalCorrect = completedChapters.reduce(0) { $0 + $1.correctCount }
+                let totalExercises = completedChapters.reduce(0) { $0 + $1.exerciseResults.count }
+                let accuracy = totalExercises > 0 ? Int(Double(totalCorrect) / Double(totalExercises) * 100) : 0
+
+                VStack(spacing: 12) {
+                    HStack(spacing: 10) {
+                        Text(avatar.emoji)
+                            .font(.system(size: 18))
+                            .frame(width: 36, height: 36)
+                            .background(.white)
+                            .overlay(
+                                Rectangle()
+                                    .stroke(GeniColor.border, lineWidth: 2)
+                                    .allowsHitTesting(false)
+                            )
+
+                        Text(profile.nickname)
+                            .font(.system(.body, design: .rounded, weight: .bold))
+                            .foregroundStyle(GeniColor.border)
+
+                        Spacer()
+
+                        Text("\(L.s(.level)) \(rewards.level)")
+                            .font(.system(.caption, design: .rounded, weight: .bold))
+                            .foregroundStyle(GeniColor.purple)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(GeniColor.purple.opacity(0.1))
+                            .overlay(
+                                Rectangle()
+                                    .stroke(GeniColor.purple.opacity(0.3), lineWidth: 2)
+                                    .allowsHitTesting(false)
+                            )
+                    }
+
+                    HStack(spacing: 8) {
+                        progressStat(icon: "star.fill", value: "\(completedChapters.count)", label: L.s(.chaptersCompleted), color: GeniColor.yellow)
+                        progressStat(icon: "flame.fill", value: "\(rewards.streakCount)", label: L.s(.streak), color: GeniColor.orange)
+                        progressStat(icon: "target", value: "\(accuracy)%", label: L.s(.accuracy), color: GeniColor.green)
+                        progressStat(icon: "bolt.fill", value: "\(rewards.xp)", label: L.s(.totalXP), color: GeniColor.cyan)
+                    }
+
+                    if !completedChapters.isEmpty {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(L.s(.recentChapters))
+                                .font(.system(.caption2, design: .rounded, weight: .bold))
+                                .foregroundStyle(.secondary)
+                                .textCase(.uppercase)
+
+                            let recent = completedChapters.sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }.prefix(5)
+                            ForEach(Array(recent)) { ch in
+                                HStack(spacing: 8) {
+                                    Image(systemName: chapterTypeIcon(ch.chapterType))
+                                        .font(.caption)
+                                        .foregroundStyle(chapterTypeColor(ch.chapterType))
+                                        .frame(width: 20)
+
+                                    Text(chapterDateLabel(ch.date))
+                                        .font(.system(.caption, design: .rounded, weight: .semibold))
+                                        .foregroundStyle(GeniColor.border)
+
+                                    if ch.chapterType != .daily {
+                                        Text(chapterTypeName(ch.chapterType))
+                                            .font(.system(.caption2, design: .rounded, weight: .bold))
+                                            .foregroundStyle(chapterTypeColor(ch.chapterType))
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 2)
+                                            .background(chapterTypeColor(ch.chapterType).opacity(0.1))
+                                            .overlay(
+                                                Rectangle()
+                                                    .stroke(chapterTypeColor(ch.chapterType).opacity(0.3), lineWidth: 1)
+                                                    .allowsHitTesting(false)
+                                            )
+                                    }
+
+                                    Spacer()
+
+                                    HStack(spacing: 2) {
+                                        ForEach(0..<5, id: \.self) { i in
+                                            Image(systemName: i < ch.stars ? "star.fill" : "star")
+                                                .font(.system(size: 10))
+                                                .foregroundStyle(i < ch.stars ? GeniColor.yellow : Color.gray.opacity(0.3))
+                                        }
+                                    }
+
+                                    Text("\(ch.correctCount)/\(ch.exerciseResults.count)")
+                                        .font(.system(.caption2, design: .monospaced, weight: .bold))
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                        .padding(.top, 4)
+                    } else {
+                        Text(L.s(.noChaptersYet))
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .padding(12)
+                .brutalistCard(color: GeniColor.card, borderWidth: 3)
+            }
+        }
+    }
+
+    private func progressStat(icon: String, value: String, label: String, color: Color) -> some View {
+        VStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundStyle(color)
+            Text(value)
+                .font(.system(.caption, design: .rounded, weight: .black))
+                .foregroundStyle(GeniColor.border)
+            Text(label)
+                .font(.system(.caption2, design: .rounded))
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+        .background(color.opacity(0.06))
+        .overlay(
+            Rectangle()
+                .stroke(color.opacity(0.2), lineWidth: 2)
+                .allowsHitTesting(false)
+        )
+    }
+
+    private func chapterTypeIcon(_ type: ChapterType) -> String {
+        switch type {
+        case .daily: return "book.fill"
+        case .timeAttack: return "timer"
+        case .perfectRun: return "crown.fill"
+        case .boss: return "shield.fill"
+        case .streak: return "flame.fill"
+        case .operationSpotlight: return "scope"
+        }
+    }
+
+    private func chapterTypeColor(_ type: ChapterType) -> Color {
+        switch type {
+        case .daily: return GeniColor.blue
+        case .timeAttack: return GeniColor.orange
+        case .perfectRun: return GeniColor.purple
+        case .boss: return GeniColor.pink
+        case .streak: return GeniColor.orange
+        case .operationSpotlight: return GeniColor.cyan
+        }
+    }
+
+    private func chapterTypeName(_ type: ChapterType) -> String {
+        switch type {
+        case .daily: return L.s(.dailyChapter)
+        case .timeAttack: return L.s(.timeAttack)
+        case .perfectRun: return L.s(.perfectRun)
+        case .boss: return L.s(.bossChapter)
+        case .streak: return L.s(.streakBonus)
+        case .operationSpotlight: return L.s(.spotlightChapter)
+        }
+    }
+
+    private func chapterDateLabel(_ dateStr: String) -> String {
+        let today = viewModel.persistence.todayString()
+        if dateStr == today { return L.s(.today) }
+
+        let fmt = DateFormatter()
+        fmt.dateFormat = "yyyy-MM-dd"
+        if let date = fmt.date(from: dateStr) {
+            let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+            let yesterdayStr = fmt.string(from: yesterday)
+            if dateStr == yesterdayStr { return L.s(.yesterday) }
+
+            let display = DateFormatter()
+            display.dateStyle = .short
+            return display.string(from: date)
+        }
+        return dateStr
+    }
+
+    private var reminderSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L.s(.reminders))
+                .font(.system(.headline, design: .rounded, weight: .bold))
+
+            HStack {
+                Image(systemName: "bell.fill")
+                    .foregroundStyle(GeniColor.orange)
+                    .frame(width: 40)
+
+                Text(L.s(.dailyReminder))
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+
+                Spacer()
+
+                Toggle("", isOn: Binding(
+                    get: { viewModel.notificationService.isEnabled },
+                    set: { newValue in
+                        HapticManager.selection()
+                        if newValue {
+                            viewModel.notificationService.enableReminders()
+                        } else {
+                            viewModel.notificationService.disableReminders()
+                        }
+                    }
+                ))
+                .labelsHidden()
+            }
+            .padding(12)
+            .brutalistCard(color: GeniColor.card, borderWidth: 3)
+
+            if viewModel.notificationService.isEnabled {
+                HStack {
+                    Image(systemName: "clock.fill")
+                        .foregroundStyle(GeniColor.blue)
+                        .frame(width: 40)
+
+                    Text(L.s(.reminderTime))
+                        .font(.system(.body, design: .rounded, weight: .semibold))
+
+                    Spacer()
+
+                    DatePicker("", selection: Binding(
+                        get: {
+                            var comps = DateComponents()
+                            comps.hour = viewModel.notificationService.reminderHour
+                            comps.minute = viewModel.notificationService.reminderMinute
+                            return Calendar.current.date(from: comps) ?? Date()
+                        },
+                        set: { date in
+                            let comps = Calendar.current.dateComponents([.hour, .minute], from: date)
+                            viewModel.notificationService.setReminderTime(
+                                hour: comps.hour ?? 17,
+                                minute: comps.minute ?? 0
+                            )
+                        }
+                    ), displayedComponents: .hourAndMinute)
+                    .labelsHidden()
+                }
+                .padding(12)
+                .brutalistCard(color: GeniColor.card, borderWidth: 3)
+            }
+        }
+    }
+
+    private var cloudSyncSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L.s(.cloudSync))
+                .font(.system(.headline, design: .rounded, weight: .bold))
+
+            VStack(spacing: 12) {
+                HStack {
+                    Image(systemName: "icloud.fill")
+                        .foregroundStyle(GeniColor.blue)
+                        .frame(width: 40)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(L.s(.syncCode))
+                            .font(.system(.body, design: .rounded, weight: .semibold))
+                        Text(L.s(.syncCodeDesc))
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Spacer()
+
+                    Text(viewModel.cloudSync.syncCode)
+                        .font(.system(.title3, design: .monospaced, weight: .bold))
+                        .foregroundStyle(GeniColor.blue)
+                }
+
+                HStack(spacing: 12) {
+                    Button {
+                        HapticManager.impact(.medium)
+                        viewModel.cloudSync.syncToCloud(persistence: viewModel.persistence)
+                    } label: {
+                        HStack(spacing: 6) {
+                            if viewModel.cloudSync.isSyncing {
+                                ProgressView()
+                                    .scaleEffect(0.8)
+                            } else {
+                                Image(systemName: "arrow.triangle.2.circlepath")
+                            }
+                            Text(L.s(.syncNow))
+                                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        }
+                        .foregroundStyle(GeniColor.blue)
+                    }
+                    .disabled(viewModel.cloudSync.isSyncing)
+
+                    Spacer()
+
+                    Button {
+                        HapticManager.selection()
+                        showSyncRestore = true
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "arrow.down.circle")
+                            Text(L.s(.restore))
+                                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        }
+                        .foregroundStyle(GeniColor.green)
+                    }
+                }
+
+                if let lastSync = viewModel.cloudSync.lastSyncDate {
+                    Text("\(L.s(.lastSync)): \(lastSync.formatted(date: .abbreviated, time: .shortened))")
+                        .font(.system(.caption, design: .rounded))
+                        .foregroundStyle(.secondary)
+                }
+
+                if let error = viewModel.cloudSync.syncError {
+                    Text(error)
+                        .font(.system(.caption, design: .rounded))
+                        .foregroundStyle(GeniColor.pink)
+                }
+            }
+            .padding(12)
+            .brutalistCard(color: GeniColor.card, borderWidth: 3)
+        }
+        .alert(L.s(.restore), isPresented: $showSyncRestore) {
+            TextField(L.s(.enterSyncCode), text: $restoreCode)
+                .textInputAutocapitalization(.characters)
+            Button(L.s(.cancel), role: .cancel) {}
+            Button(L.s(.restore)) {
+                Task {
+                    let success = await viewModel.cloudSync.restoreFromCloud(
+                        code: restoreCode,
+                        persistence: viewModel.persistence
+                    )
+                    if success {
+                        HapticManager.notification(.success)
+                        viewModel.determineInitialScreen()
+                    } else {
+                        HapticManager.notification(.error)
+                    }
+                }
+            }
+        } message: {
+            Text(L.s(.enterSyncCodeDesc))
+        }
+    }
+
+    private var pinSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L.s(.pin))
+                .font(.system(.headline, design: .rounded, weight: .bold))
+
+            if viewModel.persistence.parentPin != nil {
+                Button {
+                    HapticManager.selection()
+                    showSetPin = true
+                } label: {
+                    HStack {
+                        Image(systemName: "lock.fill")
+                        Text(L.s(.changePin))
+                    }
+                    .font(.system(.body, design: .rounded, weight: .bold))
+                    .foregroundStyle(GeniColor.blue)
+                }
+            } else {
+                Button {
+                    HapticManager.selection()
+                    showSetPin = true
+                } label: {
+                    HStack {
+                        Image(systemName: "lock.open.fill")
+                        Text(L.s(.setPin))
+                    }
+                    .font(.system(.body, design: .rounded, weight: .bold))
+                    .foregroundStyle(GeniColor.blue)
+                }
+            }
+        }
+        .sheet(isPresented: $showSetPin) {
+            SetPinView { pin in
+                viewModel.persistence.setPin(pin)
+                showSetPin = false
+            }
+        }
+    }
+
+    private func pinPad(input: Binding<String>, onComplete: @escaping (String) -> Void) -> some View {
+        let numbers = [
+            ["1", "2", "3"],
+            ["4", "5", "6"],
+            ["7", "8", "9"],
+            ["", "0", "DEL"]
+        ]
+
+        return VStack(spacing: 12) {
+            ForEach(numbers, id: \.description) { row in
+                HStack(spacing: 12) {
+                    ForEach(row, id: \.self) { key in
+                        if key.isEmpty {
+                            Color.clear.frame(width: 72, height: 52)
+                        } else {
+                            Button {
+                                HapticManager.selection()
+                                if key == "DEL" {
+                                    if !input.wrappedValue.isEmpty {
+                                        input.wrappedValue.removeLast()
+                                    }
+                                } else if input.wrappedValue.count < 4 {
+                                    input.wrappedValue += key
+                                    pinError = false
+                                    if input.wrappedValue.count == 4 {
+                                        onComplete(input.wrappedValue)
+                                    }
+                                }
+                            } label: {
+                                Group {
+                                    if key == "DEL" {
+                                        Image(systemName: "delete.left.fill")
+                                            .font(.system(.title3, design: .rounded, weight: .bold))
+                                    } else {
+                                        Text(key)
+                                            .font(.system(.title2, design: .rounded, weight: .bold))
+                                    }
+                                }
+                                .foregroundStyle(GeniColor.border)
+                                .frame(width: 72, height: 52)
+                                .background(GeniColor.card)
+                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                                .background(
+                                    Rectangle()
+                                        .fill(GeniColor.border)
+                                        .offset(x: 3, y: 3)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct SetPinView: View {
+    let onSet: (String) -> Void
+    @State private var pin = ""
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                GeniColor.background.ignoresSafeArea()
+
+                VStack(spacing: 24) {
+                    Text(L.s(.setPin))
+                        .font(.system(.title, design: .rounded, weight: .black))
+
+                    HStack(spacing: 16) {
+                        ForEach(0..<4, id: \.self) { i in
+                            Rectangle()
+                                .fill(i < pin.count ? GeniColor.blue : Color.gray.opacity(0.2))
+                                .frame(width: 20, height: 20)
+                                .overlay(
+                                    Rectangle()
+                                        .stroke(GeniColor.border, lineWidth: 2)
+                                )
+                        }
+                    }
+
+                    pinPadView
+                }
+                .padding(24)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(L.s(.cancel)) { dismiss() }
+                }
+            }
+        }
+    }
+
+    private var pinPadView: some View {
+        let numbers = [
+            ["1", "2", "3"],
+            ["4", "5", "6"],
+            ["7", "8", "9"],
+            ["", "0", "DEL"]
+        ]
+
+        return VStack(spacing: 12) {
+            ForEach(numbers, id: \.description) { row in
+                HStack(spacing: 12) {
+                    ForEach(row, id: \.self) { key in
+                        if key.isEmpty {
+                            Color.clear.frame(width: 72, height: 52)
+                        } else {
+                            Button {
+                                HapticManager.selection()
+                                if key == "DEL" {
+                                    if !pin.isEmpty { pin.removeLast() }
+                                } else if pin.count < 4 {
+                                    pin += key
+                                    if pin.count == 4 {
+                                        HapticManager.notification(.success)
+                                        onSet(pin)
+                                    }
+                                }
+                            } label: {
+                                Group {
+                                    if key == "DEL" {
+                                        Image(systemName: "delete.left.fill")
+                                            .font(.system(.title3, design: .rounded, weight: .bold))
+                                    } else {
+                                        Text(key)
+                                            .font(.system(.title2, design: .rounded, weight: .bold))
+                                    }
+                                }
+                                .foregroundStyle(GeniColor.border)
+                                .frame(width: 72, height: 52)
+                                .background(GeniColor.card)
+                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                                .background(
+                                    Rectangle()
+                                        .fill(GeniColor.border)
+                                        .offset(x: 3, y: 3)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

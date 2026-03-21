@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "Geni",
+      "path": "ios",
+      "framework": "swift"
+    }
+  ]
+}

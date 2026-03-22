@@ -488,7 +488,7 @@ struct QuickChallengeCard: View {
             .frame(width: 100)
             .padding(.vertical, 16)
             .padding(.horizontal, 8)
-            .brutalistCard(color: color.opacity(0.1), borderWidth: 3)
+            .brutalistCard(color: GeniColor.card, borderWidth: 3)
         }
     }
 }

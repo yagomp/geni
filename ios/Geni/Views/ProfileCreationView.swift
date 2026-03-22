@@ -15,7 +15,7 @@ struct ProfileCreationView: View {
         ZStack {
             GeniColor.yellow.ignoresSafeArea()
 
-            VStack(spacing: 16) {
+            VStack(spacing: 20) {
                     HStack {
                         if let onBack {
                             Button {
@@ -46,7 +46,7 @@ struct ProfileCreationView: View {
                     Text(editingProfile != nil ? L.s(.editProfile) : L.s(.createProfile))
                         .font(.system(.title, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.horizontal, 24)
 
                     VStack(spacing: 6) {

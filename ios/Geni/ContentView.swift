@@ -66,6 +66,16 @@ struct ContentView: View {
                     .transition(.scale.combined(with: .opacity))
                 }
 
+            case .missionTransition:
+                MissionTransitionView(
+                    mathStars: viewModel.missionMathStars,
+                    mathCoins: viewModel.missionMathCoins,
+                    onContinue: {
+                        viewModel.continueToMissionReading()
+                    }
+                )
+                .transition(.scale.combined(with: .opacity))
+
             case .readingMode:
                 if let profile = viewModel.persistence.activeProfile {
                     let today = viewModel.persistence.todayString()
@@ -110,6 +120,20 @@ struct ContentView: View {
                     )
                     .transition(.scale.combined(with: .opacity))
                 }
+
+            case .missionComplete:
+                MissionCompleteView(
+                    mathStars: viewModel.missionMathStars,
+                    mathCoins: viewModel.missionMathCoins,
+                    mathXP: viewModel.missionMathXP,
+                    readingCoins: viewModel.missionReadingCoins,
+                    bonusCoins: viewModel.missionBonusCoins,
+                    rewards: viewModel.rewardState,
+                    onContinue: {
+                        viewModel.returnHome()
+                    }
+                )
+                .transition(.scale.combined(with: .opacity))
             }
 
             if viewModel.showLevelUp {

@@ -165,6 +165,25 @@ nonisolated enum LocaleKey: String, Sendable {
     case badgeReadingMasterDesc
     case badgeFullChapter
     case badgeFullChapterDesc
+    case todaysMission
+    case missionComplete
+    case mathProgress
+    case readingProgress
+    case start
+    case greatJobMath
+    case nowLetsRead
+    case continueToReading
+    case missionBonusTitle
+    case missionBonusDesc
+    case yourName
+    case whosPlaying
+    case iAm
+    case extraModes
+    case fullMissionComplete
+    case mathDone
+    case readingDone2
+    case bonusEarned
+    case missionStreak
 }
 
 nonisolated enum L {
@@ -344,6 +363,25 @@ nonisolated enum L {
         case .badgeReadingMasterDesc: return "30 minutes of reading"
         case .badgeFullChapter: return "Full Day"
         case .badgeFullChapterDesc: return "Complete math + reading in one day"
+        case .todaysMission: return "Today\u{2019}s Mission"
+        case .missionComplete: return "Mission Complete!"
+        case .mathProgress: return "Math"
+        case .readingProgress: return "Reading"
+        case .start: return "START"
+        case .greatJobMath: return "Great job!"
+        case .nowLetsRead: return "Now let\u{2019}s read"
+        case .continueToReading: return "Continue"
+        case .missionBonusTitle: return "Mission Bonus!"
+        case .missionBonusDesc: return "You completed math + reading today"
+        case .yourName: return "Your name"
+        case .whosPlaying: return "Who\u{2019}s playing?"
+        case .iAm: return "I am"
+        case .extraModes: return "Extra Challenges"
+        case .fullMissionComplete: return "Full Mission Complete!"
+        case .mathDone: return "Math done"
+        case .readingDone2: return "Reading done"
+        case .bonusEarned: return "Bonus earned"
+        case .missionStreak: return "Mission Streak"
         }
     }
 
@@ -513,6 +551,25 @@ nonisolated enum L {
         case .badgeReadingMasterDesc: return "30 minutter med lesing"
         case .badgeFullChapter: return "Full dag"
         case .badgeFullChapterDesc: return "Fullf\u{00F8}r matte + lesing p\u{00E5} en dag"
+        case .todaysMission: return "Dagens oppdrag"
+        case .missionComplete: return "Oppdrag fullf\u{00F8}rt!"
+        case .mathProgress: return "Matte"
+        case .readingProgress: return "Lesing"
+        case .start: return "START"
+        case .greatJobMath: return "Kjempebra!"
+        case .nowLetsRead: return "N\u{00E5} skal vi lese"
+        case .continueToReading: return "Fortsett"
+        case .missionBonusTitle: return "Oppdragsbonus!"
+        case .missionBonusDesc: return "Du fullf\u{00F8}rte matte + lesing i dag"
+        case .yourName: return "Ditt navn"
+        case .whosPlaying: return "Hvem spiller?"
+        case .iAm: return "Jeg er"
+        case .extraModes: return "Ekstra utfordringer"
+        case .fullMissionComplete: return "Fullt oppdrag fullf\u{00F8}rt!"
+        case .mathDone: return "Matte ferdig"
+        case .readingDone2: return "Lesing ferdig"
+        case .bonusEarned: return "Bonus opptjent"
+        case .missionStreak: return "Oppdragsrekke"
         }
     }
 }

@@ -9,6 +9,7 @@ struct ProfileCreationView: View {
     @State private var age: Int = 6
     @State private var selectedAvatar: String = "lion"
     @State private var selectedOperations: Set<MathOperation> = Set(MathOperation.recommended(for: 6))
+    @State private var avatarBounce: String? = nil
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -43,14 +44,14 @@ struct ProfileCreationView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 8)
 
-                    Text(editingProfile != nil ? L.s(.editProfile) : L.s(.createProfile))
+                    Text(editingProfile != nil ? L.s(.editProfile) : L.s(.whosPlaying))
                         .font(.system(.title, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.horizontal, 24)
 
                     VStack(spacing: 6) {
-                        Text(L.s(.nickname))
+                        Text(L.s(.yourName))
                             .font(.system(.subheadline, design: .rounded, weight: .bold))
                             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -82,19 +83,21 @@ struct ProfileCreationView: View {
                                     HapticManager.selection()
                                     age = a
                                 } label: {
-                                    Text("\(a)")
-                                        .font(.system(.title3, design: .rounded, weight: .bold))
-                                        .foregroundStyle(age == a ? .white : GeniColor.border)
-                                        .frame(maxWidth: .infinity)
-                                        .frame(height: 44)
-                                        .background(age == a ? GeniColor.cyan : GeniColor.card)
-                                        .overlay(
-                                            Rectangle()
-                                                .stroke(GeniColor.border, lineWidth: 3)
-                                        )
-                                        .background(
-                                            age == a ? AnyView(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3)) : AnyView(EmptyView())
-                                        )
+                                    VStack(spacing: 2) {
+                                        Text("\(a)")
+                                            .font(.system(.title3, design: .rounded, weight: .bold))
+                                            .foregroundStyle(age == a ? .white : GeniColor.border)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 44)
+                                    .background(age == a ? GeniColor.cyan : GeniColor.card)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(GeniColor.border, lineWidth: 3)
+                                    )
+                                    .background(
+                                        age == a ? AnyView(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3)) : AnyView(EmptyView())
+                                    )
                                 }
                             }
                         }
@@ -109,7 +112,14 @@ struct ProfileCreationView: View {
                             ForEach(AvatarOption.all) { avatar in
                                 Button {
                                     HapticManager.selection()
-                                    selectedAvatar = avatar.id
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                                        selectedAvatar = avatar.id
+                                        avatarBounce = avatar.id
+                                    }
+                                    Task {
+                                        try? await Task.sleep(for: .seconds(0.4))
+                                        avatarBounce = nil
+                                    }
                                 } label: {
                                     Text(avatar.emoji)
                                         .font(.system(size: 32))
@@ -123,45 +133,8 @@ struct ProfileCreationView: View {
                                         .background(
                                             selectedAvatar == avatar.id ? AnyView(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3)) : AnyView(EmptyView())
                                         )
-                                        .scaleEffect(selectedAvatar == avatar.id ? 1.08 : 1.0)
-                                        .animation(.snappy, value: selectedAvatar)
-                                }
-                            }
-                        }
-                    }
-
-                    VStack(spacing: 6) {
-                        Text(L.s(.operations))
-                            .font(.system(.subheadline, design: .rounded, weight: .bold))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        HStack(spacing: 12) {
-                            ForEach(MathOperation.allCases, id: \.rawValue) { op in
-                                Button {
-                                    HapticManager.selection()
-                                    if selectedOperations.contains(op) {
-                                        if selectedOperations.count > 1 {
-                                            selectedOperations.remove(op)
-                                        }
-                                    } else {
-                                        selectedOperations.insert(op)
-                                    }
-                                } label: {
-                                    Text(op.symbol)
-                                        .font(.system(.title3, design: .rounded, weight: .black))
-                                        .foregroundStyle(selectedOperations.contains(op) ? .white : GeniColor.border)
-                                        .frame(maxWidth: .infinity)
-                                        .frame(height: 48)
-                                        .background(selectedOperations.contains(op) ? GeniColor.green : GeniColor.card)
-                                        .overlay(
-                                            Rectangle()
-                                                .stroke(GeniColor.border, lineWidth: selectedOperations.contains(op) ? 4 : 2)
-                                        )
-                                        .background(
-                                            selectedOperations.contains(op) ? AnyView(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3)) : AnyView(EmptyView())
-                                        )
-                                        .scaleEffect(selectedOperations.contains(op) ? 1.05 : 1.0)
-                                        .animation(.snappy, value: selectedOperations)
+                                        .scaleEffect(avatarBounce == avatar.id ? 1.15 : (selectedAvatar == avatar.id ? 1.05 : 1.0))
+                                        .rotationEffect(avatarBounce == avatar.id ? .degrees(-5) : .degrees(0))
                                 }
                             }
                         }

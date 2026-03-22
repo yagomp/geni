@@ -39,16 +39,15 @@ struct ProfileCreationView: View {
                             }
                         }
                         Spacer()
-                        Text(editingProfile != nil ? L.s(.editProfile) : L.s(.createProfile))
-                            .font(.system(.title, design: .rounded, weight: .black))
-                            .foregroundStyle(GeniColor.border)
-                        Spacer()
-                        if onBack != nil {
-                            Color.clear.frame(width: 44, height: 44)
-                        }
                     }
                     .padding(.horizontal, 24)
                     .padding(.top, 8)
+
+                    Text(editingProfile != nil ? L.s(.editProfile) : L.s(.createProfile))
+                        .font(.system(.title, design: .rounded, weight: .black))
+                        .foregroundStyle(GeniColor.border)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 24)
 
                     VStack(spacing: 6) {
                         Text(L.s(.nickname))
@@ -106,14 +105,14 @@ struct ProfileCreationView: View {
                             .font(.system(.subheadline, design: .rounded, weight: .bold))
                             .frame(maxWidth: .infinity, alignment: .leading)
 
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 6), spacing: 8) {
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 4), spacing: 10) {
                             ForEach(AvatarOption.all) { avatar in
                                 Button {
                                     HapticManager.selection()
                                     selectedAvatar = avatar.id
                                 } label: {
                                     Text(avatar.emoji)
-                                        .font(.system(size: 20))
+                                        .font(.system(size: 32))
                                         .frame(maxWidth: .infinity)
                                         .aspectRatio(1, contentMode: .fit)
                                         .background(.white)
@@ -136,7 +135,7 @@ struct ProfileCreationView: View {
                             .font(.system(.subheadline, design: .rounded, weight: .bold))
                             .frame(maxWidth: .infinity, alignment: .leading)
 
-                        HStack(spacing: 8) {
+                        HStack(spacing: 12) {
                             ForEach(MathOperation.allCases, id: \.rawValue) { op in
                                 Button {
                                     HapticManager.selection()
@@ -151,7 +150,8 @@ struct ProfileCreationView: View {
                                     Text(op.symbol)
                                         .font(.system(.title3, design: .rounded, weight: .black))
                                         .foregroundStyle(selectedOperations.contains(op) ? .white : GeniColor.border)
-                                        .frame(width: 56, height: 44)
+                                        .frame(maxWidth: .infinity)
+                                        .frame(height: 48)
                                         .background(selectedOperations.contains(op) ? GeniColor.green : GeniColor.card)
                                         .overlay(
                                             Rectangle()

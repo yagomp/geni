@@ -11,14 +11,14 @@ nonisolated struct AvatarOption: Identifiable, Sendable {
         AvatarOption(id: "unicorn", emoji: "🦄", icon: "wand.and.stars", color: .purple),
         AvatarOption(id: "robot", emoji: "🤖", icon: "cpu", color: .cyan),
         AvatarOption(id: "rocket", emoji: "🚀", icon: "paperplane.fill", color: .blue),
-        AvatarOption(id: "star", emoji: "⭐", icon: "star.fill", color: .yellow),
+        AvatarOption(id: "dragon", emoji: "🐲", icon: "flame.fill", color: .red),
         AvatarOption(id: "dino", emoji: "🦕", icon: "leaf.fill", color: .green),
         AvatarOption(id: "penguin", emoji: "🐧", icon: "snowflake", color: .mint),
         AvatarOption(id: "fox", emoji: "🦊", icon: "hare.fill", color: .orange),
-        AvatarOption(id: "cat", emoji: "🐱", icon: "cat.fill", color: .pink),
-        AvatarOption(id: "dog", emoji: "🐶", icon: "dog.fill", color: .brown),
+        AvatarOption(id: "panda", emoji: "🐼", icon: "circle.fill", color: .black),
+        AvatarOption(id: "alien", emoji: "👾", icon: "sparkle", color: .purple),
         AvatarOption(id: "octopus", emoji: "🐙", icon: "tropicalstorm", color: .red),
-        AvatarOption(id: "butterfly", emoji: "🦋", icon: "ladybug.fill", color: .indigo),
+        AvatarOption(id: "monkey", emoji: "🐵", icon: "leaf.fill", color: .brown),
     ]
 
     static func find(_ id: String) -> AvatarOption {

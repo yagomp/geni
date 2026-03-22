@@ -10,9 +10,11 @@ class AppViewModel {
         case childHome
         case exercise
         case chapterComplete
+        case missionTransition
         case readingMode
         case reading
         case readingComplete
+        case missionComplete
     }
 
     var currentScreen: AppScreen = .welcome
@@ -36,6 +38,12 @@ class AppViewModel {
     var completedReadingSession: ReadingSession?
     var readingBonusAwarded: Bool = false
     var readingBonusCoins: Int = 0
+    var isMissionFlow: Bool = false
+    var missionMathCoins: Int = 0
+    var missionMathStars: Int = 0
+    var missionMathXP: Int = 0
+    var missionReadingCoins: Int = 0
+    var missionBonusCoins: Int = 0
 
     init() {
         self.persistence = PersistenceService()
@@ -172,7 +180,16 @@ class AppViewModel {
         }
 
         HapticManager.coinReward()
-        currentScreen = .chapterComplete
+
+        if final.chapterType == .daily && !rewardState.todayReadingCompleted {
+            isMissionFlow = true
+            missionMathCoins = final.coinsEarned
+            missionMathStars = final.stars
+            missionMathXP = xpGain
+            currentScreen = .missionTransition
+        } else {
+            currentScreen = .chapterComplete
+        }
 
         cloudSync.syncToCloud(persistence: persistence)
     }
@@ -234,6 +251,8 @@ class AppViewModel {
         completedReadingSession = final
         readingBonusAwarded = bonusAwarded
         readingBonusCoins = bonusCoins
+        missionReadingCoins = final.coinsEarned
+        missionBonusCoins = bonusCoins
 
         if rewardState.level > previousLevel {
             levelUpLevel = rewardState.level
@@ -247,7 +266,12 @@ class AppViewModel {
         }
 
         HapticManager.coinReward()
-        currentScreen = .readingComplete
+
+        if isMissionFlow {
+            currentScreen = .missionComplete
+        } else {
+            currentScreen = .readingComplete
+        }
 
         cloudSync.syncToCloud(persistence: persistence)
     }
@@ -284,8 +308,24 @@ class AppViewModel {
         chapterViewModel = nil
         readingViewModel = nil
         completedReadingSession = nil
+        isMissionFlow = false
+        missionMathCoins = 0
+        missionMathStars = 0
+        missionMathXP = 0
+        missionReadingCoins = 0
+        missionBonusCoins = 0
         refreshTodayStatus()
         currentScreen = .childHome
+    }
+
+    func continueToMissionReading() {
+        guard let profile = persistence.activeProfile else { return }
+        let today = persistence.todayString()
+        let text = ReadingContentService.textForToday(profile: profile, date: today)
+        readingViewModel = nil
+        completedReadingSession = nil
+        currentScreen = .readingMode
+        _ = text
     }
 
     func switchProfile() {

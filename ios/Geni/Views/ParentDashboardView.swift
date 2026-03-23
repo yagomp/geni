@@ -15,6 +15,7 @@ struct ParentDashboardView: View {
     @State private var restoreCode = ""
     @State private var restoreError: String? = nil
     @State private var restoreSuccess = false
+    @State private var selectedLanguage: AppLanguage = L.selectedLanguage
 
     var body: some View {
         NavigationStack {
@@ -89,6 +90,7 @@ struct ParentDashboardView: View {
             ScrollView {
                 VStack(spacing: 20) {
                     profilesSection
+                    languageSection
                     progressOverviewSection
                     reminderSection
                     cloudSyncSection
@@ -116,6 +118,50 @@ struct ParentDashboardView: View {
                 viewModel.persistence.saveProfile(updated)
                 editingProfile = nil
             }, editingProfile: profile)
+        }
+    }
+
+    private var languageSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L.s(.language))
+                .font(.system(.headline, design: .rounded, weight: .bold))
+
+            ForEach(AppLanguage.allCases, id: \.rawValue) { lang in
+                let isSelected = selectedLanguage == lang
+                Button {
+                    HapticManager.selection()
+                    selectedLanguage = lang
+                    L.selectedLanguage = lang
+                } label: {
+                    HStack(spacing: 12) {
+                        Text(lang.flag)
+                            .font(.system(size: 24))
+                            .frame(width: 40)
+
+                        Text(languageLabel(lang))
+                            .font(.system(.body, design: .rounded, weight: .semibold))
+                            .foregroundStyle(GeniColor.border)
+
+                        Spacer()
+
+                        if isSelected {
+                            Image(systemName: "checkmark")
+                                .font(.system(.body, weight: .bold))
+                                .foregroundStyle(GeniColor.blue)
+                        }
+                    }
+                    .padding(12)
+                    .brutalistCard(color: isSelected ? GeniColor.blue.opacity(0.08) : GeniColor.card, borderWidth: isSelected ? 3 : 2)
+                }
+            }
+        }
+    }
+
+    private func languageLabel(_ lang: AppLanguage) -> String {
+        switch lang {
+        case .system: return L.s(.languageSystem)
+        case .english: return L.s(.languageEnglish)
+        case .norwegian: return L.s(.languageNorwegian)
         }
     }
 

@@ -184,13 +184,54 @@ nonisolated enum LocaleKey: String, Sendable {
     case readingDone2
     case bonusEarned
     case missionStreak
+    case language
+    case languageSystem
+    case languageEnglish
+    case languageNorwegian
+}
+
+nonisolated enum AppLanguage: String, Sendable, CaseIterable {
+    case system
+    case english
+    case norwegian
+
+    var flag: String {
+        switch self {
+        case .system: return "🌐"
+        case .english: return "🇬🇧"
+        case .norwegian: return "🇳🇴"
+        }
+    }
 }
 
 nonisolated enum L {
-    static var isNorwegian: Bool {
+    private static let languageKey = "geni_app_language"
+
+    static var selectedLanguage: AppLanguage {
+        get {
+            if let raw = UserDefaults.standard.string(forKey: languageKey),
+               let lang = AppLanguage(rawValue: raw) {
+                return lang
+            }
+            return .system
+        }
+        set {
+            UserDefaults.standard.set(newValue.rawValue, forKey: languageKey)
+        }
+    }
+
+    private static var systemIsNorwegian: Bool {
         Bundle.main.preferredLocalizations.first?.hasPrefix("nb") == true
             || Bundle.main.preferredLocalizations.first?.hasPrefix("nn") == true
             || Bundle.main.preferredLocalizations.first?.hasPrefix("no") == true
+    }
+
+    static var isNorwegian: Bool {
+        switch selectedLanguage {
+        case .system: return systemIsNorwegian
+        case .english: return false
+        case .norwegian: return true
+        }
     }
 
     static func s(_ key: LocaleKey) -> String {
@@ -382,6 +423,10 @@ nonisolated enum L {
         case .readingDone2: return "Reading done"
         case .bonusEarned: return "Bonus earned"
         case .missionStreak: return "Mission Streak"
+        case .language: return "Language"
+        case .languageSystem: return "System Default"
+        case .languageEnglish: return "English"
+        case .languageNorwegian: return "Norwegian"
         }
     }
 
@@ -570,6 +615,10 @@ nonisolated enum L {
         case .readingDone2: return "Lesing ferdig"
         case .bonusEarned: return "Bonus opptjent"
         case .missionStreak: return "Oppdragsrekke"
+        case .language: return "Spr\u{00E5}k"
+        case .languageSystem: return "Systemstandard"
+        case .languageEnglish: return "Engelsk"
+        case .languageNorwegian: return "Norsk"
         }
     }
 }

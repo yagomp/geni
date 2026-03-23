@@ -59,7 +59,7 @@ struct MissionTransitionView: View {
                 }
                 .padding(24)
                 .frame(maxWidth: .infinity)
-                .brutalistCard(color: GeniColor.green.opacity(0.08))
+                .brutalistCard(color: GeniColor.card)
                 .opacity(showButton ? 1 : 0)
                 .offset(y: showButton ? 0 : 30)
 

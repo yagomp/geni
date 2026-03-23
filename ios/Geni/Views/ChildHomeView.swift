@@ -2,10 +2,7 @@ import SwiftUI
 
 struct ChildHomeView: View {
     let viewModel: AppViewModel
-    @State private var appeared = false
-    @State private var streakBounce = 0
     @State private var showAvatarPicker = false
-    @State private var missionPulse = false
 
     var body: some View {
         let profile = viewModel.persistence.activeProfile
@@ -26,13 +23,6 @@ struct ChildHomeView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 8)
                 .padding(.bottom, 32)
-            }
-        }
-        .onAppear {
-            appeared = true
-            streakBounce += 1
-            withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
-                missionPulse = true
             }
         }
         .sheet(isPresented: $showAvatarPicker) {
@@ -84,8 +74,6 @@ struct ChildHomeView: View {
                     .foregroundStyle(.secondary)
             }
         }
-        .opacity(appeared ? 1 : 0)
-        .animation(.spring(response: 0.5), value: appeared)
     }
 
     private func statsRow(rewards: RewardState) -> some View {
@@ -96,7 +84,6 @@ struct ChildHomeView: View {
                 label: rewards.streakCount == 1 ? L.s(.day) : L.s(.days),
                 color: GeniColor.orange
             )
-            .symbolEffect(.bounce, value: streakBounce)
 
             StatBubble(
                 icon: "star.fill",
@@ -129,9 +116,6 @@ struct ChildHomeView: View {
                 .brutalistCard(color: GeniColor.card, borderWidth: 3)
             }
         }
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 20)
-        .animation(.spring(response: 0.5).delay(0.1), value: appeared)
     }
 
     private var missionCard: some View {
@@ -142,9 +126,6 @@ struct ChildHomeView: View {
                 missionActiveCard
             }
         }
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 30)
-        .animation(.spring(response: 0.5).delay(0.2), value: appeared)
     }
 
     private var missionCompleteCard: some View {
@@ -228,7 +209,7 @@ struct ChildHomeView: View {
                 .frame(maxWidth: .infinity)
             }
             .buttonStyle(BrutalistButton(color: missionButtonColor))
-            .scaleEffect(missionPulse && !viewModel.todayMathCompleted && !viewModel.todayChapterInProgress ? 1.02 : 1.0)
+
         }
         .padding(20)
         .brutalistCard(color: GeniColor.card)
@@ -278,9 +259,6 @@ struct ChildHomeView: View {
                 }
             }
         }
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 30)
-        .animation(.spring(response: 0.5).delay(0.3), value: appeared)
     }
 
     private func specialChapterCard(type: ChapterType) -> some View {
@@ -372,9 +350,6 @@ struct ChildHomeView: View {
                 rewards: viewModel.rewardState
             )
         }
-        .opacity(appeared ? 1 : 0)
-        .offset(y: appeared ? 0 : 30)
-        .animation(.spring(response: 0.5).delay(0.35), value: appeared)
     }
 
     private func specialChapterIcon(_ type: ChapterType) -> String {

@@ -58,7 +58,7 @@ struct MissionCompleteView: View {
 
                     VStack(spacing: 16) {
                         HStack(spacing: 12) {
-                            Image(systemName: "function")
+                            Image(systemName: "plus")
                                 .font(.title3)
                                 .foregroundStyle(.white)
                                 .frame(width: 36, height: 36)

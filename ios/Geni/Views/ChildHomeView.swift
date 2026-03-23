@@ -190,7 +190,7 @@ struct ChildHomeView: View {
 
             HStack(spacing: 16) {
                 MissionProgressItem(
-                    icon: "function",
+                    icon: "plus",
                     label: L.s(.mathProgress),
                     progress: "\(viewModel.todayChapterExercisesCompleted)/20",
                     done: viewModel.todayMathCompleted,

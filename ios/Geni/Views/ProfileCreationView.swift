@@ -44,6 +44,8 @@ struct ProfileCreationView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 8)
 
+                    Spacer().frame(height: 8)
+
                     Text(editingProfile != nil ? L.s(.editProfile) : L.s(.whosPlaying))
                         .font(.system(.title, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
@@ -56,8 +58,8 @@ struct ProfileCreationView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                         TextField(L.s(.nicknamePlaceholder), text: $nickname)
-                            .font(.system(.body, design: .rounded, weight: .semibold))
-                            .padding(12)
+                            .font(.system(.title3, design: .rounded, weight: .semibold))
+                            .padding(14)
                             .background(GeniColor.card)
                             .overlay(
                                 Rectangle()

@@ -467,7 +467,7 @@ struct ExerciseView: View {
 
     private func trueFalseButtonColor(for value: Int, exercise: Exercise) -> Color {
         guard chapterVM.showFeedback, let selected = chapterVM.selectedAnswer else {
-            return value == 1 ? GeniColor.green.opacity(0.2) : GeniColor.pink.opacity(0.2)
+            return GeniColor.card
         }
         let correctValue = exercise.trueFalseIsCorrect ? 1 : 0
         if value == correctValue && (chapterVM.feedbackCorrect || chapterVM.showAnswer) {
@@ -476,18 +476,21 @@ struct ExerciseView: View {
         if value == selected && !chapterVM.feedbackCorrect {
             return GeniColor.pink.opacity(0.3)
         }
-        return value == 1 ? GeniColor.green.opacity(0.2) : GeniColor.pink.opacity(0.2)
+        return GeniColor.card
     }
 
     private func trueFalseButtonTextColor(for value: Int, exercise: Exercise) -> Color {
         guard chapterVM.showFeedback, let selected = chapterVM.selectedAnswer else {
-            return GeniColor.border
+            return value == 1 ? GeniColor.green : GeniColor.pink
         }
         let correctValue = exercise.trueFalseIsCorrect ? 1 : 0
         if value == correctValue && (chapterVM.feedbackCorrect || chapterVM.showAnswer) {
             return .white
         }
-        return GeniColor.border
+        if value == selected && !chapterVM.feedbackCorrect {
+            return GeniColor.pink
+        }
+        return value == 1 ? GeniColor.green : GeniColor.pink
     }
 
     private func comparisonBgColor(for value: Int, exercise: Exercise) -> Color {

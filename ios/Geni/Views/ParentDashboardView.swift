@@ -16,6 +16,7 @@ struct ParentDashboardView: View {
     @State private var restoreError: String? = nil
     @State private var restoreSuccess = false
     @State private var selectedLanguage: AppLanguage = L.selectedLanguage
+    @State private var languageManager = LanguageManager.shared
 
     var body: some View {
         NavigationStack {
@@ -132,6 +133,7 @@ struct ParentDashboardView: View {
                     HapticManager.selection()
                     selectedLanguage = lang
                     L.selectedLanguage = lang
+                    languageManager.current = lang
                 } label: {
                     HStack(spacing: 12) {
                         Text(lang.flag)

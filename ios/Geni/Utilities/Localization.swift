@@ -202,6 +202,32 @@ nonisolated enum AppLanguage: String, Sendable, CaseIterable {
     }
 }
 
+@Observable
+class LanguageManager {
+    static let shared = LanguageManager()
+    private let languageKey = "geni_app_language"
+
+    var current: AppLanguage {
+        didSet {
+            UserDefaults.standard.set(current.rawValue, forKey: languageKey)
+        }
+    }
+
+    private init() {
+        if let raw = UserDefaults.standard.string(forKey: "geni_app_language"),
+           let lang = AppLanguage(rawValue: raw) {
+            self.current = lang
+        } else {
+            let preferred = Locale.preferredLanguages.first ?? "en"
+            if preferred.hasPrefix("nb") || preferred.hasPrefix("nn") || preferred.hasPrefix("no") {
+                self.current = .norwegian
+            } else {
+                self.current = .english
+            }
+        }
+    }
+}
+
 nonisolated enum L {
     private static let languageKey = "geni_app_language"
 
@@ -232,6 +258,10 @@ nonisolated enum L {
 
     static func s(_ key: LocaleKey) -> String {
         return isNorwegian ? norwegian(key) : english(key)
+    }
+
+    static func s(_ key: LocaleKey, lang: AppLanguage) -> String {
+        return lang == .norwegian ? norwegian(key) : english(key)
     }
 
     private static func english(_ key: LocaleKey) -> String {

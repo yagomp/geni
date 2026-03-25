@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var viewModel = AppViewModel()
     @State private var showProfileCreation = false
+    @State private var languageManager = LanguageManager.shared
 
     var body: some View {
         ZStack {
@@ -172,5 +173,6 @@ struct ContentView: View {
         .sheet(isPresented: $viewModel.showRewards) {
             RewardsView(rewards: viewModel.rewardState)
         }
+        .id(languageManager.current.rawValue)
     }
 }

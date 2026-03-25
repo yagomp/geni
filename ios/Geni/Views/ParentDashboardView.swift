@@ -151,7 +151,7 @@ struct ParentDashboardView: View {
                         }
                     }
                     .padding(12)
-                    .brutalistCard(color: isSelected ? GeniColor.blue.opacity(0.08) : GeniColor.card, borderWidth: isSelected ? 3 : 2)
+                    .brutalistCard(color: GeniColor.card, borderWidth: 3)
                 }
             }
         }
@@ -159,7 +159,6 @@ struct ParentDashboardView: View {
 
     private func languageLabel(_ lang: AppLanguage) -> String {
         switch lang {
-        case .system: return L.s(.languageSystem)
         case .english: return L.s(.languageEnglish)
         case .norwegian: return L.s(.languageNorwegian)
         }

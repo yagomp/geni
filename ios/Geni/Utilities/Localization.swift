@@ -191,13 +191,11 @@ nonisolated enum LocaleKey: String, Sendable {
 }
 
 nonisolated enum AppLanguage: String, Sendable, CaseIterable {
-    case system
     case english
     case norwegian
 
     var flag: String {
         switch self {
-        case .system: return "🌐"
         case .english: return "🇬🇧"
         case .norwegian: return "🇳🇴"
         }
@@ -213,25 +211,23 @@ nonisolated enum L {
                let lang = AppLanguage(rawValue: raw) {
                 return lang
             }
-            return .system
+            return systemLanguage
         }
         set {
             UserDefaults.standard.set(newValue.rawValue, forKey: languageKey)
         }
     }
 
-    private static var systemIsNorwegian: Bool {
-        Bundle.main.preferredLocalizations.first?.hasPrefix("nb") == true
-            || Bundle.main.preferredLocalizations.first?.hasPrefix("nn") == true
-            || Bundle.main.preferredLocalizations.first?.hasPrefix("no") == true
+    private static var systemLanguage: AppLanguage {
+        let preferred = Locale.preferredLanguages.first ?? "en"
+        if preferred.hasPrefix("nb") || preferred.hasPrefix("nn") || preferred.hasPrefix("no") {
+            return .norwegian
+        }
+        return .english
     }
 
     static var isNorwegian: Bool {
-        switch selectedLanguage {
-        case .system: return systemIsNorwegian
-        case .english: return false
-        case .norwegian: return true
-        }
+        selectedLanguage == .norwegian
     }
 
     static func s(_ key: LocaleKey) -> String {

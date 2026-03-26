@@ -59,6 +59,24 @@ nonisolated enum MathOperation: String, Codable, Sendable, CaseIterable, Hashabl
         }
     }
 
+    var emoji: String {
+        switch self {
+        case .addition: return "➕"
+        case .subtraction: return "➖"
+        case .multiplication: return "✖️"
+        case .division: return "➗"
+        }
+    }
+
+    var example: String {
+        switch self {
+        case .addition: return "2 + 3"
+        case .subtraction: return "5 \u{2212} 2"
+        case .multiplication: return "3 \u{00D7} 4"
+        case .division: return "8 \u{00F7} 2"
+        }
+    }
+
     var displayName: String {
         switch self {
         case .addition: return L.s(.addition)

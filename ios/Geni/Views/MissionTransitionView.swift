@@ -16,10 +16,7 @@ struct MissionTransitionView: View {
             VStack(spacing: 32) {
                 Spacer()
 
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 72))
-                    .foregroundStyle(GeniColor.green)
-                    .symbolEffect(.bounce, value: checkBounce)
+                Text("✅").font(.system(size: 72))
                     .opacity(appeared ? 1 : 0)
                     .scaleEffect(appeared ? 1 : 0.3)
 
@@ -30,14 +27,14 @@ struct MissionTransitionView: View {
 
                     HStack(spacing: 6) {
                         ForEach(1...5, id: \.self) { star in
-                            Image(systemName: star <= mathStars ? "star.fill" : "star")
+                            Text(star <= mathStars ? "⭐" : "☆")
                                 .font(.system(size: 24))
                                 .foregroundStyle(star <= mathStars ? GeniColor.yellow : .gray.opacity(0.3))
                         }
                     }
 
                     HStack(spacing: 4) {
-                        Image(systemName: "dollarsign.circle.fill")
+                        Text("🪙")
                             .foregroundStyle(GeniColor.yellow)
                         Text("+\(mathCoins)")
                             .font(.system(.headline, design: .rounded, weight: .black))
@@ -49,7 +46,7 @@ struct MissionTransitionView: View {
                 .offset(y: appeared ? 0 : 20)
 
                 VStack(spacing: 8) {
-                    Image(systemName: "book.fill")
+                    Text("📖")
                         .font(.system(size: 36))
                         .foregroundStyle(GeniColor.green)
 
@@ -71,8 +68,7 @@ struct MissionTransitionView: View {
                 } label: {
                     HStack(spacing: 10) {
                         Text(L.s(.continueToReading))
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 18, weight: .bold))
+                        Text("▶️").font(.system(size: 16))
                     }
                     .frame(maxWidth: .infinity)
                 }

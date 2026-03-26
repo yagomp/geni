@@ -47,10 +47,9 @@ struct MissionCompleteView: View {
 
                     HStack(spacing: 10) {
                         ForEach(1...5, id: \.self) { star in
-                            Image(systemName: star <= mathStars ? "star.fill" : "star")
+                            Text(star <= mathStars ? "⭐" : "☆")
                                 .font(.system(size: 28))
                                 .foregroundStyle(star <= mathStars ? GeniColor.yellow : .gray.opacity(0.3))
-                                .symbolEffect(.bounce, value: starsBounce)
                         }
                     }
                     .opacity(appeared ? 1 : 0)
@@ -58,9 +57,8 @@ struct MissionCompleteView: View {
 
                     VStack(spacing: 16) {
                         HStack(spacing: 12) {
-                            Image(systemName: "plus")
+                            Text("➕")
                                 .font(.title3)
-                                .foregroundStyle(.white)
                                 .frame(width: 36, height: 36)
                                 .background(GeniColor.blue)
                                 .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
@@ -81,7 +79,7 @@ struct MissionCompleteView: View {
                             .frame(height: 2)
 
                         HStack(spacing: 12) {
-                            Image(systemName: "book.fill")
+                            Text("📖")
                                 .font(.title3)
                                 .foregroundStyle(.white)
                                 .frame(width: 36, height: 36)
@@ -105,9 +103,8 @@ struct MissionCompleteView: View {
                                 .frame(height: 2)
 
                             HStack(spacing: 12) {
-                                Image(systemName: "sparkles")
+                                Text("✨")
                                     .font(.title3)
-                                    .foregroundStyle(.white)
                                     .frame(width: 36, height: 36)
                                     .background(GeniColor.yellow)
                                     .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
@@ -148,7 +145,7 @@ struct MissionCompleteView: View {
 
                     HStack(spacing: 16) {
                         VStack(spacing: 4) {
-                            Image(systemName: "flame.fill")
+                            Text("🔥")
                                 .font(.title2)
                                 .foregroundStyle(GeniColor.orange)
                             Text("\(rewards.streakCount)")
@@ -156,14 +153,14 @@ struct MissionCompleteView: View {
                                 .foregroundStyle(GeniColor.border)
                             Text(rewards.streakCount == 1 ? L.s(.day) : L.s(.days))
                                 .font(.system(.caption2, design: .rounded, weight: .medium))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.black)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .brutalistCard(color: GeniColor.orange.opacity(0.08), borderWidth: 3)
 
                         VStack(spacing: 4) {
-                            Image(systemName: "star.fill")
+                            Text("⭐")
                                 .font(.title2)
                                 .foregroundStyle(GeniColor.yellow)
                             Text("\(mathStars)/5")
@@ -171,14 +168,14 @@ struct MissionCompleteView: View {
                                 .foregroundStyle(GeniColor.border)
                             Text(L.s(.stars))
                                 .font(.system(.caption2, design: .rounded, weight: .medium))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.black)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                         .brutalistCard(color: GeniColor.yellow.opacity(0.08), borderWidth: 3)
 
                         VStack(spacing: 4) {
-                            Image(systemName: "dollarsign.circle.fill")
+                            Text("🪙")
                                 .font(.title2)
                                 .foregroundStyle(GeniColor.yellow)
                             Text("\(rewards.coins)")
@@ -186,7 +183,7 @@ struct MissionCompleteView: View {
                                 .foregroundStyle(GeniColor.border)
                             Text(L.s(.coins))
                                 .font(.system(.caption2, design: .rounded, weight: .medium))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.black)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -211,6 +208,7 @@ struct MissionCompleteView: View {
                     Spacer().frame(height: 40)
                 }
                 .padding(.horizontal, 20)
+                .foregroundStyle(.black)
             }
         }
         .onAppear {

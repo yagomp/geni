@@ -9,6 +9,7 @@ struct RewardsView: View {
             ZStack {
                 GeniColor.background.ignoresSafeArea()
 
+
                 ScrollView {
                     VStack(spacing: 24) {
                         statsSection
@@ -16,6 +17,7 @@ struct RewardsView: View {
                         badgesSection
                     }
                     .padding(20)
+                    .foregroundStyle(.black)
                 }
             }
             .navigationTitle(L.s(.rewards))
@@ -31,9 +33,9 @@ struct RewardsView: View {
 
     private var statsSection: some View {
         HStack(spacing: 12) {
-            StatCard(icon: "dollarsign.circle.fill", value: "\(rewards.coins)", label: L.s(.coins), color: GeniColor.yellow)
-            StatCard(icon: "flame.fill", value: "\(rewards.streakCount)", label: L.s(.streak), color: GeniColor.orange)
-            StatCard(icon: "star.fill", value: "\(rewards.level)", label: L.s(.level), color: GeniColor.purple)
+            StatCard(emoji: "🪙", value: "\(rewards.coins)", label: L.s(.coins), color: GeniColor.yellow)
+            StatCard(emoji: "🔥", value: "\(rewards.streakCount)", label: L.s(.streak), color: GeniColor.orange)
+            StatCard(emoji: "⭐", value: "\(rewards.level)", label: L.s(.level), color: GeniColor.purple)
         }
     }
 
@@ -48,7 +50,7 @@ struct RewardsView: View {
                 Spacer()
                 Text("\(rewards.xp)/\(rewards.xpForNextLevel) \(L.s(.xp))")
                     .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.black)
             }
 
             GeometryReader { geo in
@@ -78,15 +80,15 @@ struct RewardsView: View {
                     let isUnlocked = rewards.badgesUnlocked.contains(badge.id)
 
                     VStack(spacing: 8) {
-                        Image(systemName: badge.icon)
-                            .font(.title)
-                            .foregroundStyle(isUnlocked ? badge.color : .gray.opacity(0.3))
+                        Text(badge.emoji)
+                            .font(.system(size: 32))
                             .frame(width: 48, height: 48)
                             .background(isUnlocked ? badge.color.opacity(0.15) : Color.gray.opacity(0.05))
                             .overlay(
                                 Rectangle()
                                     .stroke(isUnlocked ? badge.color : .gray.opacity(0.2), lineWidth: 2)
                             )
+                            .opacity(isUnlocked ? 1 : 0.3)
 
                         Text(L.s(badge.titleKey))
                             .font(.system(.caption, design: .rounded, weight: .bold))
@@ -96,7 +98,7 @@ struct RewardsView: View {
 
                         Text(L.s(badge.descriptionKey))
                             .font(.system(.caption2, design: .rounded))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.black)
                             .lineLimit(2)
                             .minimumScaleFactor(0.7)
                             .multilineTextAlignment(.center)
@@ -112,16 +114,15 @@ struct RewardsView: View {
 }
 
 struct StatCard: View {
-    let icon: String
+    let emoji: String
     let value: String
     let label: String
     let color: Color
 
     var body: some View {
         VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundStyle(color)
+            Text(emoji)
+                .font(.system(size: 28))
 
             Text(value)
                 .font(.system(.title2, design: .rounded, weight: .black))
@@ -129,7 +130,7 @@ struct StatCard: View {
 
             Text(label)
                 .font(.system(.caption, design: .rounded, weight: .medium))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.black)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)

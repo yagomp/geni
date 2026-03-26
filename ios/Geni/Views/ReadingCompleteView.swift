@@ -24,7 +24,7 @@ struct ReadingCompleteView: View {
                 VStack(spacing: 28) {
                     Spacer().frame(height: 20)
 
-                    Image(systemName: "book.fill")
+                    Text("📖")
                         .font(.system(size: 56))
                         .foregroundStyle(GeniColor.green)
                         .opacity(appeared ? 1 : 0)
@@ -40,28 +40,28 @@ struct ReadingCompleteView: View {
 
                     VStack(spacing: 16) {
                         RewardRow(
-                            icon: "clock.fill",
+                            icon: "🕐",
                             color: GeniColor.green,
                             label: L.s(.readingTime),
                             value: formattedTime(session.readingTimeSeconds)
                         )
 
                         RewardRow(
-                            icon: "dollarsign.circle.fill",
+                            icon: "🪙",
                             color: GeniColor.yellow,
                             label: L.s(.coinsEarned),
                             value: "+\(session.coinsEarned)"
                         )
 
                         RewardRow(
-                            icon: "bolt.circle.fill",
+                            icon: "⚡",
                             color: GeniColor.cyan,
                             label: L.s(.xpEarned),
                             value: "+50"
                         )
 
                         RewardRow(
-                            icon: "flame.fill",
+                            icon: "🔥",
                             color: GeniColor.orange,
                             label: L.s(.streak),
                             value: "\(rewards.streakCount) \(rewards.streakCount == 1 ? L.s(.day) : L.s(.days))"
@@ -76,9 +76,8 @@ struct ReadingCompleteView: View {
                     if bonusAwarded {
                         VStack(spacing: 12) {
                             HStack(spacing: 8) {
-                                Image(systemName: "sparkles")
+                                Text("✨")
                                     .font(.title2)
-                                    .foregroundStyle(GeniColor.yellow)
                                 Text(L.s(.dailyBonusTitle))
                                     .font(.system(.title3, design: .rounded, weight: .black))
                                     .foregroundStyle(GeniColor.border)
@@ -86,12 +85,12 @@ struct ReadingCompleteView: View {
 
                             Text(L.s(.dailyBonusDesc))
                                 .font(.system(.subheadline, design: .rounded, weight: .medium))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.black)
                                 .multilineTextAlignment(.center)
 
                             HStack(spacing: 16) {
                                 HStack(spacing: 4) {
-                                    Image(systemName: "dollarsign.circle.fill")
+                                    Text("🪙")
                                         .foregroundStyle(GeniColor.yellow)
                                     Text("+\(bonusCoins)")
                                         .font(.system(.headline, design: .rounded, weight: .black))
@@ -99,8 +98,7 @@ struct ReadingCompleteView: View {
                                 }
 
                                 HStack(spacing: 4) {
-                                    Image(systemName: "bolt.circle.fill")
-                                        .foregroundStyle(GeniColor.cyan)
+                                    Text("⚡")
                                     Text("+30 XP")
                                         .font(.system(.headline, design: .rounded, weight: .black))
                                         .foregroundStyle(GeniColor.border)
@@ -116,7 +114,7 @@ struct ReadingCompleteView: View {
 
                     Text(L.s(.greatJob))
                         .font(.system(.title3, design: .rounded, weight: .bold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.black)
                         .opacity(appeared ? 1 : 0)
                         .animation(.spring(response: 0.5).delay(0.7), value: appeared)
 
@@ -135,6 +133,7 @@ struct ReadingCompleteView: View {
                     Spacer().frame(height: 40)
                 }
                 .padding(.horizontal, 20)
+                .foregroundStyle(.black)
             }
         }
         .onAppear {

@@ -33,17 +33,17 @@ struct ParentDashboardView: View {
             GeniColor.background.ignoresSafeArea()
 
             VStack(spacing: 24) {
-                Image(systemName: "lock.fill")
+                Text("🔒")
                     .font(.system(size: 48))
                     .foregroundStyle(GeniColor.blue)
 
                 Text(L.s(.parentArea))
                     .font(.system(.title, design: .rounded, weight: .black))
-                    .foregroundStyle(GeniColor.border)
+                    .foregroundStyle(.black)
 
                 Text(L.s(.pinRequired))
                     .font(.system(.body, design: .rounded))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.black)
 
                 HStack(spacing: 16) {
                     ForEach(0..<4, id: \.self) { i in
@@ -98,6 +98,7 @@ struct ParentDashboardView: View {
                     pinSection
                 }
                 .padding(20)
+                .foregroundStyle(.black)
             }
         }
         .navigationTitle(L.s(.parentSettings))
@@ -147,9 +148,8 @@ struct ParentDashboardView: View {
                         Spacer()
 
                         if isSelected {
-                            Image(systemName: "checkmark")
-                                .font(.system(.body, weight: .bold))
-                                .foregroundStyle(GeniColor.blue)
+                            Text("✅")
+                                .font(.system(size: 18))
                         }
                     }
                     .padding(12)
@@ -188,7 +188,7 @@ struct ParentDashboardView: View {
                             .font(.system(.body, design: .rounded, weight: .bold))
                         Text("\(L.s(.age)): \(profile.age)")
                             .font(.system(.caption, design: .rounded))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.black)
                     }
 
                     Spacer()
@@ -197,8 +197,8 @@ struct ParentDashboardView: View {
                         HapticManager.selection()
                         editingProfile = profile
                     } label: {
-                        Image(systemName: "pencil")
-                            .foregroundStyle(GeniColor.blue)
+                        Text("✏️")
+                            .font(.system(size: 18))
                     }
 
                     if viewModel.persistence.profiles.count > 1 {
@@ -206,8 +206,8 @@ struct ParentDashboardView: View {
                             HapticManager.selection()
                             viewModel.persistence.deleteProfile(profile.id)
                         } label: {
-                            Image(systemName: "trash")
-                                .foregroundStyle(GeniColor.pink)
+                            Text("🗑️")
+                                .font(.system(size: 18))
                         }
                     }
                 }
@@ -220,7 +220,7 @@ struct ParentDashboardView: View {
                 showProfileCreation = true
             } label: {
                 HStack {
-                    Image(systemName: "plus.circle.fill")
+                    Text("➕")
                     Text(L.s(.addProfile))
                 }
                 .font(.system(.body, design: .rounded, weight: .bold))
@@ -275,25 +275,24 @@ struct ParentDashboardView: View {
                     }
 
                     HStack(spacing: 8) {
-                        progressStat(icon: "star.fill", value: "\(completedChapters.count)", label: L.s(.chaptersCompleted), color: GeniColor.yellow)
-                        progressStat(icon: "flame.fill", value: "\(rewards.streakCount)", label: L.s(.streak), color: GeniColor.orange)
-                        progressStat(icon: "target", value: "\(accuracy)%", label: L.s(.accuracy), color: GeniColor.green)
-                        progressStat(icon: "bolt.fill", value: "\(rewards.xp)", label: L.s(.totalXP), color: GeniColor.cyan)
+                        progressStat(emoji: "⭐", value: "\(completedChapters.count)", label: L.s(.chaptersCompleted), color: GeniColor.yellow)
+                        progressStat(emoji: "🔥", value: "\(rewards.streakCount)", label: L.s(.streak), color: GeniColor.orange)
+                        progressStat(emoji: "🎯", value: "\(accuracy)%", label: L.s(.accuracy), color: GeniColor.green)
+                        progressStat(emoji: "⚡", value: "\(rewards.xp)", label: L.s(.totalXP), color: GeniColor.cyan)
                     }
 
                     if !completedChapters.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
                             Text(L.s(.recentChapters))
                                 .font(.system(.caption2, design: .rounded, weight: .bold))
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(.black)
                                 .textCase(.uppercase)
 
                             let recent = completedChapters.sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }.prefix(5)
                             ForEach(Array(recent)) { ch in
                                 HStack(spacing: 8) {
-                                    Image(systemName: chapterTypeIcon(ch.chapterType))
-                                        .font(.caption)
-                                        .foregroundStyle(chapterTypeColor(ch.chapterType))
+                                    Text(chapterTypeEmoji(ch.chapterType))
+                                        .font(.system(size: 12))
                                         .frame(width: 20)
 
                                     Text(chapterDateLabel(ch.date))
@@ -316,17 +315,17 @@ struct ParentDashboardView: View {
 
                                     Spacer()
 
-                                    HStack(spacing: 2) {
+                                    HStack(spacing: 1) {
                                         ForEach(0..<5, id: \.self) { i in
-                                            Image(systemName: i < ch.stars ? "star.fill" : "star")
+                                            Text(i < ch.stars ? "⭐" : "☆")
                                                 .font(.system(size: 10))
-                                                .foregroundStyle(i < ch.stars ? GeniColor.yellow : Color.gray.opacity(0.3))
+                                                .foregroundStyle(i < ch.stars ? .primary : Color.gray.opacity(0.3))
                                         }
                                     }
 
                                     Text("\(ch.correctCount)/\(ch.exerciseResults.count)")
                                         .font(.system(.caption2, design: .monospaced, weight: .bold))
-                                        .foregroundStyle(.secondary)
+                                        .foregroundStyle(.black)
                                 }
                             }
                         }
@@ -334,7 +333,7 @@ struct ParentDashboardView: View {
                     } else {
                         Text(L.s(.noChaptersYet))
                             .font(.system(.caption, design: .rounded))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.black)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
@@ -344,17 +343,16 @@ struct ParentDashboardView: View {
         }
     }
 
-    private func progressStat(icon: String, value: String, label: String, color: Color) -> some View {
+    private func progressStat(emoji: String, value: String, label: String, color: Color) -> some View {
         VStack(spacing: 4) {
-            Image(systemName: icon)
-                .font(.caption)
-                .foregroundStyle(color)
+            Text(emoji)
+                .font(.system(size: 14))
             Text(value)
                 .font(.system(.caption, design: .rounded, weight: .black))
                 .foregroundStyle(GeniColor.border)
             Text(label)
                 .font(.system(.caption2, design: .rounded))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.black)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
         }
@@ -368,14 +366,14 @@ struct ParentDashboardView: View {
         )
     }
 
-    private func chapterTypeIcon(_ type: ChapterType) -> String {
+    private func chapterTypeEmoji(_ type: ChapterType) -> String {
         switch type {
-        case .daily: return "book.fill"
-        case .timeAttack: return "timer"
-        case .perfectRun: return "crown.fill"
-        case .boss: return "shield.fill"
-        case .streak: return "flame.fill"
-        case .operationSpotlight: return "scope"
+        case .daily: return "📘"
+        case .timeAttack: return "⏱️"
+        case .perfectRun: return "👑"
+        case .boss: return "🛡️"
+        case .streak: return "🔥"
+        case .operationSpotlight: return "🔍"
         }
     }
 
@@ -425,8 +423,8 @@ struct ParentDashboardView: View {
                 .font(.system(.headline, design: .rounded, weight: .bold))
 
             HStack {
-                Image(systemName: "bell.fill")
-                    .foregroundStyle(GeniColor.orange)
+                Text("🔔")
+.font(.system(size: 22))
                     .frame(width: 40)
 
                 Text(L.s(.dailyReminder))
@@ -434,26 +432,25 @@ struct ParentDashboardView: View {
 
                 Spacer()
 
-                Toggle("", isOn: Binding(
-                    get: { viewModel.notificationService.isEnabled },
-                    set: { newValue in
-                        HapticManager.selection()
-                        if newValue {
-                            viewModel.notificationService.enableReminders()
-                        } else {
-                            viewModel.notificationService.disableReminders()
-                        }
+                Button {
+                    HapticManager.selection()
+                    if viewModel.notificationService.isEnabled {
+                        viewModel.notificationService.disableReminders()
+                    } else {
+                        viewModel.notificationService.enableReminders()
                     }
-                ))
-                .labelsHidden()
+                } label: {
+                    Text(viewModel.notificationService.isEnabled ? "✅" : "⬜")
+                        .font(.system(size: 28))
+                }
             }
             .padding(12)
             .brutalistCard(color: GeniColor.card, borderWidth: 3)
 
             if viewModel.notificationService.isEnabled {
                 HStack {
-                    Image(systemName: "clock.fill")
-                        .foregroundStyle(GeniColor.blue)
+                    Text("🕐")
+.font(.system(size: 22))
                         .frame(width: 40)
 
                     Text(L.s(.reminderTime))
@@ -491,8 +488,8 @@ struct ParentDashboardView: View {
 
             VStack(spacing: 12) {
                 HStack {
-                    Image(systemName: "icloud.fill")
-                        .foregroundStyle(GeniColor.blue)
+                    Text("☁️")
+.font(.system(size: 22))
                         .frame(width: 40)
 
                     VStack(alignment: .leading, spacing: 2) {
@@ -500,7 +497,7 @@ struct ParentDashboardView: View {
                             .font(.system(.body, design: .rounded, weight: .semibold))
                         Text(L.s(.syncCodeDesc))
                             .font(.system(.caption, design: .rounded))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.black)
                     }
 
                     Spacer()
@@ -520,7 +517,7 @@ struct ParentDashboardView: View {
                                 ProgressView()
                                     .scaleEffect(0.8)
                             } else {
-                                Image(systemName: "arrow.triangle.2.circlepath")
+                                Text("🔄")
                             }
                             Text(L.s(.syncNow))
                                 .font(.system(.subheadline, design: .rounded, weight: .bold))
@@ -536,7 +533,7 @@ struct ParentDashboardView: View {
                         showSyncRestore = true
                     } label: {
                         HStack(spacing: 4) {
-                            Image(systemName: "arrow.down.circle")
+                            Text("📥")
                             Text(L.s(.restore))
                                 .font(.system(.subheadline, design: .rounded, weight: .bold))
                         }
@@ -547,7 +544,7 @@ struct ParentDashboardView: View {
                 if let lastSync = viewModel.cloudSync.lastSyncDate {
                     Text("\(L.s(.lastSync)): \(lastSync.formatted(date: .abbreviated, time: .shortened))")
                         .font(.system(.caption, design: .rounded))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.black)
                 }
 
                 if let error = viewModel.cloudSync.syncError {
@@ -593,7 +590,7 @@ struct ParentDashboardView: View {
                     showSetPin = true
                 } label: {
                     HStack {
-                        Image(systemName: "lock.fill")
+                        Text("🔒")
                         Text(L.s(.changePin))
                     }
                     .font(.system(.body, design: .rounded, weight: .bold))
@@ -605,7 +602,7 @@ struct ParentDashboardView: View {
                     showSetPin = true
                 } label: {
                     HStack {
-                        Image(systemName: "lock.open.fill")
+                        Text("🔓")
                         Text(L.s(.setPin))
                     }
                     .font(.system(.body, design: .rounded, weight: .bold))
@@ -652,7 +649,7 @@ struct ParentDashboardView: View {
                             } label: {
                                 Group {
                                     if key == "DEL" {
-                                        Image(systemName: "delete.left.fill")
+                                        Text("⌫")
                                             .font(.system(.title3, design: .rounded, weight: .bold))
                                     } else {
                                         Text(key)
@@ -690,6 +687,7 @@ struct SetPinView: View {
                 VStack(spacing: 24) {
                     Text(L.s(.setPin))
                         .font(.system(.title, design: .rounded, weight: .black))
+                        .foregroundStyle(.black)
 
                     HStack(spacing: 16) {
                         ForEach(0..<4, id: \.self) { i in
@@ -744,7 +742,7 @@ struct SetPinView: View {
                             } label: {
                                 Group {
                                     if key == "DEL" {
-                                        Image(systemName: "delete.left.fill")
+                                        Text("⌫")
                                             .font(.system(.title3, design: .rounded, weight: .bold))
                                     } else {
                                         Text(key)

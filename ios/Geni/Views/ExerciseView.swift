@@ -63,9 +63,7 @@ struct ExerciseView: View {
                     chapterVM.stopTimer()
                     onExit()
                 } label: {
-                    Image(systemName: "arrow.left")
-                        .font(.title3.bold())
-                        .foregroundStyle(GeniColor.border)
+                    Text("◀️").font(.system(size: 20))
                         .frame(width: 44, height: 44)
                         .background(GeniColor.card)
                         .overlay(
@@ -78,8 +76,7 @@ struct ExerciseView: View {
 
                 if chapterVM.isTimedMode {
                     HStack(spacing: 4) {
-                        Image(systemName: "timer")
-                            .foregroundStyle(chapterVM.timeRemaining <= 10 ? GeniColor.pink : GeniColor.orange)
+                        Text("⏱️")
                         Text("\(chapterVM.timeRemaining)s")
                             .font(.system(.headline, design: .rounded, weight: .black))
                             .foregroundStyle(chapterVM.timeRemaining <= 10 ? GeniColor.pink : GeniColor.border)
@@ -97,8 +94,7 @@ struct ExerciseView: View {
                 Spacer()
 
                 HStack(spacing: 4) {
-                    Image(systemName: "star.fill")
-                        .foregroundStyle(GeniColor.yellow)
+                    Text("⭐")
                     Text("\(chapterVM.chapter.correctCount)")
                         .font(.system(.headline, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
@@ -218,7 +214,7 @@ struct ExerciseView: View {
                     chapterVM.submitAnswer(1, persistence: persistence)
                 } label: {
                     VStack(spacing: 8) {
-                        Image(systemName: "checkmark")
+                        Text("✓")
                             .font(.system(size: 32, weight: .bold))
                         Text(L.s(.trueLabel))
                             .font(.system(.title3, design: .rounded, weight: .black))
@@ -238,7 +234,7 @@ struct ExerciseView: View {
                     chapterVM.submitAnswer(0, persistence: persistence)
                 } label: {
                     VStack(spacing: 8) {
-                        Image(systemName: "xmark")
+                        Text("✗")
                             .font(.system(size: 32, weight: .bold))
                         Text(L.s(.falseLabel))
                             .font(.system(.title3, design: .rounded, weight: .black))
@@ -259,7 +255,7 @@ struct ExerciseView: View {
         VStack(spacing: 20) {
             Text(L.s(.whichIsBigger))
                 .font(.system(.title3, design: .rounded, weight: .bold))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.black)
 
             HStack(spacing: 16) {
                 if let left = exercise.comparisonLeft {
@@ -282,7 +278,7 @@ struct ExerciseView: View {
 
                 Text(L.s(.or))
                     .font(.system(.title2, design: .rounded, weight: .bold))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.black)
 
                 if let right = exercise.comparisonRight {
                     Button {
@@ -366,9 +362,8 @@ struct ExerciseView: View {
 
     private var feedbackBanner: some View {
         HStack(spacing: 12) {
-            Image(systemName: chapterVM.feedbackCorrect ? "checkmark.circle.fill" : (chapterVM.showAnswer ? "lightbulb.fill" : "arrow.counterclockwise"))
+            Text(chapterVM.feedbackCorrect ? "✅" : (chapterVM.showAnswer ? "💡" : "🔄"))
                 .font(.title2)
-                .foregroundStyle(.white)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(chapterVM.feedbackCorrect ? chapterVM.feedbackMessage : (chapterVM.showAnswer ? L.s(.showAnswer) : chapterVM.feedbackMessage))
@@ -407,9 +402,8 @@ struct ExerciseView: View {
 
     private var timeUpView: some View {
         VStack(spacing: 16) {
-            Image(systemName: "timer")
+            Text("⏱️")
                 .font(.system(size: 48))
-                .foregroundStyle(GeniColor.orange)
             Text(L.s(.timeUp))
                 .font(.system(.title, design: .rounded, weight: .black))
                 .foregroundStyle(GeniColor.border)
@@ -495,7 +489,7 @@ struct ExerciseView: View {
 
     private func comparisonBgColor(for value: Int, exercise: Exercise) -> Color {
         guard chapterVM.showFeedback, let selected = chapterVM.selectedAnswer else {
-            return GeniColor.cyan.opacity(0.15)
+            return .white
         }
         let correctValue = exercise.options[0]
         if value == correctValue && (chapterVM.feedbackCorrect || chapterVM.showAnswer) {
@@ -504,7 +498,7 @@ struct ExerciseView: View {
         if value == selected && !chapterVM.feedbackCorrect {
             return GeniColor.pink.opacity(0.3)
         }
-        return GeniColor.cyan.opacity(0.15)
+        return .white
     }
 
     private func comparisonTextColor(for value: Int, exercise: Exercise) -> Color {

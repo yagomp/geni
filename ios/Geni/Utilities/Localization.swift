@@ -188,6 +188,8 @@ nonisolated enum LocaleKey: String, Sendable {
     case languageSystem
     case languageEnglish
     case languageNorwegian
+    case mathPractice
+    case recommendedForAge
 }
 
 nonisolated enum AppLanguage: String, Sendable, CaseIterable {
@@ -453,6 +455,8 @@ nonisolated enum L {
         case .languageSystem: return "System Default"
         case .languageEnglish: return "English"
         case .languageNorwegian: return "Norwegian"
+        case .mathPractice: return "What to practice"
+        case .recommendedForAge: return "Recommended for your age!"
         }
     }
 
@@ -645,6 +649,8 @@ nonisolated enum L {
         case .languageSystem: return "Systemstandard"
         case .languageEnglish: return "Engelsk"
         case .languageNorwegian: return "Norsk"
+        case .mathPractice: return "Hva skal vi \u{00F8}ve p\u{00E5}"
+        case .recommendedForAge: return "Anbefalt for din alder!"
         }
     }
 }

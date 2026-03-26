@@ -8,6 +8,8 @@ struct WelcomeView: View {
         ZStack {
             GeniColor.yellow.ignoresSafeArea()
 
+
+
             VStack(spacing: 0) {
                 Spacer()
 
@@ -52,9 +54,8 @@ struct WelcomeView: View {
                 } label: {
                     HStack(spacing: 10) {
                         Text(L.s(.createMyGeni))
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundStyle(.white)
+                        Text("▶️")
+                            .font(.system(size: 16))
                     }
                 }
                 .buttonStyle(BrutalistButton(color: GeniColor.pink))

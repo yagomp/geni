@@ -41,6 +41,7 @@ struct AvatarPickerSheet: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
+                .foregroundStyle(.black)
             }
             .background(GeniColor.lightYellow.ignoresSafeArea())
             .navigationTitle(L.s(.chooseAvatar))
@@ -50,9 +51,8 @@ struct AvatarPickerSheet: View {
                     Button {
                         dismiss()
                     } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.title3)
-                            .foregroundStyle(.secondary)
+                        Text("❌")
+                            .font(.system(size: 20))
                     }
                 }
             }

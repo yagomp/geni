@@ -10,6 +10,7 @@ struct ProfilePickerView: View {
         ZStack {
             GeniColor.background.ignoresSafeArea()
 
+
             VStack(spacing: 32) {
                 Text(L.s(.selectProfile))
                     .font(.system(.largeTitle, design: .rounded, weight: .black))
@@ -43,7 +44,7 @@ struct ProfilePickerView: View {
 
                                 Text("\(profile.age) \(L.s(.age).lowercased())")
                                     .font(.system(.caption, design: .rounded))
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(.black)
                             }
                             .padding(16)
                             .frame(maxWidth: .infinity)
@@ -59,9 +60,8 @@ struct ProfilePickerView: View {
                         onAddProfile()
                     } label: {
                         VStack(spacing: 12) {
-                            Image(systemName: "plus")
-                                .font(.system(size: 36, weight: .bold))
-                                .foregroundStyle(GeniColor.blue)
+                            Text("➕")
+                                .font(.system(size: 36))
                                 .frame(width: 80, height: 80)
                                 .background(GeniColor.blue.opacity(0.1))
                                 .overlay(

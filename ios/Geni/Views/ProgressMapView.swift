@@ -15,15 +15,14 @@ struct ProgressMapView: View {
 
         VStack(spacing: 12) {
             HStack(spacing: 4) {
-                Image(systemName: "chart.bar.fill")
-                    .font(.caption)
-                    .foregroundStyle(GeniColor.blue)
+                Text("📊")
+                    .font(.system(size: 14))
                 Text("\(completedCount)")
                     .font(.system(.headline, design: .rounded, weight: .black))
                     .foregroundStyle(GeniColor.border)
                 Text(L.s(.chaptersCompleted))
                     .font(.system(.caption, design: .rounded, weight: .medium))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.black)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -63,6 +62,7 @@ struct ProgressMapView: View {
             }
         }
         .padding(16)
+        .foregroundStyle(.black)
         .brutalistCard(color: GeniColor.card, borderWidth: 3)
     }
 
@@ -90,13 +90,12 @@ struct ProgressMapView: View {
                 )
 
             if isCompleted {
-                Image(systemName: "checkmark")
+                Text("✓")
                     .font(.system(size: size * 0.35, weight: .bold))
                     .foregroundStyle(.white)
             } else if isMilestone && !isCurrent {
-                Image(systemName: "lock.fill")
+                Text("🔒")
                     .font(.system(size: 14))
-                    .foregroundStyle(.gray.opacity(0.4))
             } else {
                 Text("\(index + 1)")
                     .font(.system(size: size * 0.35, weight: .bold, design: .rounded))

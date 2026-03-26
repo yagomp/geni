@@ -85,9 +85,7 @@ struct GuidedReadingView: View {
                     readingVM.stop()
                     onExit()
                 } label: {
-                    Image(systemName: "arrow.left")
-                        .font(.title3.bold())
-                        .foregroundStyle(GeniColor.border)
+                    Text("◀️").font(.system(size: 20))
                         .frame(width: 44, height: 44)
                         .background(GeniColor.card)
                         .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
@@ -100,7 +98,7 @@ struct GuidedReadingView: View {
                 Spacer()
 
                 HStack(spacing: 4) {
-                    Image(systemName: "clock.fill")
+                    Text("🕐")
                         .foregroundStyle(GeniColor.green)
                     Text("\(readingVM.formattedElapsed)/\(readingVM.formattedTarget)")
                         .font(.system(.headline, design: .rounded, weight: .black))
@@ -132,8 +130,7 @@ struct GuidedReadingView: View {
 
     private var modeIndicator: some View {
         HStack(spacing: 4) {
-            Image(systemName: modeIcon)
-                .foregroundStyle(modeColor)
+            Text(modeIcon)
             Text(modeLabel)
                 .font(.system(.caption, design: .rounded, weight: .bold))
                 .foregroundStyle(GeniColor.border)
@@ -146,9 +143,9 @@ struct GuidedReadingView: View {
 
     private var modeIcon: String {
         switch readingVM.mode {
-        case .readByMyself: return "eye.fill"
-        case .readToMe: return "speaker.wave.2.fill"
-        case .listenToMeRead: return "mic.fill"
+        case .readByMyself: return "👁️"
+        case .readToMe: return "🔊"
+        case .listenToMeRead: return "🎤"
         }
     }
 
@@ -174,9 +171,7 @@ struct GuidedReadingView: View {
                 HapticManager.selection()
                 readingVM.restart()
             } label: {
-                Image(systemName: "arrow.counterclockwise")
-                    .font(.title3.bold())
-                    .foregroundStyle(GeniColor.border)
+                Text("🔄").font(.system(size: 20))
                     .frame(width: 52, height: 52)
                     .background(GeniColor.card)
                     .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
@@ -192,7 +187,7 @@ struct GuidedReadingView: View {
                 }
             } label: {
                 HStack(spacing: 8) {
-                    Image(systemName: readingVM.isPlaying ? "pause.fill" : "play.fill")
+                    Text(readingVM.isPlaying ? "⏸️" : "▶️")
                         .font(.title3)
                     Text(readingVM.isPlaying ? L.s(.pause) : L.s(.play))
                         .font(.system(.headline, design: .rounded, weight: .black))
@@ -210,7 +205,7 @@ struct GuidedReadingView: View {
                     HapticManager.impact(.heavy)
                     readingVM.completeReading()
                 } label: {
-                    Image(systemName: "checkmark")
+                    Text("✓")
                         .font(.title3.bold())
                         .foregroundStyle(.white)
                         .frame(width: 52, height: 52)
@@ -224,9 +219,8 @@ struct GuidedReadingView: View {
 
     private var feedbackBanner: some View {
         HStack(spacing: 12) {
-            Image(systemName: "sparkles")
+            Text("✨")
                 .font(.title2)
-                .foregroundStyle(.white)
 
             Text(readingVM.feedbackMessage)
                 .font(.system(.headline, design: .rounded, weight: .bold))

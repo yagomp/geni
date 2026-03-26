@@ -18,9 +18,7 @@ struct ReadingModeSelectionView: View {
                         HapticManager.selection()
                         onBack()
                     } label: {
-                        Image(systemName: "arrow.left")
-                            .font(.title3.bold())
-                            .foregroundStyle(GeniColor.border)
+                        Text("◀️").font(.system(size: 20))
                             .frame(width: 44, height: 44)
                             .background(GeniColor.card)
                             .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
@@ -32,7 +30,7 @@ struct ReadingModeSelectionView: View {
                 Spacer()
 
                 VStack(spacing: 8) {
-                    Image(systemName: "book.fill")
+                    Text("📖")
                         .font(.system(size: 48))
                         .foregroundStyle(GeniColor.green)
 
@@ -42,7 +40,7 @@ struct ReadingModeSelectionView: View {
 
                     Text(readingText.title)
                         .font(.system(.title3, design: .rounded, weight: .bold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.black)
 
                     let mins = ReadingText.targetReadingSeconds(for: profile.age) / 60
                     Text("\(mins) \(L.s(.minutes))")
@@ -63,7 +61,7 @@ struct ReadingModeSelectionView: View {
                     ReadingModeButton(
                         title: L.s(.readByMyself),
                         subtitle: L.s(.readBySelfDesc),
-                        icon: "eye.fill",
+                        icon: "👁️",
                         color: GeniColor.blue
                     ) {
                         HapticManager.impact(.medium)
@@ -73,7 +71,7 @@ struct ReadingModeSelectionView: View {
                     ReadingModeButton(
                         title: L.s(.readToMe),
                         subtitle: L.s(.readToMeDesc),
-                        icon: "speaker.wave.2.fill",
+                        icon: "🔊",
                         color: GeniColor.purple
                     ) {
                         HapticManager.impact(.medium)
@@ -83,7 +81,7 @@ struct ReadingModeSelectionView: View {
                     ReadingModeButton(
                         title: L.s(.listenToMeRead),
                         subtitle: L.s(.listenToMeDesc),
-                        icon: "mic.fill",
+                        icon: "🎤",
                         color: GeniColor.orange
                     ) {
                         HapticManager.impact(.medium)
@@ -98,6 +96,7 @@ struct ReadingModeSelectionView: View {
                 Spacer()
             }
             .padding(.top, 20)
+            .foregroundStyle(.black)
         }
         .onAppear { appeared = true }
     }
@@ -115,9 +114,8 @@ struct ReadingModeButton: View {
             action()
         } label: {
             HStack(spacing: 16) {
-                Image(systemName: icon)
+                Text(icon)
                     .font(.title2)
-                    .foregroundStyle(.white)
                     .frame(width: 48, height: 48)
                     .background(color)
                     .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
@@ -129,14 +127,12 @@ struct ReadingModeButton: View {
 
                     Text(subtitle)
                         .font(.system(.caption, design: .rounded, weight: .medium))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.black)
                 }
 
                 Spacer()
 
-                Image(systemName: "arrow.right")
-                    .font(.body.bold())
-                    .foregroundStyle(color)
+                Text("▶️").font(.system(size: 16))
             }
             .padding(16)
             .brutalistCard(color: GeniColor.card)

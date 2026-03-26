@@ -34,10 +34,9 @@ struct ChapterCompleteView: View {
 
                     HStack(spacing: 10) {
                         ForEach(1...5, id: \.self) { star in
-                            Image(systemName: star <= chapter.stars ? "star.fill" : "star")
+                            Text(star <= chapter.stars ? "⭐" : "☆")
                                 .font(.system(size: 36))
                                 .foregroundStyle(star <= chapter.stars ? GeniColor.yellow : .gray.opacity(0.3))
-                                .symbolEffect(.bounce, value: starsBounce)
                         }
                     }
                     .opacity(appeared ? 1 : 0)
@@ -45,28 +44,28 @@ struct ChapterCompleteView: View {
 
                     VStack(spacing: 16) {
                         RewardRow(
-                            icon: "checkmark.circle.fill",
+                            icon: "✅",
                             color: GeniColor.green,
                             label: L.s(.correct),
                             value: "\(chapter.correctCount)/\(chapter.exerciseResults.count)"
                         )
 
                         RewardRow(
-                            icon: "dollarsign.circle.fill",
+                            icon: "🪙",
                             color: GeniColor.yellow,
                             label: L.s(.coinsEarned),
                             value: "+\(chapter.coinsEarned)"
                         )
 
                         RewardRow(
-                            icon: "bolt.circle.fill",
+                            icon: "⚡",
                             color: GeniColor.cyan,
                             label: L.s(.xpEarned),
                             value: "+\(xpEarned)"
                         )
 
                         RewardRow(
-                            icon: "flame.fill",
+                            icon: "🔥",
                             color: GeniColor.orange,
                             label: L.s(.streak),
                             value: "\(rewards.streakCount) \(rewards.streakCount == 1 ? L.s(.day) : L.s(.days))"
@@ -80,7 +79,7 @@ struct ChapterCompleteView: View {
 
                     Text(L.s(.greatJob))
                         .font(.system(.title3, design: .rounded, weight: .bold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.black)
                         .opacity(appeared ? 1 : 0)
                         .animation(.spring(response: 0.5).delay(0.7), value: appeared)
 
@@ -99,6 +98,7 @@ struct ChapterCompleteView: View {
                     Spacer().frame(height: 40)
                 }
                 .padding(.horizontal, 20)
+                .foregroundStyle(.black)
             }
         }
         .onAppear {
@@ -121,9 +121,8 @@ struct RewardRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: icon)
+            Text(icon)
                 .font(.title2)
-                .foregroundStyle(color)
                 .frame(width: 32)
 
             Text(label)

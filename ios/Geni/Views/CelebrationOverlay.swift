@@ -13,7 +13,7 @@ struct LevelUpOverlay: View {
                 .onTapGesture { dismiss() }
 
             VStack(spacing: 24) {
-                Image(systemName: "arrow.up.circle.fill")
+                Text("⬆️")
                     .font(.system(size: 72))
                     .foregroundStyle(GeniColor.purple)
                     .symbolEffect(.bounce, value: particleBurst)
@@ -85,14 +85,12 @@ struct BadgeUnlockOverlay: View {
                     .font(.system(.title2, design: .rounded, weight: .black))
                     .foregroundStyle(GeniColor.border)
 
-                Image(systemName: badge.icon)
+                Text(badge.icon)
                     .font(.system(size: 64))
-                    .foregroundStyle(badge.color)
                     .frame(width: 100, height: 100)
                     .background(badge.color.opacity(0.15))
                     .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
                     .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
-                    .symbolEffect(.bounce, value: iconBounce)
 
                 VStack(spacing: 4) {
                     Text(L.s(badge.titleKey))
@@ -101,7 +99,7 @@ struct BadgeUnlockOverlay: View {
 
                     Text(L.s(badge.descriptionKey))
                         .font(.system(.body, design: .rounded))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.black)
                         .multilineTextAlignment(.center)
                 }
 

@@ -16,16 +16,15 @@ struct ProfileCreationView: View {
         ZStack {
             GeniColor.yellow.ignoresSafeArea()
 
-            VStack(spacing: 20) {
+            VStack(spacing: 0) {
                     HStack {
                         if let onBack {
                             Button {
                                 HapticManager.selection()
                                 onBack()
                             } label: {
-                                Image(systemName: "arrow.left")
-                                    .font(.title3.bold())
-                                    .foregroundStyle(GeniColor.border)
+                                Text("◀️")
+                                    .font(.system(size: 20))
                                     .frame(width: 44, height: 44)
                                     .background(GeniColor.card)
                                     .overlay(
@@ -44,7 +43,8 @@ struct ProfileCreationView: View {
                     .padding(.horizontal, 24)
                     .padding(.top, 8)
 
-                    Spacer().frame(height: 8)
+                ScrollView {
+                    VStack(spacing: 20) {
 
                     Text(editingProfile != nil ? L.s(.editProfile) : L.s(.whosPlaying))
                         .font(.system(.title, design: .rounded, weight: .black))
@@ -55,10 +55,12 @@ struct ProfileCreationView: View {
                     VStack(spacing: 6) {
                         Text(L.s(.yourName))
                             .font(.system(.subheadline, design: .rounded, weight: .bold))
+                            .foregroundStyle(.black)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                         TextField(L.s(.nicknamePlaceholder), text: $nickname)
                             .font(.system(.title3, design: .rounded, weight: .semibold))
+                            .foregroundStyle(.black)
                             .padding(14)
                             .background(GeniColor.card)
                             .overlay(
@@ -77,6 +79,7 @@ struct ProfileCreationView: View {
                     VStack(spacing: 6) {
                         Text(L.s(.age))
                             .font(.system(.subheadline, design: .rounded, weight: .bold))
+                            .foregroundStyle(.black)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                         HStack(spacing: 6) {
@@ -108,6 +111,7 @@ struct ProfileCreationView: View {
                     VStack(spacing: 6) {
                         Text(L.s(.chooseAvatar))
                             .font(.system(.subheadline, design: .rounded, weight: .bold))
+                            .foregroundStyle(.black)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 4), spacing: 10) {
@@ -124,7 +128,7 @@ struct ProfileCreationView: View {
                                     }
                                 } label: {
                                     Text(avatar.emoji)
-                                        .font(.system(size: 32))
+                                        .font(.system(size: 48))
                                         .frame(maxWidth: .infinity)
                                         .aspectRatio(1, contentMode: .fit)
                                         .background(.white)
@@ -142,7 +146,57 @@ struct ProfileCreationView: View {
                         }
                     }
 
-                    Spacer(minLength: 8)
+                    VStack(spacing: 8) {
+                        HStack {
+                            Text(L.s(.mathPractice))
+                                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                                .foregroundStyle(.black)
+                            Spacer()
+                        }
+
+                        HStack(spacing: 8) {
+                            ForEach(MathOperation.allCases, id: \.self) { op in
+                                let isSelected = selectedOperations.contains(op)
+                                let isRecommended = MathOperation.recommended(for: age).contains(op)
+                                Button {
+                                    HapticManager.selection()
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                        if isSelected && selectedOperations.count > 1 {
+                                            selectedOperations.remove(op)
+                                        } else {
+                                            selectedOperations.insert(op)
+                                        }
+                                    }
+                                } label: {
+                                    Text(op.symbol)
+                                        .font(.system(size: 32, weight: .black, design: .rounded))
+                                        .foregroundStyle(isSelected ? .white : GeniColor.border)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 56)
+                                    .background(isSelected ? GeniColor.cyan : GeniColor.card)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(GeniColor.border, lineWidth: isSelected ? 4 : 2)
+                                    )
+                                    .background(
+                                        isSelected ? AnyView(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3)) : AnyView(EmptyView())
+                                    )
+                                    .opacity(isRecommended || isSelected ? 1.0 : 0.5)
+                                    .scaleEffect(isSelected ? 1.02 : 1.0)
+                                }
+                            }
+                        }
+
+                        if selectedOperations == Set(MathOperation.recommended(for: age)) {
+                            Text("⭐ \(L.s(.recommendedForAge))")
+                                .font(.system(.caption, design: .rounded, weight: .semibold))
+                                .foregroundStyle(.black)
+                        }
+                    }
+
+                    }
+                    .padding(.horizontal, 24)
+                }
 
                     Button {
                         HapticManager.impact(.medium)
@@ -162,17 +216,16 @@ struct ProfileCreationView: View {
                     } label: {
                         HStack(spacing: 10) {
                             Text(L.s(.letsGo))
-                            Image(systemName: "arrow.right")
-                                .font(.system(size: 18, weight: .bold))
-                                .foregroundStyle(.white)
+                            Text("▶️")
+                                .font(.system(size: 16))
                         }
                     }
                     .buttonStyle(BrutalistButton(color: GeniColor.green))
                     .disabled(nickname.trimmingCharacters(in: .whitespaces).isEmpty)
                     .opacity(nickname.trimmingCharacters(in: .whitespaces).isEmpty ? 0.5 : 1)
-                }
-                .padding(.horizontal, 24)
-                .padding(.bottom, 24)
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 16)
+            }
         }
         .onAppear {
             if let profile = editingProfile {

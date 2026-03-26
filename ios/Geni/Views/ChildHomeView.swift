@@ -23,6 +23,7 @@ struct ChildHomeView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 8)
                 .padding(.bottom, 32)
+                .foregroundStyle(.black)
             }
         }
         .sheet(isPresented: $showAvatarPicker) {
@@ -59,7 +60,7 @@ struct ChildHomeView: View {
                 HStack(spacing: 4) {
                     Text("\(L.s(.level)) \(rewards.level)")
                         .font(.system(.subheadline, design: .rounded, weight: .bold))
-                        .foregroundStyle(GeniColor.purple)
+                        .foregroundStyle(.black)
                 }
             }
 
@@ -69,9 +70,8 @@ struct ChildHomeView: View {
                 HapticManager.selection()
                 viewModel.showParentSettings = true
             } label: {
-                Image(systemName: "gearshape.fill")
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
+                Text("⚙️")
+                    .font(.system(size: 24))
             }
         }
     }
@@ -79,14 +79,14 @@ struct ChildHomeView: View {
     private func statsRow(rewards: RewardState) -> some View {
         HStack(spacing: 8) {
             StatBubble(
-                icon: "flame.fill",
+                emoji: "🔥",
                 value: "\(rewards.streakCount)",
                 label: rewards.streakCount == 1 ? L.s(.day) : L.s(.days),
                 color: GeniColor.orange
             )
 
             StatBubble(
-                icon: "star.fill",
+                emoji: "⭐",
                 value: "\(viewModel.completedChapterCount)",
                 label: L.s(.chaptersCompleted),
                 color: GeniColor.yellow
@@ -97,9 +97,8 @@ struct ChildHomeView: View {
                 viewModel.showRewards = true
             } label: {
                 VStack(spacing: 6) {
-                    Image(systemName: "dollarsign.circle.fill")
-                        .font(.title3)
-                        .foregroundStyle(GeniColor.yellow)
+                    Text("🪙")
+                        .font(.system(size: 22))
 
                     Text("\(rewards.coins)")
                         .font(.system(.headline, design: .rounded, weight: .black))
@@ -107,7 +106,7 @@ struct ChildHomeView: View {
 
                     Text(L.s(.coins))
                         .font(.system(.caption2, design: .rounded, weight: .medium))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.black)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                 }
@@ -139,7 +138,7 @@ struct ChildHomeView: View {
 
             Text(L.s(.comeBackTomorrow))
                 .font(.system(.body, design: .rounded))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.black)
 
             HStack(spacing: 12) {
                 MissionCheckItem(label: L.s(.mathDone), done: true)
@@ -157,7 +156,7 @@ struct ChildHomeView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L.s(.todaysMission))
                         .font(.system(.caption, design: .rounded, weight: .bold))
-                        .foregroundStyle(GeniColor.blue)
+                        .foregroundStyle(.black)
                         .textCase(.uppercase)
                         .tracking(1)
 
@@ -171,7 +170,7 @@ struct ChildHomeView: View {
 
             HStack(spacing: 16) {
                 MissionProgressItem(
-                    icon: "plus",
+                    emoji: "🧮",
                     label: L.s(.mathProgress),
                     progress: "\(viewModel.todayChapterExercisesCompleted)/20",
                     done: viewModel.todayMathCompleted,
@@ -183,7 +182,7 @@ struct ChildHomeView: View {
                     .frame(width: 2, height: 50)
 
                 MissionProgressItem(
-                    icon: "book.fill",
+                    emoji: "📖",
                     label: L.s(.readingProgress),
                     progress: readingProgressText,
                     done: viewModel.todayReadingCompleted,
@@ -202,8 +201,8 @@ struct ChildHomeView: View {
                 HStack(spacing: 8) {
                     Text(missionButtonText)
                     if !viewModel.todayMathCompleted && !viewModel.todayChapterInProgress {
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 16, weight: .bold))
+                        Text("▶️")
+                            .font(.system(size: 14))
                     }
                 }
                 .frame(maxWidth: .infinity)
@@ -251,7 +250,7 @@ struct ChildHomeView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(L.s(.extraModes))
                         .font(.system(.caption, design: .rounded, weight: .bold))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.black)
                         .textCase(.uppercase)
                         .tracking(0.5)
 
@@ -264,9 +263,8 @@ struct ChildHomeView: View {
     private func specialChapterCard(type: ChapterType) -> some View {
         VStack(spacing: 12) {
             HStack {
-                Image(systemName: specialChapterIcon(type))
-                    .font(.title2)
-                    .foregroundStyle(specialChapterColor(type))
+                Text(specialChapterEmoji(type))
+                    .font(.system(size: 28))
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(L.s(.specialChallenge))
@@ -281,9 +279,8 @@ struct ChildHomeView: View {
 
                 Spacer()
 
-                Image(systemName: "sparkles")
-                    .font(.title2)
-                    .foregroundStyle(specialChapterColor(type))
+                Text("✨")
+                    .font(.system(size: 28))
             }
 
             Button {
@@ -304,7 +301,7 @@ struct ChildHomeView: View {
             HStack(spacing: 12) {
                 QuickChallengeCard(
                     title: L.s(.timeAttack),
-                    icon: "timer",
+                    emoji: "⏱️",
                     color: GeniColor.orange
                 ) {
                     HapticManager.specialChapter()
@@ -313,7 +310,7 @@ struct ChildHomeView: View {
 
                 QuickChallengeCard(
                     title: L.s(.perfectRun),
-                    icon: "crown.fill",
+                    emoji: "👑",
                     color: GeniColor.purple
                 ) {
                     HapticManager.specialChapter()
@@ -324,7 +321,7 @@ struct ChildHomeView: View {
                     ForEach(profile.operationsEnabled, id: \.rawValue) { op in
                         QuickChallengeCard(
                             title: "\(op.symbol) \(L.s(.spotlightChapter))",
-                            icon: "scope",
+                            emoji: "🔍",
                             color: GeniColor.cyan
                         ) {
                             HapticManager.specialChapter()
@@ -363,6 +360,17 @@ struct ChildHomeView: View {
         }
     }
 
+    private func specialChapterEmoji(_ type: ChapterType) -> String {
+        switch type {
+        case .boss: return "🛡️"
+        case .streak: return "🔥"
+        case .timeAttack: return "⏱️"
+        case .perfectRun: return "👑"
+        case .operationSpotlight: return "🔍"
+        default: return "⭐"
+        }
+    }
+
     private func specialChapterColor(_ type: ChapterType) -> Color {
         switch type {
         case .boss: return GeniColor.pink
@@ -387,7 +395,7 @@ struct ChildHomeView: View {
 }
 
 struct MissionProgressItem: View {
-    let icon: String
+    let emoji: String
     let label: String
     let progress: String
     let done: Bool
@@ -397,16 +405,12 @@ struct MissionProgressItem: View {
         HStack(spacing: 10) {
             ZStack {
                 if done {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 14, weight: .black))
-                        .foregroundStyle(.white)
+                    Text("✅")
+                        .font(.system(size: 18))
                         .frame(width: 32, height: 32)
-                        .background(GeniColor.green)
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
                 } else {
-                    Image(systemName: icon)
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(color)
+                    Text(emoji)
+                        .font(.system(size: 18))
                         .frame(width: 32, height: 32)
                         .background(color.opacity(0.12))
                         .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
@@ -416,7 +420,7 @@ struct MissionProgressItem: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(label)
                     .font(.system(.caption, design: .rounded, weight: .bold))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.black)
 
                 Text(done ? "✓" : progress)
                     .font(.system(.headline, design: .rounded, weight: .black))
@@ -435,13 +439,12 @@ struct MissionCheckItem: View {
 
     var body: some View {
         HStack(spacing: 6) {
-            Image(systemName: done ? "checkmark.circle.fill" : "circle")
-                .font(.body)
-                .foregroundStyle(done ? GeniColor.green : .secondary)
+            Text(done ? "✅" : "⬜")
+                .font(.system(size: 16))
 
             Text(label)
                 .font(.system(.caption, design: .rounded, weight: .bold))
-                .foregroundStyle(done ? GeniColor.green : .secondary)
+                .foregroundStyle(done ? GeniColor.green : .black)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -451,16 +454,15 @@ struct MissionCheckItem: View {
 }
 
 struct StatBubble: View {
-    let icon: String
+    let emoji: String
     let value: String
     let label: String
     let color: Color
 
     var body: some View {
         VStack(spacing: 6) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundStyle(color)
+            Text(emoji)
+                .font(.system(size: 22))
 
             Text(value)
                 .font(.system(.headline, design: .rounded, weight: .black))
@@ -468,7 +470,7 @@ struct StatBubble: View {
 
             Text(label)
                 .font(.system(.caption2, design: .rounded, weight: .medium))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.black)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
         }
@@ -480,7 +482,7 @@ struct StatBubble: View {
 
 struct QuickChallengeCard: View {
     let title: String
-    let icon: String
+    let emoji: String
     let color: Color
     let action: () -> Void
 
@@ -489,9 +491,8 @@ struct QuickChallengeCard: View {
             action()
         } label: {
             VStack(spacing: 8) {
-                Image(systemName: icon)
-                    .font(.title2)
-                    .foregroundStyle(color)
+                Text(emoji)
+                    .font(.system(size: 28))
 
                 Text(title)
                     .font(.system(.caption, design: .rounded, weight: .bold))

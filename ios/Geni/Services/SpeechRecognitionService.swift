@@ -73,7 +73,11 @@ class SpeechRecognitionService {
                         .components(separatedBy: " ")
                         .filter { !$0.isEmpty }
                 }
-                if err != nil || (result?.isFinal ?? false) {
+                if result?.isFinal == true {
+                    // Recognition ended naturally — restart to keep listening
+                    self.stopListening()
+                    self.startListening()
+                } else if err != nil {
                     self.stopListening()
                 }
             }
@@ -100,15 +104,43 @@ class SpeechRecognitionService {
         isListening = false
     }
 
+    var misreadIndices: Set<Int> = []
+
     func matchedWordCount(expected: [String]) -> Int {
-        var matched = 0
         let cleanExpected = expected.map { cleanWord($0) }
-        for (i, recognized) in recognizedWords.enumerated() {
-            guard i < cleanExpected.count else { break }
-            if recognized == cleanExpected[i] || levenshteinClose(recognized, cleanExpected[i]) {
-                matched = i + 1
+        let cleanRecognized = recognizedWords.map { cleanWord($0) }
+        var matched = 0
+        var rIdx = 0
+
+        for eIdx in 0..<cleanExpected.count {
+            guard rIdx < cleanRecognized.count else { break }
+
+            if cleanRecognized[rIdx] == cleanExpected[eIdx] || levenshteinClose(cleanRecognized[rIdx], cleanExpected[eIdx]) {
+                misreadIndices.remove(eIdx)
+                matched = eIdx + 1
+                rIdx += 1
             } else {
-                break
+                // Check if the user skipped this word and said the next one
+                if rIdx + 1 < cleanRecognized.count && eIdx + 1 < cleanExpected.count &&
+                   (cleanRecognized[rIdx + 1] == cleanExpected[eIdx] || levenshteinClose(cleanRecognized[rIdx + 1], cleanExpected[eIdx])) {
+                    // The extra recognized word was a misread — skip it
+                    rIdx += 1
+                    misreadIndices.remove(eIdx)
+                    matched = eIdx + 1
+                    rIdx += 1
+                } else if rIdx < cleanRecognized.count &&
+                          eIdx + 1 < cleanExpected.count &&
+                          (cleanRecognized[rIdx] == cleanExpected[eIdx + 1] || levenshteinClose(cleanRecognized[rIdx], cleanExpected[eIdx + 1])) {
+                    // User skipped a word — mark it misread and continue
+                    misreadIndices.insert(eIdx)
+                    matched = eIdx + 1
+                    // Don't advance rIdx — it matches the next expected word
+                } else {
+                    // Genuine mismatch at current position — mark misread but keep going
+                    misreadIndices.insert(eIdx)
+                    matched = eIdx + 1
+                    rIdx += 1
+                }
             }
         }
         return matched

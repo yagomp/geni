@@ -76,7 +76,11 @@ class ReadingViewModel {
             var wordStr = AttributedString(word.text + separator)
 
             if mode == .listenToMeRead {
-                if i < matchedWordCount {
+                let isMisread = recognitionService?.misreadIndices.contains(i) == true
+                if i < matchedWordCount && isMisread {
+                    wordStr.foregroundColor = Color(GeniColor.pink)
+                    wordStr.underlineStyle = .single
+                } else if i < matchedWordCount {
                     wordStr.foregroundColor = Color(GeniColor.green)
                 } else if i == matchedWordCount {
                     wordStr.foregroundColor = Color(GeniColor.border)

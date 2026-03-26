@@ -15,7 +15,7 @@ struct WelcomeView: View {
 
                 VStack(spacing: 16) {
                     Text("\u{1F9E0}")
-                        .font(.system(size: 56))
+                        .font(.system(size: 96))
                         .frame(width: 120, height: 120)
                         .background(.white)
                         .overlay(

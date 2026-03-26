@@ -1,4 +1,5 @@
 import Foundation
+import Security
 
 @Observable
 @MainActor
@@ -6,7 +7,7 @@ class PersistenceService {
     private let profilesKey = "geni_profiles"
     private let rewardsKeyPrefix = "geni_rewards_"
     private let chaptersKeyPrefix = "geni_chapters_"
-    private let pinKey = "geni_parent_pin"
+    private let pinKeychainKey = "com.yagomp.geni.parentPin"
     private let hasOnboardedKey = "geni_has_onboarded"
     private let activeProfileKey = "geni_active_profile"
     private let readingKeyPrefix = "geni_reading_"
@@ -27,7 +28,14 @@ class PersistenceService {
     func loadAll() {
         hasOnboarded = defaults.bool(forKey: hasOnboardedKey)
         activeProfileId = defaults.string(forKey: activeProfileKey)
-        parentPin = defaults.string(forKey: pinKey)
+        parentPin = loadPinFromKeychain()
+
+        // Migrate plaintext PIN from UserDefaults to Keychain
+        if parentPin == nil, let legacyPin = defaults.string(forKey: "geni_parent_pin") {
+            parentPin = legacyPin
+            savePinToKeychain(legacyPin)
+            defaults.removeObject(forKey: "geni_parent_pin")
+        }
 
         if let data = defaults.data(forKey: profilesKey),
            let decoded = try? decoder.decode([ChildProfile].self, from: data) {
@@ -73,11 +81,39 @@ class PersistenceService {
 
     func setPin(_ pin: String) {
         parentPin = pin
-        defaults.set(pin, forKey: pinKey)
+        savePinToKeychain(pin)
     }
 
     func verifyPin(_ pin: String) -> Bool {
         parentPin == pin
+    }
+
+    // MARK: - Keychain
+
+    private func savePinToKeychain(_ pin: String) {
+        let data = Data(pin.utf8)
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: pinKeychainKey,
+            kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+        ]
+        SecItemDelete(query as CFDictionary)
+        var addQuery = query
+        addQuery[kSecValueData as String] = data
+        SecItemAdd(addQuery as CFDictionary, nil)
+    }
+
+    private func loadPinFromKeychain() -> String? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: pinKeychainKey,
+            kSecReturnData as String: true,
+            kSecMatchLimit as String: kSecMatchLimitOne
+        ]
+        var result: AnyObject?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        guard status == errSecSuccess, let data = result as? Data else { return nil }
+        return String(data: data, encoding: .utf8)
     }
 
     func saveRewardState(_ state: RewardState, for childId: String) {

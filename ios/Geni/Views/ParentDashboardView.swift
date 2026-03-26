@@ -94,7 +94,6 @@ struct ParentDashboardView: View {
                     languageSection
                     progressOverviewSection
                     reminderSection
-                    cloudSyncSection
                     pinSection
                 }
                 .padding(20)

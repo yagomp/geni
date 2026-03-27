@@ -5,28 +5,42 @@ struct RewardsView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                GeniColor.background.ignoresSafeArea()
+        ZStack {
+            GeniColor.background.ignoresSafeArea()
 
+            ScrollView {
+                VStack(spacing: 24) {
+                    HStack {
+                        Button {
+                            HapticManager.selection()
+                            dismiss()
+                        } label: {
+                            Text("◀️").font(.system(size: 20))
+                                .frame(width: 44, height: 44)
+                                .background(GeniColor.card)
+                                .overlay(
+                                    Rectangle()
+                                        .stroke(GeniColor.border, lineWidth: 3)
+                                )
+                        }
 
-                ScrollView {
-                    VStack(spacing: 24) {
-                        statsSection
-                        xpSection
-                        badgesSection
+                        Spacer()
+
+                        Text(L.s(.rewards))
+                            .font(.system(.title2, design: .rounded, weight: .black))
+                            .foregroundStyle(GeniColor.border)
+
+                        Spacer()
+
+                        Color.clear.frame(width: 44, height: 44)
                     }
-                    .padding(20)
-                    .foregroundStyle(.black)
+
+                    statsSection
+                    xpSection
+                    badgesSection
                 }
-            }
-            .navigationTitle(L.s(.rewards))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(L.s(.done)) { dismiss() }
-                        .font(.system(.body, design: .rounded, weight: .bold))
-                }
+                .padding(iPadScale.padding)
+                .foregroundStyle(.black)
             }
         }
     }

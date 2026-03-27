@@ -13,7 +13,7 @@ struct ChildHomeView: View {
             GeniColor.lightYellow.ignoresSafeArea()
 
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: iPadScale.isIPad ? 32 : 20) {
                     headerSection(profile: profile, avatar: avatar, rewards: rewards)
                     statsRow(rewards: rewards)
                     missionCard
@@ -21,7 +21,7 @@ struct ChildHomeView: View {
                     progressMapSection
                 }
                 .padding(.horizontal, iPadScale.padding)
-                .padding(.top, iPadScale.isIPad ? 16 : 8)
+                .padding(.top, iPadScale.isIPad ? 20 : 8)
                 .padding(.bottom, iPadScale.largePadding)
                 .foregroundStyle(.black)
             }

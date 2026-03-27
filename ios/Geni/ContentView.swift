@@ -167,10 +167,10 @@ struct ContentView: View {
                 showProfileCreation = false
             })
         }
-        .sheet(isPresented: $viewModel.showParentSettings) {
+        .fullScreenCover(isPresented: $viewModel.showParentSettings) {
             ParentDashboardView(viewModel: viewModel)
         }
-        .sheet(isPresented: $viewModel.showRewards) {
+        .fullScreenCover(isPresented: $viewModel.showRewards) {
             RewardsView(rewards: viewModel.rewardState)
         }
         .id(languageManager.current.rawValue)

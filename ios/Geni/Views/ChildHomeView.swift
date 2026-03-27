@@ -20,9 +20,9 @@ struct ChildHomeView: View {
                     specialModesSection
                     progressMapSection
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
-                .padding(.bottom, 32)
+                .padding(.horizontal, iPadScale.padding)
+                .padding(.top, iPadScale.isIPad ? 16 : 8)
+                .padding(.bottom, iPadScale.largePadding)
                 .foregroundStyle(.black)
             }
         }

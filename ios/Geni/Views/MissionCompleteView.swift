@@ -33,13 +33,13 @@ struct MissionCompleteView: View {
                     Spacer().frame(height: 20)
 
                     Text("🎉")
-                        .font(.system(size: 64))
+                        .font(.system(size: iPadScale.value(64)))
                         .opacity(appeared ? 1 : 0)
                         .scaleEffect(appeared ? 1 : 0.3)
                         .animation(.spring(response: 0.5, dampingFraction: 0.6), value: appeared)
 
                     Text(L.s(.missionComplete))
-                        .font(.system(size: 32, weight: .black, design: .rounded))
+                        .font(.system(size: iPadScale.value(32), weight: .black, design: .rounded))
                         .foregroundStyle(GeniColor.border)
                         .multilineTextAlignment(.center)
                         .opacity(appeared ? 1 : 0)
@@ -205,9 +205,9 @@ struct MissionCompleteView: View {
                     .opacity(appeared ? 1 : 0)
                     .animation(.spring(response: 0.5).delay(0.9), value: appeared)
 
-                    Spacer().frame(height: 40)
+                    Spacer().frame(height: iPadScale.value(40))
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, iPadScale.padding)
                 .foregroundStyle(.black)
             }
         }

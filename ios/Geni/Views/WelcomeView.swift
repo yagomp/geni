@@ -15,8 +15,8 @@ struct WelcomeView: View {
 
                 VStack(spacing: 16) {
                     Text("\u{1F9E0}")
-                        .font(.system(size: 96))
-                        .frame(width: 120, height: 120)
+                        .font(.system(size: iPadScale.value(96)))
+                        .frame(width: iPadScale.value(120), height: iPadScale.value(120))
                         .background(.white)
                         .overlay(
                             Rectangle()
@@ -31,7 +31,7 @@ struct WelcomeView: View {
                         .animation(.spring(response: 0.6, dampingFraction: 0.6), value: appeared)
 
                     Text(L.s(.appName))
-                        .font(.system(size: 56, weight: .black, design: .rounded))
+                        .font(.system(size: iPadScale.value(56), weight: .black, design: .rounded))
                         .foregroundStyle(GeniColor.border)
                         .opacity(appeared ? 1 : 0)
                         .offset(y: appeared ? 0 : 20)
@@ -59,7 +59,7 @@ struct WelcomeView: View {
                     }
                 }
                 .buttonStyle(BrutalistButton(color: GeniColor.pink))
-                .padding(.horizontal, 32)
+                .padding(.horizontal, iPadScale.largePadding)
                 .opacity(appeared ? 1 : 0)
                 .animation(.spring(response: 0.5).delay(0.8), value: appeared)
 

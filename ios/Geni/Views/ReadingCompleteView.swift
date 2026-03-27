@@ -106,7 +106,7 @@ struct ReadingCompleteView: View {
                             }
                         }
                         .padding(20)
-                        .brutalistCard(color: GeniColor.yellow.opacity(0.1))
+                        .brutalistCard(color: GeniColor.card)
                         .opacity(appeared ? 1 : 0)
                         .offset(y: appeared ? 0 : 40)
                         .animation(.spring(response: 0.5).delay(0.6), value: appeared)

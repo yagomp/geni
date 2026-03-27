@@ -147,7 +147,7 @@ struct ChildHomeView: View {
         }
         .padding(24)
         .frame(maxWidth: .infinity)
-        .brutalistCard(color: GeniColor.green.opacity(0.1))
+        .brutalistCard(color: GeniColor.card)
     }
 
     private var missionActiveCard: some View {
@@ -246,16 +246,14 @@ struct ChildHomeView: View {
                 specialChapterCard(type: special)
             }
 
-            if viewModel.canStartTimeAttack {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text(L.s(.extraModes))
-                        .font(.system(.caption, design: .rounded, weight: .bold))
-                        .foregroundStyle(.black)
-                        .textCase(.uppercase)
-                        .tracking(0.5)
+            VStack(alignment: .leading, spacing: 8) {
+                Text(L.s(.extraModes))
+                    .font(.system(.caption, design: .rounded, weight: .bold))
+                    .foregroundStyle(.black)
+                    .textCase(.uppercase)
+                    .tracking(0.5)
 
-                    quickChallengeCards
-                }
+                quickChallengeCards
             }
         }
     }

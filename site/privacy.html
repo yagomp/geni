@@ -6,45 +6,85 @@
 <title>Privacy Policy - Geni App</title>
 <meta name="description" content="Geni privacy policy. We collect no personal data. All information stays on your device. Safe for children.">
 <meta name="robots" content="index, follow">
-<meta name="theme-color" content="#FFF7E0">
-<link rel="icon" type="image/png" href="icon.png">
+<meta name="theme-color" content="#FFD60A">
+<meta name="apple-mobile-web-app-title" content="Geni">
+<meta property="og:title" content="Privacy Policy - Geni App">
+<meta property="og:description" content="Geni collects no personal data. All information stays on your device. Safe for children.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://geni.app/icon.webp">
+<meta property="og:url" content="https://geni.app/privacy.html">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Privacy Policy - Geni App">
+<meta name="twitter:description" content="Geni collects no personal data. All information stays on your device.">
+<meta name="twitter:image" content="https://geni.app/icon.webp">
+<link rel="icon" type="image/webp" href="icon.webp">
 <link rel="apple-touch-icon" href="icon.png">
 <link rel="canonical" href="https://geni.app/privacy.html">
+<link rel="alternate" hreflang="en" href="https://geni.app/privacy.html">
+<link rel="alternate" hreflang="nb" href="https://geni.app/privacy.html?lang=nb">
+<link rel="alternate" hreflang="x-default" href="https://geni.app/privacy.html">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy","description":"Geni privacy policy. No data collection, safe for children.","url":"https://geni.app/privacy.html","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"Geni","url":"https://geni.app"}}
+</script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#FFF7E0;--card:#FFFFFF;--border:#000;--blue:#0066FF;--shadow:4px 4px 0 #000;--font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif}
-html{font-size:16px}body{font-family:var(--font);background:var(--bg);color:#000;line-height:1.7;-webkit-font-smoothing:antialiased}
-a{color:var(--blue)}a:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
-.container{max-width:700px;margin:0 auto;padding:0 20px}
-nav{background:var(--card);border-bottom:3px solid var(--border);padding:12px 0}
+:root{
+--yellow:#FFD60A;--blue:#0066FF;--purple:#B052DE;
+--bg:#FFD60A;--card:#FFFFFF;--border:#000;
+--shadow:6px 6px 0 #000;--shadow-sm:4px 4px 0 #000;
+--font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;
+}
+html{font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:#000;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:#000;text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:4px solid #000;outline-offset:2px}
+img{max-width:100%;height:auto;display:block}
+.container{max-width:800px;margin:0 auto;padding:0 20px}
+
+/* NAV - same as landing */
+nav{background:var(--card);border-bottom:4px solid var(--border);padding:10px 0;position:sticky;top:0;z-index:10}
 nav .container{display:flex;align-items:center;justify-content:space-between}
-.nav-logo{font-weight:900;font-size:1.25rem;display:flex;align-items:center;gap:8px;text-decoration:none;color:#000}
-.nav-logo img{width:32px;height:32px}
-.nav-links{display:flex;gap:16px;font-weight:700;font-size:0.9rem}
-.lang-btn{background:var(--bg);border:2px solid var(--border);padding:4px 10px;font-weight:800;font-size:0.8rem;cursor:pointer;box-shadow:2px 2px 0 #000;font-family:var(--font)}
-.lang-btn:hover{background:#FFD60A}.lang-btn:active{box-shadow:0 0 0 #000;transform:translate(2px,2px)}
+.nav-logo{font-weight:900;font-size:1.4rem;display:flex;align-items:center;gap:8px;color:#000;text-transform:uppercase;letter-spacing:-0.5px}
+.nav-logo img{width:36px;height:36px}
+.nav-links{display:flex;gap:16px;align-items:center;font-weight:800;font-size:0.9rem}
+.nav-links a{color:#000;text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid transparent;padding-bottom:2px}
+.nav-links a:hover{border-bottom-color:#000;text-decoration:none}
+.lang-btn{background:var(--bg);border:3px solid var(--border);padding:6px 12px;font-weight:900;font-size:0.85rem;cursor:pointer;box-shadow:var(--shadow-sm);font-family:var(--font);text-transform:uppercase;letter-spacing:0.5px}
+.lang-btn:hover{background:#fff}
+.lang-btn:active{box-shadow:0 0 0 #000;transform:translate(4px,4px)}
+
+/* CONTENT */
 .content{padding:48px 0 60px}
-.content-card{background:var(--card);border:3px solid var(--border);box-shadow:var(--shadow);padding:40px 32px}
-h1{font-weight:900;font-size:2rem;margin-bottom:8px}
+.content-card{background:var(--card);border:4px solid var(--border);box-shadow:var(--shadow);padding:40px 32px}
+.content-card h1{font-weight:900;font-size:2rem;margin-bottom:8px;text-transform:uppercase;letter-spacing:-0.5px}
 .updated{font-size:0.85rem;color:#555;margin-bottom:32px}
-h2{font-weight:800;font-size:1.2rem;margin:28px 0 8px;border-bottom:2px solid var(--border);padding-bottom:4px}
-h2:first-of-type{margin-top:0}
+.content-card h2{font-weight:900;font-size:1.2rem;margin:28px 0 8px;border-bottom:3px solid var(--border);padding-bottom:4px;text-transform:uppercase;letter-spacing:0.3px}
+.content-card h2:first-of-type{margin-top:0}
 p,ul{margin-bottom:12px;font-size:0.95rem}
 ul{padding-left:20px}li{margin-bottom:6px}
-footer{background:var(--card);border-top:3px solid var(--border);padding:24px 0;font-size:0.85rem}
-footer .container{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-.footer-links{display:flex;gap:16px;font-weight:600}
-@media(max-width:600px){.content-card{padding:24px 16px}footer .container{flex-direction:column;text-align:center}}
+.content-card a{color:var(--blue);font-weight:700}
+
+/* FOOTER - same as landing */
+footer{background:#000;color:#fff;padding:20px 0;font-size:0.85rem}
+footer .container{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+footer a{color:#fff;font-weight:700;text-decoration:underline}
+footer a:hover{color:#FFE566}
+.footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px}
+
+@media(max-width:600px){.content-card{padding:24px 16px}footer .container{flex-direction:column;text-align:center}.nav-links{gap:10px;font-size:0.8rem}}
 </style>
 </head>
 <body>
 
 <nav aria-label="Main navigation">
 <div class="container">
-<a href="/" class="nav-logo"><img src="icon.png" alt="" width="32" height="32" loading="eager"> Geni</a>
+<a href="/" class="nav-logo" aria-label="Geni home"><img src="icon.webp" alt="" width="36" height="36" loading="eager"> Geni</a>
 <div class="nav-links">
 <a href="parents.html" data-i18n="nav_parents">For Parents</a>
-<button class="lang-btn" onclick="toggleLang()" aria-label="Switch language" id="langBtn">NO</button>
+<a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
+<button class="lang-btn" onclick="toggleLang()" id="langBtn" type="button"><span aria-hidden="true">🇳🇴</span> NO</button>
 </div>
 </div>
 </nav>
@@ -147,26 +187,30 @@ footer .container{display:flex;justify-content:space-between;align-items:center;
 
 <footer>
 <div class="container">
-<span>&copy; <span id="year"></span> Geni App</span>
-<nav class="footer-links" aria-label="Footer navigation">
-<a href="/">Home</a>
-<a href="parents.html" data-i18n="nav_parents_f">For Parents</a>
-</nav>
+<span>&copy; <span id="year"></span> Geni</span>
 </div>
 </footer>
 
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
-var lang=navigator.language.startsWith('nb')||navigator.language.startsWith('no')?'nb':'en';
+var lang='en';
+try{var s=localStorage.getItem('geni_lang');if(s)lang=s}catch(e){}
 try{var p=new URLSearchParams(location.search);if(p.get('lang'))lang=p.get('lang')}catch(e){}
+if(!lang||lang==='en'){if(navigator.language.startsWith('nb')||navigator.language.startsWith('no'))lang='nb';else lang='en'}
 function applyLang(l){
-lang=l;document.documentElement.lang=l==='nb'?'nb':'en';
-document.getElementById('langBtn').textContent=l==='nb'?'EN':'NO';
+lang=l;
+try{localStorage.setItem('geni_lang',l)}catch(e){}
+document.documentElement.lang=l==='nb'?'nb':'en';
+document.getElementById('langBtn').innerHTML=l==='nb'?'<span aria-hidden="true">\uD83C\uDDEC\uD83C\uDDE7</span> EN':'<span aria-hidden="true">\uD83C\uDDF3\uD83C\uDDF4</span> NO';
 document.getElementById('content-en').hidden=l==='nb';
 document.getElementById('content-nb').hidden=l!=='nb';
 document.title=l==='nb'?'Personvern - Geni App':'Privacy Policy - Geni App';
-var pp=document.querySelector('[data-i18n="nav_parents"]');if(pp)pp.textContent=l==='nb'?'For foreldre':'For Parents';
-var pf=document.querySelector('[data-i18n="nav_parents_f"]');if(pf)pf.textContent=l==='nb'?'For foreldre':'For Parents';
+var els=document.querySelectorAll('[data-i18n]');
+for(var i=0;i<els.length;i++){
+var k=els[i].getAttribute('data-i18n');
+var t={nav_parents:l==='nb'?'For foreldre':'For Parents',nav_privacy:l==='nb'?'Personvern':'Privacy'};
+if(t[k])els[i].textContent=t[k];
+}
 }
 function toggleLang(){applyLang(lang==='en'?'nb':'en')}
 applyLang(lang);

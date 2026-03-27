@@ -3,166 +3,176 @@ import Foundation
 @Observable
 @MainActor
 class CloudSyncService {
-    private let deviceIdKey = "geni_device_sync_id"
-    private let syncCodeKey = "geni_sync_code"
-    private let lastSyncKey = "geni_last_sync"
+    private let store = NSUbiquitousKeyValueStore.default
     private let defaults = UserDefaults.standard
 
-    var syncCode: String = ""
-    var lastSyncDate: Date? = nil
-    var isSyncing: Bool = false
-    var syncError: String? = nil
+    private let profilesKey = "sync_profiles"
+    private let chaptersPrefix = "sync_chapters_"
+    private let rewardsPrefix = "sync_rewards_"
+    private let readingsPrefix = "sync_readings_"
+    private let onboardedKey = "sync_onboarded"
+    private let lastModifiedKey = "sync_last_modified"
+    private let syncEnabledKey = "geni_icloud_sync_enabled"
+    private let lastSyncKey = "geni_last_sync"
 
-    var deviceId: String {
-        if let existing = defaults.string(forKey: deviceIdKey) {
-            return existing
-        }
-        let newId = UUID().uuidString
-        defaults.set(newId, forKey: deviceIdKey)
-        return newId
+    private let encoder: JSONEncoder = {
+        let e = JSONEncoder()
+        e.dateEncodingStrategy = .iso8601
+        return e
+    }()
+    private let decoder: JSONDecoder = {
+        let d = JSONDecoder()
+        d.dateDecodingStrategy = .iso8601
+        return d
+    }()
+
+    var isSyncing: Bool = false
+    var lastSyncDate: Date? = nil
+    var syncEnabled: Bool = true
+    var syncError: String? = nil
+    var onExternalChange: (() -> Void)? = nil
+
+    var isICloudAvailable: Bool {
+        FileManager.default.ubiquityIdentityToken != nil
     }
 
     init() {
-        syncCode = defaults.string(forKey: syncCodeKey) ?? generateSyncCode()
+        syncEnabled = defaults.object(forKey: syncEnabledKey) as? Bool ?? true
         if let interval = defaults.object(forKey: lastSyncKey) as? Double {
             lastSyncDate = Date(timeIntervalSince1970: interval)
         }
-    }
 
-    private func generateSyncCode() -> String {
-        let chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-        let code = String((0..<6).map { _ in chars.randomElement()! })
-        defaults.set(code, forKey: syncCodeKey)
-        return code
-    }
-
-    func syncToCloud(persistence: PersistenceService) {
-        guard !isSyncing else { return }
-        isSyncing = true
-        syncError = nil
-
-        Task {
-            do {
-                let payload = buildSyncPayload(persistence: persistence)
-                try await uploadPayload(payload)
-                lastSyncDate = Date()
-                defaults.set(lastSyncDate!.timeIntervalSince1970, forKey: lastSyncKey)
-                isSyncing = false
-            } catch {
-                syncError = error.localizedDescription
-                isSyncing = false
+        NotificationCenter.default.addObserver(
+            forName: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
+            object: store,
+            queue: .main
+        ) { [weak self] notification in
+            Task { @MainActor in
+                self?.handleExternalChange(notification)
             }
         }
+
+        store.synchronize()
     }
 
-    func restoreFromCloud(code: String, persistence: PersistenceService) async -> Bool {
+    func setSyncEnabled(_ enabled: Bool) {
+        syncEnabled = enabled
+        defaults.set(enabled, forKey: syncEnabledKey)
+    }
+
+    // MARK: - Push
+
+    func pushToCloud(persistence: PersistenceService) {
+        guard syncEnabled, isICloudAvailable else { return }
         isSyncing = true
         syncError = nil
 
         do {
-            guard let payload = try await downloadPayload(code: code) else {
-                syncError = "No data found for this code"
-                isSyncing = false
-                return false
+            let profilesData = try encoder.encode(persistence.profiles)
+            store.set(profilesData, forKey: profilesKey)
+            store.set(persistence.hasOnboarded, forKey: onboardedKey)
+
+            for profile in persistence.profiles {
+                let chapters = persistence.loadAllChapters(for: profile.id)
+                let chaptersData = try encoder.encode(chapters)
+                store.set(chaptersData, forKey: chaptersPrefix + profile.id)
+
+                let rewards = persistence.loadRewardState(for: profile.id)
+                let rewardsData = try encoder.encode(rewards)
+                store.set(rewardsData, forKey: rewardsPrefix + profile.id)
+
+                let readings = persistence.loadAllReadingSessions(for: profile.id)
+                let readingsData = try encoder.encode(readings)
+                store.set(readingsData, forKey: readingsPrefix + profile.id)
             }
-            applySyncPayload(payload, persistence: persistence)
-            syncCode = code
-            defaults.set(code, forKey: syncCodeKey)
+
+            store.set(Date().timeIntervalSince1970, forKey: lastModifiedKey)
+            store.synchronize()
+
+            lastSyncDate = Date()
+            defaults.set(lastSyncDate!.timeIntervalSince1970, forKey: lastSyncKey)
             isSyncing = false
-            return true
         } catch {
             syncError = error.localizedDescription
             isSyncing = false
-            return false
         }
     }
 
-    private func buildSyncPayload(persistence: PersistenceService) -> SyncPayload {
-        var allChapters: [String: [ChapterProgress]] = [:]
-        var allRewards: [String: RewardState] = [:]
+    // MARK: - Pull
 
-        for profile in persistence.profiles {
-            allChapters[profile.id] = persistence.loadAllChapters(for: profile.id)
-            allRewards[profile.id] = persistence.loadRewardState(for: profile.id)
-        }
+    func pullFromCloud(persistence: PersistenceService) {
+        guard syncEnabled, isICloudAvailable else { return }
+        store.synchronize()
 
-        return SyncPayload(
-            deviceId: deviceId,
-            syncCode: syncCode,
-            profiles: persistence.profiles,
-            chapters: allChapters,
-            rewards: allRewards,
-            parentPin: persistence.parentPin,
-            hasOnboarded: persistence.hasOnboarded,
-            timestamp: Date()
-        )
-    }
+        guard let profilesData = store.data(forKey: profilesKey),
+              let profiles = try? decoder.decode([ChildProfile].self, from: profilesData),
+              !profiles.isEmpty else { return }
 
-    private func applySyncPayload(_ payload: SyncPayload, persistence: PersistenceService) {
-        for profile in payload.profiles {
-            persistence.saveProfile(profile)
-        }
+        // Only apply if local is empty (new device) or remote is newer
+        let remoteTimestamp = store.double(forKey: lastModifiedKey)
+        let localTimestamp = defaults.double(forKey: lastSyncKey)
 
-        for (childId, chapters) in payload.chapters {
-            for chapter in chapters {
-                persistence.saveChapterProgress(chapter)
-            }
-            if let rewards = payload.rewards[childId] {
-                persistence.saveRewardState(rewards, for: childId)
-            }
-        }
-
-        if let pin = payload.parentPin {
-            persistence.setPin(pin)
-        }
-
-        if payload.hasOnboarded {
-            persistence.completeOnboarding()
+        if persistence.profiles.isEmpty || remoteTimestamp > localTimestamp {
+            applyRemoteData(persistence: persistence, profiles: profiles)
         }
     }
 
-    private func uploadPayload(_ payload: SyncPayload) async throws {
-        let baseURL = Config.EXPO_PUBLIC_RORK_API_BASE_URL
-        guard !baseURL.isEmpty else { return }
+    // MARK: - External Change Handler
 
-        let url = URL(string: "\(baseURL)/sync/\(payload.syncCode)")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    private func handleExternalChange(_ notification: Notification) {
+        guard syncEnabled else { return }
 
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .iso8601
-        request.httpBody = try encoder.encode(payload)
+        guard let userInfo = notification.userInfo,
+              let reason = userInfo[NSUbiquitousKeyValueStoreChangeReasonKey] as? Int else { return }
 
-        let (_, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+        switch reason {
+        case NSUbiquitousKeyValueStoreQuotaViolationChange:
+            syncError = "iCloud storage full"
             return
-        }
-    }
-
-    private func downloadPayload(code: String) async throws -> SyncPayload? {
-        let baseURL = Config.EXPO_PUBLIC_RORK_API_BASE_URL
-        guard !baseURL.isEmpty else { return nil }
-
-        let url = URL(string: "\(baseURL)/sync/\(code)")!
-        let (data, response) = try await URLSession.shared.data(from: url)
-        guard let http = response as? HTTPURLResponse, http.statusCode == 200 else {
-            return nil
+        case NSUbiquitousKeyValueStoreAccountChange:
+            lastSyncDate = nil
+            defaults.removeObject(forKey: lastSyncKey)
+            return
+        default:
+            break
         }
 
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601
-        return try decoder.decode(SyncPayload.self, from: data)
+        onExternalChange?()
     }
-}
 
-nonisolated struct SyncPayload: Codable, Sendable {
-    let deviceId: String
-    let syncCode: String
-    let profiles: [ChildProfile]
-    let chapters: [String: [ChapterProgress]]
-    let rewards: [String: RewardState]
-    let parentPin: String?
-    let hasOnboarded: Bool
-    let timestamp: Date
+    // MARK: - Apply Remote Data
+
+    private func applyRemoteData(persistence: PersistenceService, profiles: [ChildProfile]) {
+        var chapters: [String: [ChapterProgress]] = [:]
+        var rewards: [String: RewardState] = [:]
+        var readings: [String: [ReadingSession]] = [:]
+
+        for profile in profiles {
+            if let data = store.data(forKey: chaptersPrefix + profile.id),
+               let decoded = try? decoder.decode([ChapterProgress].self, from: data) {
+                chapters[profile.id] = decoded
+            }
+            if let data = store.data(forKey: rewardsPrefix + profile.id),
+               let decoded = try? decoder.decode(RewardState.self, from: data) {
+                rewards[profile.id] = decoded
+            }
+            if let data = store.data(forKey: readingsPrefix + profile.id),
+               let decoded = try? decoder.decode([ReadingSession].self, from: data) {
+                readings[profile.id] = decoded
+            }
+        }
+
+        let hasOnboarded = store.bool(forKey: onboardedKey)
+
+        persistence.applyCloudData(
+            profiles: profiles,
+            chapters: chapters,
+            rewards: rewards,
+            readings: readings,
+            hasOnboarded: hasOnboarded
+        )
+
+        lastSyncDate = Date()
+        defaults.set(lastSyncDate!.timeIntervalSince1970, forKey: lastSyncKey)
+    }
 }

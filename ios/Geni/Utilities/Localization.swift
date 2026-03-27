@@ -190,6 +190,10 @@ nonisolated enum LocaleKey: String, Sendable {
     case languageNorwegian
     case mathPractice
     case recommendedForAge
+    case iCloudSync
+    case iCloudSyncDesc
+    case iCloudNotAvailable
+    case synced
 }
 
 nonisolated enum AppLanguage: String, Sendable, CaseIterable {
@@ -457,6 +461,10 @@ nonisolated enum L {
         case .languageNorwegian: return "Norwegian"
         case .mathPractice: return "What to practice"
         case .recommendedForAge: return "Recommended for your age!"
+        case .iCloudSync: return "iCloud Sync"
+        case .iCloudSyncDesc: return "Sync across your devices"
+        case .iCloudNotAvailable: return "Sign in to iCloud in Settings"
+        case .synced: return "Synced"
         }
     }
 
@@ -651,6 +659,10 @@ nonisolated enum L {
         case .languageNorwegian: return "Norsk"
         case .mathPractice: return "Hva skal vi \u{00F8}ve p\u{00E5}"
         case .recommendedForAge: return "Anbefalt for din alder!"
+        case .iCloudSync: return "iCloud-synk"
+        case .iCloudSyncDesc: return "Synk mellom enhetene dine"
+        case .iCloudNotAvailable: return "Logg inn p\u{00E5} iCloud i Innstillinger"
+        case .synced: return "Synkronisert"
         }
     }
 }

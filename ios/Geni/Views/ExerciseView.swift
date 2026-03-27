@@ -12,8 +12,8 @@ struct ExerciseView: View {
 
             VStack(spacing: 0) {
                 exerciseHeader
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
+                    .padding(.horizontal, iPadScale.padding)
+                    .padding(.top, iPadScale.padding)
 
                 Spacer()
 
@@ -21,14 +21,14 @@ struct ExerciseView: View {
                     timeUpView
                 } else if let exercise = chapterVM.currentExercise {
                     exerciseContent(exercise)
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, iPadScale.padding)
                 } else {
                     completingView
                 }
 
                 Spacer()
 
-                Color.clear.frame(height: 100)
+                Color.clear.frame(height: iPadScale.isIPad ? 140 : 100)
             }
             .animation(.spring(response: 0.4), value: chapterVM.currentIndex)
 
@@ -152,18 +152,18 @@ struct ExerciseView: View {
         VStack(spacing: 28) {
             HStack(spacing: 8) {
                 Text(exercise.prompt)
-                    .font(.system(size: 48, weight: .black, design: .rounded))
+                    .font(.system(size: iPadScale.value(48), weight: .black, design: .rounded))
                     .foregroundStyle(GeniColor.border)
                     .contentTransition(.numericText())
 
                 Text("=")
-                    .font(.system(size: 48, weight: .black, design: .rounded))
+                    .font(.system(size: iPadScale.value(48), weight: .black, design: .rounded))
                     .foregroundStyle(GeniColor.border)
 
                 Text("?")
-                    .font(.system(size: 40, weight: .black, design: .rounded))
+                    .font(.system(size: iPadScale.value(40), weight: .black, design: .rounded))
                     .foregroundStyle(GeniColor.border)
-                    .frame(width: 64, height: 64)
+                    .frame(width: iPadScale.value(64), height: iPadScale.value(64))
                     .background(GeniColor.card)
                     .overlay(
                         Rectangle()
@@ -184,7 +184,7 @@ struct ExerciseView: View {
     private func missingNumberContent(_ exercise: Exercise) -> some View {
         VStack(spacing: 28) {
             Text(exercise.missingNumberPrompt)
-                .font(.system(size: 44, weight: .black, design: .rounded))
+                .font(.system(size: iPadScale.value(44), weight: .black, design: .rounded))
                 .foregroundStyle(GeniColor.border)
                 .contentTransition(.numericText())
                 .frame(maxWidth: .infinity)
@@ -201,7 +201,7 @@ struct ExerciseView: View {
     private func trueFalseContent(_ exercise: Exercise) -> some View {
         VStack(spacing: 28) {
             Text(exercise.trueFalsePrompt)
-                .font(.system(size: 40, weight: .black, design: .rounded))
+                .font(.system(size: iPadScale.value(40), weight: .black, design: .rounded))
                 .foregroundStyle(GeniColor.border)
                 .contentTransition(.numericText())
                 .frame(maxWidth: .infinity)
@@ -221,7 +221,7 @@ struct ExerciseView: View {
                     }
                     .foregroundStyle(trueFalseButtonTextColor(for: 1, exercise: exercise))
                     .frame(maxWidth: .infinity)
-                    .frame(height: 100)
+                    .frame(height: iPadScale.value(100))
                     .background(trueFalseButtonColor(for: 1, exercise: exercise))
                     .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
                     .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
@@ -241,7 +241,7 @@ struct ExerciseView: View {
                     }
                     .foregroundStyle(trueFalseButtonTextColor(for: 0, exercise: exercise))
                     .frame(maxWidth: .infinity)
-                    .frame(height: 100)
+                    .frame(height: iPadScale.value(100))
                     .background(trueFalseButtonColor(for: 0, exercise: exercise))
                     .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
                     .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
@@ -268,7 +268,7 @@ struct ExerciseView: View {
                             .font(.system(size: 28, weight: .black, design: .rounded))
                             .foregroundStyle(comparisonTextColor(for: 0, exercise: exercise))
                             .frame(maxWidth: .infinity)
-                            .frame(height: 90)
+                            .frame(height: iPadScale.value(90))
                             .background(comparisonBgColor(for: 0, exercise: exercise))
                             .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
                             .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
@@ -290,7 +290,7 @@ struct ExerciseView: View {
                             .font(.system(size: 28, weight: .black, design: .rounded))
                             .foregroundStyle(comparisonTextColor(for: 1, exercise: exercise))
                             .frame(maxWidth: .infinity)
-                            .frame(height: 90)
+                            .frame(height: iPadScale.value(90))
                             .background(comparisonBgColor(for: 1, exercise: exercise))
                             .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
                             .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
@@ -311,10 +311,10 @@ struct ExerciseView: View {
                     chapterVM.submitAnswer(option, persistence: persistence)
                 } label: {
                     Text("\(option)")
-                        .font(.system(.title2, design: .rounded, weight: .black))
+                        .font(.system(size: iPadScale.isIPad ? 28 : 22, weight: .black, design: .rounded))
                         .foregroundStyle(answerTextColor(for: option, correct: correctValue))
                         .frame(maxWidth: .infinity)
-                        .frame(height: 64)
+                        .frame(height: iPadScale.value(64))
                         .background(answerBgColor(for: option, correct: correctValue))
                         .overlay(
                             Rectangle()
@@ -341,9 +341,9 @@ struct ExerciseView: View {
                     chapterVM.submitAnswer(option, persistence: persistence)
                 } label: {
                     Text("\(option)")
-                        .font(.system(.title2, design: .rounded, weight: .black))
+                        .font(.system(size: iPadScale.isIPad ? 28 : 22, weight: .black, design: .rounded))
                         .foregroundStyle(dragTextColor(for: option, correct: correctValue))
-                        .frame(width: 72, height: 72)
+                        .frame(width: iPadScale.value(72), height: iPadScale.value(72))
                         .background(dragBubbleColor(for: option, correct: correctValue))
                         .overlay(
                             Rectangle()

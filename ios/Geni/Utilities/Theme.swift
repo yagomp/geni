@@ -49,10 +49,10 @@ struct BrutalistButton: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(.title3, design: .rounded, weight: .black))
+            .font(.system(size: iPadScale.isIPad ? 24 : 20, weight: .black, design: .rounded))
             .foregroundStyle(textColor)
-            .padding(.horizontal, 32)
-            .padding(.vertical, 18)
+            .padding(.horizontal, iPadScale.largePadding)
+            .padding(.vertical, iPadScale.isIPad ? 24 : 18)
             .frame(maxWidth: .infinity)
             .background(color)
             .clipShape(.rect(cornerRadius: 0))
@@ -74,4 +74,14 @@ extension View {
     func brutalistCard(color: Color = GeniColor.card, borderWidth: CGFloat = 3) -> some View {
         modifier(BrutalistCard(color: color, borderWidth: borderWidth))
     }
+}
+
+enum iPadScale {
+    static var isIPad: Bool {
+        UIDevice.current.userInterfaceIdiom == .pad
+    }
+    static var factor: CGFloat { isIPad ? 1.35 : 1.0 }
+    static func value(_ base: CGFloat) -> CGFloat { base * factor }
+    static var padding: CGFloat { isIPad ? 40 : 20 }
+    static var largePadding: CGFloat { isIPad ? 56 : 32 }
 }

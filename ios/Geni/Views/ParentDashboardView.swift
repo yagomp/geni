@@ -29,6 +29,22 @@ struct ParentDashboardView: View {
             GeniColor.background.ignoresSafeArea()
 
             VStack(spacing: 24) {
+                HStack {
+                    Button {
+                        HapticManager.selection()
+                        dismiss()
+                    } label: {
+                        Text("◀️").font(.system(size: 20))
+                            .frame(width: 44, height: 44)
+                            .background(GeniColor.card)
+                            .overlay(
+                                Rectangle()
+                                    .stroke(GeniColor.border, lineWidth: 3)
+                            )
+                    }
+                    Spacer()
+                }
+
                 Text("🔒")
                     .font(.system(size: 48))
                     .foregroundStyle(GeniColor.blue)
@@ -70,14 +86,9 @@ struct ParentDashboardView: View {
                     }
                 }
             }
-            .padding(24)
+            .padding(iPadScale.padding)
         }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(L.s(.cancel)) { dismiss() }
-                    .font(.system(.body, design: .rounded, weight: .bold))
-            }
-        }
+        .navigationBarHidden(true)
     }
 
     private var settingsContent: some View {
@@ -86,6 +97,31 @@ struct ParentDashboardView: View {
 
             ScrollView {
                 VStack(spacing: 20) {
+                    HStack {
+                        Button {
+                            HapticManager.selection()
+                            dismiss()
+                        } label: {
+                            Text("◀️").font(.system(size: 20))
+                                .frame(width: 44, height: 44)
+                                .background(GeniColor.card)
+                                .overlay(
+                                    Rectangle()
+                                        .stroke(GeniColor.border, lineWidth: 3)
+                                )
+                        }
+
+                        Spacer()
+
+                        Text(L.s(.parentSettings))
+                            .font(.system(.title2, design: .rounded, weight: .black))
+                            .foregroundStyle(GeniColor.border)
+
+                        Spacer()
+
+                        Color.clear.frame(width: 44, height: 44)
+                    }
+
                     profilesSection
                     languageSection
                     progressOverviewSection
@@ -93,18 +129,11 @@ struct ParentDashboardView: View {
                     iCloudSyncSection
                     pinSection
                 }
-                .padding(20)
+                .padding(iPadScale.padding)
                 .foregroundStyle(.black)
             }
         }
-        .navigationTitle(L.s(.parentSettings))
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(L.s(.done)) { dismiss() }
-                    .font(.system(.body, design: .rounded, weight: .bold))
-            }
-        }
+        .navigationBarHidden(true)
         .sheet(isPresented: $showProfileCreation) {
             ProfileCreationView { profile in
                 viewModel.persistence.saveProfile(profile)

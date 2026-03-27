@@ -105,7 +105,7 @@ struct RewardsView: View {
                     }
                     .padding(8)
                     .frame(maxWidth: .infinity)
-                    .brutalistCard(color: isUnlocked ? GeniColor.card : Color.gray.opacity(0.05), borderWidth: isUnlocked ? 3 : 1)
+                    .brutalistCard(color: GeniColor.card, borderWidth: isUnlocked ? 3 : 1)
                     .opacity(isUnlocked ? 1 : 0.6)
                 }
             }

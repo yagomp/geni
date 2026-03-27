@@ -157,7 +157,7 @@ struct MissionCompleteView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .brutalistCard(color: GeniColor.orange.opacity(0.08), borderWidth: 3)
+                        .brutalistCard(color: GeniColor.card, borderWidth: 3)
 
                         VStack(spacing: 4) {
                             Text("⭐")
@@ -172,7 +172,7 @@ struct MissionCompleteView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .brutalistCard(color: GeniColor.yellow.opacity(0.08), borderWidth: 3)
+                        .brutalistCard(color: GeniColor.card, borderWidth: 3)
 
                         VStack(spacing: 4) {
                             Text("🪙")

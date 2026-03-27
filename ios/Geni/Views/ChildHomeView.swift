@@ -321,7 +321,7 @@ struct ChildHomeView: View {
             .buttonStyle(BrutalistButton(color: specialChapterColor(type)))
         }
         .padding(20)
-        .brutalistCard(color: specialChapterColor(type).opacity(0.08))
+        .brutalistCard(color: GeniColor.card)
     }
 
     private var quickChallengeCards: some View {

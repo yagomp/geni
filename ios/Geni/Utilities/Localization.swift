@@ -194,6 +194,9 @@ nonisolated enum LocaleKey: String, Sendable {
     case iCloudSyncDesc
     case iCloudNotAvailable
     case synced
+    case challengeTimeLeft
+    case challengesClosed
+    case seeYouTomorrow
 }
 
 nonisolated enum AppLanguage: String, Sendable, CaseIterable {
@@ -465,6 +468,9 @@ nonisolated enum L {
         case .iCloudSyncDesc: return "Sync across your devices"
         case .iCloudNotAvailable: return "Sign in to iCloud in Settings"
         case .synced: return "Synced"
+        case .challengeTimeLeft: return "Time left to play"
+        case .challengesClosed: return "Challenges closed!"
+        case .seeYouTomorrow: return "See you tomorrow"
         }
     }
 
@@ -663,6 +669,9 @@ nonisolated enum L {
         case .iCloudSyncDesc: return "Synk mellom enhetene dine"
         case .iCloudNotAvailable: return "Logg inn p\u{00E5} iCloud i Innstillinger"
         case .synced: return "Synkronisert"
+        case .challengeTimeLeft: return "Tid igjen \u{00E5} spille"
+        case .challengesClosed: return "Utfordringer stengt!"
+        case .seeYouTomorrow: return "Vi ses i morgen"
         }
     }
 }

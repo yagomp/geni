@@ -186,6 +186,51 @@ class PersistenceService {
         return loadAllReadingSessions(for: childId).first { $0.date == today && $0.isCompleted }
     }
 
+    // MARK: - Cloud Sync
+
+    func applyCloudData(
+        profiles cloudProfiles: [ChildProfile],
+        chapters: [String: [ChapterProgress]],
+        rewards: [String: RewardState],
+        readings: [String: [ReadingSession]],
+        hasOnboarded cloudOnboarded: Bool
+    ) {
+        // Upsert profiles
+        for cloudProfile in cloudProfiles {
+            if let index = profiles.firstIndex(where: { $0.id == cloudProfile.id }) {
+                profiles[index] = cloudProfile
+            } else {
+                profiles.append(cloudProfile)
+            }
+        }
+        persistProfiles()
+
+        // Replace per-child data
+        for (childId, childChapters) in chapters {
+            if let data = try? encoder.encode(childChapters) {
+                defaults.set(data, forKey: chaptersKeyPrefix + childId)
+            }
+        }
+        for (childId, childRewards) in rewards {
+            if let data = try? encoder.encode(childRewards) {
+                defaults.set(data, forKey: rewardsKeyPrefix + childId)
+            }
+        }
+        for (childId, childReadings) in readings {
+            if let data = try? encoder.encode(childReadings) {
+                defaults.set(data, forKey: readingKeyPrefix + childId)
+            }
+        }
+
+        if cloudOnboarded && !hasOnboarded {
+            completeOnboarding()
+        }
+
+        if activeProfileId == nil, let first = profiles.first {
+            setActiveProfile(first.id)
+        }
+    }
+
     private func persistProfiles() {
         if let data = try? encoder.encode(profiles) {
             defaults.set(data, forKey: profilesKey)

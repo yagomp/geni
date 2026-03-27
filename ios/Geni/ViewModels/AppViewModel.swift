@@ -51,6 +51,22 @@ class AppViewModel {
         self.notificationService = NotificationService()
         self.isPremium = UserDefaults.standard.bool(forKey: "geni_is_premium")
         determineInitialScreen()
+
+        // Pull cloud data on launch (handles new device scenario)
+        cloudSync.pullFromCloud(persistence: persistence)
+        if persistence.profiles.count > 0 && currentScreen == .welcome && persistence.hasOnboarded {
+            determineInitialScreen()
+        }
+
+        // Handle incoming changes from other devices
+        cloudSync.onExternalChange = { [weak self] in
+            guard let self else { return }
+            self.persistence.loadAll()
+            if let profile = self.persistence.activeProfile {
+                self.loadRewards(for: profile.id)
+                self.refreshTodayStatus()
+            }
+        }
     }
 
     func determineInitialScreen() {
@@ -78,7 +94,7 @@ class AppViewModel {
         persistence.setActiveProfile(profile.id)
         loadRewards(for: profile.id)
         currentScreen = .childHome
-        cloudSync.syncToCloud(persistence: persistence)
+        cloudSync.pushToCloud(persistence: persistence)
     }
 
     func selectProfile(_ profile: ChildProfile) {
@@ -191,7 +207,7 @@ class AppViewModel {
             currentScreen = .chapterComplete
         }
 
-        cloudSync.syncToCloud(persistence: persistence)
+        cloudSync.pushToCloud(persistence: persistence)
     }
 
     func startReading() {
@@ -273,7 +289,7 @@ class AppViewModel {
             currentScreen = .readingComplete
         }
 
-        cloudSync.syncToCloud(persistence: persistence)
+        cloudSync.pushToCloud(persistence: persistence)
     }
 
     func dismissLevelUp() {
@@ -336,7 +352,7 @@ class AppViewModel {
         guard var profile = persistence.activeProfile else { return }
         profile.avatarId = avatarId
         persistence.saveProfile(profile)
-        cloudSync.syncToCloud(persistence: persistence)
+        cloudSync.pushToCloud(persistence: persistence)
     }
 
     var todayMathCompleted: Bool {

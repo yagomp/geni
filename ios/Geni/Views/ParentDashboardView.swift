@@ -11,10 +11,6 @@ struct ParentDashboardView: View {
     @State private var editingProfile: ChildProfile? = nil
     @State private var newPin = ""
     @State private var showSetPin = false
-    @State private var showSyncRestore = false
-    @State private var restoreCode = ""
-    @State private var restoreError: String? = nil
-    @State private var restoreSuccess = false
     @State private var selectedLanguage: AppLanguage = L.selectedLanguage
     @State private var languageManager = LanguageManager.shared
 
@@ -94,6 +90,7 @@ struct ParentDashboardView: View {
                     languageSection
                     progressOverviewSection
                     reminderSection
+                    iCloudSyncSection
                     pinSection
                 }
                 .padding(20)
@@ -480,70 +477,71 @@ struct ParentDashboardView: View {
         }
     }
 
-    private var cloudSyncSection: some View {
+    private var iCloudSyncSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(L.s(.cloudSync))
+            Text(L.s(.iCloudSync))
                 .font(.system(.headline, design: .rounded, weight: .bold))
 
             VStack(spacing: 12) {
                 HStack {
                     Text("☁️")
-.font(.system(size: 22))
+                        .font(.system(size: 22))
                         .frame(width: 40)
 
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(L.s(.syncCode))
+                        Text(L.s(.iCloudSync))
                             .font(.system(.body, design: .rounded, weight: .semibold))
-                        Text(L.s(.syncCodeDesc))
+                        Text(L.s(.iCloudSyncDesc))
                             .font(.system(.caption, design: .rounded))
                             .foregroundStyle(.black)
                     }
 
                     Spacer()
 
-                    Text(viewModel.cloudSync.syncCode)
-                        .font(.system(.title3, design: .monospaced, weight: .bold))
-                        .foregroundStyle(GeniColor.blue)
-                }
-
-                HStack(spacing: 12) {
-                    Button {
-                        HapticManager.impact(.medium)
-                        viewModel.cloudSync.syncToCloud(persistence: viewModel.persistence)
-                    } label: {
-                        HStack(spacing: 6) {
-                            if viewModel.cloudSync.isSyncing {
-                                ProgressView()
-                                    .scaleEffect(0.8)
-                            } else {
-                                Text("🔄")
-                            }
-                            Text(L.s(.syncNow))
-                                .font(.system(.subheadline, design: .rounded, weight: .bold))
-                        }
-                        .foregroundStyle(GeniColor.blue)
-                    }
-                    .disabled(viewModel.cloudSync.isSyncing)
-
-                    Spacer()
-
                     Button {
                         HapticManager.selection()
-                        showSyncRestore = true
-                    } label: {
-                        HStack(spacing: 4) {
-                            Text("📥")
-                            Text(L.s(.restore))
-                                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        viewModel.cloudSync.setSyncEnabled(!viewModel.cloudSync.syncEnabled)
+                        if viewModel.cloudSync.syncEnabled {
+                            viewModel.cloudSync.pushToCloud(persistence: viewModel.persistence)
                         }
-                        .foregroundStyle(GeniColor.green)
+                    } label: {
+                        Text(viewModel.cloudSync.syncEnabled ? "✅" : "⬜")
+                            .font(.system(size: 28))
                     }
                 }
 
-                if let lastSync = viewModel.cloudSync.lastSyncDate {
-                    Text("\(L.s(.lastSync)): \(lastSync.formatted(date: .abbreviated, time: .shortened))")
-                        .font(.system(.caption, design: .rounded))
-                        .foregroundStyle(.black)
+                if !viewModel.cloudSync.isICloudAvailable {
+                    Text(L.s(.iCloudNotAvailable))
+                        .font(.system(.caption, design: .rounded, weight: .semibold))
+                        .foregroundStyle(GeniColor.orange)
+                } else if viewModel.cloudSync.syncEnabled {
+                    HStack(spacing: 12) {
+                        Button {
+                            HapticManager.impact(.medium)
+                            viewModel.cloudSync.pushToCloud(persistence: viewModel.persistence)
+                        } label: {
+                            HStack(spacing: 6) {
+                                if viewModel.cloudSync.isSyncing {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                } else {
+                                    Text("🔄")
+                                }
+                                Text(L.s(.syncNow))
+                                    .font(.system(.subheadline, design: .rounded, weight: .bold))
+                            }
+                            .foregroundStyle(GeniColor.blue)
+                        }
+                        .disabled(viewModel.cloudSync.isSyncing)
+
+                        Spacer()
+
+                        if let lastSync = viewModel.cloudSync.lastSyncDate {
+                            Text("\(L.s(.synced)) \(lastSync.formatted(date: .abbreviated, time: .shortened))")
+                                .font(.system(.caption, design: .rounded))
+                                .foregroundStyle(.black)
+                        }
+                    }
                 }
 
                 if let error = viewModel.cloudSync.syncError {
@@ -554,27 +552,6 @@ struct ParentDashboardView: View {
             }
             .padding(12)
             .brutalistCard(color: GeniColor.card, borderWidth: 3)
-        }
-        .alert(L.s(.restore), isPresented: $showSyncRestore) {
-            TextField(L.s(.enterSyncCode), text: $restoreCode)
-                .textInputAutocapitalization(.characters)
-            Button(L.s(.cancel), role: .cancel) {}
-            Button(L.s(.restore)) {
-                Task {
-                    let success = await viewModel.cloudSync.restoreFromCloud(
-                        code: restoreCode,
-                        persistence: viewModel.persistence
-                    )
-                    if success {
-                        HapticManager.notification(.success)
-                        viewModel.determineInitialScreen()
-                    } else {
-                        HapticManager.notification(.error)
-                    }
-                }
-            }
-        } message: {
-            Text(L.s(.enterSyncCodeDesc))
         }
     }
 

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geni - Fun Learning App for Kids | Math & Reading</title>
+<meta name="description" content="Geni makes math and reading fun for kids aged 5-10. Daily missions, speech recognition, rewards, and parent controls. Download free on the App Store.">
+<meta name="keywords" content="kids learning app, math for kids, reading app children, educational game, daily missions, speech recognition, parent controls">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#FFF7E0">
+<meta name="apple-mobile-web-app-title" content="Geni">
+<meta property="og:title" content="Geni - Fun Learning App for Kids">
+<meta property="og:description" content="Daily math and reading missions that make learning an adventure. For kids aged 5-10.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="icon.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Geni - Fun Learning App for Kids">
+<meta name="twitter:description" content="Daily math and reading missions that make learning an adventure.">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="canonical" href="https://geni.app">
+<link rel="alternate" hreflang="en" href="https://geni.app">
+<link rel="alternate" hreflang="nb" href="https://geni.app?lang=nb">
+<link rel="alternate" hreflang="x-default" href="https://geni.app">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--yellow:#FFD60A;--blue:#0066FF;--pink:#FF2E54;--green:#33C75A;
+--purple:#B052DE;--orange:#FF9400;--cyan:#66D9F2;--peach:#F5D1B8;
+--bg:#FFF7E0;--card:#FFFFFF;--border:#000000;--gray:#E6E6E6;
+--shadow:4px 4px 0 #000;--font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:#000;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+img{max-width:100%;height:auto;display:block}
+
+.container{max-width:800px;margin:0 auto;padding:0 20px}
+
+/* NAV */
+nav{background:var(--card);border-bottom:3px solid var(--border);padding:12px 0;position:sticky;top:0;z-index:10}
+nav .container{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-weight:900;font-size:1.25rem;display:flex;align-items:center;gap:8px}
+.nav-logo img{width:32px;height:32px}
+.nav-links{display:flex;gap:16px;align-items:center;font-weight:700;font-size:0.9rem}
+.lang-btn{background:var(--bg);border:2px solid var(--border);padding:4px 10px;font-weight:800;font-size:0.8rem;cursor:pointer;box-shadow:2px 2px 0 #000;font-family:var(--font)}
+.lang-btn:hover{background:var(--yellow)}
+.lang-btn:active{box-shadow:0 0 0 #000;transform:translate(2px,2px)}
+
+/* HERO */
+.hero{padding:60px 0 40px;text-align:center}
+.hero-icon{width:180px;height:180px;margin:0 auto 24px;border:4px solid var(--border);box-shadow:var(--shadow);background:var(--card)}
+.hero h1{font-weight:900;font-size:clamp(2.5rem,6vw,3.5rem);line-height:1.1;margin-bottom:12px}
+.hero p{font-size:1.15rem;max-width:500px;margin:0 auto 32px;font-weight:500}
+.app-store-badge{display:inline-block;transition:transform 0.15s}
+.app-store-badge:hover{transform:scale(1.05)}
+.app-store-badge img{height:54px;width:auto}
+
+/* FEATURES */
+.features{padding:40px 0}
+.features h2{font-weight:900;font-size:1.8rem;text-align:center;margin-bottom:32px}
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.feature-card{background:var(--card);border:3px solid var(--border);box-shadow:var(--shadow);padding:24px;transition:transform 0.15s,box-shadow 0.15s}
+.feature-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #000}
+.feature-emoji{font-size:2.5rem;margin-bottom:8px}
+.feature-card h3{font-weight:800;font-size:1.1rem;margin-bottom:4px}
+.feature-card p{font-size:0.9rem;color:#333}
+
+/* PARENTS CTA */
+.parents-cta{padding:40px 0}
+.parents-card{background:var(--card);border:3px solid var(--border);box-shadow:var(--shadow);padding:32px;text-align:center}
+.parents-card h2{font-weight:900;font-size:1.5rem;margin-bottom:8px}
+.parents-card p{margin-bottom:20px;font-size:1rem}
+.btn-parents{display:inline-block;background:#222;color:#fff;font-weight:800;font-size:1rem;padding:14px 28px;border:3px solid var(--border);box-shadow:var(--shadow);font-family:var(--font);cursor:pointer;text-decoration:none}
+.btn-parents:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #000;text-decoration:none}
+.btn-parents:active{transform:translate(2px,2px);box-shadow:0 0 0 #000}
+
+/* CTA BOTTOM */
+.cta-bottom{padding:40px 0 60px;text-align:center}
+.cta-bottom h2{font-weight:900;font-size:1.8rem;margin-bottom:16px}
+
+/* FOOTER */
+footer{background:var(--card);border-top:3px solid var(--border);padding:24px 0;font-size:0.85rem}
+footer .container{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+.footer-links{display:flex;gap:16px;font-weight:600}
+
+/* MOBILE */
+@media(max-width:600px){
+.feature-grid{grid-template-columns:1fr}
+.hero{padding:40px 0 24px}
+.hero-icon{width:140px;height:140px}
+footer .container{flex-direction:column;text-align:center}
+}
+</style>
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"MobileApplication",
+"name":"Geni",
+"operatingSystem":"iOS",
+"applicationCategory":"EducationalApplication",
+"description":"Fun math and reading learning app for kids aged 5-10 with daily missions and rewards.",
+"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
+"aggregateRating":{"@type":"AggregateRating","ratingValue":"5","ratingCount":"1"},
+"author":{"@type":"Organization","name":"Geni App"}
+}
+</script>
+</head>
+<body>
+
+<nav aria-label="Main navigation">
+<div class="container">
+<a href="/" class="nav-logo" aria-label="Geni home"><img src="icon.png" alt="" width="32" height="32" loading="eager"> Geni</a>
+<div class="nav-links">
+<a href="parents.html" data-i18n="nav_parents">For Parents</a>
+<a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
+<button class="lang-btn" onclick="toggleLang()" id="langBtn" type="button">NO</button>
+</div>
+</div>
+</nav>
+
+<main>
+
+<section class="hero" id="hero">
+<div class="container">
+<img class="hero-icon" src="icon.png" alt="Geni app icon - a colorful brain illustration" width="180" height="180" loading="eager">
+<h1 data-i18n="hero_title">Learning is an adventure <span aria-hidden="true">🧠</span></h1>
+<p data-i18n="hero_sub">Daily math and reading missions for kids aged 5-10. Fun, safe, and offline-first.</p>
+<a href="#" class="app-store-badge" id="appStoreLink">
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="54" viewBox="0 0 180 54" role="img" aria-label="Download on the App Store" focusable="false"><rect width="180" height="54" rx="8" fill="#000"/><text x="90" y="22" text-anchor="middle" fill="#fff" font-family="-apple-system,system-ui,sans-serif" font-size="10" font-weight="400">Download on the</text><text x="90" y="39" text-anchor="middle" fill="#fff" font-family="-apple-system,system-ui,sans-serif" font-size="18" font-weight="700">App Store</text><text x="22" y="34" text-anchor="middle" fill="#fff" font-size="24"></text></svg>
+</a>
+</div>
+</section>
+
+<section class="features" aria-labelledby="features-heading">
+<div class="container">
+<h2 id="features-heading" data-i18n="features_title">What makes Geni special</h2>
+<div class="feature-grid">
+
+<article class="feature-card">
+<div class="feature-emoji" aria-hidden="true">🔢</div>
+<h3 data-i18n="f1_title">Math Missions</h3>
+<p data-i18n="f1_desc">Addition, subtraction, multiplication - with smart difficulty that adapts to your child.</p>
+</article>
+
+<article class="feature-card">
+<div class="feature-emoji" aria-hidden="true">📖</div>
+<h3 data-i18n="f2_title">Reading Adventures</h3>
+<p data-i18n="f2_desc">Three reading modes with speech recognition. Kids read aloud and get instant feedback.</p>
+</article>
+
+<article class="feature-card">
+<div class="feature-emoji" aria-hidden="true">🏆</div>
+<h3 data-i18n="f3_title">Rewards & Badges</h3>
+<p data-i18n="f3_desc">Earn coins, level up, unlock badges. Streaks and boss challenges keep kids motivated.</p>
+</article>
+
+<article class="feature-card">
+<div class="feature-emoji" aria-hidden="true">🔒</div>
+<h3 data-i18n="f4_title">Parent Controls</h3>
+<p data-i18n="f4_desc">PIN-protected dashboard. Track progress, manage profiles, and control settings.</p>
+</article>
+
+<article class="feature-card">
+<div class="feature-emoji" aria-hidden="true">📱</div>
+<h3 data-i18n="f5_title">Offline First</h3>
+<p data-i18n="f5_desc">Works without internet. All data stays on the device. No ads, no tracking.</p>
+</article>
+
+<article class="feature-card">
+<div class="feature-emoji" aria-hidden="true">👶</div>
+<h3 data-i18n="f6_title">Multiple Profiles</h3>
+<p data-i18n="f6_desc">Add siblings with their own progress, avatars, and difficulty levels.</p>
+</article>
+
+</div>
+</div>
+</section>
+
+<section class="parents-cta" aria-labelledby="parents-heading">
+<div class="container">
+<div class="parents-card">
+<h2 id="parents-heading" data-i18n="parents_title"><span aria-hidden="true">👨‍👩‍👧‍👦</span> Built for parents who care</h2>
+<p data-i18n="parents_desc">Learn how Geni keeps your child safe and why no data ever leaves the device.</p>
+<a href="parents.html" class="btn-parents" data-i18n="parents_btn">Read more for parents</a>
+</div>
+</div>
+</section>
+
+<section class="cta-bottom">
+<div class="container">
+<h2 data-i18n="cta_title">Start the adventure today <span aria-hidden="true">🚀</span></h2>
+<a href="#" class="app-store-badge">
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="54" viewBox="0 0 180 54" role="img" aria-label="Download on the App Store" focusable="false"><rect width="180" height="54" rx="8" fill="#000"/><text x="90" y="22" text-anchor="middle" fill="#fff" font-family="-apple-system,system-ui,sans-serif" font-size="10" font-weight="400">Download on the</text><text x="90" y="39" text-anchor="middle" fill="#fff" font-family="-apple-system,system-ui,sans-serif" font-size="18" font-weight="700">App Store</text><text x="22" y="34" text-anchor="middle" fill="#fff" font-size="24"></text></svg>
+</a>
+</div>
+</section>
+
+</main>
+
+<footer>
+<div class="container">
+<span>&copy; <span id="year"></span> Geni App</span>
+<nav class="footer-links" aria-label="Footer navigation">
+<a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
+<a href="parents.html" data-i18n="nav_parents">For Parents</a>
+</nav>
+</div>
+</footer>
+
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+
+var T={
+en:{
+nav_parents:"For Parents",nav_privacy:"Privacy",
+hero_title:'Learning is an adventure <span aria-hidden="true">🧠</span>',
+hero_sub:"Daily math and reading missions for kids aged 5\u201310. Fun, safe, and offline-first.",
+features_title:"What makes Geni special",
+f1_title:"Math Missions",f1_desc:"Addition, subtraction, multiplication \u2013 with smart difficulty that adapts to your child.",
+f2_title:"Reading Adventures",f2_desc:"Three reading modes with speech recognition. Kids read aloud and get instant feedback.",
+f3_title:"Rewards & Badges",f3_desc:"Earn coins, level up, unlock badges. Streaks and boss challenges keep kids motivated.",
+f4_title:"Parent Controls",f4_desc:"PIN-protected dashboard. Track progress, manage profiles, and control settings.",
+f5_title:"Offline First",f5_desc:"Works without internet. All data stays on the device. No ads, no tracking.",
+f6_title:"Multiple Profiles",f6_desc:"Add siblings with their own progress, avatars, and difficulty levels.",
+parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span> Built for parents who care',
+parents_desc:"Learn how Geni keeps your child safe and why no data ever leaves the device.",
+parents_btn:"Read more for parents",
+cta_title:'Start the adventure today <span aria-hidden="true">🚀</span>'
+},
+nb:{
+nav_parents:"For foreldre",nav_privacy:"Personvern",
+hero_title:'L\u00e6ring er et eventyr <span aria-hidden="true">🧠</span>',
+hero_sub:"Daglige matte- og leseoppdrag for barn 5\u201310 \u00e5r. Morsomt, trygt og fungerer offline.",
+features_title:"Hva gj\u00f8r Geni spesiell",
+f1_title:"Matteoppdrag",f1_desc:"Addisjon, subtraksjon, multiplikasjon \u2013 med smart vanskelighetsgrad som tilpasser seg barnet ditt.",
+f2_title:"Leseeventyr",f2_desc:"Tre lesemodi med talegjenkjenning. Barn leser h\u00f8yt og f\u00e5r tilbakemelding med en gang.",
+f3_title:"Belønninger",f3_desc:"Tjen mynter, stig i level, l\u00e5s opp merker. Streaks og boss-utfordringer holder motivasjonen oppe.",
+f4_title:"Foreldrekontroll",f4_desc:"PIN-beskyttet kontrollpanel. F\u00f8lg fremgang, administrer profiler og innstillinger.",
+f5_title:"Fungerer offline",f5_desc:"Fungerer uten internett. All data forblir p\u00e5 enheten. Ingen reklame, ingen sporing.",
+f6_title:"Flere profiler",f6_desc:"Legg til s\u00f8sken med egen fremgang, avatar og vanskelighetsgrad.",
+parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span> Bygget for foreldre som bryr seg',
+parents_desc:"Les om hvordan Geni holder barnet ditt trygt og hvorfor ingen data forlater enheten.",
+parents_btn:"Les mer for foreldre",
+cta_title:'Start eventyret i dag <span aria-hidden="true">🚀</span>'
+}
+};
+
+var lang=navigator.language.startsWith('nb')||navigator.language.startsWith('no')?'nb':'en';
+try{var p=new URLSearchParams(location.search);if(p.get('lang'))lang=p.get('lang')}catch(e){}
+
+function applyLang(l){
+lang=l;
+document.documentElement.lang=l==='nb'?'nb':'en';
+document.getElementById('langBtn').textContent=l==='nb'?'EN':'NO';
+var els=document.querySelectorAll('[data-i18n]');
+for(var i=0;i<els.length;i++){
+var k=els[i].getAttribute('data-i18n');
+if(T[l]&&T[l][k])els[i].innerHTML=T[l][k];
+}
+document.title=l==='nb'?'Geni - Morsom l\u00e6ringsapp for barn | Matte og lesing':'Geni - Fun Learning App for Kids | Math & Reading';
+var meta=document.querySelector('meta[name="description"]');
+if(meta)meta.content=l==='nb'?'Geni gj\u00f8r matte og lesing morsomt for barn 5-10 \u00e5r. Daglige oppdrag, talegjenkjenning, belønninger og foreldrekontroll.':'Geni makes math and reading fun for kids aged 5-10. Daily missions, speech recognition, rewards, and parent controls. Download free on the App Store.';
+}
+
+function toggleLang(){applyLang(lang==='en'?'nb':'en')}
+applyLang(lang);
+</script>
+
+</body>
+</html>

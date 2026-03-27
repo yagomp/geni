@@ -17,6 +17,7 @@ nonisolated struct RewardState: Codable, Sendable {
     var todayReadingCompleted: Bool
     var lastMathDate: String?
     var lastReadingDate: String?
+    var dailyCompletedAt: Date?
 
     init() {
         self.coins = 0
@@ -32,6 +33,7 @@ nonisolated struct RewardState: Codable, Sendable {
         self.totalReadingMinutes = 0
         self.todayMathCompleted = false
         self.todayReadingCompleted = false
+        self.dailyCompletedAt = nil
     }
 
     var xpForNextLevel: Int {

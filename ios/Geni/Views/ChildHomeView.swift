@@ -242,20 +242,50 @@ struct ChildHomeView: View {
 
     private var specialModesSection: some View {
         VStack(spacing: 12) {
-            if let special = viewModel.specialChapterAvailable {
+            if let special = viewModel.specialChapterAvailable, !viewModel.challengeTimeExpired {
                 specialChapterCard(type: special)
             }
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text(L.s(.extraModes))
-                    .font(.system(.caption, design: .rounded, weight: .bold))
-                    .foregroundStyle(.black)
-                    .textCase(.uppercase)
-                    .tracking(0.5)
+            if viewModel.challengeTimeExpired {
+                challengesClosedCard
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text(L.s(.extraModes))
+                            .font(.system(.caption, design: .rounded, weight: .bold))
+                            .foregroundStyle(.black)
+                            .textCase(.uppercase)
+                            .tracking(0.5)
 
-                quickChallengeCards
+                        Spacer()
+
+                        if viewModel.todayFullChapterCompleted {
+                            ChallengeCountdown(viewModel: viewModel)
+                        }
+                    }
+
+                    quickChallengeCards
+                }
             }
         }
+    }
+
+    private var challengesClosedCard: some View {
+        VStack(spacing: 12) {
+            Text("😴")
+                .font(.system(size: 48))
+
+            Text(L.s(.challengesClosed))
+                .font(.system(.title3, design: .rounded, weight: .bold))
+                .foregroundStyle(GeniColor.border)
+
+            Text(L.s(.seeYouTomorrow))
+                .font(.system(.body, design: .rounded))
+                .foregroundStyle(.black)
+        }
+        .padding(24)
+        .frame(maxWidth: .infinity)
+        .brutalistCard(color: GeniColor.card)
     }
 
     private func specialChapterCard(type: ChapterType) -> some View {
@@ -503,5 +533,41 @@ struct QuickChallengeCard: View {
             .padding(.horizontal, 8)
             .brutalistCard(color: GeniColor.card, borderWidth: 3)
         }
+    }
+}
+
+struct ChallengeCountdown: View {
+    let viewModel: AppViewModel
+    @State private var secondsLeft: Int = 0
+    @State private var timer: Timer?
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Text("⏳")
+                .font(.system(size: 14))
+            Text(timeString)
+                .font(.system(.caption, design: .rounded, weight: .bold))
+                .foregroundStyle(secondsLeft <= 60 ? GeniColor.pink : GeniColor.green)
+                .monospacedDigit()
+        }
+        .onAppear {
+            secondsLeft = viewModel.challengeSecondsRemaining()
+            timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                let remaining = viewModel.challengeSecondsRemaining()
+                if remaining != secondsLeft {
+                    secondsLeft = remaining
+                }
+            }
+        }
+        .onDisappear {
+            timer?.invalidate()
+            timer = nil
+        }
+    }
+
+    private var timeString: String {
+        let mins = secondsLeft / 60
+        let secs = secondsLeft % 60
+        return String(format: "%d:%02d", mins, secs)
     }
 }

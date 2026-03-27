@@ -35,6 +35,8 @@ class AppViewModel {
     var pendingBadges: [Badge] = []
     var isPremium: Bool = false
 
+    static let challengeWindowSeconds: TimeInterval = 10 * 60
+
     var completedReadingSession: ReadingSession?
     var readingBonusAwarded: Bool = false
     var readingBonusCoins: Int = 0
@@ -108,6 +110,10 @@ class AppViewModel {
         guard let profile = persistence.activeProfile else { return }
         let today = persistence.todayString()
 
+        if type != .daily && challengeTimeExpired {
+            return
+        }
+
         if type == .daily {
             if let existing = persistence.todayChapter(for: profile.id), existing.status == .inProgress {
                 chapterViewModel = ChapterViewModel(
@@ -169,6 +175,9 @@ class AppViewModel {
         if final.chapterType == .daily {
             rewardState.todayMathCompleted = true
             rewardState.lastMathDate = persistence.todayString()
+            if rewardState.todayReadingCompleted {
+                rewardState.dailyCompletedAt = Date()
+            }
         }
 
         var xpGain = 100
@@ -248,6 +257,9 @@ class AppViewModel {
         rewardState.totalReadingMinutes += max(1, final.readingTimeSeconds / 60)
         rewardState.todayReadingCompleted = true
         rewardState.lastReadingDate = persistence.todayString()
+        if rewardState.todayMathCompleted {
+            rewardState.dailyCompletedAt = Date()
+        }
 
         var xpGain = 50
         rewardState.addXP(xpGain)
@@ -413,6 +425,17 @@ class AppViewModel {
         return profile.ageGroup != .young
     }
 
+    var challengeTimeExpired: Bool {
+        guard let completedAt = rewardState.dailyCompletedAt else { return false }
+        return Date().timeIntervalSince(completedAt) >= Self.challengeWindowSeconds
+    }
+
+    func challengeSecondsRemaining() -> Int {
+        guard let completedAt = rewardState.dailyCompletedAt else { return Int(Self.challengeWindowSeconds) }
+        let elapsed = Date().timeIntervalSince(completedAt)
+        return max(0, Int(Self.challengeWindowSeconds - elapsed))
+    }
+
     private func loadRewards(for childId: String) {
         rewardState = persistence.loadRewardState(for: childId)
     }
@@ -421,9 +444,11 @@ class AppViewModel {
         let today = persistence.todayString()
         if rewardState.lastMathDate != today {
             rewardState.todayMathCompleted = false
+            rewardState.dailyCompletedAt = nil
         }
         if rewardState.lastReadingDate != today {
             rewardState.todayReadingCompleted = false
+            rewardState.dailyCompletedAt = nil
         }
         if let profile = persistence.activeProfile {
             if persistence.todayChapter(for: profile.id)?.status == .completed {

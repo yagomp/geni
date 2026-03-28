@@ -99,6 +99,11 @@ class AppViewModel {
         cloudSync.pushToCloud(persistence: persistence)
     }
 
+    var mistakeExercises: [ExerciseResult] {
+        guard let profile = persistence.activeProfile else { return [] }
+        return persistence.recentMistakes(for: profile.id)
+    }
+
     func selectProfile(_ profile: ChildProfile) {
         // Save current profile's rewards before switching
         if let currentId = persistence.activeProfileId {
@@ -261,6 +266,7 @@ class AppViewModel {
         rewardState.totalReadingMinutes += max(1, final.readingTimeSeconds / 60)
         rewardState.todayReadingCompleted = true
         rewardState.lastReadingDate = persistence.todayString()
+        rewardState.completedDates.insert(persistence.todayString())
         if rewardState.todayMathCompleted {
             rewardState.dailyCompletedAt = Date()
         }

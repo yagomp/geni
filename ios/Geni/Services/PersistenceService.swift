@@ -231,6 +231,69 @@ class PersistenceService {
         }
     }
 
+    func recentMistakes(for childId: String, days: Int = 7) -> [ExerciseResult] {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "yyyy-MM-dd"
+        let cutoff = Calendar.current.date(byAdding: .day, value: -days, to: Date())!
+        let cutoffStr = fmt.string(from: cutoff)
+
+        return loadAllChapters(for: childId)
+            .filter { $0.status == .completed && $0.date >= cutoffStr }
+            .flatMap { $0.exerciseResults }
+            .filter { !$0.firstAttemptCorrect }
+    }
+
+    func weeklyStats(for childId: String, profileName: String) -> WeeklyReport {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "yyyy-MM-dd"
+        let now = Date()
+        let weekStart = Calendar.current.date(byAdding: .day, value: -6, to: now)!
+        let cutoffStr = fmt.string(from: weekStart)
+
+        let chapters = loadAllChapters(for: childId)
+            .filter { $0.status == .completed && $0.date >= cutoffStr }
+        let activeDays = Set(chapters.map { $0.date }).count
+        let allResults = chapters.flatMap { $0.exerciseResults }
+        let correct = allResults.filter { $0.wasCorrect }.count
+        let total = allResults.count
+        let accuracy = total > 0 ? (correct * 100) / total : 0
+
+        var opCorrect: [MathOperation: Int] = [:]
+        var opTotal: [MathOperation: Int] = [:]
+        for r in allResults {
+            opTotal[r.operationType, default: 0] += 1
+            if r.wasCorrect { opCorrect[r.operationType, default: 0] += 1 }
+        }
+        let strong = opTotal.compactMap { op, t -> MathOperation? in
+            let pct = t > 0 ? (opCorrect[op, default: 0] * 100) / t : 0
+            return t >= 5 && pct >= 85 ? op : nil
+        }
+        let weak = opTotal.compactMap { op, t -> MathOperation? in
+            let pct = t > 0 ? (opCorrect[op, default: 0] * 100) / t : 0
+            return t >= 5 && pct < 70 ? op : nil
+        }
+
+        let readings = loadAllReadingSessions(for: childId)
+            .filter { $0.isCompleted && $0.date >= cutoffStr }
+
+        let rewards = loadRewardState(for: childId)
+
+        return WeeklyReport(
+            childId: childId,
+            childName: profileName,
+            weekStartDate: cutoffStr,
+            daysActive: activeDays,
+            totalExercises: total,
+            correctCount: correct,
+            accuracy: accuracy,
+            streakStatus: rewards.streakCount,
+            strongOperations: strong,
+            weakOperations: weak,
+            chaptersCompleted: chapters.count,
+            readingSessions: readings.count
+        )
+    }
+
     private func persistProfiles() {
         if let data = try? encoder.encode(profiles) {
             defaults.set(data, forKey: profilesKey)

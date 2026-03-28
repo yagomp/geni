@@ -125,6 +125,7 @@ struct ParentDashboardView: View {
                     profilesSection
                     languageSection
                     progressOverviewSection
+                    weeklyReportSection
                     reminderSection
                     iCloudSyncSection
                     pinSection
@@ -444,6 +445,126 @@ struct ParentDashboardView: View {
             return display.string(from: date)
         }
         return dateStr
+    }
+
+    private var weeklyReportSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L.s(.weeklySummary))
+                .font(.system(.headline, design: .rounded, weight: .bold))
+
+            ForEach(viewModel.persistence.profiles) { profile in
+                let report = viewModel.persistence.weeklyStats(for: profile.id, profileName: profile.nickname)
+                VStack(alignment: .leading, spacing: 10) {
+                    // Profile header
+                    HStack(spacing: 8) {
+                        let avatar = AvatarOption.all.first { $0.id == profile.avatarId }
+                        Text(avatar?.emoji ?? "🧒")
+                            .font(.system(size: iPadScale.isIPad ? 24 : 20))
+                        Text(profile.nickname)
+                            .font(.system(size: iPadScale.isIPad ? 18 : 15, weight: .bold, design: .rounded))
+                        Spacer()
+                    }
+
+                    // Activity dots (7 days)
+                    HStack(spacing: 6) {
+                        ForEach(0..<7, id: \.self) { i in
+                            let active = i < report.daysActive
+                            Rectangle()
+                                .fill(active ? GeniColor.green : GeniColor.lightGray)
+                                .frame(width: iPadScale.isIPad ? 28 : 22, height: iPadScale.isIPad ? 28 : 22)
+                                .overlay(
+                                    Rectangle()
+                                        .stroke(GeniColor.border, lineWidth: 1)
+                                )
+                        }
+                        Spacer()
+                        Text("\(report.daysActive)/7")
+                            .font(.system(size: iPadScale.isIPad ? 16 : 13, weight: .bold, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    // Stats row
+                    HStack(spacing: iPadScale.isIPad ? 20 : 12) {
+                        weeklyStatItem(
+                            value: "\(report.totalExercises)",
+                            label: L.s(.exercisesDone)
+                        )
+                        weeklyStatItem(
+                            value: "\(report.accuracy)%",
+                            label: L.s(.accuracy),
+                            color: report.accuracy >= 80 ? GeniColor.green : report.accuracy >= 60 ? GeniColor.orange : GeniColor.pink
+                        )
+                        weeklyStatItem(
+                            value: "🔥 \(report.streakStatus)",
+                            label: L.s(.streak)
+                        )
+                    }
+
+                    // Strong/weak operations
+                    if !report.strongOperations.isEmpty {
+                        HStack(spacing: 4) {
+                            Text(L.s(.strongIn) + ":")
+                                .font(.system(size: iPadScale.isIPad ? 14 : 12, weight: .bold, design: .rounded))
+                                .foregroundStyle(GeniColor.green)
+                            Text(report.strongOperations.map { $0.emoji }.joined(separator: " "))
+                                .font(.system(size: iPadScale.isIPad ? 16 : 14))
+                        }
+                    }
+                    if !report.weakOperations.isEmpty {
+                        HStack(spacing: 4) {
+                            Text(L.s(.needsPractice) + ":")
+                                .font(.system(size: iPadScale.isIPad ? 14 : 12, weight: .bold, design: .rounded))
+                                .foregroundStyle(GeniColor.orange)
+                            Text(report.weakOperations.map { $0.emoji }.joined(separator: " "))
+                                .font(.system(size: iPadScale.isIPad ? 16 : 14))
+                        }
+                    }
+                }
+                .padding(iPadScale.isIPad ? 16 : 12)
+                .brutalistCard()
+            }
+
+            // Weekly notification toggle
+            HStack {
+                Text("📊")
+                    .font(.system(size: 22))
+                    .frame(width: 40)
+
+                Text(L.s(.enableWeeklyReport))
+                    .font(.system(.body, design: .rounded))
+
+                Spacer()
+
+                Toggle("", isOn: Binding(
+                    get: { viewModel.notificationService.weeklyReportEnabled },
+                    set: { enabled in
+                        if enabled {
+                            viewModel.notificationService.enableWeeklyReport(
+                                profiles: viewModel.persistence.profiles,
+                                persistence: viewModel.persistence
+                            )
+                        } else {
+                            viewModel.notificationService.disableWeeklyReport()
+                        }
+                    }
+                ))
+                .tint(GeniColor.blue)
+            }
+            .padding(iPadScale.isIPad ? 16 : 12)
+            .brutalistCard()
+        }
+    }
+
+    private func weeklyStatItem(value: String, label: String, color: Color = .primary) -> some View {
+        VStack(spacing: 2) {
+            Text(value)
+                .font(.system(size: iPadScale.isIPad ? 20 : 16, weight: .black, design: .rounded))
+                .foregroundStyle(color)
+            Text(label)
+                .font(.system(size: iPadScale.isIPad ? 12 : 10, weight: .medium, design: .rounded))
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private var reminderSection: some View {

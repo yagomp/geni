@@ -82,7 +82,9 @@ class ChapterViewModel {
                 exercise: exercise,
                 firstCorrect: attempts == 1,
                 secondCorrect: attempts == 2 ? true : nil,
-                attempts: attempts
+                attempts: attempts,
+                userAnswer: answer,
+                correctAnswer: actualCorrectAnswer
             )
             chapter.exerciseResults.append(result)
             persistence.saveChapterProgress(chapter)
@@ -100,7 +102,9 @@ class ChapterViewModel {
                 exercise: exercise,
                 firstCorrect: false,
                 secondCorrect: false,
-                attempts: attempts
+                attempts: attempts,
+                userAnswer: answer,
+                correctAnswer: actualCorrectAnswer
             )
             chapter.exerciseResults.append(result)
             persistence.saveChapterProgress(chapter)

@@ -179,8 +179,11 @@ nonisolated struct ExerciseResult: Codable, Identifiable, Sendable {
     var secondAttemptCorrect: Bool?
     var attemptsUsed: Int
     let answeredAt: Date
+    let correctAnswer: Int
+    let userAnswer: Int?
+    let format: ExerciseFormat
 
-    init(chapterId: String, exercise: Exercise, firstCorrect: Bool, secondCorrect: Bool?, attempts: Int) {
+    init(chapterId: String, exercise: Exercise, firstCorrect: Bool, secondCorrect: Bool?, attempts: Int, userAnswer: Int?, correctAnswer: Int) {
         self.id = UUID().uuidString
         self.chapterId = chapterId
         self.prompt = exercise.prompt
@@ -190,6 +193,25 @@ nonisolated struct ExerciseResult: Codable, Identifiable, Sendable {
         self.secondAttemptCorrect = secondCorrect
         self.attemptsUsed = attempts
         self.answeredAt = Date()
+        self.correctAnswer = correctAnswer
+        self.userAnswer = userAnswer
+        self.format = exercise.format
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(String.self, forKey: .id)
+        chapterId = try container.decode(String.self, forKey: .chapterId)
+        prompt = try container.decode(String.self, forKey: .prompt)
+        operationType = try container.decode(MathOperation.self, forKey: .operationType)
+        difficulty = try container.decode(ExerciseDifficulty.self, forKey: .difficulty)
+        firstAttemptCorrect = try container.decode(Bool.self, forKey: .firstAttemptCorrect)
+        secondAttemptCorrect = try container.decodeIfPresent(Bool.self, forKey: .secondAttemptCorrect)
+        attemptsUsed = try container.decode(Int.self, forKey: .attemptsUsed)
+        answeredAt = try container.decode(Date.self, forKey: .answeredAt)
+        correctAnswer = (try? container.decode(Int.self, forKey: .correctAnswer)) ?? 0
+        userAnswer = try? container.decode(Int.self, forKey: .userAnswer)
+        format = (try? container.decode(ExerciseFormat.self, forKey: .format)) ?? .solveResult
     }
 
     var wasCorrect: Bool {

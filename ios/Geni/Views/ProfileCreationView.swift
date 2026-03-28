@@ -5,6 +5,10 @@ struct ProfileCreationView: View {
     var editingProfile: ChildProfile? = nil
     var onBack: (() -> Void)? = nil
 
+    private var bgColor: Color {
+        editingProfile != nil ? GeniColor.background : GeniColor.yellow
+    }
+
     @State private var nickname: String = ""
     @State private var age: Int = 6
     @State private var selectedAvatar: String = "lion"
@@ -14,7 +18,7 @@ struct ProfileCreationView: View {
 
     var body: some View {
         ZStack {
-            GeniColor.yellow.ignoresSafeArea()
+            bgColor.ignoresSafeArea()
 
             VStack(spacing: 0) {
                     HStack {

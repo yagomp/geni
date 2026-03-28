@@ -9,20 +9,25 @@ struct ChildHomeView: View {
         let avatar = AvatarOption.find(profile?.avatarId ?? "lion")
         let rewards = viewModel.rewardState
 
-        ZStack {
-            GeniColor.lightYellow.ignoresSafeArea()
+        GeometryReader { geo in
+            ZStack {
+                GeniColor.lightYellow.ignoresSafeArea()
 
-            ScrollView {
-                VStack(spacing: iPadScale.isIPad ? 32 : 20) {
+                VStack(spacing: 0) {
                     headerSection(profile: profile, avatar: avatar, rewards: rewards)
+                    Spacer()
                     statsRow(rewards: rewards)
+                    Spacer()
                     missionCard
+                    Spacer()
                     specialModesSection
+                    Spacer()
                     progressMapSection
+                    Spacer().frame(height: iPadScale.isIPad ? 20 : 12)
                 }
                 .padding(.horizontal, iPadScale.padding)
                 .padding(.top, iPadScale.isIPad ? 20 : 8)
-                .padding(.bottom, iPadScale.largePadding)
+                .padding(.bottom, geo.safeAreaInsets.bottom > 0 ? 0 : 12)
                 .foregroundStyle(.black)
             }
         }

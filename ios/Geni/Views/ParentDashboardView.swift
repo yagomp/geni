@@ -134,17 +134,21 @@ struct ParentDashboardView: View {
             }
         }
         .navigationBarHidden(true)
-        .sheet(isPresented: $showProfileCreation) {
-            ProfileCreationView { profile in
+        .fullScreenCover(isPresented: $showProfileCreation) {
+            ProfileCreationView(onComplete: { profile in
                 viewModel.persistence.saveProfile(profile)
                 showProfileCreation = false
-            }
+            }, onBack: {
+                showProfileCreation = false
+            })
         }
-        .sheet(item: $editingProfile) { profile in
+        .fullScreenCover(item: $editingProfile) { profile in
             ProfileCreationView(onComplete: { updated in
                 viewModel.persistence.saveProfile(updated)
                 editingProfile = nil
-            }, editingProfile: profile)
+            }, editingProfile: profile, onBack: {
+                editingProfile = nil
+            })
         }
     }
 

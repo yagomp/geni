@@ -44,10 +44,14 @@ struct AvatarPickerSheet: View {
                 .foregroundStyle(.black)
             }
             .background(GeniColor.lightYellow.ignoresSafeArea())
-            .navigationTitle(L.s(.chooseAvatar))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+            .safeAreaInset(edge: .top) {
+                HStack {
+                    Text(L.s(.chooseAvatar))
+                        .font(.system(.title3, design: .rounded, weight: .black))
+                        .foregroundStyle(.black)
+
+                    Spacer()
+
                     Button {
                         dismiss()
                     } label: {
@@ -55,6 +59,9 @@ struct AvatarPickerSheet: View {
                             .font(.system(size: 20))
                     }
                 }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(GeniColor.lightYellow)
             }
         }
         .presentationDetents([.medium])

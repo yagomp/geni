@@ -3,6 +3,11 @@ import SwiftUI
 struct ChildHomeView: View {
     let viewModel: AppViewModel
     @State private var showAvatarPicker = false
+    @State private var showProfileSwitcher = false
+
+    private var hasMultipleProfiles: Bool {
+        viewModel.persistence.profiles.count > 1
+    }
 
     var body: some View {
         let profile = viewModel.persistence.activeProfile
@@ -34,38 +39,69 @@ struct ChildHomeView: View {
         .sheet(isPresented: $showAvatarPicker) {
             AvatarPickerSheet(viewModel: viewModel)
         }
+        .sheet(isPresented: $showProfileSwitcher) {
+            ProfileSwitcherSheet(
+                profiles: viewModel.persistence.profiles,
+                activeProfileId: viewModel.persistence.activeProfileId,
+                onSelect: { profile in
+                    showProfileSwitcher = false
+                    if profile.id != viewModel.persistence.activeProfileId {
+                        viewModel.selectProfile(profile)
+                    }
+                }
+            )
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
+        }
     }
 
     private func headerSection(profile: ChildProfile?, avatar: AvatarOption, rewards: RewardState) -> some View {
         HStack(spacing: 16) {
             Button {
                 HapticManager.selection()
-                showAvatarPicker = true
+                if hasMultipleProfiles {
+                    showProfileSwitcher = true
+                } else {
+                    showAvatarPicker = true
+                }
             } label: {
-                Text(avatar.emoji)
-                    .font(.system(size: 28))
-                    .frame(width: 56, height: 56)
-                    .background(.white)
-                    .overlay(
-                        Rectangle()
-                            .stroke(GeniColor.border, lineWidth: 3)
-                    )
-                    .background(
-                        Rectangle()
-                            .fill(GeniColor.border)
-                            .offset(x: 3, y: 3)
-                    )
-            }
+                HStack(spacing: 12) {
+                    ZStack(alignment: .bottomTrailing) {
+                        Text(avatar.emoji)
+                            .font(.system(size: 28))
+                            .frame(width: 56, height: 56)
+                            .background(.white)
+                            .overlay(
+                                Rectangle()
+                                    .stroke(GeniColor.border, lineWidth: 3)
+                            )
+                            .background(
+                                Rectangle()
+                                    .fill(GeniColor.border)
+                                    .offset(x: 3, y: 3)
+                            )
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(profile?.nickname ?? "")
-                    .font(.system(.title2, design: .rounded, weight: .black))
-                    .foregroundStyle(GeniColor.border)
+                        if hasMultipleProfiles {
+                            Text("🔄")
+                                .font(.system(size: 12))
+                                .frame(width: 20, height: 20)
+                                .background(GeniColor.blue)
+                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 1.5))
+                                .offset(x: 4, y: 4)
+                        }
+                    }
 
-                HStack(spacing: 4) {
-                    Text("\(L.s(.level)) \(rewards.level)")
-                        .font(.system(.subheadline, design: .rounded, weight: .bold))
-                        .foregroundStyle(.black)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(profile?.nickname ?? "")
+                            .font(.system(.title2, design: .rounded, weight: .black))
+                            .foregroundStyle(GeniColor.border)
+
+                        HStack(spacing: 4) {
+                            Text("\(L.s(.level)) \(rewards.level)")
+                                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                                .foregroundStyle(.black)
+                        }
+                    }
                 }
             }
 
@@ -574,5 +610,72 @@ struct ChallengeCountdown: View {
         let mins = secondsLeft / 60
         let secs = secondsLeft % 60
         return String(format: "%d:%02d", mins, secs)
+    }
+}
+
+struct ProfileSwitcherSheet: View {
+    let profiles: [ChildProfile]
+    let activeProfileId: String?
+    let onSelect: (ChildProfile) -> Void
+
+    var body: some View {
+        ZStack {
+            GeniColor.background.ignoresSafeArea()
+
+            VStack(spacing: 24) {
+                Text(L.s(.whosPlaying))
+                    .font(.system(.title, design: .rounded, weight: .black))
+                    .foregroundStyle(GeniColor.border)
+                    .padding(.top, 8)
+
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 20)], spacing: 20) {
+                    ForEach(profiles) { profile in
+                        let avatar = AvatarOption.find(profile.avatarId)
+                        let isActive = profile.id == activeProfileId
+
+                        Button {
+                            HapticManager.impact(.medium)
+                            onSelect(profile)
+                        } label: {
+                            VStack(spacing: 12) {
+                                Text(avatar.emoji)
+                                    .font(.system(size: 44))
+                                    .frame(width: 88, height: 88)
+                                    .background(isActive ? GeniColor.blue.opacity(0.15) : .white)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(isActive ? GeniColor.blue : GeniColor.border, lineWidth: isActive ? 4 : 3)
+                                    )
+                                    .background(
+                                        Rectangle()
+                                            .fill(isActive ? GeniColor.blue : GeniColor.border)
+                                            .offset(x: 4, y: 4)
+                                    )
+
+                                Text(profile.nickname)
+                                    .font(.system(.title3, design: .rounded, weight: .black))
+                                    .foregroundStyle(GeniColor.border)
+
+                                if isActive {
+                                    Text("✓")
+                                        .font(.system(.caption, design: .rounded, weight: .bold))
+                                        .foregroundStyle(GeniColor.blue)
+                                } else {
+                                    Text("\(profile.age) \(L.s(.age).lowercased())")
+                                        .font(.system(.caption, design: .rounded, weight: .medium))
+                                        .foregroundStyle(.black)
+                                }
+                            }
+                            .padding(16)
+                            .frame(maxWidth: .infinity)
+                            .brutalistCard(color: isActive ? GeniColor.blue.opacity(0.08) : GeniColor.card)
+                        }
+                    }
+                }
+                .padding(.horizontal, 24)
+
+                Spacer()
+            }
+        }
     }
 }

@@ -100,6 +100,10 @@ class AppViewModel {
     }
 
     func selectProfile(_ profile: ChildProfile) {
+        // Save current profile's rewards before switching
+        if let currentId = persistence.activeProfileId {
+            persistence.saveRewardState(rewardState, for: currentId)
+        }
         persistence.setActiveProfile(profile.id)
         loadRewards(for: profile.id)
         refreshTodayStatus()

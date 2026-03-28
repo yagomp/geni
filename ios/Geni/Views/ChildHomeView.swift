@@ -109,13 +109,17 @@ struct ChildHomeView: View {
                     }
 
                     if hasMultipleProfiles {
-                        Text(L.s(.changeProfile))
-                            .font(.system(.caption, design: .rounded, weight: .bold))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(GeniColor.blue)
-                            .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                        HStack(spacing: 4) {
+                            Text("🔄")
+                                .font(.system(size: 12))
+                            Text(L.s(.changeProfile))
+                                .font(.system(.caption, design: .rounded, weight: .bold))
+                                .foregroundStyle(GeniColor.border)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
+                        .background(.white)
+                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
                     }
                 }
             }

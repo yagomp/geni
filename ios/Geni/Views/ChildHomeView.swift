@@ -4,6 +4,7 @@ struct ChildHomeView: View {
     let viewModel: AppViewModel
     @State private var showAvatarPicker = false
     @State private var showProfileSwitcher = false
+    @State private var showProfileCreation = false
 
     private var hasMultipleProfiles: Bool {
         viewModel.persistence.profiles.count > 1
@@ -48,10 +49,25 @@ struct ChildHomeView: View {
                     if profile.id != viewModel.persistence.activeProfileId {
                         viewModel.selectProfile(profile)
                     }
+                },
+                onAddProfile: {
+                    showProfileSwitcher = false
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        showProfileCreation = true
+                    }
                 }
             )
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
+        }
+        .fullScreenCover(isPresented: $showProfileCreation) {
+            ProfileCreationView(onComplete: { profile in
+                viewModel.persistence.saveProfile(profile)
+                viewModel.selectProfile(profile)
+                showProfileCreation = false
+            }, onBack: {
+                showProfileCreation = false
+            })
         }
     }
 
@@ -66,30 +82,19 @@ struct ChildHomeView: View {
                 }
             } label: {
                 HStack(spacing: 12) {
-                    ZStack(alignment: .bottomTrailing) {
-                        Text(avatar.emoji)
-                            .font(.system(size: 28))
-                            .frame(width: 56, height: 56)
-                            .background(.white)
-                            .overlay(
-                                Rectangle()
-                                    .stroke(GeniColor.border, lineWidth: 3)
-                            )
-                            .background(
-                                Rectangle()
-                                    .fill(GeniColor.border)
-                                    .offset(x: 3, y: 3)
-                            )
-
-                        if hasMultipleProfiles {
-                            Text("🔄")
-                                .font(.system(size: 12))
-                                .frame(width: 20, height: 20)
-                                .background(GeniColor.blue)
-                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 1.5))
-                                .offset(x: 4, y: 4)
-                        }
-                    }
+                    Text(avatar.emoji)
+                        .font(.system(size: 28))
+                        .frame(width: 56, height: 56)
+                        .background(.white)
+                        .overlay(
+                            Rectangle()
+                                .stroke(GeniColor.border, lineWidth: 3)
+                        )
+                        .background(
+                            Rectangle()
+                                .fill(GeniColor.border)
+                                .offset(x: 3, y: 3)
+                        )
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(profile?.nickname ?? "")
@@ -101,6 +106,16 @@ struct ChildHomeView: View {
                                 .font(.system(.subheadline, design: .rounded, weight: .bold))
                                 .foregroundStyle(.black)
                         }
+                    }
+
+                    if hasMultipleProfiles {
+                        Text(L.s(.changeProfile))
+                            .font(.system(.caption, design: .rounded, weight: .bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(GeniColor.blue)
+                            .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
                     }
                 }
             }
@@ -617,6 +632,7 @@ struct ProfileSwitcherSheet: View {
     let profiles: [ChildProfile]
     let activeProfileId: String?
     let onSelect: (ChildProfile) -> Void
+    let onAddProfile: () -> Void
 
     var body: some View {
         ZStack {
@@ -628,7 +644,7 @@ struct ProfileSwitcherSheet: View {
                     .foregroundStyle(GeniColor.border)
                     .padding(.top, 8)
 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 20)], spacing: 20) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: 16)], spacing: 16) {
                     ForEach(profiles) { profile in
                         let avatar = AvatarOption.find(profile.avatarId)
                         let isActive = profile.id == activeProfileId
@@ -637,39 +653,62 @@ struct ProfileSwitcherSheet: View {
                             HapticManager.impact(.medium)
                             onSelect(profile)
                         } label: {
-                            VStack(spacing: 12) {
+                            VStack(spacing: 8) {
                                 Text(avatar.emoji)
-                                    .font(.system(size: 44))
-                                    .frame(width: 88, height: 88)
-                                    .background(isActive ? GeniColor.blue.opacity(0.15) : .white)
-                                    .overlay(
-                                        Rectangle()
-                                            .stroke(isActive ? GeniColor.blue : GeniColor.border, lineWidth: isActive ? 4 : 3)
-                                    )
-                                    .background(
-                                        Rectangle()
-                                            .fill(isActive ? GeniColor.blue : GeniColor.border)
-                                            .offset(x: 4, y: 4)
-                                    )
+                                    .font(.system(size: 36))
 
                                 Text(profile.nickname)
-                                    .font(.system(.title3, design: .rounded, weight: .black))
+                                    .font(.system(.subheadline, design: .rounded, weight: .black))
                                     .foregroundStyle(GeniColor.border)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
 
                                 if isActive {
-                                    Text("✓")
-                                        .font(.system(.caption, design: .rounded, weight: .bold))
-                                        .foregroundStyle(GeniColor.blue)
-                                } else {
-                                    Text("\(profile.age) \(L.s(.age).lowercased())")
-                                        .font(.system(.caption, design: .rounded, weight: .medium))
-                                        .foregroundStyle(.black)
+                                    Text("✅")
+                                        .font(.system(size: 14))
                                 }
                             }
-                            .padding(16)
+                            .padding(.vertical, 14)
+                            .padding(.horizontal, 8)
                             .frame(maxWidth: .infinity)
-                            .brutalistCard(color: isActive ? GeniColor.blue.opacity(0.08) : GeniColor.card)
+                            .background(GeniColor.card)
+                            .overlay(
+                                Rectangle()
+                                    .stroke(isActive ? GeniColor.green : GeniColor.border, lineWidth: isActive ? 4 : 3)
+                            )
+                            .background(
+                                Rectangle()
+                                    .fill(isActive ? GeniColor.green : GeniColor.border)
+                                    .offset(x: 3, y: 3)
+                            )
                         }
+                    }
+
+                    Button {
+                        HapticManager.impact(.medium)
+                        onAddProfile()
+                    } label: {
+                        VStack(spacing: 8) {
+                            Text("➕")
+                                .font(.system(size: 36))
+
+                            Text(L.s(.add))
+                                .font(.system(.subheadline, design: .rounded, weight: .black))
+                                .foregroundStyle(GeniColor.border)
+                        }
+                        .padding(.vertical, 14)
+                        .padding(.horizontal, 8)
+                        .frame(maxWidth: .infinity)
+                        .background(GeniColor.card)
+                        .overlay(
+                            Rectangle()
+                                .stroke(GeniColor.border, lineWidth: 3)
+                        )
+                        .background(
+                            Rectangle()
+                                .fill(GeniColor.border)
+                                .offset(x: 3, y: 3)
+                        )
                     }
                 }
                 .padding(.horizontal, 24)

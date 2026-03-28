@@ -197,6 +197,8 @@ nonisolated enum LocaleKey: String, Sendable {
     case challengeTimeLeft
     case challengesClosed
     case seeYouTomorrow
+    case changeProfile
+    case add
 }
 
 nonisolated enum AppLanguage: String, Sendable, CaseIterable {
@@ -471,6 +473,8 @@ nonisolated enum L {
         case .challengeTimeLeft: return "Time left to play"
         case .challengesClosed: return "Challenges closed!"
         case .seeYouTomorrow: return "See you tomorrow"
+        case .changeProfile: return "Change"
+        case .add: return "Add"
         }
     }
 
@@ -672,6 +676,8 @@ nonisolated enum L {
         case .challengeTimeLeft: return "Tid igjen \u{00E5} spille"
         case .challengesClosed: return "Utfordringer stengt!"
         case .seeYouTomorrow: return "Vi ses i morgen"
+        case .changeProfile: return "Bytt"
+        case .add: return "Legg til"
         }
     }
 }

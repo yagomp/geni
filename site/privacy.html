@@ -51,9 +51,14 @@ nav .container{display:flex;align-items:center;justify-content:space-between}
 .nav-links{display:flex;gap:16px;align-items:center;font-weight:800;font-size:0.9rem}
 .nav-links a{color:#000;text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid transparent;padding-bottom:2px}
 .nav-links a:hover{border-bottom-color:#000;text-decoration:none}
-.lang-btn{background:none;border:none;padding:6px 4px;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:0.5px;color:#000}
+.lang-dropdown{position:relative}
+.lang-btn{background:none;border:none;border-bottom:3px solid transparent;padding:6px 4px 2px;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:0.5px;color:#000}
 .lang-btn:hover{opacity:0.7}
 .lang-btn:active{opacity:0.5}
+.lang-menu{display:none;position:absolute;right:0;top:100%;margin-top:6px;background:var(--card);border:3px solid var(--border);box-shadow:var(--shadow-sm);min-width:120px;z-index:20}
+.lang-dropdown:hover .lang-menu{display:block}
+.lang-menu button{display:block;width:100%;background:none;border:none;padding:8px 12px;font-weight:800;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-align:left;color:#000}
+.lang-menu button:hover{background:var(--yellow)}
 
 /* CONTENT */
 .content{padding:48px 0 60px}
@@ -73,7 +78,7 @@ footer a{color:#fff;font-weight:700;text-decoration:underline}
 footer a:hover{color:#FFE566}
 .footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px}
 
-@media(max-width:600px){.content-card{padding:24px 16px}footer .container{flex-direction:column;text-align:center}.nav-links{gap:10px;font-size:0.8rem}.nav-logo-text{display:none}}
+@media(max-width:600px){.content-card{padding:24px 16px}footer .container{flex-direction:column;text-align:center}.nav-links{gap:10px;font-size:0.8rem;flex:1;justify-content:center}.nav-logo-text{display:none}}
 </style>
 </head>
 <body>
@@ -84,7 +89,13 @@ footer a:hover{color:#FFE566}
 <div class="nav-links">
 <a href="parents.html" data-i18n="nav_parents">For Parents</a>
 <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
-<button class="lang-btn" onclick="toggleLang()" id="langBtn" type="button"><span aria-hidden="true">🇳🇴</span> NO</button>
+<div class="lang-dropdown">
+<button class="lang-btn" id="langBtn" type="button"><span aria-hidden="true">🇳🇴</span> NO</button>
+<div class="lang-menu" id="langMenu">
+<button onclick="applyLang('en')"><span aria-hidden="true">🇬🇧</span> English</button>
+<button onclick="applyLang('nb')"><span aria-hidden="true">🇳🇴</span> Norsk</button>
+</div>
+</div>
 </div>
 </div>
 </nav>

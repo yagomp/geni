@@ -55,7 +55,8 @@ nav .container{display:flex;align-items:center;justify-content:space-between}
 .lang-btn{background:none;border:none;border-bottom:3px solid transparent;padding:6px 4px 2px;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:0.5px;color:#000}
 .lang-btn:hover{opacity:0.7}
 .lang-btn:active{opacity:0.5}
-.lang-menu{display:none;position:absolute;right:0;top:100%;margin-top:6px;background:var(--card);border:3px solid var(--border);box-shadow:var(--shadow-sm);min-width:120px;z-index:20}
+.lang-menu{display:none;position:absolute;right:0;top:100%;padding-top:4px;min-width:120px;z-index:20}
+.lang-menu-inner{background:var(--card);border:3px solid var(--border);box-shadow:var(--shadow-sm)}
 .lang-dropdown:hover .lang-menu{display:block}
 .lang-menu button{display:block;width:100%;background:none;border:none;padding:8px 12px;font-weight:800;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-align:left;color:#000}
 .lang-menu button:hover{background:var(--yellow)}
@@ -91,10 +92,10 @@ footer a:hover{color:#FFE566}
 <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
 <div class="lang-dropdown">
 <button class="lang-btn" id="langBtn" type="button"><span aria-hidden="true">🇳🇴</span> NO</button>
-<div class="lang-menu" id="langMenu">
+<div class="lang-menu" id="langMenu"><div class="lang-menu-inner">
 <button onclick="applyLang('en')"><span aria-hidden="true">🇬🇧</span> English</button>
 <button onclick="applyLang('nb')"><span aria-hidden="true">🇳🇴</span> Norsk</button>
-</div>
+</div></div>
 </div>
 </div>
 </div>

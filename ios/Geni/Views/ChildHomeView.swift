@@ -5,8 +5,6 @@ struct ChildHomeView: View {
     @State private var showAvatarPicker = false
     @State private var showProfileSwitcher = false
     @State private var showProfileCreation = false
-    @State private var showStreakCalendar = false
-    @State private var showMistakeReview = false
 
     private var hasMultipleProfiles: Bool {
         viewModel.persistence.profiles.count > 1
@@ -27,10 +25,6 @@ struct ChildHomeView: View {
                     statsRow(rewards: rewards)
                     Spacer()
                     missionCard
-                    if !viewModel.mistakeExercises.isEmpty {
-                        Spacer()
-                        mistakeReviewCard
-                    }
                     Spacer()
                     specialModesSection
                     Spacer()
@@ -74,20 +68,6 @@ struct ChildHomeView: View {
             }, onBack: {
                 showProfileCreation = false
             })
-        }
-        .sheet(isPresented: $showStreakCalendar) {
-            StreakCalendarView(
-                streakCount: viewModel.rewardState.streakCount,
-                completedDates: viewModel.rewardState.completedDates
-            )
-            .presentationDetents([.large])
-            .presentationDragIndicator(.visible)
-        }
-        .fullScreenCover(isPresented: $showMistakeReview) {
-            MistakeReviewView(
-                mistakes: viewModel.mistakeExercises,
-                onDismiss: { showMistakeReview = false }
-            )
         }
     }
 
@@ -158,18 +138,12 @@ struct ChildHomeView: View {
 
     private func statsRow(rewards: RewardState) -> some View {
         HStack(spacing: 8) {
-            Button {
-                HapticManager.selection()
-                showStreakCalendar = true
-            } label: {
-                StatBubble(
-                    emoji: "🔥",
-                    value: "\(rewards.streakCount)",
-                    label: rewards.streakCount == 1 ? L.s(.day) : L.s(.days),
-                    color: GeniColor.orange
-                )
-            }
-            .buttonStyle(.plain)
+            StatBubble(
+                emoji: "🔥",
+                value: "\(rewards.streakCount)",
+                label: rewards.streakCount == 1 ? L.s(.day) : L.s(.days),
+                color: GeniColor.orange
+            )
 
             StatBubble(
                 emoji: "⭐",
@@ -201,35 +175,6 @@ struct ChildHomeView: View {
                 .brutalistCard(color: GeniColor.card, borderWidth: 3)
             }
         }
-    }
-
-    private var mistakeReviewCard: some View {
-        Button {
-            HapticManager.selection()
-            showMistakeReview = true
-        } label: {
-            HStack(spacing: iPadScale.isIPad ? 16 : 12) {
-                Text("🔄")
-                    .font(.system(size: iPadScale.isIPad ? 32 : 26))
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(L.s(.practiceAgain))
-                        .font(.system(size: iPadScale.isIPad ? 20 : 16, weight: .black, design: .rounded))
-                    Text("\(viewModel.mistakeExercises.count) \(L.s(.problemsToReview))")
-                        .font(.system(size: iPadScale.isIPad ? 16 : 13, weight: .medium, design: .rounded))
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
-
-                Text("→")
-                    .font(.system(size: iPadScale.isIPad ? 24 : 20, weight: .bold))
-                    .foregroundStyle(.secondary)
-            }
-            .padding(iPadScale.isIPad ? 18 : 14)
-            .brutalistCard(color: GeniColor.peach)
-        }
-        .buttonStyle(.plain)
     }
 
     private var missionCard: some View {

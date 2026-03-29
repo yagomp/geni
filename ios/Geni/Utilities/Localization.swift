@@ -199,27 +199,6 @@ nonisolated enum LocaleKey: String, Sendable {
     case seeYouTomorrow
     case changeProfile
     case add
-    // Streak calendar
-    case yourStreak
-    case dayStreak
-    case daysStreak
-    case streakMilestone
-    case streakCalendarTitle
-    // Mistake review
-    case practiceAgain
-    case problemsToReview
-    case noMistakes
-    case allReviewed
-    case reviewComplete
-    // Weekly report
-    case weeklySummary
-    case daysActiveOf7
-    case exercisesDone
-    case strongIn
-    case needsPractice
-    case weeklyReport
-    case enableWeeklyReport
-    case weeklyReportBody
 }
 
 nonisolated enum AppLanguage: String, Sendable, CaseIterable {
@@ -496,27 +475,6 @@ nonisolated enum L {
         case .seeYouTomorrow: return "See you tomorrow"
         case .changeProfile: return "Change"
         case .add: return "Add"
-        // Streak calendar
-        case .yourStreak: return "Your streak"
-        case .dayStreak: return "day streak"
-        case .daysStreak: return "day streak"
-        case .streakMilestone: return "Milestone"
-        case .streakCalendarTitle: return "Streak calendar"
-        // Mistake review
-        case .practiceAgain: return "Practice again"
-        case .problemsToReview: return "problems to review"
-        case .noMistakes: return "No mistakes to review"
-        case .allReviewed: return "All reviewed!"
-        case .reviewComplete: return "Great practice!"
-        // Weekly report
-        case .weeklySummary: return "Weekly summary"
-        case .daysActiveOf7: return "days active"
-        case .exercisesDone: return "exercises"
-        case .strongIn: return "Strong in"
-        case .needsPractice: return "Needs practice"
-        case .weeklyReport: return "Weekly report"
-        case .enableWeeklyReport: return "Weekly progress report"
-        case .weeklyReportBody: return "Weekly learning summary"
         }
     }
 
@@ -720,27 +678,6 @@ nonisolated enum L {
         case .seeYouTomorrow: return "Vi ses i morgen"
         case .changeProfile: return "Bytt"
         case .add: return "Legg til"
-        // Streak calendar
-        case .yourStreak: return "Din rekke"
-        case .dayStreak: return "dagers rekke"
-        case .daysStreak: return "dagers rekke"
-        case .streakMilestone: return "Milep\u{00E6}l"
-        case .streakCalendarTitle: return "Rekkekalender"
-        // Mistake review
-        case .practiceAgain: return "\u{00D8}v igjen"
-        case .problemsToReview: return "oppgaver \u{00E5} \u{00F8}ve p\u{00E5}"
-        case .noMistakes: return "Ingen feil \u{00E5} \u{00F8}ve p\u{00E5}"
-        case .allReviewed: return "Alt gjennomg\u{00E5}tt!"
-        case .reviewComplete: return "Flott \u{00F8}ving!"
-        // Weekly report
-        case .weeklySummary: return "Ukesoppsummering"
-        case .daysActiveOf7: return "dager aktiv"
-        case .exercisesDone: return "oppgaver"
-        case .strongIn: return "Sterk i"
-        case .needsPractice: return "Trenger \u{00F8}ving"
-        case .weeklyReport: return "Ukesrapport"
-        case .enableWeeklyReport: return "Ukentlig fremgangsrapport"
-        case .weeklyReportBody: return "Ukentlig l\u{00E6}ringsoppsummering"
         }
     }
 }

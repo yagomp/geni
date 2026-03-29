@@ -18,7 +18,6 @@ nonisolated struct RewardState: Codable, Sendable {
     var lastMathDate: String?
     var lastReadingDate: String?
     var dailyCompletedAt: Date?
-    var completedDates: Set<String>
 
     init() {
         self.coins = 0
@@ -35,33 +34,6 @@ nonisolated struct RewardState: Codable, Sendable {
         self.todayMathCompleted = false
         self.todayReadingCompleted = false
         self.dailyCompletedAt = nil
-        self.completedDates = []
-    }
-
-    init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        coins = try container.decode(Int.self, forKey: .coins)
-        xp = try container.decode(Int.self, forKey: .xp)
-        level = try container.decode(Int.self, forKey: .level)
-        streakCount = try container.decode(Int.self, forKey: .streakCount)
-        lastPlayedDate = try container.decodeIfPresent(String.self, forKey: .lastPlayedDate)
-        streakSaveAvailable = try container.decode(Bool.self, forKey: .streakSaveAvailable)
-        badgesUnlocked = try container.decode([String].self, forKey: .badgesUnlocked)
-        cosmeticsUnlocked = try container.decode([String].self, forKey: .cosmeticsUnlocked)
-        totalChaptersCompleted = try container.decode(Int.self, forKey: .totalChaptersCompleted)
-        totalCorrectAnswers = try container.decode(Int.self, forKey: .totalCorrectAnswers)
-        totalReadingSessions = try container.decode(Int.self, forKey: .totalReadingSessions)
-        totalReadingMinutes = try container.decode(Int.self, forKey: .totalReadingMinutes)
-        todayMathCompleted = try container.decode(Bool.self, forKey: .todayMathCompleted)
-        todayReadingCompleted = try container.decode(Bool.self, forKey: .todayReadingCompleted)
-        lastMathDate = try container.decodeIfPresent(String.self, forKey: .lastMathDate)
-        lastReadingDate = try container.decodeIfPresent(String.self, forKey: .lastReadingDate)
-        dailyCompletedAt = try container.decodeIfPresent(Date.self, forKey: .dailyCompletedAt)
-        var dates = (try? container.decode(Set<String>.self, forKey: .completedDates)) ?? []
-        if dates.isEmpty, let last = lastPlayedDate {
-            dates.insert(last)
-        }
-        completedDates = dates
     }
 
     var xpForNextLevel: Int {
@@ -111,6 +83,5 @@ nonisolated struct RewardState: Codable, Sendable {
         }
 
         lastPlayedDate = dateString
-        completedDates.insert(dateString)
     }
 }

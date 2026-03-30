@@ -27,6 +27,7 @@ class AppViewModel {
     var showBadges = false
     var cloudSync: CloudSyncService
     var notificationService: NotificationService
+    var topicProgress: TopicProgress = TopicProgress()
 
     var showLevelUp = false
     var levelUpLevel: Int = 0
@@ -120,15 +121,26 @@ class AppViewModel {
 
         if type == .daily {
             if let existing = persistence.todayChapter(for: profile.id), existing.status == .inProgress {
+                let exercises: [Exercise]
+                if profile.ageGroup == .middle {
+                    exercises = ExerciseGenerator.generateTopicChapter(profile: profile, topic: topicProgress.currentTopic())
+                } else {
+                    exercises = ExerciseGenerator.generateChapter(profile: profile)
+                }
                 chapterViewModel = ChapterViewModel(
                     profile: profile,
                     chapter: existing,
-                    exercises: ExerciseGenerator.generateChapter(profile: profile),
+                    exercises: exercises,
                     startIndex: existing.exerciseResults.count
                 )
             } else if persistence.todayChapter(for: profile.id) == nil {
                 let chapter = ChapterProgress(childId: profile.id, date: today)
-                let exercises = ExerciseGenerator.generateChapter(profile: profile)
+                let exercises: [Exercise]
+                if profile.ageGroup == .middle {
+                    exercises = ExerciseGenerator.generateTopicChapter(profile: profile, topic: topicProgress.currentTopic())
+                } else {
+                    exercises = ExerciseGenerator.generateChapter(profile: profile)
+                }
                 chapterViewModel = ChapterViewModel(profile: profile, chapter: chapter, exercises: exercises)
             } else {
                 return
@@ -190,6 +202,13 @@ class AppViewModel {
         if final.chapterType != .daily { xpGain += 50 }
         rewardState.addXP(xpGain)
         rewardState.updateStreak(for: persistence.todayString())
+
+        // Track topic progress for middle age group
+        if profile.ageGroup == .middle && final.chapterType == .daily {
+            let currentTopic = topicProgress.currentTopic()
+            topicProgress.addStars(final.stars, for: currentTopic)
+            persistence.saveTopicProgress(topicProgress, for: profile.id)
+        }
 
         let newBadges = checkBadges(chapter: final)
         persistence.saveRewardState(rewardState, for: profile.id)
@@ -406,6 +425,18 @@ class AppViewModel {
         return persistence.loadAllChapters(for: profile.id).filter { $0.status == .completed }.count
     }
 
+    var currentMathTopic: MathTopic {
+        topicProgress.currentTopic()
+    }
+
+    var currentTopicStars: Int {
+        topicProgress.stars(for: currentMathTopic)
+    }
+
+    var nextTopicThreshold: Int {
+        currentMathTopic.next?.starsToUnlock ?? 0
+    }
+
     var specialChapterAvailable: ChapterType? {
         guard let profile = persistence.activeProfile else { return nil }
         let completed = persistence.loadAllChapters(for: profile.id).filter { $0.status == .completed }
@@ -442,6 +473,7 @@ class AppViewModel {
 
     private func loadRewards(for childId: String) {
         rewardState = persistence.loadRewardState(for: childId)
+        topicProgress = persistence.loadTopicProgress(for: childId)
     }
 
     private func refreshTodayStatus() {

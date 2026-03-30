@@ -199,6 +199,21 @@ nonisolated enum LocaleKey: String, Sendable {
     case seeYouTomorrow
     case changeProfile
     case add
+    case evenNumber
+    case oddNumber
+    case topicNumbers
+    case topicAddSubBasic
+    case topicStrategies
+    case topicTensCrossing
+    case topicTimeAndCalendar
+    case topicLargerNumbers
+    case topicAddSubAdvanced
+    case topicProblemSolving
+    case topicMeasurement
+    case topicLogicPatterns
+    case topicProgress
+    case topicLocked
+    case topicCurrent
 }
 
 nonisolated enum AppLanguage: String, Sendable, CaseIterable {
@@ -475,6 +490,21 @@ nonisolated enum L {
         case .seeYouTomorrow: return "See you tomorrow"
         case .changeProfile: return "Change"
         case .add: return "Add"
+        case .evenNumber: return "Even"
+        case .oddNumber: return "Odd"
+        case .topicNumbers: return "Numbers"
+        case .topicAddSubBasic: return "Add & Subtract"
+        case .topicStrategies: return "Strategies"
+        case .topicTensCrossing: return "Tens Crossing"
+        case .topicTimeAndCalendar: return "Time & Calendar"
+        case .topicLargerNumbers: return "Larger Numbers"
+        case .topicAddSubAdvanced: return "Advanced Math"
+        case .topicProblemSolving: return "Problem Solving"
+        case .topicMeasurement: return "Measurement"
+        case .topicLogicPatterns: return "Logic & Patterns"
+        case .topicProgress: return "Topic Progress"
+        case .topicLocked: return "Locked"
+        case .topicCurrent: return "Current"
         }
     }
 
@@ -678,6 +708,21 @@ nonisolated enum L {
         case .seeYouTomorrow: return "Vi ses i morgen"
         case .changeProfile: return "Bytt"
         case .add: return "Legg til"
+        case .evenNumber: return "Partall"
+        case .oddNumber: return "Oddetall"
+        case .topicNumbers: return "Tall"
+        case .topicAddSubBasic: return "Addisjon og subtraksjon"
+        case .topicStrategies: return "Regnestrategier"
+        case .topicTensCrossing: return "Tierovergang"
+        case .topicTimeAndCalendar: return "Tid og kalender"
+        case .topicLargerNumbers: return "St\u{00F8}rre tall"
+        case .topicAddSubAdvanced: return "Avansert regning"
+        case .topicProblemSolving: return "Probleml\u{00F8}sing"
+        case .topicMeasurement: return "Lengde og areal"
+        case .topicLogicPatterns: return "Logikk og m\u{00F8}nstre"
+        case .topicProgress: return "Temafremgang"
+        case .topicLocked: return "L\u{00E5}st"
+        case .topicCurrent: return "N\u{00E5}v\u{00E6}rende"
         }
     }
 }

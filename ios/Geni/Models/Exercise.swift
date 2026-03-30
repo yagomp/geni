@@ -5,6 +5,15 @@ nonisolated enum ExerciseFormat: String, Codable, Sendable {
     case missingNumber
     case trueFalse
     case comparison
+    case countingObjects
+    case visualAddition
+    case compareGroups
+    case tenFrame
+    case matchConnect
+    case numberBonds
+    case diceAddition
+    case evenOddSort
+    case visualSubtraction
 }
 
 nonisolated struct Exercise: Identifiable, Sendable {
@@ -20,6 +29,12 @@ nonisolated struct Exercise: Identifiable, Sendable {
     let proposedAnswer: Int?
     let comparisonLeft: (Int, MathOperation, Int)?
     let comparisonRight: (Int, MathOperation, Int)?
+    let emojiSymbol: String?
+    let emojiSymbolRight: String?
+    let matchLeftLabels: [String]?
+    let matchRightLabels: [String]?
+    let correctMatchIndices: [Int]?
+    let numberBondMissingWhole: Bool?
 
     init(operand1: Int, operand2: Int, operation: MathOperation, difficulty: ExerciseDifficulty, format: ExerciseFormat = .solveResult) {
         self.id = UUID().uuidString
@@ -37,6 +52,13 @@ nonisolated struct Exercise: Identifiable, Sendable {
         case .division: answer = operand1 / operand2
         }
         self.correctAnswer = answer
+
+        self.emojiSymbol = nil
+        self.emojiSymbolRight = nil
+        self.matchLeftLabels = nil
+        self.matchRightLabels = nil
+        self.correctMatchIndices = nil
+        self.numberBondMissingWhole = nil
 
         switch format {
         case .solveResult:
@@ -122,11 +144,198 @@ nonisolated struct Exercise: Identifiable, Sendable {
             } else {
                 self.options = [1, 0]
             }
+
+        case .countingObjects, .visualAddition, .compareGroups, .tenFrame,
+             .matchConnect, .numberBonds, .diceAddition, .evenOddSort, .visualSubtraction:
+            fatalError("Use the appropriate init for visual exercise types")
         }
     }
 
+    init(emojiFormat: ExerciseFormat, emojiSymbol: String, count: Int, count2: Int = 0, emojiRight: String? = nil, difficulty: ExerciseDifficulty) {
+        self.id = UUID().uuidString
+        self.format = emojiFormat
+        self.difficulty = difficulty
+        self.operation = .addition
+        self.operand1 = count
+        self.operand2 = count2
+        self.emojiSymbol = emojiSymbol
+        self.emojiSymbolRight = emojiRight
+        self.missingOperandIndex = nil
+        self.proposedAnswer = nil
+        self.comparisonLeft = nil
+        self.comparisonRight = nil
+        self.matchLeftLabels = nil
+        self.matchRightLabels = nil
+        self.correctMatchIndices = nil
+        self.numberBondMissingWhole = nil
+
+        switch emojiFormat {
+        case .countingObjects, .tenFrame:
+            self.correctAnswer = count
+            var opts = Set<Int>()
+            opts.insert(count)
+            while opts.count < 4 {
+                let offset = Int.random(in: 1...2) * (Bool.random() ? 1 : -1)
+                let wrong = count + offset
+                if wrong >= 1 && wrong != count {
+                    opts.insert(wrong)
+                }
+            }
+            self.options = Array(opts).shuffled()
+
+        case .visualAddition:
+            let total = count + count2
+            self.correctAnswer = total
+            var opts = Set<Int>()
+            opts.insert(total)
+            while opts.count < 4 {
+                let offset = Int.random(in: 1...2) * (Bool.random() ? 1 : -1)
+                let wrong = total + offset
+                if wrong >= 1 && wrong != total {
+                    opts.insert(wrong)
+                }
+            }
+            self.options = Array(opts).shuffled()
+
+        case .compareGroups:
+            self.correctAnswer = count > count2 ? 0 : 1
+            self.options = count > count2 ? [0, 1] : [1, 0]
+
+        default:
+            fatalError("Use init(operand1:) for non-emoji exercise types")
+        }
+    }
+
+    // MARK: - Match Connect init
+
+    init(matchLeft: [String], matchRight: [String], correctIndices: [Int], difficulty: ExerciseDifficulty) {
+        self.id = UUID().uuidString
+        self.format = .matchConnect
+        self.difficulty = difficulty
+        self.operation = .addition
+        self.operand1 = matchLeft.count
+        self.operand2 = 0
+        self.correctAnswer = matchLeft.count
+        self.options = []
+        self.emojiSymbol = nil
+        self.emojiSymbolRight = nil
+        self.missingOperandIndex = nil
+        self.proposedAnswer = nil
+        self.comparisonLeft = nil
+        self.comparisonRight = nil
+        self.matchLeftLabels = matchLeft
+        self.matchRightLabels = matchRight
+        self.correctMatchIndices = correctIndices
+        self.numberBondMissingWhole = nil
+    }
+
+    // MARK: - Number Bonds init
+
+    init(numberBondWhole: Int, givenPart: Int, missingWhole: Bool, difficulty: ExerciseDifficulty) {
+        self.id = UUID().uuidString
+        self.format = .numberBonds
+        self.difficulty = difficulty
+        self.operation = .addition
+        self.numberBondMissingWhole = missingWhole
+        self.emojiSymbol = nil
+        self.emojiSymbolRight = nil
+        self.missingOperandIndex = nil
+        self.proposedAnswer = nil
+        self.comparisonLeft = nil
+        self.comparisonRight = nil
+        self.matchLeftLabels = nil
+        self.matchRightLabels = nil
+        self.correctMatchIndices = nil
+
+        if missingWhole {
+            self.operand1 = givenPart
+            self.operand2 = numberBondWhole - givenPart
+            self.correctAnswer = numberBondWhole
+        } else {
+            self.operand1 = numberBondWhole
+            self.operand2 = givenPart
+            self.correctAnswer = numberBondWhole - givenPart
+        }
+
+        var opts = Set<Int>()
+        opts.insert(correctAnswer)
+        while opts.count < 4 {
+            let offset = Int.random(in: 1...3) * (Bool.random() ? 1 : -1)
+            let wrong = correctAnswer + offset
+            if wrong >= 1 && wrong != correctAnswer {
+                opts.insert(wrong)
+            }
+        }
+        self.options = Array(opts).shuffled()
+    }
+
+    // MARK: - Dice / EvenOdd / Visual Subtraction init
+
+    init(middleFormat: ExerciseFormat, op1: Int, op2: Int, operation: MathOperation, difficulty: ExerciseDifficulty, emoji: String? = nil) {
+        self.id = UUID().uuidString
+        self.format = middleFormat
+        self.difficulty = difficulty
+        self.operation = operation
+        self.operand1 = op1
+        self.operand2 = op2
+        self.emojiSymbol = emoji
+        self.emojiSymbolRight = nil
+        self.missingOperandIndex = nil
+        self.proposedAnswer = nil
+        self.comparisonLeft = nil
+        self.comparisonRight = nil
+        self.matchLeftLabels = nil
+        self.matchRightLabels = nil
+        self.correctMatchIndices = nil
+        self.numberBondMissingWhole = nil
+
+        let answer: Int
+        switch operation {
+        case .addition: answer = op1 + op2
+        case .subtraction: answer = op1 - op2
+        case .multiplication: answer = op1 * op2
+        case .division: answer = op1 / op2
+        }
+        self.correctAnswer = answer
+
+        var opts = Set<Int>()
+        opts.insert(answer)
+        while opts.count < 4 {
+            let offset = Int.random(in: 1...3) * (Bool.random() ? 1 : -1)
+            let wrong = answer + offset
+            if wrong >= 0 && wrong != answer {
+                opts.insert(wrong)
+            }
+        }
+        self.options = Array(opts).shuffled()
+    }
+
     var prompt: String {
-        "\(operand1) \(operation.symbol) \(operand2)"
+        switch format {
+        case .countingObjects:
+            return "\(emojiSymbol ?? "?") x\(operand1)"
+        case .visualAddition:
+            return "\(emojiSymbol ?? "?")x\(operand1) + \(emojiSymbol ?? "?")x\(operand2)"
+        case .compareGroups:
+            return "\(emojiSymbol ?? "?")x\(operand1) vs \(emojiSymbolRight ?? "?")x\(operand2)"
+        case .tenFrame:
+            return "[\(emojiSymbol ?? "?")x\(operand1)/10]"
+        case .matchConnect:
+            return "Match \(operand1) pairs"
+        case .numberBonds:
+            if numberBondMissingWhole == true {
+                return "\(operand1) + \(operand2) = ?"
+            }
+            return "\(operand1) = \(operand2) + ?"
+        case .diceAddition:
+            return "🎲\(operand1) + 🎲\(operand2)"
+        case .evenOddSort:
+            return "\(operand1) \(operation.symbol) \(operand2) = \(correctAnswer)"
+        case .visualSubtraction:
+            return "\(emojiSymbol ?? "?")x\(operand1) - \(operand2)"
+        default:
+            return "\(operand1) \(operation.symbol) \(operand2)"
+        }
     }
 
     var missingNumberPrompt: String {

@@ -11,6 +11,7 @@ class PersistenceService {
     private let hasOnboardedKey = "geni_has_onboarded"
     private let activeProfileKey = "geni_active_profile"
     private let readingKeyPrefix = "geni_reading_"
+    private let topicProgressKeyPrefix = "geni_topics_"
 
     private let defaults = UserDefaults.standard
     private let encoder = JSONEncoder()
@@ -184,6 +185,20 @@ class PersistenceService {
     func todayReadingSession(for childId: String) -> ReadingSession? {
         let today = todayString()
         return loadAllReadingSessions(for: childId).first { $0.date == today && $0.isCompleted }
+    }
+
+    func saveTopicProgress(_ progress: TopicProgress, for childId: String) {
+        if let data = try? encoder.encode(progress) {
+            defaults.set(data, forKey: topicProgressKeyPrefix + childId)
+        }
+    }
+
+    func loadTopicProgress(for childId: String) -> TopicProgress {
+        guard let data = defaults.data(forKey: topicProgressKeyPrefix + childId),
+              let progress = try? decoder.decode(TopicProgress.self, from: data) else {
+            return TopicProgress()
+        }
+        return progress
     }
 
     // MARK: - Cloud Sync

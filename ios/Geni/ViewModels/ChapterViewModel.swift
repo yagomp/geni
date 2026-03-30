@@ -16,6 +16,11 @@ class ChapterViewModel {
     var completedChapter: ChapterProgress? = nil
     var xpEarned: Int = 0
     var dragAnswer: Int? = nil
+    var completedMatches: [(Int, Int)] = []
+    var activeDragSource: Int? = nil
+    var activeDragPosition: CGPoint? = nil
+    var wrongMatchPair: (Int, Int)? = nil
+    var evenOddStep: Int = 0
     var timeRemaining: Int = 60
     var isTimedMode: Bool = false
     var timerTask: Task<Void, Never>? = nil
@@ -51,14 +56,23 @@ class ChapterViewModel {
 
         let actualCorrectAnswer: Int
         switch exercise.format {
-        case .solveResult:
+        case .solveResult, .countingObjects, .visualAddition, .tenFrame,
+             .numberBonds, .diceAddition, .visualSubtraction:
             actualCorrectAnswer = exercise.correctAnswer
         case .missingNumber:
             actualCorrectAnswer = exercise.missingNumberCorrectAnswer
         case .trueFalse:
             actualCorrectAnswer = exercise.trueFalseIsCorrect ? 1 : 0
-        case .comparison:
+        case .comparison, .compareGroups:
             actualCorrectAnswer = exercise.options[0]
+        case .evenOddSort:
+            if evenOddStep == 0 {
+                actualCorrectAnswer = exercise.correctAnswer
+            } else {
+                actualCorrectAnswer = exercise.correctAnswer % 2 == 0 ? 0 : 1
+            }
+        case .matchConnect:
+            actualCorrectAnswer = answer
         }
 
         let isCorrect = answer == actualCorrectAnswer
@@ -70,6 +84,23 @@ class ChapterViewModel {
         }
 
         if isCorrect {
+            // EvenOddSort step 0 → advance to classification step
+            if exercise.format == .evenOddSort && evenOddStep == 0 {
+                feedbackCorrect = true
+                feedbackMessage = L.s(.correct)
+                showFeedback = true
+                HapticManager.correctAnswer()
+                Task {
+                    try? await Task.sleep(for: .seconds(1.0))
+                    showFeedback = false
+                    selectedAnswer = nil
+                    dragAnswer = nil
+                    attempts = 0
+                    evenOddStep = 1
+                }
+                return
+            }
+
             feedbackCorrect = true
             feedbackMessage = attempts == 1 ?
                 [L.s(.youGotIt), L.s(.niceJob), L.s(.correct)].randomElement()! :
@@ -120,6 +151,40 @@ class ChapterViewModel {
         }
     }
 
+    func submitMatch(leftIndex: Int, rightIndex: Int, persistence: PersistenceService) {
+        guard let exercise = currentExercise,
+              let correctIndices = exercise.correctMatchIndices else { return }
+
+        if correctIndices[leftIndex] == rightIndex {
+            completedMatches.append((leftIndex, rightIndex))
+            HapticManager.correctAnswer()
+
+            if completedMatches.count == correctIndices.count {
+                feedbackCorrect = true
+                feedbackMessage = [L.s(.youGotIt), L.s(.niceJob), L.s(.correct)].randomElement()!
+                showFeedback = true
+
+                let result = ExerciseResult(
+                    chapterId: chapter.id,
+                    exercise: exercise,
+                    firstCorrect: true,
+                    secondCorrect: nil,
+                    attempts: 1
+                )
+                chapter.exerciseResults.append(result)
+                persistence.saveChapterProgress(chapter)
+                advanceAfterDelay()
+            }
+        } else {
+            wrongMatchPair = (leftIndex, rightIndex)
+            HapticManager.wrongAnswer()
+            Task {
+                try? await Task.sleep(for: .seconds(0.6))
+                wrongMatchPair = nil
+            }
+        }
+    }
+
     private func advanceAfterDelay() {
         Task {
             try? await Task.sleep(for: .seconds(1.5))
@@ -128,6 +193,8 @@ class ChapterViewModel {
             selectedAnswer = nil
             dragAnswer = nil
             attempts = 0
+            evenOddStep = 0
+            completedMatches = []
             currentIndex += 1
         }
     }

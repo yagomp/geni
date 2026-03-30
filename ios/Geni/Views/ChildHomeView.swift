@@ -223,6 +223,16 @@ struct ChildHomeView: View {
                     Text("📚 \(L.s(.mathAndReading))")
                         .font(.system(.title2, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
+
+                    if viewModel.persistence.activeProfile?.ageGroup == .middle {
+                        HStack(spacing: 6) {
+                            Text(viewModel.currentMathTopic.emoji)
+                                .font(.system(size: 14))
+                            Text(viewModel.currentMathTopic.displayName)
+                                .font(.system(.caption, design: .rounded, weight: .bold))
+                                .foregroundStyle(GeniColor.blue)
+                        }
+                    }
                 }
 
                 Spacer()
@@ -426,14 +436,22 @@ struct ChildHomeView: View {
 
     private var progressMapSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(L.s(.progressMap))
-                .font(.system(.headline, design: .rounded, weight: .bold))
-                .foregroundStyle(GeniColor.border)
+            if viewModel.persistence.activeProfile?.ageGroup == .middle {
+                Text(L.s(.topicProgress))
+                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .foregroundStyle(GeniColor.border)
 
-            ProgressMapView(
-                completedCount: viewModel.completedChapterCount,
-                rewards: viewModel.rewardState
-            )
+                TopicMapView(topicProgress: viewModel.topicProgress)
+            } else {
+                Text(L.s(.progressMap))
+                    .font(.system(.headline, design: .rounded, weight: .bold))
+                    .foregroundStyle(GeniColor.border)
+
+                ProgressMapView(
+                    completedCount: viewModel.completedChapterCount,
+                    rewards: viewModel.rewardState
+                )
+            }
         }
     }
 
@@ -593,6 +611,48 @@ struct QuickChallengeCard: View {
             .padding(.horizontal, 8)
             .brutalistCard(color: GeniColor.card, borderWidth: 3)
         }
+    }
+}
+
+struct TopicMapView: View {
+    let topicProgress: TopicProgress
+
+    var body: some View {
+        ScrollView(.horizontal) {
+            HStack(spacing: 8) {
+                ForEach(MathTopic.allCases, id: \.rawValue) { topic in
+                    let isUnlocked = topicProgress.isUnlocked(topic)
+                    let isCurrent = topicProgress.currentTopic() == topic
+                    let stars = topicProgress.stars(for: topic)
+
+                    VStack(spacing: 6) {
+                        Text(topic.emoji)
+                            .font(.system(size: 22))
+                            .opacity(isUnlocked ? 1.0 : 0.4)
+
+                        Text("\(topic.order + 1)")
+                            .font(.system(.caption2, design: .rounded, weight: .black))
+                            .foregroundStyle(isCurrent ? .white : (isUnlocked ? GeniColor.border : .gray))
+
+                        if isUnlocked && stars > 0 {
+                            Text("⭐\(stars)")
+                                .font(.system(size: 10, weight: .bold, design: .rounded))
+                                .foregroundStyle(GeniColor.border)
+                        } else if !isUnlocked {
+                            Text("🔒")
+                                .font(.system(size: 10))
+                        }
+                    }
+                    .frame(width: 56, height: 72)
+                    .background(isCurrent ? GeniColor.blue : (isUnlocked ? GeniColor.card : Color.gray.opacity(0.1)))
+                    .overlay(Rectangle().stroke(isCurrent ? GeniColor.blue : (isUnlocked ? GeniColor.border : Color.gray.opacity(0.3)), lineWidth: isCurrent ? 3 : 2))
+                    .background(Rectangle().fill(GeniColor.border.opacity(isUnlocked ? 1 : 0.2)).offset(x: 2, y: 2))
+                }
+            }
+            .padding(.vertical, 4)
+        }
+        .contentMargins(.horizontal, 0)
+        .scrollIndicators(.hidden)
     }
 }
 

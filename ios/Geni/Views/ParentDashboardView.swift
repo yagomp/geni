@@ -137,6 +137,9 @@ struct ParentDashboardView: View {
         .fullScreenCover(isPresented: $showProfileCreation) {
             ProfileCreationView(onComplete: { profile in
                 viewModel.persistence.saveProfile(profile)
+                if viewModel.persistence.activeProfileId == profile.id {
+                    ThemeManager.shared.current = profile.theme
+                }
                 showProfileCreation = false
             }, onBack: {
                 showProfileCreation = false
@@ -145,6 +148,9 @@ struct ParentDashboardView: View {
         .fullScreenCover(item: $editingProfile) { profile in
             ProfileCreationView(onComplete: { updated in
                 viewModel.persistence.saveProfile(updated)
+                if viewModel.persistence.activeProfileId == updated.id {
+                    ThemeManager.shared.current = updated.theme
+                }
                 editingProfile = nil
             }, editingProfile: profile, onBack: {
                 editingProfile = nil

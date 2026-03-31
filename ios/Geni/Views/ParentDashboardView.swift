@@ -26,7 +26,7 @@ struct ParentDashboardView: View {
 
     private var pinEntryView: some View {
         ZStack {
-            GeniColor.background.ignoresSafeArea()
+            GeniColor.lightYellow.ignoresSafeArea()
 
             VStack(spacing: 24) {
                 HStack {
@@ -93,7 +93,7 @@ struct ParentDashboardView: View {
 
     private var settingsContent: some View {
         ZStack {
-            GeniColor.background.ignoresSafeArea()
+            GeniColor.lightYellow.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 20) {
@@ -784,7 +784,7 @@ struct SetPinView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                GeniColor.background.ignoresSafeArea()
+                GeniColor.lightYellow.ignoresSafeArea()
 
                 VStack(spacing: 24) {
                     Text(L.s(.setPin))

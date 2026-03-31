@@ -19,6 +19,7 @@ struct ProfileCreationView: View {
     @State private var selectedOperations: Set<MathOperation> = Set(MathOperation.recommended(for: 6))
     @State private var selectedTheme: AppTheme = .standard
     @State private var avatarBounce: String? = nil
+    @State private var showFullAvatarPicker = false
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -123,34 +124,33 @@ struct ProfileCreationView: View {
                             .foregroundStyle(.black)
                             .frame(maxWidth: .infinity, alignment: .leading)
 
+                        let quickAvatars = Array(AvatarOption.all.prefix(7))
                         LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 4), spacing: 10) {
-                            ForEach(AvatarOption.all) { avatar in
-                                Button {
-                                    HapticManager.selection()
-                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                                        selectedAvatar = avatar.id
-                                        avatarBounce = avatar.id
-                                    }
-                                    Task {
-                                        try? await Task.sleep(for: .seconds(0.4))
-                                        avatarBounce = nil
-                                    }
-                                } label: {
-                                    Text(avatar.emoji)
-                                        .font(.system(size: 48))
-                                        .frame(maxWidth: .infinity)
-                                        .aspectRatio(1, contentMode: .fit)
-                                        .background(.white)
-                                        .overlay(
-                                            Rectangle()
-                                                .stroke(selectedAvatar == avatar.id ? avatar.color : GeniColor.border, lineWidth: selectedAvatar == avatar.id ? 4 : 2)
-                                        )
-                                        .background(
-                                            selectedAvatar == avatar.id ? AnyView(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3)) : AnyView(EmptyView())
-                                        )
-                                        .scaleEffect(avatarBounce == avatar.id ? 1.15 : (selectedAvatar == avatar.id ? 1.05 : 1.0))
-                                        .rotationEffect(avatarBounce == avatar.id ? .degrees(-5) : .degrees(0))
-                                }
+                            ForEach(quickAvatars) { avatar in
+                                avatarButton(avatar)
+                            }
+
+                            // "More" button in last slot of row 2
+                            Button {
+                                HapticManager.selection()
+                                showFullAvatarPicker = true
+                            } label: {
+                                Text("···")
+                                    .font(.system(size: 28, weight: .black, design: .rounded))
+                                    .foregroundStyle(GeniColor.border)
+                                    .frame(maxWidth: .infinity)
+                                    .aspectRatio(1, contentMode: .fit)
+                                    .background(GeniColor.card)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(GeniColor.border, lineWidth: 2)
+                                    )
+                            }
+
+                            // Show selected avatar inline if it's not in quickAvatars
+                            if !quickAvatars.contains(where: { $0.id == selectedAvatar }) {
+                                let selected = AvatarOption.find(selectedAvatar)
+                                avatarButton(selected)
                             }
                         }
                     }
@@ -284,6 +284,101 @@ struct ProfileCreationView: View {
         }
         .onChange(of: age) { _, newAge in
             selectedOperations = Set(MathOperation.recommended(for: newAge))
+        }
+        .sheet(isPresented: $showFullAvatarPicker) {
+            fullAvatarPicker
+        }
+    }
+
+    private var fullAvatarPicker: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 4), spacing: 12) {
+                        ForEach(AvatarOption.all) { avatar in
+                            Button {
+                                HapticManager.selection()
+                                selectedAvatar = avatar.id
+                                showFullAvatarPicker = false
+                            } label: {
+                                Text(avatar.emoji)
+                                    .font(.system(size: 40))
+                                    .frame(maxWidth: .infinity)
+                                    .aspectRatio(1, contentMode: .fit)
+                                    .background(selectedAvatar == avatar.id ? avatar.color.opacity(0.2) : .white)
+                                    .overlay(Rectangle().stroke(selectedAvatar == avatar.id ? avatar.color : GeniColor.border, lineWidth: selectedAvatar == avatar.id ? 4 : 2))
+                            }
+                        }
+
+                        ForEach(AvatarOption.extras) { avatar in
+                            Button {
+                                HapticManager.selection()
+                                selectedAvatar = avatar.id
+                                showFullAvatarPicker = false
+                            } label: {
+                                Text(avatar.emoji)
+                                    .font(.system(size: 40))
+                                    .frame(maxWidth: .infinity)
+                                    .aspectRatio(1, contentMode: .fit)
+                                    .background(selectedAvatar == avatar.id ? avatar.color.opacity(0.2) : .white)
+                                    .overlay(Rectangle().stroke(selectedAvatar == avatar.id ? avatar.color : GeniColor.border, lineWidth: selectedAvatar == avatar.id ? 4 : 2))
+                            }
+                        }
+                    }
+                }
+                .padding(20)
+            }
+            .background(GeniColor.lightYellow.ignoresSafeArea())
+            .safeAreaInset(edge: .top) {
+                HStack {
+                    Text(L.s(.chooseAvatar))
+                        .font(.system(.title3, design: .rounded, weight: .black))
+                        .foregroundStyle(.black)
+                    Spacer()
+                    Button {
+                        showFullAvatarPicker = false
+                    } label: {
+                        Text("✕")
+                            .font(.system(size: 18, weight: .bold))
+                            .frame(width: 32, height: 32)
+                            .background(GeniColor.card)
+                            .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(GeniColor.lightYellow)
+            }
+        }
+        .presentationDetents([.medium])
+    }
+
+    private func avatarButton(_ avatar: AvatarOption) -> some View {
+        Button {
+            HapticManager.selection()
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                selectedAvatar = avatar.id
+                avatarBounce = avatar.id
+            }
+            Task {
+                try? await Task.sleep(for: .seconds(0.4))
+                avatarBounce = nil
+            }
+        } label: {
+            Text(avatar.emoji)
+                .font(.system(size: 48))
+                .frame(maxWidth: .infinity)
+                .aspectRatio(1, contentMode: .fit)
+                .background(.white)
+                .overlay(
+                    Rectangle()
+                        .stroke(selectedAvatar == avatar.id ? avatar.color : GeniColor.border, lineWidth: selectedAvatar == avatar.id ? 4 : 2)
+                )
+                .background(
+                    selectedAvatar == avatar.id ? AnyView(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3)) : AnyView(EmptyView())
+                )
+                .scaleEffect(avatarBounce == avatar.id ? 1.15 : (selectedAvatar == avatar.id ? 1.05 : 1.0))
+                .rotationEffect(avatarBounce == avatar.id ? .degrees(-5) : .degrees(0))
         }
     }
 

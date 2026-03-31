@@ -113,6 +113,7 @@ nonisolated enum LocaleKey: String, Sendable {
     case falseLabel
     case whichIsBigger
     case howMany
+    case howManyTotal
     case whichHasMore
     case matchThePairs
     case whatComesNext
@@ -408,6 +409,7 @@ nonisolated enum L {
         case .falseLabel: return "False"
         case .whichIsBigger: return "Which is bigger?"
         case .howMany: return "How many?"
+        case .howManyTotal: return "How many in total?"
         case .whichHasMore: return "Which has more?"
         case .matchThePairs: return "Match the pairs"
         case .whatComesNext: return "What comes next?"
@@ -630,6 +632,7 @@ nonisolated enum L {
         case .falseLabel: return "Feil"
         case .whichIsBigger: return "Hvilken er st\u{00F8}rst?"
         case .howMany: return "Hvor mange?"
+        case .howManyTotal: return "Hvor mange til sammen?"
         case .whichHasMore: return "Hvilken har flest?"
         case .matchThePairs: return "Koble sammen parene"
         case .whatComesNext: return "Hva kommer neste?"

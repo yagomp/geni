@@ -411,6 +411,10 @@ struct ExerciseView: View {
 
     private func visualAdditionContent(_ exercise: Exercise) -> some View {
         VStack(spacing: 28) {
+            Text(L.s(.howManyTotal))
+                .font(.system(size: iPadScale.value(28), weight: .bold, design: .rounded))
+                .foregroundStyle(GeniColor.border)
+
             HStack(spacing: iPadScale.value(12)) {
                 emojiGrid(exercise.emojiSymbol ?? "🍎", count: exercise.operand1, columns: 3)
 
@@ -438,7 +442,11 @@ struct ExerciseView: View {
     }
 
     private func compareGroupsContent(_ exercise: Exercise) -> some View {
-        VStack(spacing: 20) {
+        let maxCount = max(exercise.operand1, exercise.operand2)
+        let rows = (maxCount + 2) / 3 // columns=3
+        let boxHeight = iPadScale.value(CGFloat(rows) * 48 + 32)
+
+        return VStack(spacing: 20) {
             Text(L.s(.whichHasMore))
                 .font(.system(size: iPadScale.value(28), weight: .bold, design: .rounded))
                 .foregroundStyle(GeniColor.border)
@@ -452,7 +460,7 @@ struct ExerciseView: View {
                     emojiGrid(exercise.emojiSymbol ?? "🍎", count: exercise.operand1, columns: 3)
                         .padding(iPadScale.value(16))
                         .frame(maxWidth: .infinity)
-                        .frame(minHeight: iPadScale.value(120))
+                        .frame(height: boxHeight)
                         .background(comparisonBgColor(for: 0, exercise: exercise))
                         .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
                         .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
@@ -467,7 +475,7 @@ struct ExerciseView: View {
                     emojiGrid(exercise.emojiSymbolRight ?? "🍊", count: exercise.operand2, columns: 3)
                         .padding(iPadScale.value(16))
                         .frame(maxWidth: .infinity)
-                        .frame(minHeight: iPadScale.value(120))
+                        .frame(height: boxHeight)
                         .background(comparisonBgColor(for: 1, exercise: exercise))
                         .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
                         .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))

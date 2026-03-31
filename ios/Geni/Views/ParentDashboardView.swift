@@ -123,7 +123,6 @@ struct ParentDashboardView: View {
                     }
 
                     profilesSection
-                    themeSection
                     languageSection
                     progressOverviewSection
                     reminderSection

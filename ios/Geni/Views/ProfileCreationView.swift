@@ -6,13 +6,18 @@ struct ProfileCreationView: View {
     var onBack: (() -> Void)? = nil
 
     private var bgColor: Color {
-        editingProfile != nil ? GeniColor.background : GeniColor.yellow
+        switch selectedTheme {
+        case .standard: return editingProfile != nil ? GeniColor.background : Color(red: 1.0, green: 0.97, blue: 0.88)
+        case .ocean: return Color(red: 0.9, green: 0.95, blue: 1.0)
+        case .blossom: return Color(red: 1.0, green: 0.93, blue: 0.95)
+        }
     }
 
     @State private var nickname: String = ""
     @State private var age: Int = 6
     @State private var selectedAvatar: String = "lion"
     @State private var selectedOperations: Set<MathOperation> = Set(MathOperation.recommended(for: 6))
+    @State private var selectedTheme: AppTheme = .standard
     @State private var avatarBounce: String? = nil
     @Environment(\.dismiss) private var dismiss
 
@@ -150,6 +155,40 @@ struct ProfileCreationView: View {
                         }
                     }
 
+                    VStack(spacing: 6) {
+                        Text(L.s(.theme))
+                            .font(.system(.subheadline, design: .rounded, weight: .bold))
+                            .foregroundStyle(.black)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                        HStack(spacing: 8) {
+                            ForEach(AppTheme.allCases, id: \.rawValue) { theme in
+                                let isSelected = selectedTheme == theme
+                                Button {
+                                    HapticManager.selection()
+                                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                        selectedTheme = theme
+                                    }
+                                } label: {
+                                    HStack(spacing: 6) {
+                                        Circle()
+                                            .fill(themeSwatchColor(theme))
+                                            .frame(width: 18, height: 18)
+                                            .overlay(Circle().stroke(Color.black, lineWidth: 1))
+                                        Text(themeDisplayName(theme))
+                                            .font(.system(.caption, design: .rounded, weight: .bold))
+                                            .foregroundStyle(GeniColor.border)
+                                    }
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 40)
+                                    .background(isSelected ? themeSwatchBg(theme) : GeniColor.card)
+                                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: isSelected ? 3 : 2))
+                                    .background(isSelected ? AnyView(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3)) : AnyView(EmptyView()))
+                                }
+                            }
+                        }
+                    }
+
                     VStack(spacing: 8) {
                         HStack {
                             Text(L.s(.mathPractice))
@@ -210,12 +249,15 @@ struct ProfileCreationView: View {
                             existing.age = age
                             existing.avatarId = selectedAvatar
                             existing.operationsEnabled = Array(selectedOperations)
+                            existing.theme = selectedTheme
                             profile = existing
                         } else {
                             var newProfile = ChildProfile(nickname: nickname, age: age, avatarId: selectedAvatar)
                             newProfile.operationsEnabled = Array(selectedOperations)
+                            newProfile.theme = selectedTheme
                             profile = newProfile
                         }
+                        ThemeManager.shared.current = selectedTheme
                         onComplete(profile)
                     } label: {
                         HStack(spacing: 10) {
@@ -237,10 +279,35 @@ struct ProfileCreationView: View {
                 age = profile.age
                 selectedAvatar = profile.avatarId
                 selectedOperations = Set(profile.operationsEnabled)
+                selectedTheme = profile.theme
             }
         }
         .onChange(of: age) { _, newAge in
             selectedOperations = Set(MathOperation.recommended(for: newAge))
+        }
+    }
+
+    private func themeSwatchColor(_ theme: AppTheme) -> Color {
+        switch theme {
+        case .standard: return Color(red: 1.0, green: 0.84, blue: 0.04)
+        case .ocean: return Color(red: 0.18, green: 0.45, blue: 0.82)
+        case .blossom: return Color(red: 0.88, green: 0.28, blue: 0.48)
+        }
+    }
+
+    private func themeSwatchBg(_ theme: AppTheme) -> Color {
+        switch theme {
+        case .standard: return Color(red: 1.0, green: 0.97, blue: 0.88)
+        case .ocean: return Color(red: 0.9, green: 0.95, blue: 1.0)
+        case .blossom: return Color(red: 1.0, green: 0.93, blue: 0.95)
+        }
+    }
+
+    private func themeDisplayName(_ theme: AppTheme) -> String {
+        switch theme {
+        case .standard: return L.s(.themeStandard)
+        case .ocean: return L.s(.themeOcean)
+        case .blossom: return L.s(.themeBlossom)
         }
     }
 }

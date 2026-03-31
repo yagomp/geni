@@ -224,7 +224,7 @@ struct ChildHomeView: View {
                         .font(.system(.title2, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
 
-                    if viewModel.persistence.activeProfile?.ageGroup == .middle {
+                    if viewModel.persistence.activeProfile?.ageGroup == .middle || viewModel.persistence.activeProfile?.ageGroup == .older {
                         HStack(spacing: 6) {
                             Text(viewModel.currentMathTopic.emoji)
                                 .font(.system(size: 14))
@@ -436,7 +436,7 @@ struct ChildHomeView: View {
 
     private var progressMapSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            if viewModel.persistence.activeProfile?.ageGroup == .middle {
+            if viewModel.persistence.activeProfile?.ageGroup == .middle || viewModel.persistence.activeProfile?.ageGroup == .older {
                 Text(L.s(.topicProgress))
                     .font(.system(.headline, design: .rounded, weight: .bold))
                     .foregroundStyle(GeniColor.border)

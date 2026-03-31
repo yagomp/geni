@@ -52,7 +52,21 @@ nonisolated enum MathTopic: String, Codable, CaseIterable, Sendable {
         return all[all.index(after: idx)]
     }
 
-    var formats: [ExerciseFormat] {
+    func formats(for ageGroup: AgeGroup) -> [ExerciseFormat] {
+        if ageGroup == .older {
+            switch self {
+            case .numbers: return [.solveResult, .numberSequence, .evenOddSort, .comparison]
+            case .addSubBasic: return [.solveResult, .missingNumber, .multiStep, .trueFalse]
+            case .strategies: return [.multiStep, .numberBonds, .matchConnect, .missingNumber]
+            case .tensCrossing: return [.solveResult, .multiStep, .numberBonds, .missingNumber]
+            case .timeAndCalendar: return [.matchConnect, .solveResult, .multiStep]
+            case .largerNumbers: return [.solveResult, .comparison, .matchConnect, .multiStep]
+            case .addSubAdvanced: return [.multiStep, .missingNumber, .matchConnect, .longDivision]
+            case .problemSolving: return [.multiStep, .matchConnect, .numberSequence, .solveResult]
+            case .measurement: return [.areaPerimeter, .matchConnect, .solveResult, .comparison]
+            case .logicPatterns: return [.numberSequence, .matchConnect, .fractionPick, .multiStep]
+            }
+        }
         switch self {
         case .numbers: return [.countingObjects, .evenOddSort, .numberBonds, .solveResult]
         case .addSubBasic: return [.solveResult, .visualSubtraction, .visualAddition, .trueFalse]

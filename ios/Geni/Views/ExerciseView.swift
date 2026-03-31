@@ -205,6 +205,16 @@ struct ExerciseView: View {
                 evenOddSortContent(exercise)
             case .visualSubtraction:
                 visualSubtractionContent(exercise)
+            case .multiStep:
+                multiStepContent(exercise)
+            case .numberSequence:
+                numberSequenceContent(exercise)
+            case .areaPerimeter:
+                areaPerimeterContent(exercise)
+            case .fractionPick:
+                fractionPickContent(exercise)
+            case .longDivision:
+                longDivisionContent(exercise)
             }
         }
     }
@@ -868,6 +878,188 @@ struct ExerciseView: View {
             } else {
                 tapAnswers(exercise, answers: exercise.options, correctValue: exercise.correctAnswer)
             }
+        }
+    }
+
+    // MARK: - Older Age Exercise Views
+
+    private func multiStepContent(_ exercise: Exercise) -> some View {
+        VStack(spacing: 28) {
+            Text(exercise.multiStepExpression ?? "")
+                .font(.system(size: iPadScale.value(40), weight: .black, design: .rounded))
+                .foregroundStyle(GeniColor.border)
+                .padding(.vertical, 16)
+
+            HStack(spacing: 8) {
+                Text("=")
+                    .font(.system(size: iPadScale.value(44), weight: .black, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+                Text("?")
+                    .font(.system(size: iPadScale.value(36), weight: .black, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+                    .frame(width: iPadScale.value(56), height: iPadScale.value(56))
+                    .background(GeniColor.card)
+                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+            }
+
+            tapAnswers(exercise, answers: exercise.options, correctValue: exercise.correctAnswer)
+        }
+    }
+
+    private func numberSequenceContent(_ exercise: Exercise) -> some View {
+        let seq = exercise.sequenceNumbers ?? []
+
+        return VStack(spacing: 28) {
+            // Show sequence numbers in boxes
+            HStack(spacing: 8) {
+                ForEach(seq, id: \.self) { num in
+                    Text("\(num)")
+                        .font(.system(size: iPadScale.value(28), weight: .black, design: .rounded))
+                        .foregroundStyle(GeniColor.border)
+                        .frame(width: iPadScale.value(56), height: iPadScale.value(56))
+                        .background(GeniColor.card)
+                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                        .background(Rectangle().fill(GeniColor.border).offset(x: 2, y: 2))
+                }
+
+                Text("?")
+                    .font(.system(size: iPadScale.value(28), weight: .black, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+                    .frame(width: iPadScale.value(56), height: iPadScale.value(56))
+                    .background(GeniColor.yellow.opacity(0.3))
+                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                    .background(Rectangle().fill(GeniColor.border).offset(x: 2, y: 2))
+            }
+            .padding(.vertical, 16)
+
+            tapAnswers(exercise, answers: exercise.options, correctValue: exercise.correctAnswer)
+        }
+    }
+
+    private func areaPerimeterContent(_ exercise: Exercise) -> some View {
+        let w = exercise.gridWidth ?? 3
+        let h = exercise.gridHeight ?? 3
+        let isArea = exercise.operand1 == 1
+        let cellSize = iPadScale.value(min(36, 200 / CGFloat(max(w, h))))
+
+        return VStack(spacing: 20) {
+            // Label: area or perimeter with visual hint
+            HStack(spacing: 8) {
+                Text(isArea ? "📐" : "📏")
+                    .font(.system(size: 28))
+                Text(isArea ? "\(w) \u{00D7} \(h)" : "2 \u{00D7} (\(w) + \(h))")
+                    .font(.system(size: iPadScale.value(28), weight: .black, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+            }
+
+            // Grid visualization
+            VStack(spacing: 0) {
+                ForEach(0..<h, id: \.self) { row in
+                    HStack(spacing: 0) {
+                        ForEach(0..<w, id: \.self) { col in
+                            let isEdge = row == 0 || row == h - 1 || col == 0 || col == w - 1
+                            Rectangle()
+                                .fill(isArea ? GeniColor.blue.opacity(0.2) : (isEdge ? GeniColor.orange.opacity(0.3) : GeniColor.card))
+                                .frame(width: cellSize, height: cellSize)
+                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 1))
+                        }
+                    }
+                }
+            }
+            .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+            .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+
+            // Width/height labels
+            HStack {
+                Text("\(w)")
+                    .font(.system(size: iPadScale.value(20), weight: .bold, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+            }
+
+            Text("= ?")
+                .font(.system(size: iPadScale.value(32), weight: .black, design: .rounded))
+                .foregroundStyle(GeniColor.border)
+
+            tapAnswers(exercise, answers: exercise.options, correctValue: exercise.correctAnswer)
+        }
+    }
+
+    private func fractionPickContent(_ exercise: Exercise) -> some View {
+        let num = exercise.fractionNumerator ?? 1
+        let den = exercise.fractionDenominator ?? 4
+
+        return VStack(spacing: 24) {
+            // Visual fraction: a bar divided into den parts, num filled
+            HStack(spacing: 0) {
+                ForEach(0..<den, id: \.self) { i in
+                    Rectangle()
+                        .fill(i < num ? GeniColor.blue.opacity(0.5) : GeniColor.card)
+                        .frame(width: iPadScale.value(min(60, 280 / CGFloat(den))), height: iPadScale.value(56))
+                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                }
+            }
+            .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+
+            // Show fraction notation
+            VStack(spacing: 2) {
+                Text("?")
+                    .font(.system(size: iPadScale.value(32), weight: .black, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+                Rectangle()
+                    .fill(GeniColor.border)
+                    .frame(width: iPadScale.value(60), height: 3)
+                Text("\(den)")
+                    .font(.system(size: iPadScale.value(32), weight: .black, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+            }
+
+            tapAnswers(exercise, answers: exercise.options, correctValue: exercise.correctAnswer)
+        }
+    }
+
+    private func longDivisionContent(_ exercise: Exercise) -> some View {
+        let dividend = exercise.operand1
+        let divisor = exercise.operand2
+        let remainder = exercise.divisionRemainder ?? 0
+
+        return VStack(spacing: 24) {
+            // Classic long division layout
+            HStack(spacing: 4) {
+                Text("\(dividend)")
+                    .font(.system(size: iPadScale.value(44), weight: .black, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+
+                Text("\u{00F7}")
+                    .font(.system(size: iPadScale.value(40), weight: .black, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+
+                Text("\(divisor)")
+                    .font(.system(size: iPadScale.value(44), weight: .black, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+
+                Text("=")
+                    .font(.system(size: iPadScale.value(40), weight: .black, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+
+                Text("?")
+                    .font(.system(size: iPadScale.value(36), weight: .black, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+                    .frame(width: iPadScale.value(56), height: iPadScale.value(56))
+                    .background(GeniColor.card)
+                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+            }
+
+            if remainder > 0 {
+                Text("r = \(remainder)")
+                    .font(.system(size: iPadScale.value(22), weight: .bold, design: .rounded))
+                    .foregroundStyle(GeniColor.orange)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(GeniColor.orange.opacity(0.1))
+                    .overlay(Rectangle().stroke(GeniColor.orange, lineWidth: 2))
+            }
+
+            tapAnswers(exercise, answers: exercise.options, correctValue: exercise.correctAnswer)
         }
     }
 

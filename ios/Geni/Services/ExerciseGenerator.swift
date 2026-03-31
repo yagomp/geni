@@ -25,6 +25,7 @@ enum ExerciseGenerator {
 
         let emojiFormats: Set<ExerciseFormat> = [.countingObjects, .visualAddition, .compareGroups, .tenFrame]
         let middleFormats: Set<ExerciseFormat> = [.numberBonds, .diceAddition, .evenOddSort, .visualSubtraction]
+        let olderFormats: Set<ExerciseFormat> = [.multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision]
 
         var i = 0
         while i < 20 {
@@ -33,13 +34,15 @@ enum ExerciseGenerator {
             if format == .matchConnect {
                 let exercise = generateMatchConnectExercise(difficulty: difficulty, ageGroup: profile.ageGroup, ops: ops)
                 exercises.append(exercise)
-                // matchConnect counts as 3 exercises worth
                 i += 3
             } else if emojiFormats.contains(format) {
                 exercises.append(generateEmojiExercise(format: format, difficulty: difficulty))
                 i += 1
             } else if middleFormats.contains(format) {
                 exercises.append(generateMiddleExercise(format: format, difficulty: difficulty, ageGroup: profile.ageGroup, ops: ops))
+                i += 1
+            } else if olderFormats.contains(format) {
+                exercises.append(generateOlderExercise(format: format, difficulty: difficulty))
                 i += 1
             } else {
                 let operation = ops[Int.random(in: 0..<ops.count)]
@@ -56,7 +59,8 @@ enum ExerciseGenerator {
         let ops = profile.operationsEnabled
         let emojiFormats: Set<ExerciseFormat> = [.countingObjects, .visualAddition, .compareGroups, .tenFrame]
         let middleFormats: Set<ExerciseFormat> = [.numberBonds, .diceAddition, .evenOddSort, .visualSubtraction]
-        let topicFormats = topic.formats
+        let olderFormats: Set<ExerciseFormat> = [.multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision]
+        let topicFormats = topic.formats(for: profile.ageGroup)
 
         var i = 0
         while i < 20 {
@@ -71,6 +75,9 @@ enum ExerciseGenerator {
                 i += 1
             } else if middleFormats.contains(format) {
                 exercises.append(generateMiddleExercise(format: format, difficulty: difficulty, ageGroup: profile.ageGroup, ops: ops))
+                i += 1
+            } else if olderFormats.contains(format) {
+                exercises.append(generateOlderExercise(format: format, difficulty: difficulty))
                 i += 1
             } else {
                 let operation = ops[Int.random(in: 0..<ops.count)]
@@ -122,10 +129,16 @@ enum ExerciseGenerator {
             if roll < 9 { return .visualSubtraction }
             return .comparison
         case .older:
-            if roll < 3 { return .solveResult }
-            if roll < 5 { return .missingNumber }
-            if roll < 7 { return .trueFalse }
-            return .comparison
+            if index < 2 { return .solveResult }
+            if roll < 2 { return .solveResult }
+            if roll < 3 { return .missingNumber }
+            if roll < 4 { return .trueFalse }
+            if roll < 5 { return .comparison }
+            if roll < 6 { return .multiStep }
+            if roll < 7 { return .numberSequence }
+            if roll < 8 { return .matchConnect }
+            if roll < 9 { return .areaPerimeter }
+            return [.fractionPick, .longDivision].randomElement()!
         }
     }
 
@@ -191,6 +204,172 @@ enum ExerciseGenerator {
         default:
             fatalError("Not an emoji format")
         }
+    }
+
+    // MARK: - Older Age Format Generators
+
+    static func generateOlderExercise(format: ExerciseFormat, difficulty: ExerciseDifficulty) -> Exercise {
+        switch format {
+        case .multiStep: return generateMultiStepExercise(difficulty: difficulty)
+        case .numberSequence: return generateNumberSequenceExercise(difficulty: difficulty)
+        case .areaPerimeter: return generateAreaPerimeterExercise(difficulty: difficulty)
+        case .fractionPick: return generateFractionExercise(difficulty: difficulty)
+        case .longDivision: return generateLongDivisionExercise(difficulty: difficulty)
+        default: fatalError("Not an older format: \(format)")
+        }
+    }
+
+    static func generateMultiStepExercise(difficulty: ExerciseDifficulty) -> Exercise {
+        let a: Int, b: Int, c: Int
+        let expression: String
+        let answer: Int
+
+        switch difficulty {
+        case .warmup:
+            a = Int.random(in: 2...5); b = Int.random(in: 1...5); c = Int.random(in: 2...3)
+            if Bool.random() {
+                expression = "(\(a) + \(b)) \u{00D7} \(c)"; answer = (a + b) * c
+            } else {
+                expression = "\(a) \u{00D7} \(c) + \(b)"; answer = a * c + b
+            }
+        case .normal:
+            a = Int.random(in: 3...8); b = Int.random(in: 2...6); c = Int.random(in: 2...5)
+            if Bool.random() {
+                expression = "(\(a) + \(b)) \u{00D7} \(c)"; answer = (a + b) * c
+            } else {
+                expression = "\(a) \u{00D7} \(c) - \(b)"; answer = a * c - b
+            }
+        case .harder:
+            a = Int.random(in: 5...12); b = Int.random(in: 3...8); c = Int.random(in: 2...6)
+            if Bool.random() {
+                expression = "(\(a) - \(b)) \u{00D7} \(c)"; answer = (a - b) * c
+            } else {
+                expression = "\(a) \u{00D7} \(b) + \(c)"; answer = a * b + c
+            }
+        case .challenge:
+            a = Int.random(in: 5...15); b = Int.random(in: 2...10); c = Int.random(in: 2...8)
+            let ops = [("+", a + b), ("-", a - b)].filter { $0.1 > 0 }
+            let (opStr, inner) = ops.randomElement() ?? ("+", a + b)
+            expression = "(\(a) \(opStr) \(b)) \u{00D7} \(c)"; answer = inner * c
+        }
+
+        var opts = Set<Int>()
+        opts.insert(answer)
+        while opts.count < 4 {
+            let offset = Int.random(in: 1...max(answer / 5, 3)) * (Bool.random() ? 1 : -1)
+            let wrong = answer + offset
+            if wrong >= 0 && wrong != answer { opts.insert(wrong) }
+        }
+        return Exercise(olderFormat: .multiStep, answer: answer, options: Array(opts).shuffled(), difficulty: difficulty, expression: expression)
+    }
+
+    static func generateNumberSequenceExercise(difficulty: ExerciseDifficulty) -> Exercise {
+        let step: Int
+        let start: Int
+        let length = 4
+
+        switch difficulty {
+        case .warmup: step = [2, 3, 5, 10].randomElement()!; start = Int.random(in: 1...10)
+        case .normal: step = [3, 4, 5, 6].randomElement()!; start = Int.random(in: 2...20)
+        case .harder: step = [7, 8, 9, 11].randomElement()!; start = Int.random(in: 5...30)
+        case .challenge: step = [12, 15, 25].randomElement()!; start = Int.random(in: 10...50)
+        }
+
+        let ascending = Bool.random() || difficulty == .warmup
+        var seq: [Int] = []
+        for i in 0..<length {
+            seq.append(ascending ? start + step * i : start - step * i)
+        }
+        let answer = ascending ? start + step * length : start - step * length
+
+        if answer < 0 { // fallback to ascending
+            let newSeq = (0..<length).map { start + step * $0 }
+            let newAnswer = start + step * length
+            var opts = Set<Int>()
+            opts.insert(newAnswer)
+            while opts.count < 4 {
+                let offset = Int.random(in: 1...step) * (Bool.random() ? 1 : -1)
+                let wrong = newAnswer + offset
+                if wrong >= 0 && wrong != newAnswer { opts.insert(wrong) }
+            }
+            return Exercise(olderFormat: .numberSequence, answer: newAnswer, options: Array(opts).shuffled(), difficulty: difficulty, sequence: newSeq)
+        }
+
+        var opts = Set<Int>()
+        opts.insert(answer)
+        while opts.count < 4 {
+            let offset = Int.random(in: 1...step) * (Bool.random() ? 1 : -1)
+            let wrong = answer + offset
+            if wrong >= 0 && wrong != answer { opts.insert(wrong) }
+        }
+        return Exercise(olderFormat: .numberSequence, answer: answer, options: Array(opts).shuffled(), difficulty: difficulty, sequence: seq)
+    }
+
+    static func generateAreaPerimeterExercise(difficulty: ExerciseDifficulty) -> Exercise {
+        let w: Int, h: Int
+        switch difficulty {
+        case .warmup: w = Int.random(in: 2...4); h = Int.random(in: 2...4)
+        case .normal: w = Int.random(in: 3...6); h = Int.random(in: 2...5)
+        case .harder: w = Int.random(in: 4...8); h = Int.random(in: 3...7)
+        case .challenge: w = Int.random(in: 5...10); h = Int.random(in: 4...9)
+        }
+
+        let isArea = Bool.random()
+        let answer = isArea ? w * h : 2 * (w + h)
+
+        var opts = Set<Int>()
+        opts.insert(answer)
+        // Add the other calculation as a distractor
+        let other = isArea ? 2 * (w + h) : w * h
+        if other != answer { opts.insert(other) }
+        while opts.count < 4 {
+            let offset = Int.random(in: 1...4) * (Bool.random() ? 1 : -1)
+            let wrong = answer + offset
+            if wrong >= 1 && wrong != answer { opts.insert(wrong) }
+        }
+        return Exercise(olderFormat: .areaPerimeter, answer: answer, options: Array(opts).shuffled(), difficulty: difficulty, width: w, height: h, op1: isArea ? 1 : 0)
+    }
+
+    static func generateFractionExercise(difficulty: ExerciseDifficulty) -> Exercise {
+        let den: Int, num: Int
+        switch difficulty {
+        case .warmup: den = [2, 4].randomElement()!; num = Int.random(in: 1..<den)
+        case .normal: den = [2, 3, 4, 5].randomElement()!; num = Int.random(in: 1..<den)
+        case .harder: den = [3, 4, 5, 6, 8].randomElement()!; num = Int.random(in: 1...den)
+        case .challenge: den = [4, 5, 6, 8, 10].randomElement()!; num = Int.random(in: 1...den)
+        }
+
+        // Answer is numerator (how many parts are filled)
+        // Options include wrong numerators
+        var opts = Set<Int>()
+        opts.insert(num)
+        while opts.count < 4 {
+            let wrong = Int.random(in: max(1, num - 2)...min(den, num + 2))
+            if wrong != num { opts.insert(wrong) }
+        }
+        while opts.count < 4 { opts.insert(Int.random(in: 1...den)) }
+        return Exercise(olderFormat: .fractionPick, answer: num, options: Array(opts).shuffled(), difficulty: difficulty, fracNum: num, fracDen: den)
+    }
+
+    static func generateLongDivisionExercise(difficulty: ExerciseDifficulty) -> Exercise {
+        let divisor: Int, quotient: Int, remainder: Int
+        switch difficulty {
+        case .warmup: divisor = Int.random(in: 2...5); quotient = Int.random(in: 2...6); remainder = 0
+        case .normal: divisor = Int.random(in: 2...6); quotient = Int.random(in: 3...8); remainder = Int.random(in: 0...1)
+        case .harder: divisor = Int.random(in: 3...9); quotient = Int.random(in: 4...10); remainder = Int.random(in: 0...(divisor - 1))
+        case .challenge: divisor = Int.random(in: 4...12); quotient = Int.random(in: 5...15); remainder = Int.random(in: 0...(divisor - 1))
+        }
+
+        let dividend = divisor * quotient + remainder
+
+        var opts = Set<Int>()
+        opts.insert(quotient)
+        while opts.count < 4 {
+            let offset = Int.random(in: 1...3) * (Bool.random() ? 1 : -1)
+            let wrong = quotient + offset
+            if wrong >= 1 && wrong != quotient { opts.insert(wrong) }
+        }
+        return Exercise(olderFormat: .longDivision, answer: quotient, options: Array(opts).shuffled(), difficulty: difficulty, remainder: remainder, op1: dividend, op2: divisor, operation: .division)
     }
 
     // MARK: - Middle Age Format Generators

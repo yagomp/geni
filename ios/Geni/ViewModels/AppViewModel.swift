@@ -234,13 +234,17 @@ class AppViewModel {
 
         HapticManager.coinReward()
 
-        if final.chapterType == .daily && !rewardState.todayReadingCompleted {
+        if final.chapterType == .daily && !rewardState.todayReadingCompleted
+            && persistence.activeProfile?.readingMode == .required {
             isMissionFlow = true
             missionMathCoins = final.coinsEarned
             missionMathStars = final.stars
             missionMathXP = xpGain
             currentScreen = .missionTransition
         } else {
+            if profile.readingMode == .hidden || profile.readingMode == .optional {
+                rewardState.dailyCompletedAt = Date()
+            }
             currentScreen = .chapterComplete
         }
 
@@ -411,7 +415,13 @@ class AppViewModel {
     }
 
     var todayFullChapterCompleted: Bool {
-        todayMathCompleted && todayReadingCompleted
+        guard let profile = persistence.activeProfile else { return false }
+        switch profile.readingMode {
+        case .hidden, .optional:
+            return todayMathCompleted
+        case .required:
+            return todayMathCompleted && todayReadingCompleted
+        }
     }
 
     var todayChapterInProgress: Bool {

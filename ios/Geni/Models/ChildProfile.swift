@@ -131,6 +131,20 @@ nonisolated struct ChildProfile: Codable, Identifiable, Sendable, Hashable {
     var ageGroup: AgeGroup {
         AgeGroup.from(age: age)
     }
+
+    var readingMode: ReadingRequirement {
+        switch age {
+        case ...5: return .hidden
+        case 6: return .optional
+        default: return .required
+        }
+    }
+}
+
+nonisolated enum ReadingRequirement: Sendable {
+    case hidden
+    case optional
+    case required
 }
 
 nonisolated enum AgeGroup: String, Codable, Sendable {

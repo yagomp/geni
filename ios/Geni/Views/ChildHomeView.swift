@@ -202,7 +202,9 @@ struct ChildHomeView: View {
 
             HStack(spacing: 12) {
                 MissionCheckItem(label: L.s(.mathDone), done: true)
-                MissionCheckItem(label: L.s(.readingDone2), done: true)
+                if viewModel.persistence.activeProfile?.readingMode != .hidden {
+                    MissionCheckItem(label: L.s(.readingDone2), done: viewModel.todayReadingCompleted)
+                }
             }
         }
         .padding(24)
@@ -220,7 +222,9 @@ struct ChildHomeView: View {
                         .textCase(.uppercase)
                         .tracking(1)
 
-                    Text("📚 \(L.s(.mathAndReading))")
+                    Text(viewModel.persistence.activeProfile?.readingMode == .hidden
+                         ? "🧮 \(L.s(.mathOnly))"
+                         : "📚 \(L.s(.mathAndReading))")
                         .font(.system(.title2, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
 
@@ -247,22 +251,27 @@ struct ChildHomeView: View {
                     color: GeniColor.blue
                 )
 
-                Rectangle()
-                    .fill(GeniColor.border.opacity(0.15))
-                    .frame(width: 2, height: 50)
+                if viewModel.persistence.activeProfile?.readingMode != .hidden {
+                    Rectangle()
+                        .fill(GeniColor.border.opacity(0.15))
+                        .frame(width: 2, height: 50)
 
-                MissionProgressItem(
-                    emoji: "📖",
-                    label: L.s(.readingProgress),
-                    progress: readingProgressText,
-                    done: viewModel.todayReadingCompleted,
-                    color: GeniColor.green
-                )
+                    MissionProgressItem(
+                        emoji: "📖",
+                        label: viewModel.persistence.activeProfile?.readingMode == .optional
+                            ? "\(L.s(.readingProgress)) \(L.s(.optionalLabel))"
+                            : L.s(.readingProgress),
+                        progress: readingProgressText,
+                        done: viewModel.todayReadingCompleted,
+                        color: GeniColor.green
+                    )
+                }
             }
 
             Button {
                 HapticManager.impact(.medium)
-                if viewModel.todayMathCompleted && !viewModel.todayReadingCompleted {
+                if viewModel.todayMathCompleted && !viewModel.todayReadingCompleted
+                    && viewModel.persistence.activeProfile?.readingMode == .required {
                     viewModel.startReading()
                 } else if !viewModel.todayMathCompleted {
                     viewModel.startChapter()
@@ -279,6 +288,23 @@ struct ChildHomeView: View {
             }
             .buttonStyle(BrutalistButton(color: missionButtonColor))
 
+            // Optional reading button for age 6 after math is done
+            if viewModel.todayMathCompleted && !viewModel.todayReadingCompleted
+                && viewModel.persistence.activeProfile?.readingMode == .optional {
+                Button {
+                    HapticManager.impact(.medium)
+                    viewModel.startReading()
+                } label: {
+                    HStack(spacing: 8) {
+                        Text("📖")
+                            .font(.system(size: 14))
+                        Text(L.s(.startReading))
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(BrutalistButton(color: GeniColor.green))
+            }
+
         }
         .padding(20)
         .brutalistCard(color: GeniColor.card)
@@ -294,7 +320,8 @@ struct ChildHomeView: View {
     }
 
     private var missionButtonText: String {
-        if viewModel.todayMathCompleted && !viewModel.todayReadingCompleted {
+        if viewModel.todayMathCompleted && !viewModel.todayReadingCompleted
+            && viewModel.persistence.activeProfile?.readingMode == .required {
             return L.s(.startReading)
         } else if viewModel.todayChapterInProgress {
             return L.s(.continueChapter)
@@ -304,7 +331,8 @@ struct ChildHomeView: View {
     }
 
     private var missionButtonColor: Color {
-        if viewModel.todayMathCompleted && !viewModel.todayReadingCompleted {
+        if viewModel.todayMathCompleted && !viewModel.todayReadingCompleted
+            && viewModel.persistence.activeProfile?.readingMode == .required {
             return GeniColor.green
         }
         return GeniColor.blue

@@ -328,7 +328,7 @@ struct ProfileCreationView: View {
                 }
                 .padding(20)
             }
-            .background(GeniColor.lightYellow.ignoresSafeArea())
+            .background(bgColor.ignoresSafeArea())
             .safeAreaInset(edge: .top) {
                 HStack {
                     Text(L.s(.chooseAvatar))
@@ -347,7 +347,7 @@ struct ProfileCreationView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
-                .background(GeniColor.lightYellow)
+                .background(bgColor)
             }
         }
         .presentationDetents([.medium])

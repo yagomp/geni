@@ -123,6 +123,7 @@ struct ParentDashboardView: View {
                     }
 
                     profilesSection
+                    themeSection
                     languageSection
                     progressOverviewSection
                     reminderSection
@@ -149,6 +150,99 @@ struct ParentDashboardView: View {
             }, editingProfile: profile, onBack: {
                 editingProfile = nil
             })
+        }
+    }
+
+    private var themeSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L.s(.theme))
+                .font(.system(.headline, design: .rounded, weight: .bold))
+
+            HStack(spacing: 12) {
+                ForEach(AppTheme.allCases, id: \.rawValue) { theme in
+                    let isSelected = viewModel.persistence.activeProfile?.theme == theme
+                    Button {
+                        HapticManager.selection()
+                        guard var profile = viewModel.persistence.activeProfile else { return }
+                        profile.theme = theme
+                        viewModel.persistence.saveProfile(profile)
+                        ThemeManager.shared.current = theme
+                    } label: {
+                        VStack(spacing: 8) {
+                            ZStack {
+                                Rectangle()
+                                    .fill(themePreviewBg(theme))
+                                    .frame(height: 56)
+                                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+
+                                HStack(spacing: 6) {
+                                    Circle().fill(themePreviewAccent(theme)).frame(width: 14, height: 14)
+                                    RoundedRectangle(cornerRadius: 0)
+                                        .fill(themePreviewCard(theme))
+                                        .frame(width: 28, height: 14)
+                                        .overlay(Rectangle().stroke(Color.black, lineWidth: 1))
+                                    Circle().fill(themePreviewSecondary(theme)).frame(width: 14, height: 14)
+                                }
+                            }
+
+                            Text(themeLabel(theme))
+                                .font(.system(.caption, design: .rounded, weight: .bold))
+                                .foregroundStyle(GeniColor.border)
+
+                            if isSelected {
+                                Text("✅")
+                                    .font(.system(size: 14))
+                            } else {
+                                Text(" ")
+                                    .font(.system(size: 14))
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(10)
+                        .brutalistCard(color: isSelected ? themePreviewBg(theme).opacity(0.3) : GeniColor.card, borderWidth: isSelected ? 3 : 2)
+                    }
+                }
+            }
+        }
+    }
+
+    private func themePreviewBg(_ theme: AppTheme) -> Color {
+        switch theme {
+        case .standard: return Color(red: 1.0, green: 0.97, blue: 0.88)
+        case .ocean: return Color(red: 0.9, green: 0.95, blue: 1.0)
+        case .blossom: return Color(red: 1.0, green: 0.93, blue: 0.95)
+        }
+    }
+
+    private func themePreviewCard(_ theme: AppTheme) -> Color {
+        switch theme {
+        case .standard: return .white
+        case .ocean: return Color(red: 0.95, green: 0.97, blue: 1.0)
+        case .blossom: return Color(red: 1.0, green: 0.97, blue: 0.98)
+        }
+    }
+
+    private func themePreviewAccent(_ theme: AppTheme) -> Color {
+        switch theme {
+        case .standard: return Color(red: 0.0, green: 0.4, blue: 1.0)
+        case .ocean: return Color(red: 0.18, green: 0.45, blue: 0.82)
+        case .blossom: return Color(red: 0.88, green: 0.28, blue: 0.48)
+        }
+    }
+
+    private func themePreviewSecondary(_ theme: AppTheme) -> Color {
+        switch theme {
+        case .standard: return Color(red: 1.0, green: 0.84, blue: 0.04)
+        case .ocean: return Color(red: 0.4, green: 0.85, blue: 0.95)
+        case .blossom: return Color(red: 0.85, green: 0.55, blue: 0.75)
+        }
+    }
+
+    private func themeLabel(_ theme: AppTheme) -> String {
+        switch theme {
+        case .standard: return L.s(.themeStandard)
+        case .ocean: return L.s(.themeOcean)
+        case .blossom: return L.s(.themeBlossom)
         }
     }
 

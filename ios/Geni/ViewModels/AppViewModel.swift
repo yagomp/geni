@@ -80,11 +80,13 @@ class AppViewModel {
         } else if let profile = persistence.activeProfile {
             loadRewards(for: profile.id)
             refreshTodayStatus()
+            ThemeManager.shared.current = profile.theme
             currentScreen = .childHome
         } else if let first = persistence.profiles.first {
             persistence.setActiveProfile(first.id)
             loadRewards(for: first.id)
             refreshTodayStatus()
+            ThemeManager.shared.current = first.theme
             currentScreen = .childHome
         } else {
             currentScreen = .welcome
@@ -96,6 +98,7 @@ class AppViewModel {
         persistence.completeOnboarding()
         persistence.setActiveProfile(profile.id)
         loadRewards(for: profile.id)
+        ThemeManager.shared.current = profile.theme
         currentScreen = .childHome
         cloudSync.pushToCloud(persistence: persistence)
     }
@@ -108,6 +111,7 @@ class AppViewModel {
         persistence.setActiveProfile(profile.id)
         loadRewards(for: profile.id)
         refreshTodayStatus()
+        ThemeManager.shared.current = profile.theme
         currentScreen = .childHome
     }
 

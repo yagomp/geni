@@ -1,6 +1,54 @@
 import SwiftUI
 
+@Observable
+class ThemeManager {
+    static let shared = ThemeManager()
+    var current: AppTheme = .standard
+
+    var accent: Color {
+        switch current {
+        case .standard: return Color(red: 0.0, green: 0.4, blue: 1.0)
+        case .ocean: return Color(red: 0.18, green: 0.45, blue: 0.82)
+        case .blossom: return Color(red: 0.88, green: 0.28, blue: 0.48)
+        }
+    }
+
+    var screenBackground: Color {
+        switch current {
+        case .standard: return Color(red: 1.0, green: 0.97, blue: 0.88)
+        case .ocean: return Color(red: 0.9, green: 0.95, blue: 1.0)
+        case .blossom: return Color(red: 1.0, green: 0.93, blue: 0.95)
+        }
+    }
+
+    var cardBackground: Color {
+        switch current {
+        case .standard: return Color.white
+        case .ocean: return Color(red: 0.95, green: 0.97, blue: 1.0)
+        case .blossom: return Color(red: 1.0, green: 0.97, blue: 0.98)
+        }
+    }
+
+    var progressAccent: Color {
+        switch current {
+        case .standard: return Color(red: 0.0, green: 0.4, blue: 1.0)
+        case .ocean: return Color(red: 0.15, green: 0.5, blue: 0.85)
+        case .blossom: return Color(red: 0.85, green: 0.3, blue: 0.55)
+        }
+    }
+
+    var buttonColor: Color {
+        switch current {
+        case .standard: return Color(red: 0.0, green: 0.4, blue: 1.0)
+        case .ocean: return Color(red: 0.18, green: 0.45, blue: 0.82)
+        case .blossom: return Color(red: 0.88, green: 0.28, blue: 0.48)
+        }
+    }
+}
+
 enum GeniColor {
+    private static var theme: ThemeManager { ThemeManager.shared }
+
     static let yellow = Color(red: 1.0, green: 0.84, blue: 0.04)
     static let blue = Color(red: 0.0, green: 0.4, blue: 1.0)
     static let pink = Color(red: 1.0, green: 0.18, blue: 0.33)
@@ -9,12 +57,14 @@ enum GeniColor {
     static let orange = Color(red: 1.0, green: 0.58, blue: 0.0)
     static let cyan = Color(red: 0.4, green: 0.85, blue: 0.95)
     static let background = Color.white
-    static let lightYellow = Color(red: 1.0, green: 0.97, blue: 0.88)
+    static var lightYellow: Color { theme.screenBackground }
     static let darkBG = Color(red: 0.12, green: 0.12, blue: 0.14)
-    static let card = Color.white
+    static var card: Color { theme.cardBackground }
     static let border = Color.black
     static let peach = Color(red: 0.96, green: 0.82, blue: 0.72)
     static let lightGray = Color(red: 0.9, green: 0.9, blue: 0.9)
+
+    static var accent: Color { theme.accent }
 }
 
 struct BrutalistCard: ViewModifier {
@@ -42,7 +92,7 @@ struct BrutalistButton: ButtonStyle {
     let color: Color
     let textColor: Color
 
-    init(color: Color = GeniColor.blue, textColor: Color = .white) {
+    init(color: Color = ThemeManager.shared.buttonColor, textColor: Color = .white) {
         self.color = color
         self.textColor = textColor
     }

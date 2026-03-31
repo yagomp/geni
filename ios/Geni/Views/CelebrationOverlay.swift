@@ -73,12 +73,37 @@ struct BadgeUnlockOverlay: View {
     let onDismiss: () -> Void
     @State private var appeared = false
     @State private var iconBounce = 0
+    @State private var particles: [CelebrationParticle] = []
+    @State private var useFireworks = Bool.random()
 
     var body: some View {
         ZStack {
             Color.black.opacity(appeared ? 0.6 : 0)
                 .ignoresSafeArea()
                 .onTapGesture { dismiss() }
+
+            // Celebration particles
+            GeometryReader { geo in
+                ForEach(particles) { p in
+                    Group {
+                        if useFireworks {
+                            Circle()
+                                .fill(p.color)
+                                .frame(width: p.size, height: p.size)
+                                .shadow(color: p.color.opacity(0.6), radius: 4)
+                        } else {
+                            Rectangle()
+                                .fill(p.color)
+                                .frame(width: p.size * 0.6, height: p.size * 1.4)
+                                .rotationEffect(.degrees(p.rotation))
+                        }
+                    }
+                    .position(x: p.x, y: p.y)
+                    .opacity(p.opacity)
+                }
+            }
+            .ignoresSafeArea()
+            .allowsHitTesting(false)
 
             VStack(spacing: 24) {
                 Text(L.s(.newBadge))
@@ -127,6 +152,7 @@ struct BadgeUnlockOverlay: View {
             Task {
                 try? await Task.sleep(for: .seconds(0.3))
                 iconBounce += 1
+                launchCelebration()
             }
         }
     }
@@ -138,4 +164,88 @@ struct BadgeUnlockOverlay: View {
             onDismiss()
         }
     }
+
+    private func launchCelebration() {
+        let screenW = UIScreen.main.bounds.width
+        let screenH = UIScreen.main.bounds.height
+        let colors: [Color] = [.red, .orange, .yellow, .green, .blue, .purple, .pink, GeniColor.yellow, GeniColor.green]
+
+        if useFireworks {
+            // Fireworks: burst from 2-3 center points
+            let burstCount = Int.random(in: 2...3)
+            for _ in 0..<burstCount {
+                let cx = CGFloat.random(in: screenW * 0.2...screenW * 0.8)
+                let cy = CGFloat.random(in: screenH * 0.15...screenH * 0.4)
+                for i in 0..<20 {
+                    let angle = Double.random(in: 0...(2 * .pi))
+                    let speed = CGFloat.random(in: 80...200)
+                    let dx = cos(angle) * speed
+                    let dy = sin(angle) * speed
+                    let p = CelebrationParticle(
+                        x: cx, y: cy,
+                        color: colors.randomElement()!,
+                        size: CGFloat.random(in: 6...12),
+                        rotation: 0, opacity: 1
+                    )
+                    particles.append(p)
+                    let idx = particles.count - 1
+                    let delay = Double(i) * 0.02
+                    Task {
+                        try? await Task.sleep(for: .seconds(delay))
+                        await animateParticle(idx, dx: dx, dy: dy + 100)
+                    }
+                }
+            }
+        } else {
+            // Confetti: fall from top
+            for i in 0..<40 {
+                let p = CelebrationParticle(
+                    x: CGFloat.random(in: 0...screenW),
+                    y: -20,
+                    color: colors.randomElement()!,
+                    size: CGFloat.random(in: 8...14),
+                    rotation: Double.random(in: 0...360),
+                    opacity: 1
+                )
+                particles.append(p)
+                let idx = particles.count - 1
+                let delay = Double(i) * 0.05
+                Task {
+                    try? await Task.sleep(for: .seconds(delay))
+                    await animateConfetti(idx, screenH: screenH)
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func animateParticle(_ idx: Int, dx: CGFloat, dy: CGFloat) {
+        guard idx < particles.count else { return }
+        withAnimation(.easeOut(duration: 1.2)) {
+            particles[idx].x += dx
+            particles[idx].y += dy
+            particles[idx].opacity = 0
+        }
+    }
+
+    @MainActor
+    private func animateConfetti(_ idx: Int, screenH: CGFloat) {
+        guard idx < particles.count else { return }
+        withAnimation(.easeIn(duration: Double.random(in: 1.5...2.5))) {
+            particles[idx].y = screenH + 40
+            particles[idx].x += CGFloat.random(in: -60...60)
+            particles[idx].rotation += Double.random(in: 180...720)
+            particles[idx].opacity = 0
+        }
+    }
+}
+
+struct CelebrationParticle: Identifiable {
+    let id = UUID()
+    var x: CGFloat
+    var y: CGFloat
+    var color: Color
+    var size: CGFloat
+    var rotation: Double
+    var opacity: Double
 }

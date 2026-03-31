@@ -439,6 +439,10 @@ struct ExerciseView: View {
 
     private func compareGroupsContent(_ exercise: Exercise) -> some View {
         VStack(spacing: 20) {
+            Text(L.s(.whichHasMore))
+                .font(.system(size: iPadScale.value(28), weight: .bold, design: .rounded))
+                .foregroundStyle(GeniColor.border)
+
             HStack(spacing: 16) {
                 Button {
                     guard !chapterVM.showFeedback else { return }
@@ -514,6 +518,10 @@ struct ExerciseView: View {
     // MARK: - Match Connect (Draw a Line)
 
     private func matchConnectContent(_ exercise: Exercise) -> some View {
+        Text(L.s(.matchThePairs))
+            .font(.system(size: iPadScale.value(28), weight: .bold, design: .rounded))
+            .foregroundStyle(GeniColor.border)
+
         let leftLabels = exercise.matchLeftLabels ?? []
         let rightLabels = exercise.matchRightLabels ?? []
         let correctIndices = exercise.correctMatchIndices ?? []
@@ -918,6 +926,10 @@ struct ExerciseView: View {
         let seq = exercise.sequenceNumbers ?? []
 
         return VStack(spacing: 28) {
+            Text(L.s(.whatComesNext))
+                .font(.system(size: iPadScale.value(28), weight: .bold, design: .rounded))
+                .foregroundStyle(GeniColor.border)
+
             // Show sequence numbers in boxes
             HStack(spacing: 8) {
                 ForEach(seq, id: \.self) { num in

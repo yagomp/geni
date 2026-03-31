@@ -107,6 +107,12 @@ nonisolated struct TopicProgress: Codable, Sendable {
     }
 }
 
+nonisolated enum AppTheme: String, Codable, Sendable, CaseIterable, Hashable {
+    case standard
+    case ocean
+    case blossom
+}
+
 nonisolated struct ChildProfile: Codable, Identifiable, Sendable, Hashable {
     let id: String
     var nickname: String
@@ -116,6 +122,7 @@ nonisolated struct ChildProfile: Codable, Identifiable, Sendable, Hashable {
     var remindersEnabled: Bool
     var adaptiveDifficultyEnabled: Bool
     let createdAt: Date
+    var theme: AppTheme
 
     init(nickname: String, age: Int, avatarId: String) {
         self.id = UUID().uuidString
@@ -126,6 +133,7 @@ nonisolated struct ChildProfile: Codable, Identifiable, Sendable, Hashable {
         self.remindersEnabled = false
         self.adaptiveDifficultyEnabled = false
         self.createdAt = Date()
+        self.theme = .standard
     }
 
     var ageGroup: AgeGroup {

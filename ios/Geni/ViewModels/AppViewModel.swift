@@ -127,11 +127,16 @@ class AppViewModel {
                 } else {
                     exercises = ExerciseGenerator.generateChapter(profile: profile)
                 }
+                let startIndex = min(existing.exerciseResults.count, exercises.count)
+                if startIndex >= exercises.count {
+                    completeChapter(existing)
+                    return
+                }
                 chapterViewModel = ChapterViewModel(
                     profile: profile,
                     chapter: existing,
                     exercises: exercises,
-                    startIndex: existing.exerciseResults.count
+                    startIndex: startIndex
                 )
             } else if persistence.todayChapter(for: profile.id) == nil {
                 let chapter = ChapterProgress(childId: profile.id, date: today)

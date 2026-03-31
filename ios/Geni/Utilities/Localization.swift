@@ -112,6 +112,7 @@ nonisolated enum LocaleKey: String, Sendable {
     case trueLabel
     case falseLabel
     case whichIsBigger
+    case howMany
     case or
     case timeUp
     case reminders
@@ -403,6 +404,7 @@ nonisolated enum L {
         case .trueLabel: return "True"
         case .falseLabel: return "False"
         case .whichIsBigger: return "Which is bigger?"
+        case .howMany: return "How many?"
         case .or: return "or"
         case .timeUp: return "Time\u{2019}s up!"
         case .reminders: return "Reminders"
@@ -621,6 +623,7 @@ nonisolated enum L {
         case .trueLabel: return "Riktig"
         case .falseLabel: return "Feil"
         case .whichIsBigger: return "Hvilken er st\u{00F8}rst?"
+        case .howMany: return "Hvor mange?"
         case .or: return "eller"
         case .timeUp: return "Tiden er ute!"
         case .reminders: return "P\u{00E5}minnelser"

@@ -398,6 +398,10 @@ struct ExerciseView: View {
 
     private func countingObjectsContent(_ exercise: Exercise) -> some View {
         VStack(spacing: 28) {
+            Text(L.s(.howMany))
+                .font(.system(size: iPadScale.value(28), weight: .bold, design: .rounded))
+                .foregroundStyle(GeniColor.border)
+
             emojiGrid(exercise.emojiSymbol ?? "🍎", count: exercise.operand1)
                 .padding(.vertical, 16)
 
@@ -472,6 +476,10 @@ struct ExerciseView: View {
 
     private func tenFrameContent(_ exercise: Exercise) -> some View {
         VStack(spacing: 28) {
+            Text(L.s(.howMany))
+                .font(.system(size: iPadScale.value(28), weight: .bold, design: .rounded))
+                .foregroundStyle(GeniColor.border)
+
             let emoji = exercise.emojiSymbol ?? "⭐"
             let filled = exercise.operand1
             let cellSize = iPadScale.value(48)

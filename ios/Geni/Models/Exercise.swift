@@ -88,13 +88,17 @@ nonisolated struct Exercise: Identifiable, Sendable {
 
             var opts = Set<Int>()
             opts.insert(answer)
-            while opts.count < 4 {
+            var attempts = 0
+            while opts.count < 4 && attempts < 50 {
+                attempts += 1
                 let offset = Int.random(in: 1...5) * (Bool.random() ? 1 : -1)
                 let wrong = answer + offset
                 if wrong >= 0 && wrong != answer {
                     opts.insert(wrong)
                 }
             }
+            var fallback = answer + 6
+            while opts.count < 4 { opts.insert(fallback); fallback += 1 }
             self.options = Array(opts).shuffled()
 
         case .missingNumber:
@@ -107,13 +111,17 @@ nonisolated struct Exercise: Identifiable, Sendable {
             let missingValue = missingIdx == 0 ? operand1 : operand2
             var opts = Set<Int>()
             opts.insert(missingValue)
-            while opts.count < 4 {
+            var attempts2 = 0
+            while opts.count < 4 && attempts2 < 50 {
+                attempts2 += 1
                 let offset = Int.random(in: 1...5) * (Bool.random() ? 1 : -1)
                 let wrong = missingValue + offset
                 if wrong >= 0 && wrong != missingValue {
                     opts.insert(wrong)
                 }
             }
+            var fallback2 = missingValue + 6
+            while opts.count < 4 { opts.insert(fallback2); fallback2 += 1 }
             self.options = Array(opts).shuffled()
 
         case .trueFalse:
@@ -201,13 +209,17 @@ nonisolated struct Exercise: Identifiable, Sendable {
             self.correctAnswer = count
             var opts = Set<Int>()
             opts.insert(count)
-            while opts.count < 4 {
-                let offset = Int.random(in: 1...2) * (Bool.random() ? 1 : -1)
+            var attempts = 0
+            while opts.count < 4 && attempts < 50 {
+                attempts += 1
+                let offset = Int.random(in: 1...3) * (Bool.random() ? 1 : -1)
                 let wrong = count + offset
                 if wrong >= 1 && wrong != count {
                     opts.insert(wrong)
                 }
             }
+            var fallback = count + 3
+            while opts.count < 4 { opts.insert(fallback); fallback += 1 }
             self.options = Array(opts).shuffled()
 
         case .visualAddition:
@@ -215,13 +227,17 @@ nonisolated struct Exercise: Identifiable, Sendable {
             self.correctAnswer = total
             var opts = Set<Int>()
             opts.insert(total)
-            while opts.count < 4 {
-                let offset = Int.random(in: 1...2) * (Bool.random() ? 1 : -1)
+            var attempts = 0
+            while opts.count < 4 && attempts < 50 {
+                attempts += 1
+                let offset = Int.random(in: 1...3) * (Bool.random() ? 1 : -1)
                 let wrong = total + offset
                 if wrong >= 1 && wrong != total {
                     opts.insert(wrong)
                 }
             }
+            var fallback = total + 3
+            while opts.count < 4 { opts.insert(fallback); fallback += 1 }
             self.options = Array(opts).shuffled()
 
         case .compareGroups:
@@ -300,13 +316,17 @@ nonisolated struct Exercise: Identifiable, Sendable {
 
         var opts = Set<Int>()
         opts.insert(correctAnswer)
-        while opts.count < 4 {
+        var attempts = 0
+        while opts.count < 4 && attempts < 50 {
+            attempts += 1
             let offset = Int.random(in: 1...3) * (Bool.random() ? 1 : -1)
             let wrong = correctAnswer + offset
             if wrong >= 1 && wrong != correctAnswer {
                 opts.insert(wrong)
             }
         }
+        var fallback = correctAnswer + 4
+        while opts.count < 4 { opts.insert(fallback); fallback += 1 }
         self.options = Array(opts).shuffled()
     }
 
@@ -348,13 +368,17 @@ nonisolated struct Exercise: Identifiable, Sendable {
 
         var opts = Set<Int>()
         opts.insert(answer)
-        while opts.count < 4 {
+        var attempts = 0
+        while opts.count < 4 && attempts < 50 {
+            attempts += 1
             let offset = Int.random(in: 1...3) * (Bool.random() ? 1 : -1)
             let wrong = answer + offset
             if wrong >= 0 && wrong != answer {
                 opts.insert(wrong)
             }
         }
+        var fallback = answer + 4
+        while opts.count < 4 { opts.insert(fallback); fallback += 1 }
         self.options = Array(opts).shuffled()
     }
 

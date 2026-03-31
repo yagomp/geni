@@ -255,11 +255,15 @@ enum ExerciseGenerator {
 
         var opts = Set<Int>()
         opts.insert(answer)
-        while opts.count < 4 {
+        var attempts = 0
+        while opts.count < 4 && attempts < 50 {
+            attempts += 1
             let offset = Int.random(in: 1...max(answer / 5, 3)) * (Bool.random() ? 1 : -1)
             let wrong = answer + offset
             if wrong >= 0 && wrong != answer { opts.insert(wrong) }
         }
+        var fallback = answer + 10
+        while opts.count < 4 { opts.insert(fallback); fallback += 1 }
         return Exercise(olderFormat: .multiStep, answer: answer, options: Array(opts).shuffled(), difficulty: difficulty, expression: expression)
     }
 
@@ -287,21 +291,29 @@ enum ExerciseGenerator {
             let newAnswer = start + step * length
             var opts = Set<Int>()
             opts.insert(newAnswer)
-            while opts.count < 4 {
+            var attempts = 0
+            while opts.count < 4 && attempts < 50 {
+                attempts += 1
                 let offset = Int.random(in: 1...step) * (Bool.random() ? 1 : -1)
                 let wrong = newAnswer + offset
                 if wrong >= 0 && wrong != newAnswer { opts.insert(wrong) }
             }
+            var fallback = newAnswer + step + 1
+            while opts.count < 4 { opts.insert(fallback); fallback += 1 }
             return Exercise(olderFormat: .numberSequence, answer: newAnswer, options: Array(opts).shuffled(), difficulty: difficulty, sequence: newSeq)
         }
 
         var opts = Set<Int>()
         opts.insert(answer)
-        while opts.count < 4 {
+        var attempts = 0
+        while opts.count < 4 && attempts < 50 {
+            attempts += 1
             let offset = Int.random(in: 1...step) * (Bool.random() ? 1 : -1)
             let wrong = answer + offset
             if wrong >= 0 && wrong != answer { opts.insert(wrong) }
         }
+        var fallback = answer + step + 1
+        while opts.count < 4 { opts.insert(fallback); fallback += 1 }
         return Exercise(olderFormat: .numberSequence, answer: answer, options: Array(opts).shuffled(), difficulty: difficulty, sequence: seq)
     }
 
@@ -322,11 +334,15 @@ enum ExerciseGenerator {
         // Add the other calculation as a distractor
         let other = isArea ? 2 * (w + h) : w * h
         if other != answer { opts.insert(other) }
-        while opts.count < 4 {
+        var attempts = 0
+        while opts.count < 4 && attempts < 50 {
+            attempts += 1
             let offset = Int.random(in: 1...4) * (Bool.random() ? 1 : -1)
             let wrong = answer + offset
             if wrong >= 1 && wrong != answer { opts.insert(wrong) }
         }
+        var fallback = answer + 5
+        while opts.count < 4 { opts.insert(fallback); fallback += 1 }
         return Exercise(olderFormat: .areaPerimeter, answer: answer, options: Array(opts).shuffled(), difficulty: difficulty, width: w, height: h, op1: isArea ? 1 : 0)
     }
 
@@ -343,11 +359,14 @@ enum ExerciseGenerator {
         // Options include wrong numerators
         var opts = Set<Int>()
         opts.insert(num)
-        while opts.count < 4 {
-            let wrong = Int.random(in: max(1, num - 2)...min(den, num + 2))
-            if wrong != num { opts.insert(wrong) }
+        var attempts = 0
+        while opts.count < 4 && attempts < 50 {
+            attempts += 1
+            let wrong = Int.random(in: max(1, num - 3)...min(den + 2, num + 3))
+            if wrong >= 0 && wrong != num { opts.insert(wrong) }
         }
-        while opts.count < 4 { opts.insert(Int.random(in: 1...den)) }
+        var fallback = den + 1
+        while opts.count < 4 { opts.insert(fallback); fallback += 1 }
         return Exercise(olderFormat: .fractionPick, answer: num, options: Array(opts).shuffled(), difficulty: difficulty, fracNum: num, fracDen: den)
     }
 
@@ -364,11 +383,15 @@ enum ExerciseGenerator {
 
         var opts = Set<Int>()
         opts.insert(quotient)
-        while opts.count < 4 {
+        var attempts = 0
+        while opts.count < 4 && attempts < 50 {
+            attempts += 1
             let offset = Int.random(in: 1...3) * (Bool.random() ? 1 : -1)
             let wrong = quotient + offset
             if wrong >= 1 && wrong != quotient { opts.insert(wrong) }
         }
+        var fallback = quotient + 4
+        while opts.count < 4 { opts.insert(fallback); fallback += 1 }
         return Exercise(olderFormat: .longDivision, answer: quotient, options: Array(opts).shuffled(), difficulty: difficulty, remainder: remainder, op1: dividend, op2: divisor, operation: .division)
     }
 

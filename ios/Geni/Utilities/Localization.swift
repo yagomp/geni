@@ -162,6 +162,8 @@ nonisolated enum LocaleKey: String, Sendable {
     case startReading
     case readingDone
     case mathAndReading
+    case mathOnly
+    case optionalLabel
     case badgeFirstReading
     case badgeFirstReadingDesc
     case badgeReading5
@@ -458,6 +460,8 @@ nonisolated enum L {
         case .startReading: return "Start Reading"
         case .readingDone: return "Reading done!"
         case .mathAndReading: return "Math & Reading"
+        case .mathOnly: return "Math"
+        case .optionalLabel: return "(optional)"
         case .badgeFirstReading: return "First Read"
         case .badgeFirstReadingDesc: return "Complete your first reading"
         case .badgeReading5: return "Story Lover"
@@ -681,6 +685,8 @@ nonisolated enum L {
         case .startReading: return "Start lesing"
         case .readingDone: return "Lesing ferdig!"
         case .mathAndReading: return "Matte og lesing"
+        case .mathOnly: return "Matte"
+        case .optionalLabel: return "(valgfritt)"
         case .badgeFirstReading: return "F\u{00F8}rste lesing"
         case .badgeFirstReadingDesc: return "Fullf\u{00F8}r din f\u{00F8}rste lesing"
         case .badgeReading5: return "Historieelsker"

@@ -31,7 +31,17 @@ struct ProfileCreationView: View {
                         if let onBack {
                             Button {
                                 HapticManager.selection()
-                                onBack()
+                                if var existing = editingProfile {
+                                    existing.nickname = nickname
+                                    existing.age = age
+                                    existing.avatarId = selectedAvatar
+                                    existing.operationsEnabled = Array(selectedOperations)
+                                    existing.theme = selectedTheme
+                                    ThemeManager.shared.current = selectedTheme
+                                    onComplete(existing)
+                                } else {
+                                    onBack()
+                                }
                             } label: {
                                 Text("◀️")
                                     .font(.system(size: 20))

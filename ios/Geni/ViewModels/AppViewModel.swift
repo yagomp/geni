@@ -122,7 +122,7 @@ class AppViewModel {
         if type == .daily {
             if let existing = persistence.todayChapter(for: profile.id), existing.status == .inProgress {
                 let exercises: [Exercise]
-                if profile.ageGroup == .middle {
+                if profile.ageGroup == .middle || profile.ageGroup == .older {
                     exercises = ExerciseGenerator.generateTopicChapter(profile: profile, topic: topicProgress.currentTopic())
                 } else {
                     exercises = ExerciseGenerator.generateChapter(profile: profile)
@@ -136,7 +136,7 @@ class AppViewModel {
             } else if persistence.todayChapter(for: profile.id) == nil {
                 let chapter = ChapterProgress(childId: profile.id, date: today)
                 let exercises: [Exercise]
-                if profile.ageGroup == .middle {
+                if profile.ageGroup == .middle || profile.ageGroup == .older {
                     exercises = ExerciseGenerator.generateTopicChapter(profile: profile, topic: topicProgress.currentTopic())
                 } else {
                     exercises = ExerciseGenerator.generateChapter(profile: profile)
@@ -204,7 +204,7 @@ class AppViewModel {
         rewardState.updateStreak(for: persistence.todayString())
 
         // Track topic progress for middle age group
-        if profile.ageGroup == .middle && final.chapterType == .daily {
+        if (profile.ageGroup == .middle || profile.ageGroup == .older) && final.chapterType == .daily {
             let currentTopic = topicProgress.currentTopic()
             topicProgress.addStars(final.stars, for: currentTopic)
             persistence.saveTopicProgress(topicProgress, for: profile.id)

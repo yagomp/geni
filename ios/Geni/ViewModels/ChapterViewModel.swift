@@ -57,7 +57,8 @@ class ChapterViewModel {
         let actualCorrectAnswer: Int
         switch exercise.format {
         case .solveResult, .countingObjects, .visualAddition, .tenFrame,
-             .numberBonds, .diceAddition, .visualSubtraction:
+             .numberBonds, .diceAddition, .visualSubtraction,
+             .multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision:
             actualCorrectAnswer = exercise.correctAnswer
         case .missingNumber:
             actualCorrectAnswer = exercise.missingNumberCorrectAnswer

@@ -14,6 +14,11 @@ nonisolated enum ExerciseFormat: String, Codable, Sendable {
     case diceAddition
     case evenOddSort
     case visualSubtraction
+    case multiStep
+    case numberSequence
+    case areaPerimeter
+    case fractionPick
+    case longDivision
 }
 
 nonisolated struct Exercise: Identifiable, Sendable {
@@ -35,6 +40,13 @@ nonisolated struct Exercise: Identifiable, Sendable {
     let matchRightLabels: [String]?
     let correctMatchIndices: [Int]?
     let numberBondMissingWhole: Bool?
+    let sequenceNumbers: [Int]?
+    let multiStepExpression: String?
+    let gridWidth: Int?
+    let gridHeight: Int?
+    let fractionNumerator: Int?
+    let fractionDenominator: Int?
+    let divisionRemainder: Int?
 
     init(operand1: Int, operand2: Int, operation: MathOperation, difficulty: ExerciseDifficulty, format: ExerciseFormat = .solveResult) {
         self.id = UUID().uuidString
@@ -59,6 +71,13 @@ nonisolated struct Exercise: Identifiable, Sendable {
         self.matchRightLabels = nil
         self.correctMatchIndices = nil
         self.numberBondMissingWhole = nil
+        self.sequenceNumbers = nil
+        self.multiStepExpression = nil
+        self.gridWidth = nil
+        self.gridHeight = nil
+        self.fractionNumerator = nil
+        self.fractionDenominator = nil
+        self.divisionRemainder = nil
 
         switch format {
         case .solveResult:
@@ -146,7 +165,8 @@ nonisolated struct Exercise: Identifiable, Sendable {
             }
 
         case .countingObjects, .visualAddition, .compareGroups, .tenFrame,
-             .matchConnect, .numberBonds, .diceAddition, .evenOddSort, .visualSubtraction:
+             .matchConnect, .numberBonds, .diceAddition, .evenOddSort, .visualSubtraction,
+             .multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision:
             fatalError("Use the appropriate init for visual exercise types")
         }
     }
@@ -168,6 +188,13 @@ nonisolated struct Exercise: Identifiable, Sendable {
         self.matchRightLabels = nil
         self.correctMatchIndices = nil
         self.numberBondMissingWhole = nil
+        self.sequenceNumbers = nil
+        self.multiStepExpression = nil
+        self.gridWidth = nil
+        self.gridHeight = nil
+        self.fractionNumerator = nil
+        self.fractionDenominator = nil
+        self.divisionRemainder = nil
 
         switch emojiFormat {
         case .countingObjects, .tenFrame:
@@ -227,6 +254,13 @@ nonisolated struct Exercise: Identifiable, Sendable {
         self.matchRightLabels = matchRight
         self.correctMatchIndices = correctIndices
         self.numberBondMissingWhole = nil
+        self.sequenceNumbers = nil
+        self.multiStepExpression = nil
+        self.gridWidth = nil
+        self.gridHeight = nil
+        self.fractionNumerator = nil
+        self.fractionDenominator = nil
+        self.divisionRemainder = nil
     }
 
     // MARK: - Number Bonds init
@@ -246,6 +280,13 @@ nonisolated struct Exercise: Identifiable, Sendable {
         self.matchLeftLabels = nil
         self.matchRightLabels = nil
         self.correctMatchIndices = nil
+        self.sequenceNumbers = nil
+        self.multiStepExpression = nil
+        self.gridWidth = nil
+        self.gridHeight = nil
+        self.fractionNumerator = nil
+        self.fractionDenominator = nil
+        self.divisionRemainder = nil
 
         if missingWhole {
             self.operand1 = givenPart
@@ -288,6 +329,13 @@ nonisolated struct Exercise: Identifiable, Sendable {
         self.matchRightLabels = nil
         self.correctMatchIndices = nil
         self.numberBondMissingWhole = nil
+        self.sequenceNumbers = nil
+        self.multiStepExpression = nil
+        self.gridWidth = nil
+        self.gridHeight = nil
+        self.fractionNumerator = nil
+        self.fractionDenominator = nil
+        self.divisionRemainder = nil
 
         let answer: Int
         switch operation {
@@ -308,6 +356,39 @@ nonisolated struct Exercise: Identifiable, Sendable {
             }
         }
         self.options = Array(opts).shuffled()
+    }
+
+    // MARK: - Older Age Exercises init
+
+    init(olderFormat: ExerciseFormat, answer: Int, options: [Int], difficulty: ExerciseDifficulty,
+         expression: String? = nil, sequence: [Int]? = nil, width: Int? = nil, height: Int? = nil,
+         fracNum: Int? = nil, fracDen: Int? = nil, remainder: Int? = nil,
+         op1: Int = 0, op2: Int = 0, operation: MathOperation = .addition) {
+        self.id = UUID().uuidString
+        self.format = olderFormat
+        self.difficulty = difficulty
+        self.operation = operation
+        self.operand1 = op1
+        self.operand2 = op2
+        self.correctAnswer = answer
+        self.options = options
+        self.emojiSymbol = nil
+        self.emojiSymbolRight = nil
+        self.missingOperandIndex = nil
+        self.proposedAnswer = nil
+        self.comparisonLeft = nil
+        self.comparisonRight = nil
+        self.matchLeftLabels = nil
+        self.matchRightLabels = nil
+        self.correctMatchIndices = nil
+        self.numberBondMissingWhole = nil
+        self.multiStepExpression = expression
+        self.sequenceNumbers = sequence
+        self.gridWidth = width
+        self.gridHeight = height
+        self.fractionNumerator = fracNum
+        self.fractionDenominator = fracDen
+        self.divisionRemainder = remainder
     }
 
     var prompt: String {
@@ -333,6 +414,16 @@ nonisolated struct Exercise: Identifiable, Sendable {
             return "\(operand1) \(operation.symbol) \(operand2) = \(correctAnswer)"
         case .visualSubtraction:
             return "\(emojiSymbol ?? "?")x\(operand1) - \(operand2)"
+        case .multiStep:
+            return multiStepExpression ?? "\(operand1) \(operation.symbol) \(operand2)"
+        case .numberSequence:
+            return (sequenceNumbers ?? []).map { "\($0)" }.joined(separator: ", ") + ", ?"
+        case .areaPerimeter:
+            return "\(gridWidth ?? 0)x\(gridHeight ?? 0)"
+        case .fractionPick:
+            return "\(fractionNumerator ?? 0)/\(fractionDenominator ?? 1)"
+        case .longDivision:
+            return "\(operand1) \u{00F7} \(operand2)"
         default:
             return "\(operand1) \(operation.symbol) \(operand2)"
         }

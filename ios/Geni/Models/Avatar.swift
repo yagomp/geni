@@ -21,7 +21,26 @@ nonisolated struct AvatarOption: Identifiable, Sendable {
         AvatarOption(id: "monkey", emoji: "🐵", icon: "leaf.fill", color: .brown),
     ]
 
+    static let extras: [AvatarOption] = [
+        AvatarOption(id: "cat", emoji: "🐱", icon: "pawprint.fill", color: .orange),
+        AvatarOption(id: "dog", emoji: "🐶", icon: "pawprint.fill", color: .brown),
+        AvatarOption(id: "bear", emoji: "🐻", icon: "leaf.fill", color: .brown),
+        AvatarOption(id: "frog", emoji: "🐸", icon: "leaf.fill", color: .green),
+        AvatarOption(id: "butterfly", emoji: "🦋", icon: "sparkle", color: .purple),
+        AvatarOption(id: "dolphin", emoji: "🐬", icon: "tropicalstorm", color: .cyan),
+        AvatarOption(id: "owl", emoji: "🦉", icon: "moon.fill", color: .brown),
+        AvatarOption(id: "bee", emoji: "🐝", icon: "sparkle", color: .yellow),
+        AvatarOption(id: "star", emoji: "⭐", icon: "star.fill", color: .yellow),
+        AvatarOption(id: "rainbow", emoji: "🌈", icon: "sparkle", color: .purple),
+        AvatarOption(id: "sun", emoji: "☀️", icon: "sun.max.fill", color: .orange),
+        AvatarOption(id: "flower", emoji: "🌸", icon: "leaf.fill", color: .pink),
+        AvatarOption(id: "wizard", emoji: "🧙", icon: "wand.and.stars", color: .purple),
+        AvatarOption(id: "fairy", emoji: "🧚", icon: "sparkle", color: .pink),
+        AvatarOption(id: "superhero", emoji: "🦸", icon: "bolt.fill", color: .blue),
+        AvatarOption(id: "astronaut", emoji: "🧑‍🚀", icon: "paperplane.fill", color: .cyan),
+    ]
+
     static func find(_ id: String) -> AvatarOption {
-        all.first { $0.id == id } ?? all[0]
+        all.first { $0.id == id } ?? extras.first { $0.id == id } ?? all[0]
     }
 }

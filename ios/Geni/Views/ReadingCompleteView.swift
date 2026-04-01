@@ -99,7 +99,7 @@ struct ReadingCompleteView: View {
 
                                 HStack(spacing: 4) {
                                     Text("⚡")
-                                    Text("+30 XP")
+                                    Text("+30 \(L.s(.xp))")
                                         .font(.system(.headline, design: .rounded, weight: .black))
                                         .foregroundStyle(GeniColor.border)
                                 }

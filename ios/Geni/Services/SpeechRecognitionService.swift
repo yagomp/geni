@@ -16,7 +16,7 @@ class SpeechRecognitionService {
     private var audioEngine: AVAudioEngine?
 
     init() {
-        let locale = Locale(identifier: L.isNorwegian ? "nb-NO" : "en-US")
+        let locale = Locale(identifier: L.speechLocaleIdentifier)
         recognizer = SFSpeechRecognizer(locale: locale)
         isAvailable = recognizer?.isAvailable ?? false
     }
@@ -34,8 +34,12 @@ class SpeechRecognitionService {
     }
 
     func startListening() {
+        let locale = Locale(identifier: L.speechLocaleIdentifier)
+        recognizer = SFSpeechRecognizer(locale: locale)
+        isAvailable = recognizer?.isAvailable ?? false
+
         guard let recognizer, recognizer.isAvailable else {
-            error = "Speech recognition not available"
+            error = L.s(.speechRecognitionUnavailable)
             return
         }
 
@@ -53,7 +57,7 @@ class SpeechRecognitionService {
             try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
-            self.error = "Audio session error"
+            self.error = L.s(.audioSessionError)
             return
         }
 
@@ -88,7 +92,7 @@ class SpeechRecognitionService {
             try engine.start()
             isListening = true
         } catch {
-            self.error = "Could not start audio engine"
+            self.error = L.s(.audioEngineStartError)
             stopListening()
         }
     }

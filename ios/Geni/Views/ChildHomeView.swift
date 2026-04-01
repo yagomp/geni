@@ -314,9 +314,9 @@ struct ChildHomeView: View {
         if viewModel.todayReadingCompleted {
             return "✓"
         }
-        guard let profile = viewModel.persistence.activeProfile else { return "0 min" }
+        guard let profile = viewModel.persistence.activeProfile else { return "0 \(L.s(.minutes))" }
         let mins = ReadingText.targetReadingSeconds(for: profile.age) / 60
-        return "0/\(mins) min"
+        return "0/\(mins) \(L.s(.minutes))"
     }
 
     private var missionButtonText: String {

@@ -126,7 +126,7 @@ struct MissionCompleteView: View {
                             .frame(height: 3)
 
                         HStack {
-                            Text("Total")
+                            Text(L.s(.total))
                                 .font(.system(.title3, design: .rounded, weight: .black))
                                 .foregroundStyle(GeniColor.border)
 

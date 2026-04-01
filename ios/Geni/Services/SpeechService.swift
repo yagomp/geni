@@ -26,7 +26,7 @@ class SpeechService: NSObject {
         }
 
         let utterance = AVSpeechUtterance(string: text)
-        utterance.voice = AVSpeechSynthesisVoice(language: L.isNorwegian ? "nb-NO" : "en-US")
+        utterance.voice = AVSpeechSynthesisVoice(language: L.speechLocaleIdentifier)
         utterance.rate = rate
         utterance.pitchMultiplier = 1.1
         utterance.preUtteranceDelay = 0.3

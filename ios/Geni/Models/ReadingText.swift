@@ -10,16 +10,30 @@ nonisolated struct ReadingText: Codable, Identifiable, Sendable {
     let id: String
     let titleEN: String
     let titleNO: String
+    let titleES: String
+    let titlePT: String
     let contentEN: String
     let contentNO: String
+    let contentES: String
+    let contentPT: String
     let ageGroup: AgeGroup
 
     var title: String {
-        L.isNorwegian ? titleNO : titleEN
+        switch L.selectedLanguage {
+        case .english: return titleEN
+        case .norwegian: return titleNO
+        case .spanish: return titleES
+        case .portuguese: return titlePT
+        }
     }
 
     var content: String {
-        L.isNorwegian ? contentNO : contentEN
+        switch L.selectedLanguage {
+        case .english: return contentEN
+        case .norwegian: return contentNO
+        case .spanish: return contentES
+        case .portuguese: return contentPT
+        }
     }
 
     var words: [String] {

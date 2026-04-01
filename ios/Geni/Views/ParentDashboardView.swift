@@ -291,6 +291,8 @@ struct ParentDashboardView: View {
         switch lang {
         case .english: return L.s(.languageEnglish)
         case .norwegian: return L.s(.languageNorwegian)
+        case .spanish: return L.s(.languageSpanish)
+        case .portuguese: return L.s(.languagePortuguese)
         }
     }
 

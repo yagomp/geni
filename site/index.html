@@ -24,6 +24,8 @@
 <link rel="canonical" href="https://geni.kids">
 <link rel="alternate" hreflang="en" href="https://geni.kids">
 <link rel="alternate" hreflang="nb" href="https://geni.kids?lang=nb">
+<link rel="alternate" hreflang="es" href="https://geni.kids?lang=es">
+<link rel="alternate" hreflang="pt" href="https://geni.kids?lang=pt">
 <link rel="alternate" hreflang="x-default" href="https://geni.kids">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -142,10 +144,12 @@ footer .container{flex-direction:column;text-align:center}
 <a href="parents.html" data-i18n="nav_parents">For Parents</a>
 <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
 <div class="lang-dropdown">
-<button class="lang-btn" id="langBtn" type="button"><span aria-hidden="true">🇳🇴</span> NO</button>
+<button class="lang-btn" id="langBtn" type="button"><span aria-hidden="true">🇬🇧</span> EN</button>
 <div class="lang-menu" id="langMenu"><div class="lang-menu-inner">
 <button onclick="applyLang('en')"><span aria-hidden="true">🇬🇧</span> English</button>
 <button onclick="applyLang('nb')"><span aria-hidden="true">🇳🇴</span> Norsk</button>
+<button onclick="applyLang('es')"><span aria-hidden="true">🇪🇸</span> Espa&ntilde;ol</button>
+<button onclick="applyLang('pt')"><span aria-hidden="true">🇵🇹</span> Portugu&ecirc;s</button>
 </div></div>
 </div>
 </div>
@@ -272,30 +276,76 @@ parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span
 parents_desc:"Les om hvordan Geni holder barnet ditt trygt og hvorfor ingen data forlater enheten.",
 parents_btn:"Les mer for foreldre",
 cta_title:'Start eventyret i dag <span aria-hidden="true">🚀</span>'
+},
+es:{
+nav_parents:"Para padres",nav_privacy:"Privacidad",
+hero_title:'Aprender es una aventura',
+hero_sub:"Misiones diarias de matem\u00E1ticas y lectura para ni\u00F1os de 5 a 10 a\u00F1os. \u00A1Aprende, juega y repite!",
+features_title:"Qu\u00E9 hace especial a Geni",
+f1_title:"Misiones de matem\u00E1ticas",f1_desc:"Suma, resta y multiplicaci\u00F3n con una dificultad inteligente que se adapta a tu hijo.",
+f2_title:"Aventuras de lectura",f2_desc:"Tres modos de lectura con reconocimiento de voz. Los ni\u00F1os leen en voz alta y reciben comentarios al instante.",
+f3_title:"Recompensas e insignias",f3_desc:"Gana monedas, sube de nivel y desbloquea insignias. Las rachas y los desaf\u00EDos especiales mantienen la motivaci\u00F3n.",
+f4_title:"Controles parentales",f4_desc:"Panel protegido con PIN. Sigue el progreso, administra perfiles y controla la configuraci\u00F3n.",
+f5_title:"Primero sin conexi\u00F3n",f5_desc:"Funciona sin internet. Todos los datos permanecen en el dispositivo. Sin anuncios ni seguimiento.",
+f6_title:"Varios perfiles",f6_desc:"Agrega hermanos con su propio progreso, avatar y nivel de dificultad.",
+parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span> Hecho para padres que se preocupan',
+parents_desc:"Descubre c\u00F3mo Geni mantiene seguro a tu hijo y por qu\u00E9 ning\u00FAn dato sale del dispositivo.",
+parents_btn:"Leer m\u00E1s para padres",
+cta_title:'Empieza la aventura hoy <span aria-hidden="true">🚀</span>'
+},
+pt:{
+nav_parents:"Para pais",nav_privacy:"Privacidade",
+hero_title:'Aprender \u00E9 uma aventura',
+hero_sub:"Miss\u00F5es di\u00E1rias de matem\u00E1tica e leitura para crian\u00E7as de 5 a 10 anos. Aprenda, brinque e repita!",
+features_title:"O que torna Geni especial",
+f1_title:"Miss\u00F5es de matem\u00E1tica",f1_desc:"Adi\u00E7\u00E3o, subtra\u00E7\u00E3o e multiplica\u00E7\u00E3o com dificuldade inteligente que se adapta ao seu filho.",
+f2_title:"Aventuras de leitura",f2_desc:"Tr\u00EAs modos de leitura com reconhecimento de fala. As crian\u00E7as leem em voz alta e recebem feedback na hora.",
+f3_title:"Recompensas e ins\u00EDgnias",f3_desc:"Ganhe moedas, suba de n\u00EDvel e desbloqueie ins\u00EDgnias. Sequ\u00EAncias e desafios especiais mant\u00EAm as crian\u00E7as motivadas.",
+f4_title:"Controles parentais",f4_desc:"Painel protegido por PIN. Acompanhe o progresso, gerencie perfis e controle as configura\u00E7\u00F5es.",
+f5_title:"Offline em primeiro lugar",f5_desc:"Funciona sem internet. Todos os dados ficam no dispositivo. Sem an\u00FAncios e sem rastreamento.",
+f6_title:"V\u00E1rios perfis",f6_desc:"Adicione irm\u00E3os com o pr\u00F3prio progresso, avatar e n\u00EDvel de dificuldade.",
+parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span> Feito para pais que se importam',
+parents_desc:"Veja como Geni mantém seu filho seguro e por que nenhum dado sai do dispositivo.",
+parents_btn:"Ler mais para pais",
+cta_title:'Comece a aventura hoje <span aria-hidden="true">🚀</span>'
 }
 };
 
+var LANG_META={
+en:{code:"EN",flag:"🇬🇧",title:"Geni - Fun Learning App for Kids | Math & Reading",description:"Geni makes math and reading fun for kids aged 5-10. Daily missions, speech recognition, rewards, and parent controls. Download free on the App Store."},
+nb:{code:"NO",flag:"🇳🇴",title:"Geni - Morsom l\u00E6ringsapp for barn | Matte og lesing",description:"Geni gj\u00F8r matte og lesing morsomt for barn 5-10 \u00E5r. Daglige oppdrag, talegjenkjenning, bel\u00F8nninger og foreldrekontroll."},
+es:{code:"ES",flag:"🇪🇸",title:"Geni - App educativa divertida para ni\u00F1os | Matem\u00E1ticas y lectura",description:"Geni hace que las matem\u00E1ticas y la lectura sean divertidas para ni\u00F1os de 5 a 10 a\u00F1os. Misiones diarias, reconocimiento de voz, recompensas y controles parentales."},
+pt:{code:"PT",flag:"🇵🇹",title:"Geni - App divertida de aprendizagem para crian\u00E7as | Matem\u00E1tica e leitura",description:"Geni torna matem\u00E1tica e leitura divertidas para crian\u00E7as de 5 a 10 anos. Miss\u00F5es di\u00E1rias, reconhecimento de fala, recompensas e controles parentais."}
+};
+
+function normalizeLang(value){
+if(!value)return"";
+if(value.indexOf("nb")===0||value.indexOf("nn")===0||value.indexOf("no")===0)return"nb";
+if(value.indexOf("es")===0)return"es";
+if(value.indexOf("pt")===0)return"pt";
+return"en";
+}
+
 var lang='en';
-try{var s=localStorage.getItem('geni_lang');if(s)lang=s}catch(e){}
-try{var p=new URLSearchParams(location.search);if(p.get('lang'))lang=p.get('lang')}catch(e){}
-if(!lang||lang==='en'){if(navigator.language.startsWith('nb')||navigator.language.startsWith('no'))lang='nb';else lang='en'}
+try{var s=localStorage.getItem('geni_lang');if(s)lang=normalizeLang(s)}catch(e){}
+try{var p=new URLSearchParams(location.search);if(p.get('lang'))lang=normalizeLang(p.get('lang'))}catch(e){}
+if(!lang||lang==='en')lang=normalizeLang(navigator.language||'en');
 
 function applyLang(l){
-lang=l;
-try{localStorage.setItem('geni_lang',l)}catch(e){}
-document.documentElement.lang=l==='nb'?'nb':'en';
-document.getElementById('langBtn').innerHTML=l==='nb'?'<span aria-hidden="true">\uD83C\uDDEC\uD83C\uDDE7</span> EN':'<span aria-hidden="true">\uD83C\uDDF3\uD83C\uDDF4</span> NO';
+lang=normalizeLang(l);
+try{localStorage.setItem('geni_lang',lang)}catch(e){}
+document.documentElement.lang=lang;
+document.getElementById('langBtn').innerHTML='<span aria-hidden="true">'+LANG_META[lang].flag+'</span> '+LANG_META[lang].code;
 var els=document.querySelectorAll('[data-i18n]');
 for(var i=0;i<els.length;i++){
 var k=els[i].getAttribute('data-i18n');
-if(T[l]&&T[l][k])els[i].innerHTML=T[l][k];
+if(T[lang]&&T[lang][k])els[i].innerHTML=T[lang][k];
 }
-document.title=l==='nb'?'Geni - Morsom l\u00e6ringsapp for barn | Matte og lesing':'Geni - Fun Learning App for Kids | Math & Reading';
+document.title=LANG_META[lang].title;
 var meta=document.querySelector('meta[name="description"]');
-if(meta)meta.content=l==='nb'?'Geni gj\u00f8r matte og lesing morsomt for barn 5-10 \u00e5r. Daglige oppdrag, talegjenkjenning, belønninger og foreldrekontroll.':'Geni makes math and reading fun for kids aged 5-10. Daily missions, speech recognition, rewards, and parent controls. Download free on the App Store.';
+if(meta)meta.content=LANG_META[lang].description;
 }
 
-function toggleLang(){applyLang(lang==='en'?'nb':'en')}
 applyLang(lang);
 </script>
 

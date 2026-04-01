@@ -199,6 +199,8 @@ nonisolated enum LocaleKey: String, Sendable {
     case languageSystem
     case languageEnglish
     case languageNorwegian
+    case languageSpanish
+    case languagePortuguese
     case mathPractice
     case recommendedForAge
     case iCloudSync
@@ -230,11 +232,15 @@ nonisolated enum LocaleKey: String, Sendable {
 nonisolated enum AppLanguage: String, Sendable, CaseIterable {
     case english
     case norwegian
+    case spanish
+    case portuguese
 
     var flag: String {
         switch self {
         case .english: return "🇬🇧"
         case .norwegian: return "🇳🇴"
+        case .spanish: return "🇪🇸"
+        case .portuguese: return "🇵🇹"
         }
     }
 }
@@ -255,13 +261,21 @@ class LanguageManager {
            let lang = AppLanguage(rawValue: raw) {
             self.current = lang
         } else {
-            let preferred = Locale.preferredLanguages.first ?? "en"
-            if preferred.hasPrefix("nb") || preferred.hasPrefix("nn") || preferred.hasPrefix("no") {
-                self.current = .norwegian
-            } else {
-                self.current = .english
-            }
+            self.current = Self.language(for: Locale.preferredLanguages.first ?? "en")
         }
+    }
+
+    static func language(for preferred: String) -> AppLanguage {
+        if preferred.hasPrefix("nb") || preferred.hasPrefix("nn") || preferred.hasPrefix("no") {
+            return .norwegian
+        }
+        if preferred.hasPrefix("es") {
+            return .spanish
+        }
+        if preferred.hasPrefix("pt") {
+            return .portuguese
+        }
+        return .english
     }
 }
 
@@ -282,11 +296,7 @@ nonisolated enum L {
     }
 
     private static var systemLanguage: AppLanguage {
-        let preferred = Locale.preferredLanguages.first ?? "en"
-        if preferred.hasPrefix("nb") || preferred.hasPrefix("nn") || preferred.hasPrefix("no") {
-            return .norwegian
-        }
-        return .english
+        LanguageManager.language(for: Locale.preferredLanguages.first ?? "en")
     }
 
     static var isNorwegian: Bool {
@@ -294,11 +304,20 @@ nonisolated enum L {
     }
 
     static func s(_ key: LocaleKey) -> String {
-        return isNorwegian ? norwegian(key) : english(key)
+        s(key, lang: selectedLanguage)
     }
 
     static func s(_ key: LocaleKey, lang: AppLanguage) -> String {
-        return lang == .norwegian ? norwegian(key) : english(key)
+        switch lang {
+        case .english:
+            return english(key)
+        case .norwegian:
+            return norwegian(key)
+        case .spanish:
+            return spanish(key)
+        case .portuguese:
+            return portuguese(key)
+        }
     }
 
     private static func english(_ key: LocaleKey) -> String {
@@ -501,6 +520,8 @@ nonisolated enum L {
         case .languageSystem: return "System Default"
         case .languageEnglish: return "English"
         case .languageNorwegian: return "Norwegian"
+        case .languageSpanish: return "Spanish"
+        case .languagePortuguese: return "Portuguese"
         case .mathPractice: return "What to practice"
         case .recommendedForAge: return "Recommended for your age!"
         case .iCloudSync: return "iCloud Sync"
@@ -730,6 +751,8 @@ nonisolated enum L {
         case .languageSystem: return "Systemstandard"
         case .languageEnglish: return "Engelsk"
         case .languageNorwegian: return "Norsk"
+        case .languageSpanish: return "Spansk"
+        case .languagePortuguese: return "Portugisisk"
         case .mathPractice: return "Hva skal vi \u{00F8}ve p\u{00E5}"
         case .recommendedForAge: return "Anbefalt for din alder!"
         case .iCloudSync: return "iCloud-synk"
@@ -756,6 +779,222 @@ nonisolated enum L {
         case .topicProgress: return "Temafremgang"
         case .topicLocked: return "L\u{00E5}st"
         case .topicCurrent: return "N\u{00E5}v\u{00E6}rende"
+        }
+    }
+
+    private static func spanish(_ key: LocaleKey) -> String {
+        switch key {
+        case .welcome: return "\u{00A1}Bienvenido a Geni!"
+        case .welcomeSubtitle: return "\u{00A1}Aprender es divertido!"
+        case .createMyGeni: return "Crear mi propio Geni"
+        case .createProfile: return "Crear perfil"
+        case .nickname: return "Apodo"
+        case .nicknamePlaceholder: return "Tu nombre"
+        case .age: return "Edad"
+        case .chooseAvatar: return "Elegir avatar"
+        case .letsGo: return "\u{00A1}Vamos!"
+        case .todaysChapter: return "Cap\u{00ED}tulo de hoy"
+        case .specialChapter: return "Desaf\u{00ED}o especial"
+        case .continueChapter: return "Continuar"
+        case .chapterComplete: return "\u{00A1}Cap\u{00ED}tulo completado!"
+        case .greatJob: return "\u{00A1}Muy bien!"
+        case .keepGoing: return "\u{00A1}Sigue as\u{00ED}!"
+        case .almostThere: return "\u{00A1}Casi!"
+        case .tryAgain: return "\u{00A1}Int\u{00E9}ntalo de nuevo!"
+        case .niceJob: return "\u{00A1}Buen trabajo!"
+        case .youGotIt: return "\u{00A1}Lo lograste!"
+        case .letsKeepGoing: return "\u{00A1}Sigamos!"
+        case .correct: return "\u{00A1}Correcto!"
+        case .settings: return "Configuraci\u{00F3}n"
+        case .parentArea: return "\u{00C1}rea para padres"
+        case .enterPin: return "Introducir PIN"
+        case .setPin: return "Crear PIN"
+        case .changePin: return "Cambiar PIN"
+        case .profiles: return "Perfiles"
+        case .addProfile: return "Agregar perfil"
+        case .editProfile: return "Editar perfil"
+        case .deleteProfile: return "Eliminar perfil"
+        case .progressMap: return "Progreso"
+        case .rewards: return "Recompensas"
+        case .badges: return "Insignias"
+        case .completed: return "Completado"
+        case .notStarted: return "Sin empezar"
+        case .coinsEarned: return "Monedas ganadas"
+        case .xpEarned: return "XP ganada"
+        case .starsEarned: return "Estrellas ganadas"
+        case .selectProfile: return "\u{00BF}Qui\u{00E9}n va a jugar?"
+        case .dailyChapter: return "Cap\u{00ED}tulo diario"
+        case .specialChallenge: return "Desaf\u{00ED}o especial"
+        case .levelUp: return "\u{00A1}Subiste de nivel!"
+        case .awesome: return "\u{00A1}Incre\u{00ED}ble!"
+        case .timeUp: return "\u{00A1}Se acab\u{00F3} el tiempo!"
+        case .reminders: return "Recordatorios"
+        case .dailyReminder: return "Recordatorio diario"
+        case .reminderTime: return "Hora del recordatorio"
+        case .progress: return "Progreso"
+        case .accuracy: return "Precisi\u{00F3}n"
+        case .recentChapters: return "Cap\u{00ED}tulos recientes"
+        case .noChaptersYet: return "Todav\u{00ED}a no hay cap\u{00ED}tulos"
+        case .today: return "Hoy"
+        case .yesterday: return "Ayer"
+        case .back: return "Atr\u{00E1}s"
+        case .readingTime: return "Tiempo de lectura"
+        case .readingComplete: return "\u{00A1}Lectura completada!"
+        case .readByMyself: return "Leer por mi cuenta"
+        case .readToMe: return "L\u{00E9}emelo"
+        case .listenToMeRead: return "Esc\u{00FA}chame leer"
+        case .readBySelfDesc: return "Sigue las palabras resaltadas"
+        case .readToMeDesc: return "La app te lee en voz alta"
+        case .listenToMeDesc: return "Lee en voz alta y recibe comentarios"
+        case .pause: return "Pausa"
+        case .play: return "Reproducir"
+        case .micPermissionNeeded: return "Se necesita acceso al micr\u{00F3}fono"
+        case .amazingReading: return "\u{00A1}Lectura incre\u{00ED}ble!"
+        case .startReading: return "Empezar a leer"
+        case .readingDone: return "\u{00A1}Lectura terminada!"
+        case .mathAndReading: return "Matem\u{00E1}ticas y lectura"
+        case .optionalLabel: return "(opcional)"
+        case .theme: return "Tema"
+        case .todaysMission: return "Misi\u{00F3}n de hoy"
+        case .missionComplete: return "\u{00A1}Misi\u{00F3}n completada!"
+        case .greatJobMath: return "\u{00A1}Buen trabajo!"
+        case .nowLetsRead: return "Ahora vamos a leer"
+        case .continueToReading: return "Continuar"
+        case .yourName: return "Tu nombre"
+        case .whosPlaying: return "\u{00BF}Qui\u{00E9}n est\u{00E1} jugando?"
+        case .iAm: return "Soy"
+        case .extraModes: return "Desaf\u{00ED}os extra"
+        case .fullMissionComplete: return "\u{00A1}Misi\u{00F3}n completa terminada!"
+        case .mathDone: return "Matem\u{00E1}ticas hechas"
+        case .readingDone2: return "Lectura hecha"
+        case .bonusEarned: return "Bono ganado"
+        case .missionStreak: return "Racha de misiones"
+        case .language: return "Idioma"
+        case .languageSystem: return "Predeterminado del sistema"
+        case .languageEnglish: return "Ingl\u{00E9}s"
+        case .languageNorwegian: return "Noruego"
+        case .languageSpanish: return "Espa\u{00F1}ol"
+        case .languagePortuguese: return "Portugu\u{00E9}s"
+        case .mathPractice: return "Qu\u{00E9} practicar"
+        case .recommendedForAge: return "\u{00A1}Recomendado para tu edad!"
+        case .iCloudSync: return "Sincronizaci\u{00F3}n con iCloud"
+        case .iCloudSyncDesc: return "Sincroniza entre tus dispositivos"
+        case .iCloudNotAvailable: return "Inicia sesi\u{00F3}n en iCloud en Ajustes"
+        case .synced: return "Sincronizado"
+        case .challengeTimeLeft: return "Tiempo restante para jugar"
+        case .challengesClosed: return "\u{00A1}Desaf\u{00ED}os cerrados!"
+        case .seeYouTomorrow: return "Nos vemos ma\u{00F1}ana"
+        case .changeProfile: return "Cambiar"
+        case .add: return "Agregar"
+        default: return english(key)
+        }
+    }
+
+    private static func portuguese(_ key: LocaleKey) -> String {
+        switch key {
+        case .welcome: return "Bem-vindo ao Geni!"
+        case .welcomeSubtitle: return "Aprender \u{00E9} divertido!"
+        case .createMyGeni: return "Criar meu pr\u{00F3}prio Geni"
+        case .createProfile: return "Criar perfil"
+        case .nickname: return "Apelido"
+        case .nicknamePlaceholder: return "Seu nome"
+        case .age: return "Idade"
+        case .chooseAvatar: return "Escolher avatar"
+        case .letsGo: return "Vamos!"
+        case .todaysChapter: return "Cap\u{00ED}tulo de hoje"
+        case .specialChapter: return "Desafio especial"
+        case .continueChapter: return "Continuar"
+        case .chapterComplete: return "Cap\u{00ED}tulo conclu\u{00ED}do!"
+        case .greatJob: return "Muito bem!"
+        case .keepGoing: return "Continue!"
+        case .almostThere: return "Quase!"
+        case .tryAgain: return "Tente novamente!"
+        case .niceJob: return "Bom trabalho!"
+        case .youGotIt: return "Voc\u{00EA} conseguiu!"
+        case .letsKeepGoing: return "Vamos continuar!"
+        case .correct: return "Correto!"
+        case .settings: return "Configura\u{00E7}\u{00F5}es"
+        case .parentArea: return "\u{00C1}rea dos pais"
+        case .enterPin: return "Inserir PIN"
+        case .setPin: return "Definir PIN"
+        case .changePin: return "Alterar PIN"
+        case .profiles: return "Perfis"
+        case .addProfile: return "Adicionar perfil"
+        case .editProfile: return "Editar perfil"
+        case .deleteProfile: return "Excluir perfil"
+        case .progressMap: return "Progresso"
+        case .rewards: return "Recompensas"
+        case .badges: return "Ins\u{00ED}gnias"
+        case .completed: return "Conclu\u{00ED}do"
+        case .notStarted: return "N\u{00E3}o iniciado"
+        case .coinsEarned: return "Moedas ganhas"
+        case .xpEarned: return "XP ganho"
+        case .starsEarned: return "Estrelas ganhas"
+        case .selectProfile: return "Quem vai jogar?"
+        case .dailyChapter: return "Cap\u{00ED}tulo di\u{00E1}rio"
+        case .specialChallenge: return "Desafio especial"
+        case .levelUp: return "Subiu de n\u{00ED}vel!"
+        case .awesome: return "Incr\u{00ED}vel!"
+        case .timeUp: return "O tempo acabou!"
+        case .reminders: return "Lembretes"
+        case .dailyReminder: return "Lembrete di\u{00E1}rio"
+        case .reminderTime: return "Hor\u{00E1}rio do lembrete"
+        case .progress: return "Progresso"
+        case .accuracy: return "Precis\u{00E3}o"
+        case .recentChapters: return "Cap\u{00ED}tulos recentes"
+        case .noChaptersYet: return "Ainda n\u{00E3}o h\u{00E1} cap\u{00ED}tulos"
+        case .today: return "Hoje"
+        case .yesterday: return "Ontem"
+        case .back: return "Voltar"
+        case .readingTime: return "Tempo de leitura"
+        case .readingComplete: return "Leitura conclu\u{00ED}da!"
+        case .readByMyself: return "Ler sozinho"
+        case .readToMe: return "Leia para mim"
+        case .listenToMeRead: return "Ou\u{00E7}a-me ler"
+        case .readBySelfDesc: return "Siga as palavras destacadas"
+        case .readToMeDesc: return "O app l\u{00EA} em voz alta para voc\u{00EA}"
+        case .listenToMeDesc: return "Leia em voz alta e receba feedback"
+        case .pause: return "Pausar"
+        case .play: return "Reproduzir"
+        case .micPermissionNeeded: return "Acesso ao microfone necess\u{00E1}rio"
+        case .amazingReading: return "Leitura incr\u{00ED}vel!"
+        case .startReading: return "Come\u{00E7}ar leitura"
+        case .readingDone: return "Leitura conclu\u{00ED}da!"
+        case .mathAndReading: return "Matem\u{00E1}tica e leitura"
+        case .optionalLabel: return "(opcional)"
+        case .theme: return "Tema"
+        case .todaysMission: return "Miss\u{00E3}o de hoje"
+        case .missionComplete: return "Miss\u{00E3}o conclu\u{00ED}da!"
+        case .greatJobMath: return "Bom trabalho!"
+        case .nowLetsRead: return "Agora vamos ler"
+        case .continueToReading: return "Continuar"
+        case .yourName: return "Seu nome"
+        case .whosPlaying: return "Quem est\u{00E1} jogando?"
+        case .iAm: return "Eu sou"
+        case .extraModes: return "Desafios extras"
+        case .fullMissionComplete: return "Miss\u{00E3}o completa conclu\u{00ED}da!"
+        case .mathDone: return "Matem\u{00E1}tica conclu\u{00ED}da"
+        case .readingDone2: return "Leitura conclu\u{00ED}da"
+        case .bonusEarned: return "B\u{00F4}nus ganho"
+        case .missionStreak: return "Sequ\u{00EA}ncia de miss\u{00F5}es"
+        case .language: return "Idioma"
+        case .languageSystem: return "Padr\u{00E3}o do sistema"
+        case .languageEnglish: return "Ingl\u{00EA}s"
+        case .languageNorwegian: return "Noruegu\u{00EA}s"
+        case .languageSpanish: return "Espanhol"
+        case .languagePortuguese: return "Portugu\u{00EA}s"
+        case .mathPractice: return "O que praticar"
+        case .recommendedForAge: return "Recomendado para a sua idade!"
+        case .iCloudSync: return "Sincroniza\u{00E7}\u{00E3}o com iCloud"
+        case .iCloudSyncDesc: return "Sincronize entre seus dispositivos"
+        case .iCloudNotAvailable: return "Inicie sess\u{00E3}o no iCloud em Ajustes"
+        case .synced: return "Sincronizado"
+        case .challengeTimeLeft: return "Tempo restante para jogar"
+        case .challengesClosed: return "Desafios encerrados!"
+        case .seeYouTomorrow: return "At\u{00E9} amanh\u{00E3}"
+        case .changeProfile: return "Mudar"
+        case .add: return "Adicionar"
+        default: return english(key)
         }
     }
 }

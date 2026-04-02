@@ -48,11 +48,13 @@ img{max-width:100%;height:auto;display:block}
 /* NAV - same as landing */
 nav{background:var(--bg);border-bottom:0;padding:10px 0;position:sticky;top:0;z-index:10}
 nav .container{max-width:1120px;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{font-weight:900;font-size:1.4rem;display:flex;align-items:center;gap:8px;color:#fff;text-transform:uppercase;letter-spacing:-0.5px}
-.nav-logo img{width:44px;height:44px;object-fit:contain;background:#fff;border:2px solid #000;border-radius:12px;padding:4px;box-shadow:var(--shadow-sm)}
+.nav-logo{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 16px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);font-weight:900;font-size:1.1rem;color:#000;text-transform:uppercase;letter-spacing:1px}
+.nav-logo:hover{text-decoration:none}
 .nav-links{display:flex;gap:16px;align-items:center;font-weight:800;font-size:0.9rem}
 .nav-links a{color:#fff;text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid transparent;padding:6px 0 2px}
 .nav-links a:hover{border-bottom-color:#fff;text-decoration:none}
+.nav-menu-btn{display:none;align-items:center;justify-content:center;width:48px;height:48px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);color:#000;cursor:pointer}
+.nav-menu-btn span{display:block;width:18px;height:2px;background:#000;box-shadow:0 -6px 0 #000,0 6px 0 #000}
 .lang-dropdown{position:relative}
 .lang-btn{background:none;border:none;border-bottom:3px solid transparent;padding:6px 4px 2px;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:0.5px;color:#fff}
 .lang-btn:hover{opacity:0.7}
@@ -62,6 +64,7 @@ nav .container{max-width:1120px;display:flex;align-items:center;justify-content:
 .lang-dropdown:hover .lang-menu{display:block}
 .lang-menu button{display:block;width:100%;background:none;border:none;padding:8px 12px;font-weight:800;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-align:left;color:#000;white-space:nowrap}
 .lang-menu button:hover{background:var(--yellow)}
+.nav-mobile{display:none}
 
 /* CONTENT */
 .content{padding:48px 0 60px}
@@ -81,23 +84,23 @@ h1{font-weight:900;font-size:2rem;text-align:center;margin-bottom:32px;text-tran
 .app-store-badge img{height:54px;width:auto;display:block}
 
 /* FOOTER - same as landing */
-footer{background:#000;color:#fff;padding:20px 0;font-size:0.85rem}
+footer{background:var(--bg);color:#fff;padding:20px 0;font-size:0.85rem}
 footer .container{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
 footer a{color:#fff;font-weight:700;text-decoration:underline}
 footer a:hover{color:#FFE566}
 .footer-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;text-decoration:none}
 .footer-brand:hover{text-decoration:none}
-.footer-brand img{width:32px;height:32px;object-fit:contain}
+.footer-brand img{width:32px;height:32px;object-fit:contain;background:#fff;border:2px solid #000;border-radius:10px;padding:3px}
 .footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px}
 
-@media(max-width:600px){.info-card{padding:20px 16px}footer .container{flex-direction:column;text-align:center}.nav-links{gap:10px;font-size:0.8rem;flex:1;justify-content:center}.nav-logo-text{display:none}}
+@media(max-width:600px){.info-card{padding:20px 16px}footer .container{flex-direction:column;text-align:center}.nav-menu-btn{display:inline-flex}.nav-links{display:none}.nav-mobile{display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg);padding:8px 20px 20px;border-top:1px solid rgba(255,255,255,0.18)}.nav-mobile.is-open{display:block}.nav-mobile-inner{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:8px}.nav-mobile a,.nav-mobile button{display:block;width:100%;padding:14px 0;color:#fff;font-weight:900;font-size:0.95rem;text-align:left;text-transform:uppercase;letter-spacing:0.5px;background:none;border:none;border-bottom:1px solid rgba(255,255,255,0.18);font-family:var(--font)}.nav-mobile a:hover,.nav-mobile button:hover{text-decoration:none;opacity:0.8}}
 </style>
 </head>
 <body>
 
 <nav aria-label="Main navigation">
 <div class="container">
-<a href="/" class="nav-logo" aria-label="Geni home"><img src="icon-mark.png" alt="" width="44" height="44" loading="eager"><span class="nav-logo-text"> Geni</span></a>
+<a href="/" class="nav-logo" aria-label="Geni home">GENI</a>
 <div class="nav-links">
 <a href="parents.html" data-i18n="nav_parents">For Parents</a>
 <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
@@ -110,6 +113,17 @@ footer a:hover{color:#FFE566}
 <button onclick="applyLang('pt')"><span aria-hidden="true">🇵🇹</span> Portugu&ecirc;s</button>
 </div></div>
 </div>
+</div>
+<button class="nav-menu-btn" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><span aria-hidden="true"></span></button>
+</div>
+<div class="nav-mobile" id="mobileMenu">
+<div class="nav-mobile-inner">
+<a href="parents.html" data-i18n="nav_parents" onclick="closeMenu()">For Parents</a>
+<a href="privacy.html" data-i18n="nav_privacy" onclick="closeMenu()">Privacy</a>
+<button type="button" onclick="applyLang('en')"><span aria-hidden="true">🇬🇧</span> English</button>
+<button type="button" onclick="applyLang('nb')"><span aria-hidden="true">🇳🇴</span> Norsk</button>
+<button type="button" onclick="applyLang('es')"><span aria-hidden="true">🇪🇸</span> Español</button>
+<button type="button" onclick="applyLang('pt')"><span aria-hidden="true">🇵🇹</span> Português</button>
 </div>
 </div>
 </nav>
@@ -337,6 +351,20 @@ footer a:hover{color:#FFE566}
 
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
+var menuToggle=document.getElementById('menuToggle');
+var mobileMenu=document.getElementById('mobileMenu');
+function closeMenu(){
+if(!menuToggle||!mobileMenu)return;
+menuToggle.setAttribute('aria-expanded','false');
+mobileMenu.classList.remove('is-open');
+}
+function toggleMenu(){
+if(!menuToggle||!mobileMenu)return;
+var next=menuToggle.getAttribute('aria-expanded')!=='true';
+menuToggle.setAttribute('aria-expanded',String(next));
+mobileMenu.classList.toggle('is-open',next);
+}
+if(menuToggle)menuToggle.addEventListener('click',toggleMenu);
 var LANG_META={
 en:{code:"EN",flag:"🇬🇧",title:"For Parents - Geni App | Safe Learning for Kids"},
 nb:{code:"NO",flag:"🇳🇴",title:"For foreldre - Geni App"},
@@ -359,6 +387,7 @@ lang=normalizeLang(l);
 try{localStorage.setItem('geni_lang',lang)}catch(e){}
 document.documentElement.lang=lang;
 document.getElementById('langBtn').innerHTML='<span aria-hidden="true">'+LANG_META[lang].flag+'</span> '+LANG_META[lang].code;
+closeMenu();
 document.getElementById('content-en').hidden=lang!=='en';
 document.getElementById('content-nb').hidden=lang!=='nb';
 document.getElementById('content-es').hidden=lang!=='es';

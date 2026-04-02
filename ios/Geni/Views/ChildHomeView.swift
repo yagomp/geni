@@ -340,29 +340,29 @@ struct ChildHomeView: View {
 
     private var specialModesSection: some View {
         VStack(spacing: 12) {
-            if let special = viewModel.specialChapterAvailable, !viewModel.challengeTimeExpired {
-                specialChapterCard(type: special)
-            }
+            if viewModel.challengeWindowStarted {
+                if let special = viewModel.specialChapterAvailable, !viewModel.challengeTimeExpired {
+                    specialChapterCard(type: special)
+                }
 
-            if viewModel.challengeTimeExpired {
-                challengesClosedCard
-            } else {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text(L.s(.extraModes))
-                            .font(.system(.caption, design: .rounded, weight: .bold))
-                            .foregroundStyle(.black)
-                            .textCase(.uppercase)
-                            .tracking(0.5)
+                if viewModel.challengeTimeExpired {
+                    challengesClosedCard
+                } else {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text(L.s(.extraModes))
+                                .font(.system(.caption, design: .rounded, weight: .bold))
+                                .foregroundStyle(.black)
+                                .textCase(.uppercase)
+                                .tracking(0.5)
 
-                        Spacer()
+                            Spacer()
 
-                        if viewModel.todayFullChapterCompleted {
                             ChallengeCountdown(viewModel: viewModel)
                         }
-                    }
 
-                    quickChallengeCards
+                        quickChallengeCards
+                    }
                 }
             }
         }

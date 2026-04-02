@@ -30,7 +30,7 @@ enum ExerciseGenerator {
         var i = 0
         while i < 20 {
             let difficulty = ExerciseDifficulty.forIndex(i)
-            let format = pickFormat(index: i, ageGroup: profile.ageGroup, chapterType: chapterType)
+            let format = pickFormat(index: i, age: profile.age, ageGroup: profile.ageGroup, chapterType: chapterType)
             if format == .matchConnect {
                 let exercise = generateMatchConnectExercise(difficulty: difficulty, ageGroup: profile.ageGroup, ops: ops)
                 exercises.append(exercise)
@@ -90,16 +90,38 @@ enum ExerciseGenerator {
 
     static func generateSpotlightChapter(profile: ChildProfile, operation: MathOperation) -> [Exercise] {
         var exercises: [Exercise] = []
+        let emojiFormats: Set<ExerciseFormat> = [.countingObjects, .visualAddition, .compareGroups, .tenFrame]
+        let middleFormats: Set<ExerciseFormat> = [.numberBonds, .diceAddition, .evenOddSort, .visualSubtraction]
+
         for i in 0..<20 {
             let difficulty = ExerciseDifficulty.forIndex(i)
-            let format = pickFormat(index: i, ageGroup: profile.ageGroup, chapterType: .operationSpotlight)
-            let exercise = generateExercise(operation: operation, difficulty: difficulty, ageGroup: profile.ageGroup, format: format)
+            let format = pickSpotlightFormat(index: i, profile: profile, operation: operation)
+            let exercise: Exercise
+
+            if emojiFormats.contains(format) {
+                exercise = generateEmojiExercise(format: format, difficulty: difficulty)
+            } else if middleFormats.contains(format) {
+                switch format {
+                case .visualSubtraction:
+                    exercise = generateVisualSubtractionExercise(difficulty: difficulty, ageGroup: profile.ageGroup)
+                case .diceAddition:
+                    exercise = generateDiceExercise(difficulty: difficulty)
+                case .numberBonds:
+                    exercise = generateNumberBondExercise(difficulty: difficulty)
+                case .evenOddSort:
+                    exercise = generateEvenOddExercise(difficulty: difficulty, ageGroup: profile.ageGroup, operation: operation)
+                default:
+                    exercise = generateExercise(operation: operation, difficulty: difficulty, ageGroup: profile.ageGroup)
+                }
+            } else {
+                exercise = generateExercise(operation: operation, difficulty: difficulty, ageGroup: profile.ageGroup, format: format)
+            }
             exercises.append(exercise)
         }
         return exercises
     }
 
-    private static func pickFormat(index: Int, ageGroup: AgeGroup, chapterType: ChapterType) -> ExerciseFormat {
+    private static func pickFormat(index: Int, age: Int, ageGroup: AgeGroup, chapterType: ChapterType) -> ExerciseFormat {
         if chapterType == .timeAttack || chapterType == .perfectRun {
             return .solveResult
         }
@@ -107,6 +129,16 @@ enum ExerciseGenerator {
         let roll = Int.random(in: 0..<10)
         switch ageGroup {
         case .young:
+            if age <= 5 {
+                if index < 8 {
+                    return [.countingObjects, .countingObjects, .tenFrame, .countingObjects, .visualAddition, .countingObjects, .compareGroups, .tenFrame][index]
+                }
+                if roll < 4 { return .countingObjects }
+                if roll < 6 { return .visualAddition }
+                if roll < 8 { return .compareGroups }
+                if roll < 9 { return .tenFrame }
+                return .solveResult
+            }
             if index < 5 {
                 return [.countingObjects, .countingObjects, .countingObjects, .tenFrame, .countingObjects][index]
             }
@@ -140,6 +172,44 @@ enum ExerciseGenerator {
             if roll < 9 { return .areaPerimeter }
             return [.fractionPick, .longDivision].randomElement()!
         }
+    }
+
+    private static func pickSpotlightFormat(index: Int, profile: ChildProfile, operation: MathOperation) -> ExerciseFormat {
+        if profile.age <= 5 {
+            switch operation {
+            case .addition:
+                if index < 5 {
+                    return [.countingObjects, .visualAddition, .tenFrame, .visualAddition, .countingObjects][index]
+                }
+                return [.countingObjects, .visualAddition, .tenFrame, .solveResult, .missingNumber].randomElement()!
+            case .subtraction:
+                if index < 4 {
+                    return [.visualSubtraction, .solveResult, .visualSubtraction, .trueFalse][index]
+                }
+                return [.visualSubtraction, .solveResult, .missingNumber, .trueFalse].randomElement()!
+            default:
+                return [.solveResult, .missingNumber, .trueFalse].randomElement()!
+            }
+        }
+
+        if profile.ageGroup == .young {
+            switch operation {
+            case .addition:
+                if index < 4 {
+                    return [.visualAddition, .solveResult, .tenFrame, .missingNumber][index]
+                }
+                return [.visualAddition, .solveResult, .missingNumber, .trueFalse, .countingObjects].randomElement()!
+            case .subtraction:
+                if index < 4 {
+                    return [.visualSubtraction, .solveResult, .missingNumber, .trueFalse][index]
+                }
+                return [.visualSubtraction, .solveResult, .missingNumber, .trueFalse].randomElement()!
+            default:
+                return [.solveResult, .missingNumber, .trueFalse].randomElement()!
+            }
+        }
+
+        return pickFormat(index: index, age: profile.age, ageGroup: profile.ageGroup, chapterType: .operationSpotlight)
     }
 
     static func generateExercise(operation: MathOperation, difficulty: ExerciseDifficulty, ageGroup: AgeGroup, format: ExerciseFormat = .solveResult) -> Exercise {

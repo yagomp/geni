@@ -1,21 +1,22 @@
 {
   "fill" : {
-    "automatic-gradient" : "extended-srgb:0.00000,0.53333,1.00000,1.00000"
+    "solid" : "srgb:0.01680,0.19835,1.00000,1.00000"
   },
   "groups" : [
     {
       "layers" : [
         {
-          "fill" : "none",
+          "blend-mode" : "normal",
+          "fill" : "automatic",
           "glass" : false,
           "hidden" : false,
-          "image-name" : "ChatGPT_Image_Mar_21__2026_at_05_08_51_PM-removebg-preview.png",
-          "name" : "ChatGPT_Image_Mar_21__2026_at_05_08_51_PM-removebg-preview",
+          "image-name" : "geni_icon_v2.png",
+          "name" : "geni_icon_v2",
           "position" : {
-            "scale" : 2.7,
+            "scale" : 1.1,
             "translation-in-points" : [
               0,
-              0
+              10.7578125
             ]
           }
         }

@@ -1,0 +1,13 @@
+{
+  "appId": "6761134405",
+  "version": "1.0",
+  "buildId": "8d1adf4c-c42d-4c6d-a731-569ebb5550be",
+  "metadataDir": "/tmp/geni-metadata/version/1.0",
+  "platform": "IOS",
+  "versionId": "6875f68b-122c-4e52-bb92-867fe17f7d59",
+  "mode": "stage",
+  "completed": {
+    "ensure_version": true
+  },
+  "updatedAt": "2026-03-28T07:02:21Z"
+}

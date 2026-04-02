@@ -1,0 +1,37 @@
+{
+  "/Users/yago/Documents/geni-rork/ios/Geni/Models/ReadingSession.swift" : {
+    "const-values" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingSession.swiftconstvalues",
+    "dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingSession.d",
+    "diagnostics" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingSession.dia",
+    "object" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingSession.o",
+    "swift-dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingSession.swiftdeps"
+  },
+  "/Users/yago/Documents/geni-rork/ios/Geni/Models/ReadingText.swift" : {
+    "const-values" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingText.swiftconstvalues",
+    "dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingText.d",
+    "diagnostics" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingText.dia",
+    "object" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingText.o",
+    "swift-dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingText.swiftdeps"
+  },
+  "/Users/yago/Documents/geni-rork/ios/Geni/Models/RewardState.swift" : {
+    "const-values" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/RewardState.swiftconstvalues",
+    "dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/RewardState.d",
+    "diagnostics" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/RewardState.dia",
+    "object" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/RewardState.o",
+    "swift-dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/RewardState.swiftdeps"
+  },
+  "/Users/yago/Documents/geni-rork/ios/Geni/Services/CloudSyncService.swift" : {
+    "const-values" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/CloudSyncService.swiftconstvalues",
+    "dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/CloudSyncService.d",
+    "diagnostics" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/CloudSyncService.dia",
+    "object" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/CloudSyncService.o",
+    "swift-dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/CloudSyncService.swiftdeps"
+  },
+  "/Users/yago/Documents/geni-rork/ios/Geni/Services/ExerciseGenerator.swift" : {
+    "const-values" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ExerciseGenerator.swiftconstvalues",
+    "dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ExerciseGenerator.d",
+    "diagnostics" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ExerciseGenerator.dia",
+    "object" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ExerciseGenerator.o",
+    "swift-dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ExerciseGenerator.swiftdeps"
+  }
+}

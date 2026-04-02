@@ -1,0 +1,147 @@
+2026-04-02 09:25:32 +0000 [MT] Initial pipeline context: <IDEDistributionProcessingPipelineContext: 0x8f374e400; archive(resolved)="<IDEArchive: 0x8f1a8b480>", distributionTask(resolved)="2", distributionDestination(resolved)="1", distributionMethod(resolved)="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team(resolved)="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	Chain (15, self inclusive):
+	<IDEDistributionProcessingPipelineContext: 0x8f374e400; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	<IDEDistributionProcessingPipelineContext: 0x8f374e100; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	<IDEDistributionContext: 0x8f3751900; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	<IDEDistributionContext: 0x8f3751680; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	<IDEDistributionContext: 0x8f3751400; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	<IDEDistributionContext: 0x8f3751180; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	<IDEDistributionContext: 0x8f3750f00; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	<IDEDistributionContext: 0x8f3750c80; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	<IDEDistributionContext: 0x8f3750a00; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	<IDEDistributionContext: 0x8f3750780; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	<IDEDistributionContext: 0x8f3750500; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	<IDEDistributionContext: 0x8f3750280; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="<IDEProvisioningBasicTeam: 0x8f1ae66c0; teamID='ZBRDR5Q455', teamName='(null)'>">
+	<IDEDistributionContext: 0x8f3750000; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="(null)">
+	<IDEDistributionContext: 0x102b8e710; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="<IDEDistributionMethodiOSAppStoreDistribution: 0x8f1494130>", team="(null)">
+	<IDEDistributionContext: 0x102bbda90; archive = "<IDEArchive: 0x8f1a8b480>", distributionMethod="(null)", team="(null)">
+</IDEDistributionProcessingPipelineContext: 0x8f374e400>
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionCreateDestRootStep
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionCopyItemStep
+2026-04-02 09:25:32 +0000 [MT] Running /usr/bin/ditto '-V' '/Users/yago/Documents/geni-rork/.asc/artifacts/Geni-46.xcarchive/Products/Applications/Geni.app' '/var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/Root/Payload/Geni.app'
+2026-04-02 09:25:32 +0000  >>> Copying /Users/yago/Documents/geni-rork/.asc/artifacts/Geni-46.xcarchive/Products/Applications/Geni.app 
+2026-04-02 09:25:32 +0000  copying file ./_CodeSignature/CodeResources ... 
+2026-04-02 09:25:32 +0000  2775 bytes for ./_CodeSignature/CodeResources
+2026-04-02 09:25:32 +0000  copying file ./AppIcon60x60@2x.png ... 
+2026-04-02 09:25:32 +0000  26004 bytes for ./AppIcon60x60@2x.png
+2026-04-02 09:25:32 +0000  copying file ./Assets.car ... 
+2026-04-02 09:25:32 +0000  9389496 bytes for ./Assets.car
+copying file ./AppIcon76x76@2x~ipad.png ... 
+2026-04-02 09:25:32 +0000  39180 bytes for ./AppIcon76x76@2x~ipad.png
+2026-04-02 09:25:32 +0000  copying file ./embedded.mobileprovision ... 
+2026-04-02 09:25:32 +0000  12546 bytes for ./embedded.mobileprovision
+2026-04-02 09:25:32 +0000  copying file ./Geni ... 
+2026-04-02 09:25:32 +0000  1837008 bytes for ./Geni
+2026-04-02 09:25:32 +0000  copying file ./Info.plist ... 
+1701 bytes for ./Info.plist
+copying file ./PkgInfo ... 
+2026-04-02 09:25:32 +0000  8 bytes for ./PkgInfo
+2026-04-02 09:25:32 +0000 [MT] /usr/bin/ditto exited with 0
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionEmbedProfileStep
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionInfoPlistStep
+2026-04-02 09:25:32 +0000 [MT] Skipping setting DTXcodeBuildDistribution because toolsBuildVersionName was nil.
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionItemRemovalStep
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionAppThinningPlistStep
+2026-04-02 09:25:32 +0000 [MT] Skipping step: IDEDistributionAppThinningPlistStep because it said so
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionSymbolsStep
+2026-04-02 09:25:32 +0000 [MT] Writing /var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/Symbols/404CD91C-7981-3E3A-BB82-9209C51E2867.symbols
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionCopyAppleProvidedContentStep
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionAppThinningStep
+2026-04-02 09:25:32 +0000 [MT] Skipping step: IDEDistributionAppThinningStep because it said so
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionArchThinningStep
+2026-04-02 09:25:32 +0000 [MT] Archs to thin for item /Users/yago/Documents/geni-rork/.asc/artifacts/Geni-46.xcarchive/Products/Applications/Geni.app are []
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionODRStep
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionStripXattrsStep
+2026-04-02 09:25:32 +0000 [MT] Skipping stripping extended attributes because the codesign step will strip them.
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionCodesignStep
+2026-04-02 09:25:32 +0000 [MT] Entitlements for <IDEDistributionItem: 0x8f1b15c20; bundleID='com.yagomp.geni', path='<DVTFilePath:0x8f1acff00:'/Users/yago/Documents/geni-rork/.asc/artifacts/Geni-46.xcarchive/Products/Applications/Geni.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x8f1b14f60; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x8f142da40; name='Apple Distribution: Yago Martinez Parrondo (ZBRDR5Q455)', hash='8B0AAD8995B9C674D20AA332C881F9687390688B', serialNumber='3E3FB2CAB40D815D41F37404159E4E68', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2026-01-01 16:08:15 +0000''>', entitlements='{
+    "application-identifier" = "ZBRDR5Q455.com.yagomp.geni";
+    "beta-reports-active" = 1;
+    "com.apple.developer.team-identifier" = ZBRDR5Q455;
+    "com.apple.developer.ubiquity-kvstore-identifier" = "ZBRDR5Q455.com.yagomp.geni";
+    "get-task-allow" = 0;
+}', teamID='ZBRDR5Q455', identifier='com.yagomp.geni', executablePath='<DVTFilePath:0x8f1b153e0:'/Users/yago/Documents/geni-rork/.asc/artifacts/Geni-46.xcarchive/Products/Applications/Geni.app/Geni'>', hardenedRuntime='0'>'>: {
+    "application-identifier" = "ZBRDR5Q455.com.yagomp.geni";
+    "beta-reports-active" = 1;
+    "com.apple.developer.team-identifier" = ZBRDR5Q455;
+    "com.apple.developer.ubiquity-kvstore-identifier" = "ZBRDR5Q455.com.yagomp.geni";
+    "get-task-allow" = 0;
+}
+2026-04-02 09:25:32 +0000 [MT] Associated App Clip Identifiers Filter: Skipping because "com.apple.developer.associated-appclip-app-identifiers" is not present
+2026-04-02 09:25:32 +0000 [MT] Entitlements for <IDEDistributionItem: 0x8f1b15c20; bundleID='com.yagomp.geni', path='<DVTFilePath:0x8f1acff00:'/Users/yago/Documents/geni-rork/.asc/artifacts/Geni-46.xcarchive/Products/Applications/Geni.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x8f1b14f60; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x8f142dec0; name='Apple Distribution: Yago Martinez Parrondo (ZBRDR5Q455)', hash='8B0AAD8995B9C674D20AA332C881F9687390688B', serialNumber='3E3FB2CAB40D815D41F37404159E4E68', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2026-01-01 16:08:15 +0000''>', entitlements='{
+    "application-identifier" = "ZBRDR5Q455.com.yagomp.geni";
+    "beta-reports-active" = 1;
+    "com.apple.developer.team-identifier" = ZBRDR5Q455;
+    "com.apple.developer.ubiquity-kvstore-identifier" = "ZBRDR5Q455.com.yagomp.geni";
+    "get-task-allow" = 0;
+}', teamID='ZBRDR5Q455', identifier='com.yagomp.geni', executablePath='<DVTFilePath:0x8f1b153e0:'/Users/yago/Documents/geni-rork/.asc/artifacts/Geni-46.xcarchive/Products/Applications/Geni.app/Geni'>', hardenedRuntime='0'>'> are: {
+    "application-identifier" = "ZBRDR5Q455.com.yagomp.geni";
+    "beta-reports-active" = 1;
+    "com.apple.developer.team-identifier" = ZBRDR5Q455;
+    "com.apple.developer.ubiquity-kvstore-identifier" = "ZBRDR5Q455.com.yagomp.geni";
+    "get-task-allow" = 0;
+}
+2026-04-02 09:25:32 +0000 [MT] Writing entitlements for <IDEDistributionItem: 0x8f1b15c20; bundleID='com.yagomp.geni', path='<DVTFilePath:0x8f1acff00:'/Users/yago/Documents/geni-rork/.asc/artifacts/Geni-46.xcarchive/Products/Applications/Geni.app'>', codeSigningInfo='<_DVTCodeSigningInformation_Path: 0x8f1b14f60; isSigned='1', isAdHocSigned='0', signingCertificate='<DVTSigningCertificate: 0x8f142dec0; name='Apple Distribution: Yago Martinez Parrondo (ZBRDR5Q455)', hash='8B0AAD8995B9C674D20AA332C881F9687390688B', serialNumber='3E3FB2CAB40D815D41F37404159E4E68', certificateKinds='(
+    "1.2.840.113635.100.6.1.7",
+    "1.2.840.113635.100.6.1.4"
+), issueDate='2026-01-01 16:08:15 +0000''>', entitlements='{
+    "application-identifier" = "ZBRDR5Q455.com.yagomp.geni";
+    "beta-reports-active" = 1;
+    "com.apple.developer.team-identifier" = ZBRDR5Q455;
+    "com.apple.developer.ubiquity-kvstore-identifier" = "ZBRDR5Q455.com.yagomp.geni";
+    "get-task-allow" = 0;
+}', teamID='ZBRDR5Q455', identifier='com.yagomp.geni', executablePath='<DVTFilePath:0x8f1b153e0:'/Users/yago/Documents/geni-rork/.asc/artifacts/Geni-46.xcarchive/Products/Applications/Geni.app/Geni'>', hardenedRuntime='0'>'> to: /var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/entitlements~~~a5GBDc
+2026-04-02 09:25:32 +0000 [MT] invoking codesign: <NSConcreteTask: 0x8f1621d10; launchPath='/usr/bin/codesign', arguments='(
+    "-f",
+    "-s",
+    8B0AAD8995B9C674D20AA332C881F9687390688B,
+    "--entitlements",
+    "/var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/entitlements~~~a5GBDc",
+    "--preserve-metadata=identifier,flags,runtime,launch-constraints,library-constraints",
+    "--generate-entitlement-der",
+    "--strip-disallowed-xattrs",
+    "-vvv",
+    "/var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/Root/Payload/Geni.app"
+)'>
+2026-04-02 09:25:32 +0000 [MT] codesign output: /var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/Root/Payload/Geni.app: replacing existing signature
+/var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/Root/Payload/Geni.app: signed app bundle with Mach-O thin (arm64) [com.yagomp.geni]
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionZipODRItemStep
+2026-04-02 09:25:32 +0000 [MT] Skipping step: IDEDistributionZipODRItemStep because it said so
+2026-04-02 09:25:32 +0000 [MT] Processing step: IDEDistributionCreateIPAStep
+2026-04-02 09:25:32 +0000 [MT] Running /usr/bin/rsync '-8aPhhE' '/var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/Symbols' '--link-dest' '/var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO' '/var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/Root'
+2026-04-02 09:25:32 +0000  Symbols/
+Symbols/404CD91C-7981-3E3A-BB82-9209C51E2867.symbols
+2026-04-02 09:25:32 +0000 [MT] /usr/bin/rsync exited with 0
+2026-04-02 09:25:32 +0000 [MT] Running /usr/bin/ditto '-V' '-c' '-k' '--norsrc' '/var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/Root' '/var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/Packages/Geni.ipa'
+2026-04-02 09:25:32 +0000  >>> Copying /var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/Root 
+2026-04-02 09:25:32 +0000  copying file ./Payload/Geni.app/_CodeSignature/CodeResources ... 
+2026-04-02 09:25:32 +0000  2775 bytes for ./Payload/Geni.app/_CodeSignature/CodeResources
+2026-04-02 09:25:32 +0000  copying file ./Payload/Geni.app/AppIcon60x60@2x.png ... 
+2026-04-02 09:25:32 +0000  26004 bytes for ./Payload/Geni.app/AppIcon60x60@2x.png
+2026-04-02 09:25:32 +0000  copying file ./Payload/Geni.app/Assets.car ... 
+2026-04-02 09:25:33 +0000  9389496 bytes for ./Payload/Geni.app/Assets.car
+2026-04-02 09:25:33 +0000  copying file ./Payload/Geni.app/AppIcon76x76@2x~ipad.png ... 
+2026-04-02 09:25:33 +0000  39180 bytes for ./Payload/Geni.app/AppIcon76x76@2x~ipad.png
+2026-04-02 09:25:33 +0000  copying file ./Payload/Geni.app/embedded.mobileprovision ... 
+2026-04-02 09:25:33 +0000  12546 bytes for ./Payload/Geni.app/embedded.mobileprovision
+copying file ./Payload/Geni.app/Geni ... 
+2026-04-02 09:25:33 +0000  1837008 bytes for ./Payload/Geni.app/Geni
+2026-04-02 09:25:33 +0000  copying file ./Payload/Geni.app/Info.plist ... 
+2026-04-02 09:25:33 +0000  1701 bytes for ./Payload/Geni.app/Info.plist
+copying file ./Payload/Geni.app/PkgInfo ... 
+2026-04-02 09:25:33 +0000  8 bytes for ./Payload/Geni.app/PkgInfo
+copying file ./Symbols/404CD91C-7981-3E3A-BB82-9209C51E2867.symbols ... 
+2026-04-02 09:25:33 +0000  5824796 bytes for ./Symbols/404CD91C-7981-3E3A-BB82-9209C51E2867.symbols
+2026-04-02 09:25:33 +0000 [MT] /usr/bin/ditto exited with 0
+2026-04-02 09:25:33 +0000 [MT] Processing step: IDEDistributionAppStoreInformationStep
+2026-04-02 09:25:33 +0000 [MT] Skipping step: IDEDistributionAppStoreInformationStep because it said so
+2026-04-02 09:25:33 +0000 [MT] Processing step: IDEDistributionGenerateProcessedDistributionItems
+2026-04-02 09:25:33 +0000 [MT] IDEDistributionItem init <DVTFilePath:0x8f1b17f00:'/var/folders/kt/skc2q3q92plbq26hhnq3kfg80000gn/T/XcodeDistPipeline.~~~saFvUO/Root/Payload/Geni.app'>
+2026-04-02 09:25:33 +0000 [MT] Processing step: IDEDistributionCreateManifestStep
+2026-04-02 09:25:33 +0000 [MT] Skipping step: IDEDistributionCreateManifestStep because it said so

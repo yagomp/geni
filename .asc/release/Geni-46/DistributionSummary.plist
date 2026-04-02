@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Geni.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>46</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>8B0AAD8995B9C674D20AA332C881F9687390688B</string>
+				<key>dateExpires</key>
+				<string>01/01/2027</string>
+				<key>type</key>
+				<string>Apple Distribution</string>
+			</dict>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>ZBRDR5Q455.com.yagomp.geni</string>
+				<key>beta-reports-active</key>
+				<true/>
+				<key>com.apple.developer.team-identifier</key>
+				<string>ZBRDR5Q455</string>
+				<key>com.apple.developer.ubiquity-kvstore-identifier</key>
+				<string>ZBRDR5Q455.com.yagomp.geni</string>
+				<key>get-task-allow</key>
+				<false/>
+			</dict>
+			<key>name</key>
+			<string>Geni.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>9d315c17-9033-4dc1-b77f-cf1cbce91fe7</string>
+				<key>dateExpires</key>
+				<string>01/01/2027</string>
+				<key>name</key>
+				<string>Geni AppStore</string>
+			</dict>
+			<key>symbols</key>
+			<true/>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>ZBRDR5Q455</string>
+				<key>name</key>
+				<string></string>
+			</dict>
+			<key>versionNumber</key>
+			<string>1.1.1</string>
+		</dict>
+	</array>
+</dict>
+</plist>

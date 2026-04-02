@@ -1,0 +1,37 @@
+{
+  "/Users/yago/Documents/geni-rork/ios/Geni/Services/NotificationService.swift" : {
+    "const-values" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/NotificationService.swiftconstvalues",
+    "dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/NotificationService.d",
+    "diagnostics" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/NotificationService.dia",
+    "object" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/NotificationService.o",
+    "swift-dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/NotificationService.swiftdeps"
+  },
+  "/Users/yago/Documents/geni-rork/ios/Geni/Services/PersistenceService.swift" : {
+    "const-values" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/PersistenceService.swiftconstvalues",
+    "dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/PersistenceService.d",
+    "diagnostics" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/PersistenceService.dia",
+    "object" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/PersistenceService.o",
+    "swift-dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/PersistenceService.swiftdeps"
+  },
+  "/Users/yago/Documents/geni-rork/ios/Geni/Services/ReadingContentService.swift" : {
+    "const-values" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingContentService.swiftconstvalues",
+    "dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingContentService.d",
+    "diagnostics" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingContentService.dia",
+    "object" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingContentService.o",
+    "swift-dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/ReadingContentService.swiftdeps"
+  },
+  "/Users/yago/Documents/geni-rork/ios/Geni/Services/SpeechRecognitionService.swift" : {
+    "const-values" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/SpeechRecognitionService.swiftconstvalues",
+    "dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/SpeechRecognitionService.d",
+    "diagnostics" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/SpeechRecognitionService.dia",
+    "object" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/SpeechRecognitionService.o",
+    "swift-dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/SpeechRecognitionService.swiftdeps"
+  },
+  "/Users/yago/Documents/geni-rork/ios/Geni/Services/SpeechService.swift" : {
+    "const-values" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/SpeechService.swiftconstvalues",
+    "dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/SpeechService.d",
+    "diagnostics" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/SpeechService.dia",
+    "object" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/SpeechService.o",
+    "swift-dependencies" : "/Users/yago/Documents/geni-rork/build/sim/Build/Intermediates.noindex/Geni.build/Debug-iphonesimulator/Geni.build/Objects-normal/arm64/SpeechService.swiftdeps"
+  }
+}

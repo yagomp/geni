@@ -21,6 +21,7 @@
 <meta name="twitter:image" content="https://geni.kids/icon-mark.png">
 <link rel="icon" type="image/png" href="icon-mark.png">
 <link rel="apple-touch-icon" href="icon-mark.png">
+<link rel="preload" as="image" href="icon-hero-tight-960.webp" imagesrcset="icon-hero-tight-640.webp 640w, icon-hero-tight-960.webp 960w, icon-hero-tight.webp 1024w" imagesizes="(max-width: 600px) 82vw, (max-width: 1120px) 46vw, 560px">
 <link rel="canonical" href="https://geni.kids">
 <link rel="alternate" hreflang="en" href="https://geni.kids">
 <link rel="alternate" hreflang="nb" href="https://geni.kids?lang=nb">
@@ -131,17 +132,24 @@ html{scroll-behavior:auto}
 
 /* FOOTER */
 footer{background:var(--bg);color:#fff;padding:20px 0;font-size:0.85rem}
-footer .container{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:16px}
+footer .container{max-width:1120px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:16px}
 footer a{color:#fff;font-weight:700;text-decoration:underline}
 footer a:hover{color:#FFE566}
 .footer-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;text-decoration:none}
 .footer-brand:hover{text-decoration:none}
 .footer-copy{max-width:620px;font-size:0.92rem;line-height:1.5;color:#fff}
-.footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px}
+.footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px;justify-content:center;text-align:center}
 
 /* MOBILE */
-@media(max-width:900px){
+@media(max-width:1024px){
 .feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.nav-menu-btn{display:inline-flex}
+.nav-links{display:none}
+.nav-mobile{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;padding:8px 20px 20px;border-top:3px solid #000;box-shadow:0 8px 0 #000}
+.nav-mobile.is-open{display:block}
+.nav-mobile-inner{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.nav-mobile a,.nav-mobile button{display:block;width:100%;padding:14px 0;color:#000;font-weight:900;font-size:0.95rem;text-align:left;text-transform:uppercase;letter-spacing:0.5px;background:none;border:none;border-bottom:1px solid rgba(0,0,0,0.15);font-family:var(--font)}
+.nav-mobile a:hover,.nav-mobile button:hover{text-decoration:none;opacity:0.8}
 }
 @media(max-width:600px){
 :root{--nav-height:74px}
@@ -157,13 +165,8 @@ footer a:hover{color:#FFE566}
 .hero-icon{width:min(360px,82vw);max-width:100%;height:auto}
 .parents-card{padding:28px 20px}
 footer .container{flex-direction:column;text-align:center}
-.nav-menu-btn{display:inline-flex}
-.nav-links{display:none}
-.nav-mobile{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;padding:8px 20px 20px;border-top:3px solid #000;box-shadow:0 8px 0 #000}
-.nav-mobile.is-open{display:block}
-.nav-mobile-inner{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
-.nav-mobile a,.nav-mobile button{display:block;width:100%;padding:14px 0;color:#000;font-weight:900;font-size:0.95rem;text-align:left;text-transform:uppercase;letter-spacing:0.5px;background:none;border:none;border-bottom:1px solid rgba(0,0,0,0.15);font-family:var(--font)}
-.nav-mobile a:hover,.nav-mobile button:hover{text-decoration:none;opacity:0.8}
+.footer-brand,.footer-copy,.footer-links{width:100%;justify-content:center;text-align:center}
+.footer-links{flex-wrap:wrap;gap:12px 20px}
 .feature-card{padding:18px}
 .age-table-card{padding:22px 18px}
 .age-table-card p{margin-bottom:16px}
@@ -177,7 +180,7 @@ footer .container{flex-direction:column;text-align:center}
 .age-cell-label{display:block;font-size:0.72rem;font-weight:900;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px}
 .nav-store{display:block}
 .nav-store .app-store-badge{display:none}
-.nav-store-mobile{display:inline-flex}
+.nav-store-mobile{display:inline-flex;border-radius:999px}
 }
 </style>
 <script type="application/ld+json">
@@ -203,7 +206,7 @@ footer .container{flex-direction:column;text-align:center}
 <a href="https://apps.apple.com/app/geni-kids/id6761134405" class="app-store-badge" tabindex="-1">
 <img src="appstore-badge.svg" alt="Download on the App Store" width="160" height="54" loading="eager">
 </a>
-<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="nav-store-mobile" tabindex="-1" aria-label="Download on the App Store"> Download</a>
+<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="nav-store-mobile" tabindex="-1" aria-label="Download on the App Store"><span aria-hidden="true"></span>&nbsp;<span data-i18n="nav_download">Download</span></a>
 </div>
 <div class="nav-links">
 <a href="#features-heading" data-i18n="nav_features">Features</a>
@@ -250,7 +253,10 @@ footer .container{flex-direction:column;text-align:center}
 </div>
 </div>
 <div class="hero-visual">
-<img class="hero-icon" src="icon-hero-tight.png" alt="Geni mascot icon with a smiling brain, glasses, and a light bulb" width="1024" height="1108" loading="eager">
+<picture>
+<source type="image/webp" srcset="icon-hero-tight-640.webp 640w, icon-hero-tight-960.webp 960w, icon-hero-tight.webp 1024w" sizes="(max-width: 600px) 82vw, (max-width: 1120px) 46vw, 560px">
+<img class="hero-icon" src="icon-hero-tight.png" alt="Geni mascot icon with a smiling brain, glasses, and a light bulb" width="1024" height="1108" loading="eager" fetchpriority="high" decoding="async">
+</picture>
 </div>
 </div>
 </section>
@@ -408,18 +414,17 @@ mobileMenu.classList.toggle('is-open',next);
 }
 if(menuToggle)menuToggle.addEventListener('click',toggleMenu);
 
-function updateNavStore(){
-if(!nav||!hero)return;
-var heroBottom=hero.getBoundingClientRect().bottom;
-nav.classList.toggle('is-store-visible',heroBottom<=80);
+if(nav&&hero&&'IntersectionObserver'in window){
+var heroObserver=new IntersectionObserver(function(entries){
+var entry=entries[0];
+nav.classList.toggle('is-store-visible',!entry.isIntersecting);
+},{rootMargin:'-80px 0px 0px 0px',threshold:0});
+heroObserver.observe(hero);
 }
-updateNavStore();
-window.addEventListener('scroll',updateNavStore,{passive:true});
-window.addEventListener('resize',updateNavStore);
 
 var T={
 en:{
-nav_features:"Features",nav_parents:"For Parents",nav_privacy:"Privacy",
+nav_features:"Features",nav_parents:"For Parents",nav_privacy:"Privacy",nav_download:"Download",
 hero_title:'Learning is an adventure',
 hero_sub:"Daily math and reading missions for kids aged 5\u201310. Learn, play, repeat!",
 features_title:"What makes Geni special",
@@ -465,7 +470,7 @@ preview_profiles_title:"Choose profile",preview_profiles_switch:"Tap to switch",
 preview_language_picker:"Language",preview_language_parent:"Parent dashboard",preview_language_english:"🇬🇧 English",preview_language_norwegian:"🇳🇴 Norwegian",preview_language_spanish:"🇪🇸 Spanish",preview_language_portuguese:"🇵🇹 Portuguese",preview_language_note:"Switch in seconds and keep each family comfortable"
 },
 nb:{
-nav_features:"Funksjoner",nav_parents:"For foreldre",nav_privacy:"Personvern",
+nav_features:"Funksjoner",nav_parents:"For foreldre",nav_privacy:"Personvern",nav_download:"Last ned",
 hero_title:'L\u00e6ring er et eventyr',
 hero_sub:"Daglige matte- og leseoppdrag for barn 5\u201310 \u00e5r. L\u00e6r, lek, gjenta!",
 features_title:"Hva gj\u00f8r Geni spesiell",
@@ -511,7 +516,7 @@ preview_profiles_title:"Velg profil",preview_profiles_switch:"Trykk for å bytte
 preview_language_picker:"Språk",preview_language_parent:"Foreldrepanel",preview_language_english:"🇬🇧 Engelsk",preview_language_norwegian:"🇳🇴 Norsk",preview_language_spanish:"🇪🇸 Spansk",preview_language_portuguese:"🇵🇹 Portugisisk",preview_language_note:"Bytt på sekunder og gjør appen komfortabel for hele familien"
 },
 es:{
-nav_features:"Funciones",nav_parents:"Para padres",nav_privacy:"Privacidad",
+nav_features:"Funciones",nav_parents:"Para padres",nav_privacy:"Privacidad",nav_download:"Descargar",
 hero_title:'Aprender es una aventura',
 hero_sub:"Misiones diarias de matem\u00E1ticas y lectura para ni\u00F1os de 5 a 10 a\u00F1os. \u00A1Aprende, juega y repite!",
 features_title:"Qu\u00E9 hace especial a Geni",
@@ -557,7 +562,7 @@ preview_profiles_title:"Elegir perfil",preview_profiles_switch:"Toca para cambia
 preview_language_picker:"Idioma",preview_language_parent:"Panel para padres",preview_language_english:"🇬🇧 Inglés",preview_language_norwegian:"🇳🇴 Noruego",preview_language_spanish:"🇪🇸 Español",preview_language_portuguese:"🇵🇹 Portugués",preview_language_note:"Cambia en segundos y haz que la app se sienta cómoda para toda la familia"
 },
 pt:{
-nav_features:"Recursos",nav_parents:"Para pais",nav_privacy:"Privacidade",
+nav_features:"Recursos",nav_parents:"Para pais",nav_privacy:"Privacidade",nav_download:"Baixar",
 hero_title:'Aprender \u00E9 uma aventura',
 hero_sub:"Miss\u00F5es di\u00E1rias de matem\u00E1tica e leitura para crian\u00E7as de 5 a 10 anos. Aprenda, brinque e repita!",
 features_title:"O que torna Geni especial",

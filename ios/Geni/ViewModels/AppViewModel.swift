@@ -119,7 +119,7 @@ class AppViewModel {
         guard let profile = persistence.activeProfile else { return }
         let today = persistence.todayString()
 
-        if type != .daily && challengeTimeExpired {
+        if type != .daily && !canStartChallengeModes {
             return
         }
 
@@ -479,13 +479,21 @@ class AppViewModel {
         return profile.ageGroup != .young
     }
 
+    var challengeWindowStarted: Bool {
+        todayFullChapterCompleted && rewardState.dailyCompletedAt != nil
+    }
+
+    var canStartChallengeModes: Bool {
+        challengeWindowStarted && !challengeTimeExpired
+    }
+
     var challengeTimeExpired: Bool {
-        guard let completedAt = rewardState.dailyCompletedAt else { return false }
+        guard challengeWindowStarted, let completedAt = rewardState.dailyCompletedAt else { return false }
         return Date().timeIntervalSince(completedAt) >= Self.challengeWindowSeconds
     }
 
     func challengeSecondsRemaining() -> Int {
-        guard let completedAt = rewardState.dailyCompletedAt else { return Int(Self.challengeWindowSeconds) }
+        guard challengeWindowStarted, let completedAt = rewardState.dailyCompletedAt else { return 0 }
         let elapsed = Date().timeIntervalSince(completedAt)
         return max(0, Int(Self.challengeWindowSeconds - elapsed))
     }

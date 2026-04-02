@@ -217,7 +217,8 @@ nonisolated enum MathOperation: String, Codable, Sendable, CaseIterable, Hashabl
 
     static func recommended(for age: Int) -> [MathOperation] {
         switch age {
-        case ...6: return [.addition, .subtraction]
+        case ...5: return [.addition]
+        case 6: return [.addition, .subtraction]
         case 7...8: return [.addition, .subtraction, .multiplication]
         default: return [.addition, .subtraction, .multiplication, .division]
         }

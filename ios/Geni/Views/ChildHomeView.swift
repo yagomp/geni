@@ -27,8 +27,6 @@ struct ChildHomeView: View {
                     missionCard
                     Spacer()
                     specialModesSection
-                    Spacer()
-                    progressMapSection
                     Spacer().frame(height: iPadScale.isIPad ? 20 : 12)
                 }
                 .padding(.horizontal, iPadScale.padding)
@@ -227,16 +225,6 @@ struct ChildHomeView: View {
                          : "📚 \(L.s(.mathAndReading))")
                         .font(.system(.title2, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
-
-                    if viewModel.persistence.activeProfile?.ageGroup == .middle || viewModel.persistence.activeProfile?.ageGroup == .older {
-                        HStack(spacing: 6) {
-                            Text(viewModel.currentMathTopic.emoji)
-                                .font(.system(size: 14))
-                            Text(viewModel.currentMathTopic.displayName)
-                                .font(.system(.caption, design: .rounded, weight: .bold))
-                                .foregroundStyle(GeniColor.blue)
-                        }
-                    }
                 }
 
                 Spacer()
@@ -340,29 +328,35 @@ struct ChildHomeView: View {
 
     private var specialModesSection: some View {
         VStack(spacing: 12) {
-            if viewModel.challengeWindowStarted {
-                if let special = viewModel.specialChapterAvailable, !viewModel.challengeTimeExpired {
-                    specialChapterCard(type: special)
-                }
+            if viewModel.challengeWindowStarted, let special = viewModel.specialChapterAvailable, !viewModel.challengeTimeExpired {
+                specialChapterCard(type: special)
+            }
 
-                if viewModel.challengeTimeExpired {
-                    challengesClosedCard
-                } else {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text(L.s(.extraModes))
-                                .font(.system(.caption, design: .rounded, weight: .bold))
-                                .foregroundStyle(.black)
-                                .textCase(.uppercase)
-                                .tracking(0.5)
+            if viewModel.challengeTimeExpired {
+                challengesClosedCard
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text(L.s(.extraModes))
+                            .font(.system(.caption, design: .rounded, weight: .bold))
+                            .foregroundStyle(.black)
+                            .textCase(.uppercase)
+                            .tracking(0.5)
 
-                            Spacer()
+                        Spacer()
 
+                        if viewModel.challengeWindowStarted {
                             ChallengeCountdown(viewModel: viewModel)
                         }
-
-                        quickChallengeCards
                     }
+
+                    if !viewModel.challengeWindowStarted {
+                        Text(L.s(.finishMissionToUnlockChallenges))
+                            .font(.system(.caption, design: .rounded, weight: .bold))
+                            .foregroundStyle(.black)
+                    }
+
+                    quickChallengeCards(isEnabled: viewModel.canStartChallengeModes)
                 }
             }
         }
@@ -422,13 +416,14 @@ struct ChildHomeView: View {
         .brutalistCard(color: GeniColor.card)
     }
 
-    private var quickChallengeCards: some View {
+    private func quickChallengeCards(isEnabled: Bool) -> some View {
         ScrollView(.horizontal) {
             HStack(spacing: 12) {
                 QuickChallengeCard(
                     title: L.s(.timeAttack),
                     emoji: "⏱️",
-                    color: GeniColor.orange
+                    color: GeniColor.orange,
+                    isEnabled: isEnabled
                 ) {
                     HapticManager.specialChapter()
                     viewModel.startChapter(type: .timeAttack)
@@ -437,7 +432,8 @@ struct ChildHomeView: View {
                 QuickChallengeCard(
                     title: L.s(.perfectRun),
                     emoji: "👑",
-                    color: GeniColor.purple
+                    color: GeniColor.purple,
+                    isEnabled: isEnabled
                 ) {
                     HapticManager.specialChapter()
                     viewModel.startChapter(type: .perfectRun)
@@ -448,7 +444,8 @@ struct ChildHomeView: View {
                         QuickChallengeCard(
                             title: "\(op.symbol) \(L.s(.spotlightChapter))",
                             emoji: "🔍",
-                            color: GeniColor.cyan
+                            color: GeniColor.cyan,
+                            isEnabled: isEnabled
                         ) {
                             HapticManager.specialChapter()
                             viewModel.startChapter(type: .operationSpotlight, spotlightOp: op)
@@ -460,27 +457,6 @@ struct ChildHomeView: View {
         }
         .contentMargins(.horizontal, 0)
         .scrollIndicators(.hidden)
-    }
-
-    private var progressMapSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            if viewModel.persistence.activeProfile?.ageGroup == .middle || viewModel.persistence.activeProfile?.ageGroup == .older {
-                Text(L.s(.topicProgress))
-                    .font(.system(.headline, design: .rounded, weight: .bold))
-                    .foregroundStyle(GeniColor.border)
-
-                TopicMapView(topicProgress: viewModel.topicProgress)
-            } else {
-                Text(L.s(.progressMap))
-                    .font(.system(.headline, design: .rounded, weight: .bold))
-                    .foregroundStyle(GeniColor.border)
-
-                ProgressMapView(
-                    completedCount: viewModel.completedChapterCount,
-                    rewards: viewModel.rewardState
-                )
-            }
-        }
     }
 
     private func specialChapterIcon(_ type: ChapterType) -> String {
@@ -618,10 +594,12 @@ struct QuickChallengeCard: View {
     let title: String
     let emoji: String
     let color: Color
+    let isEnabled: Bool
     let action: () -> Void
 
     var body: some View {
         Button {
+            guard isEnabled else { return }
             action()
         } label: {
             VStack(spacing: 8) {
@@ -638,49 +616,9 @@ struct QuickChallengeCard: View {
             .padding(.vertical, 16)
             .padding(.horizontal, 8)
             .brutalistCard(color: GeniColor.card, borderWidth: 3)
+            .opacity(isEnabled ? 1.0 : 0.45)
         }
-    }
-}
-
-struct TopicMapView: View {
-    let topicProgress: TopicProgress
-
-    var body: some View {
-        ScrollView(.horizontal) {
-            HStack(spacing: 8) {
-                ForEach(MathTopic.allCases, id: \.rawValue) { topic in
-                    let isUnlocked = topicProgress.isUnlocked(topic)
-                    let isCurrent = topicProgress.currentTopic() == topic
-                    let stars = topicProgress.stars(for: topic)
-
-                    VStack(spacing: 6) {
-                        Text(topic.emoji)
-                            .font(.system(size: 22))
-                            .opacity(isUnlocked ? 1.0 : 0.4)
-
-                        Text("\(topic.order + 1)")
-                            .font(.system(.caption2, design: .rounded, weight: .black))
-                            .foregroundStyle(isCurrent ? .white : (isUnlocked ? GeniColor.border : .gray))
-
-                        if isUnlocked && stars > 0 {
-                            Text("⭐\(stars)")
-                                .font(.system(size: 10, weight: .bold, design: .rounded))
-                                .foregroundStyle(GeniColor.border)
-                        } else if !isUnlocked {
-                            Text("🔒")
-                                .font(.system(size: 10))
-                        }
-                    }
-                    .frame(width: 56, height: 72)
-                    .background(isCurrent ? GeniColor.blue : (isUnlocked ? GeniColor.card : Color.gray.opacity(0.1)))
-                    .overlay(Rectangle().stroke(isCurrent ? GeniColor.blue : (isUnlocked ? GeniColor.border : Color.gray.opacity(0.3)), lineWidth: isCurrent ? 3 : 2))
-                    .background(Rectangle().fill(GeniColor.border.opacity(isUnlocked ? 1 : 0.2)).offset(x: 2, y: 2))
-                }
-            }
-            .padding(.vertical, 4)
-        }
-        .contentMargins(.horizontal, 0)
-        .scrollIndicators(.hidden)
+        .disabled(!isEnabled)
     }
 }
 

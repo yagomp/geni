@@ -10,7 +10,9 @@ struct ContentView: View {
             switch viewModel.currentScreen {
             case .welcome:
                 WelcomeView {
-                    showProfileCreation = true
+                    withAnimation {
+                        viewModel.currentScreen = .onboarding
+                    }
                 }
                 .transition(.opacity)
 

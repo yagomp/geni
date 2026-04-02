@@ -196,6 +196,7 @@ nonisolated enum LocaleKey: String, Sendable {
     case readingDone2
     case bonusEarned
     case missionStreak
+    case finishMissionToUnlockChallenges
     case language
     case languageSystem
     case languageEnglish
@@ -337,7 +338,7 @@ nonisolated enum L {
         switch key {
         case .appName: return "Geni"
         case .welcome: return "Welcome to Geni!"
-        case .welcomeSubtitle: return "Learning is fun!"
+        case .welcomeSubtitle: return "Learning is an adventure"
         case .createMyGeni: return "Create my own Geni"
         case .createProfile: return "Create Profile"
         case .nickname: return "Nickname"
@@ -530,6 +531,7 @@ nonisolated enum L {
         case .readingDone2: return "Reading done"
         case .bonusEarned: return "Bonus earned"
         case .missionStreak: return "Mission Streak"
+        case .finishMissionToUnlockChallenges: return "Finish today's mission to unlock challenges"
         case .language: return "Language"
         case .languageSystem: return "System Default"
         case .languageEnglish: return "English"
@@ -572,7 +574,7 @@ nonisolated enum L {
         switch key {
         case .appName: return "Geni"
         case .welcome: return "Velkommen til Geni!"
-        case .welcomeSubtitle: return "L\u{00E6}ring er g\u{00F8}y!"
+        case .welcomeSubtitle: return "L\u{00E6}ring er et eventyr"
         case .createMyGeni: return "Lag min egen Geni"
         case .createProfile: return "Lag profil"
         case .nickname: return "Kallenavn"
@@ -765,6 +767,7 @@ nonisolated enum L {
         case .readingDone2: return "Lesing ferdig"
         case .bonusEarned: return "Bonus opptjent"
         case .missionStreak: return "Oppdragsrekke"
+        case .finishMissionToUnlockChallenges: return "Fullfor dagens oppdrag for a lase opp utfordringer"
         case .language: return "Spr\u{00E5}k"
         case .languageSystem: return "Systemstandard"
         case .languageEnglish: return "Engelsk"
@@ -807,7 +810,7 @@ nonisolated enum L {
         switch key {
         case .appName: return "Geni"
         case .welcome: return "\u{00A1}Bienvenido a Geni!"
-        case .welcomeSubtitle: return "\u{00A1}Aprender es divertido!"
+        case .welcomeSubtitle: return "Aprender es una aventura"
         case .createMyGeni: return "Crear mi propio Geni"
         case .createProfile: return "Crear perfil"
         case .nickname: return "Apodo"
@@ -1000,6 +1003,7 @@ nonisolated enum L {
         case .readingDone2: return "Lectura hecha"
         case .bonusEarned: return "Bono ganado"
         case .missionStreak: return "Racha de misiones"
+        case .finishMissionToUnlockChallenges: return "Completa la mision de hoy para desbloquear desafios"
         case .language: return "Idioma"
         case .languageSystem: return "Predeterminado del sistema"
         case .languageEnglish: return "Ingl\u{00E9}s"
@@ -1042,7 +1046,7 @@ nonisolated enum L {
         switch key {
         case .appName: return "Geni"
         case .welcome: return "Bem-vindo ao Geni!"
-        case .welcomeSubtitle: return "Aprender \u{00E9} divertido!"
+        case .welcomeSubtitle: return "Aprender \u{00E9} uma aventura"
         case .createMyGeni: return "Criar o meu pr\u{00F3}prio Geni"
         case .createProfile: return "Criar perfil"
         case .nickname: return "Alcunha"
@@ -1235,6 +1239,7 @@ nonisolated enum L {
         case .readingDone2: return "Leitura conclu\u{00ED}da"
         case .bonusEarned: return "B\u{00F3}nus ganho"
         case .missionStreak: return "Sequ\u{00EA}ncia de miss\u{00F5}es"
+        case .finishMissionToUnlockChallenges: return "Conclui a missao de hoje para desbloquear desafios"
         case .language: return "Idioma"
         case .languageSystem: return "Padr\u{00E3}o do sistema"
         case .languageEnglish: return "Ingl\u{00EA}s"

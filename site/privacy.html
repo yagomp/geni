@@ -33,12 +33,15 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
 --yellow:#0433FF;--blue:#0066FF;--purple:#B052DE;
---bg:#0433FF;--card:#FFFFFF;--border:#000;
+--bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000;--border:#000;
 --shadow:6px 6px 0 #000;--shadow-sm:4px 4px 0 #000;
 --font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;
 }
+body[data-theme="standard"]{--bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000}
+body[data-theme="ocean"]{--bg:#E6F2FF;--card:#F2F7FF;--accent:#2E73D1;--on-bg:#000000}
+body[data-theme="blossom"]{--bg:#FFEDEF;--card:#FFF7FA;--accent:#E0487A;--on-bg:#000000}
 html{font-size:16px}
-body{font-family:var(--font);background:var(--bg);color:#fff;line-height:1.7;-webkit-font-smoothing:antialiased}
+body{font-family:var(--font);background:var(--bg);color:var(--on-bg);line-height:1.7;-webkit-font-smoothing:antialiased}
 a{color:#000;text-decoration:none}
 a:hover{text-decoration:underline}
 a:focus-visible,button:focus-visible{outline:4px solid #000;outline-offset:2px}
@@ -51,12 +54,12 @@ nav .container{max-width:1120px;display:flex;align-items:center;justify-content:
 .nav-logo{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 16px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);font-weight:900;font-size:1.1rem;color:#000;text-transform:uppercase;letter-spacing:1px}
 .nav-logo:hover{text-decoration:none}
 .nav-links{display:flex;gap:16px;align-items:center;font-weight:800;font-size:0.9rem}
-.nav-links a{color:#fff;text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid transparent;padding:6px 0 2px}
-.nav-links a:hover{border-bottom-color:#fff;text-decoration:none}
+.nav-links a{color:var(--on-bg);text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid transparent;padding:6px 0 2px}
+.nav-links a:hover{border-bottom-color:var(--on-bg);text-decoration:none}
 .nav-menu-btn{display:none;align-items:center;justify-content:center;width:48px;height:48px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);color:#000;cursor:pointer}
 .nav-menu-btn span{display:block;width:18px;height:2px;background:#000;box-shadow:0 -6px 0 #000,0 6px 0 #000}
 .lang-dropdown{position:relative}
-.lang-btn{background:none;border:none;border-bottom:3px solid transparent;padding:6px 4px 2px;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:0.5px;color:#fff}
+.lang-btn{background:none;border:none;border-bottom:3px solid transparent;padding:6px 4px 2px;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:0.5px;color:var(--on-bg)}
 .lang-btn:hover{opacity:0.7}
 .lang-btn:active{opacity:0.5}
 .lang-menu{display:none;position:absolute;right:0;top:100%;padding-top:4px;min-width:168px;z-index:20}
@@ -64,6 +67,14 @@ nav .container{max-width:1120px;display:flex;align-items:center;justify-content:
 .lang-dropdown:hover .lang-menu{display:block}
 .lang-menu button{display:block;width:100%;background:none;border:none;padding:8px 12px;font-weight:800;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-align:left;color:#000;white-space:nowrap}
 .lang-menu button:hover{background:var(--yellow)}
+.theme-picker{display:flex;align-items:center;gap:8px}
+.theme-label{display:none}
+.theme-options{display:flex;align-items:center;gap:8px}
+.theme-dot{width:18px;height:18px;border-radius:999px;border:3px solid #000;box-shadow:2px 2px 0 #000;cursor:pointer}
+.theme-dot[data-theme="standard"]{background:#FFF7E0}
+.theme-dot[data-theme="ocean"]{background:#E6F2FF}
+.theme-dot[data-theme="blossom"]{background:#FFEDEF}
+.theme-dot.is-active{outline:3px solid var(--accent);outline-offset:2px}
 .nav-mobile{display:none}
 
 /* CONTENT */
@@ -78,16 +89,16 @@ ul{padding-left:20px}li{margin-bottom:6px}
 .content-card a{color:var(--blue);font-weight:700}
 
 /* FOOTER - same as landing */
-footer{background:var(--bg);color:#fff;padding:20px 0;font-size:0.85rem}
+footer{background:var(--bg);color:var(--on-bg);padding:20px 0;font-size:0.85rem;border-top:4px solid #000}
 footer .container{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:16px}
-footer a{color:#fff;font-weight:700;text-decoration:underline}
+footer a{color:var(--on-bg);font-weight:700;text-decoration:underline}
 footer a:hover{color:#FFE566}
-.footer-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;text-decoration:none}
+.footer-brand{display:flex;align-items:center;gap:10px;color:var(--on-bg);font-weight:800;text-decoration:none}
 .footer-brand:hover{text-decoration:none}
-.footer-copy{max-width:620px;font-size:0.92rem;line-height:1.5;color:#fff}
-.footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px}
+.footer-copy{max-width:620px;font-size:0.92rem;line-height:1.5;color:var(--on-bg)}
+.footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px;justify-content:center;text-align:center}
 
-@media(max-width:600px){.content-card{padding:24px 16px}footer .container{flex-direction:column;text-align:center}.nav-menu-btn{display:inline-flex}.nav-links{display:none}.nav-mobile{display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg);padding:8px 20px 20px;border-top:1px solid rgba(255,255,255,0.18)}.nav-mobile.is-open{display:block}.nav-mobile-inner{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:8px}.nav-mobile a,.nav-mobile button{display:block;width:100%;padding:14px 0;color:#fff;font-weight:900;font-size:0.95rem;text-align:left;text-transform:uppercase;letter-spacing:0.5px;background:none;border:none;border-bottom:1px solid rgba(255,255,255,0.18);font-family:var(--font)}.nav-mobile a:hover,.nav-mobile button:hover{text-decoration:none;opacity:0.8}}
+@media(max-width:600px){.content-card{padding:24px 16px}footer .container{flex-direction:column;text-align:center}.footer-brand,.footer-copy,.footer-links{width:100%;justify-content:center;text-align:center}.footer-links{flex-wrap:wrap;gap:12px 20px}.nav-menu-btn{display:inline-flex}.nav-links{display:none}.nav-mobile{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;padding:8px 20px 20px;border-top:3px solid #000;box-shadow:0 8px 0 #000}.nav-mobile.is-open{display:block}.nav-mobile-inner{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:8px}.nav-mobile a,.nav-mobile button{display:block;width:100%;padding:14px 0;color:#000;font-weight:900;font-size:0.95rem;text-align:left;text-transform:uppercase;letter-spacing:0.5px;background:none;border:none;border-bottom:1px solid rgba(0,0,0,0.15);font-family:var(--font)}.nav-mobile a:hover,.nav-mobile button:hover{text-decoration:none;opacity:0.8}.theme-picker-mobile{padding:10px 0 4px}}
 </style>
 </head>
 <body>
@@ -99,6 +110,13 @@ footer a:hover{color:#FFE566}
 <a href="/#features-heading" data-i18n="nav_features">Features</a>
 <a href="parents.html" data-i18n="nav_parents">For Parents</a>
 <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
+<div class="theme-picker" aria-label="Theme selector">
+<div class="theme-options">
+<button class="theme-dot" type="button" data-theme="standard" data-i18n-aria-label="theme_standard" aria-label="Standard theme"></button>
+<button class="theme-dot" type="button" data-theme="ocean" data-i18n-aria-label="theme_ocean" aria-label="Ocean theme"></button>
+<button class="theme-dot" type="button" data-theme="blossom" data-i18n-aria-label="theme_blossom" aria-label="Blossom theme"></button>
+</div>
+</div>
 <div class="lang-dropdown">
 <button class="lang-btn" id="langBtn" type="button"><span aria-hidden="true">🇬🇧</span> EN</button>
 <div class="lang-menu" id="langMenu"><div class="lang-menu-inner">
@@ -116,6 +134,13 @@ footer a:hover{color:#FFE566}
 <a href="/#features-heading" data-i18n="nav_features" onclick="closeMenu()">Features</a>
 <a href="parents.html" data-i18n="nav_parents" onclick="closeMenu()">For Parents</a>
 <a href="privacy.html" data-i18n="nav_privacy" onclick="closeMenu()">Privacy</a>
+<div class="theme-picker-mobile">
+<div class="theme-options">
+<button class="theme-dot" type="button" data-theme="standard" data-i18n-aria-label="theme_standard" aria-label="Standard theme"></button>
+<button class="theme-dot" type="button" data-theme="ocean" data-i18n-aria-label="theme_ocean" aria-label="Ocean theme"></button>
+<button class="theme-dot" type="button" data-theme="blossom" data-i18n-aria-label="theme_blossom" aria-label="Blossom theme"></button>
+</div>
+</div>
 <button type="button" onclick="applyLang('en')"><span aria-hidden="true">🇬🇧</span> English</button>
 <button type="button" onclick="applyLang('nb')"><span aria-hidden="true">🇳🇴</span> Norsk</button>
 <button type="button" onclick="applyLang('es')"><span aria-hidden="true">🇪🇸</span> Español</button>
@@ -326,6 +351,8 @@ footer a:hover{color:#FFE566}
 document.getElementById('year').textContent=new Date().getFullYear();
 var menuToggle=document.getElementById('menuToggle');
 var mobileMenu=document.getElementById('mobileMenu');
+var themeButtons=document.querySelectorAll('.theme-dot');
+var themeColorMeta=document.querySelector('meta[name="theme-color"]');
 function closeMenu(){
 if(!menuToggle||!mobileMenu)return;
 menuToggle.setAttribute('aria-expanded','false');
@@ -338,6 +365,21 @@ menuToggle.setAttribute('aria-expanded',String(next));
 mobileMenu.classList.toggle('is-open',next);
 }
 if(menuToggle)menuToggle.addEventListener('click',toggleMenu);
+function applyTheme(theme){
+var value=(theme==='ocean'||theme==='blossom')?theme:'standard';
+document.body.setAttribute('data-theme',value);
+for(var i=0;i<themeButtons.length;i++){
+themeButtons[i].classList.toggle('is-active',themeButtons[i].getAttribute('data-theme')===value);
+}
+if(themeColorMeta){
+themeColorMeta.setAttribute('content',value==='ocean'?'#E6F2FF':value==='blossom'?'#FFEDEF':'#FFF7E0');
+}
+try{localStorage.setItem('geni_theme',value)}catch(e){}
+}
+for(var i=0;i<themeButtons.length;i++){
+themeButtons[i].addEventListener('click',function(){applyTheme(this.getAttribute('data-theme'));});
+}
+try{applyTheme(localStorage.getItem('geni_theme')||'standard')}catch(e){applyTheme('standard')}
 var LANG_META={
 en:{code:"EN",flag:"🇬🇧",title:"Privacy Policy - Geni App"},
 nb:{code:"NO",flag:"🇳🇴",title:"Personvern - Geni App"},
@@ -370,12 +412,17 @@ var els=document.querySelectorAll('[data-i18n]');
 for(var i=0;i<els.length;i++){
 var k=els[i].getAttribute('data-i18n');
 var t={
-en:{nav_features:'Features',nav_parents:'For Parents',nav_privacy:'Privacy',footer_copy:'Geni is a kids learning app for ages 5-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.',footer_home:'Home',footer_parents:'For Parents',footer_privacy:'Privacy'},
-nb:{nav_features:'Funksjoner',nav_parents:'For foreldre',nav_privacy:'Personvern',footer_copy:'Geni er en læringsapp for barn 5-10 år med matteøving, valgfri lesing, offline bruk, foreldrekontroll og ingen reklame eller sporing.',footer_home:'Hjem',footer_parents:'For foreldre',footer_privacy:'Personvern'},
-es:{nav_features:'Funciones',nav_parents:'Para padres',nav_privacy:'Privacidad',footer_copy:'Geni es una app educativa para niños de 5 a 10 años con matemáticas, lectura opcional, juego sin conexión, controles parentales y sin anuncios ni rastreo.',footer_home:'Inicio',footer_parents:'Para padres',footer_privacy:'Privacidad'},
-pt:{nav_features:'Recursos',nav_parents:'Para pais',nav_privacy:'Privacidade',footer_copy:'Geni é um app educativo para crianças de 5 a 10 anos com matemática, leitura opcional, uso offline, controles parentais e sem anúncios nem rastreamento.',footer_home:'Início',footer_parents:'Para pais',footer_privacy:'Privacidade'}
+en:{nav_features:'Features',nav_parents:'For Parents',nav_privacy:'Privacy',theme_label:'Theme',theme_standard:'Standard',theme_ocean:'Ocean',theme_blossom:'Blossom',footer_copy:'Geni is a kids learning app for ages 5-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.',footer_home:'Home',footer_parents:'For Parents',footer_privacy:'Privacy'},
+nb:{nav_features:'Funksjoner',nav_parents:'For foreldre',nav_privacy:'Personvern',theme_label:'Tema',theme_standard:'Standard',theme_ocean:'Hav',theme_blossom:'Blomst',footer_copy:'Geni er en læringsapp for barn 5-10 år med matteøving, valgfri lesing, offline bruk, foreldrekontroll og ingen reklame eller sporing.',footer_home:'Hjem',footer_parents:'For foreldre',footer_privacy:'Personvern'},
+es:{nav_features:'Funciones',nav_parents:'Para padres',nav_privacy:'Privacidad',theme_label:'Tema',theme_standard:'Estándar',theme_ocean:'Océano',theme_blossom:'Floración',footer_copy:'Geni es una app educativa para niños de 5 a 10 años con matemáticas, lectura opcional, juego sin conexión, controles parentales y sin anuncios ni rastreo.',footer_home:'Inicio',footer_parents:'Para padres',footer_privacy:'Privacidad'},
+pt:{nav_features:'Recursos',nav_parents:'Para pais',nav_privacy:'Privacidade',theme_label:'Tema',theme_standard:'Padrão',theme_ocean:'Oceano',theme_blossom:'Florescer',footer_copy:'Geni é um app educativo para crianças de 5 a 10 anos com matemática, leitura opcional, uso offline, controles parentais e sem anúncios nem rastreamento.',footer_home:'Início',footer_parents:'Para pais',footer_privacy:'Privacidade'}
 }[lang];
 if(t[k])els[i].textContent=t[k];
+}
+var ariaEls=document.querySelectorAll('[data-i18n-aria-label]');
+for(var j=0;j<ariaEls.length;j++){
+var ak=ariaEls[j].getAttribute('data-i18n-aria-label');
+if(t[ak])ariaEls[j].setAttribute('aria-label',t[ak]);
 }
 }
 applyLang(lang);

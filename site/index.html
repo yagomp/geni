@@ -131,11 +131,12 @@ html{scroll-behavior:auto}
 
 /* FOOTER */
 footer{background:var(--bg);color:#fff;padding:20px 0;font-size:0.85rem}
-footer .container{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
+footer .container{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:16px}
 footer a{color:#fff;font-weight:700;text-decoration:underline}
 footer a:hover{color:#FFE566}
 .footer-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;text-decoration:none}
 .footer-brand:hover{text-decoration:none}
+.footer-copy{max-width:620px;font-size:0.92rem;line-height:1.5;color:#fff}
 .footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px}
 
 /* MOBILE */
@@ -379,6 +380,12 @@ footer .container{flex-direction:column;text-align:center}
 <a href="/" class="footer-brand" aria-label="Geni home">
 <span>&copy; <span id="year"></span> Geni</span>
 </a>
+<p class="footer-copy" data-i18n="footer_copy">Geni is a kids learning app for ages 5-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.</p>
+<div class="footer-links">
+<a href="/" data-i18n="footer_home">Home</a>
+<a href="parents.html" data-i18n="footer_parents">For Parents</a>
+<a href="privacy.html" data-i18n="footer_privacy">Privacy</a>
+</div>
 </div>
 </footer>
 
@@ -440,6 +447,8 @@ age_row_5_reading:"🚀 Longer fiction and nonfiction texts<br>📚 Stronger com
 age_row_6_age:"10",
 age_row_6_math:"➗ Long division<br>🍕 Pick the right fraction<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter",
 age_row_6_reading:"🪐 Denser passages with stronger recall<br>📖 Confident reading across fiction and facts",
+footer_copy:"Geni is a kids learning app for ages 5-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.",
+footer_home:"Home",footer_parents:"For Parents",footer_privacy:"Privacy",
 f1_label:"Math flow",f1_title:"Math Missions",f1_desc:"Short exercises feel fast and game-like, with progress, instant feedback, and the next challenge ready right away.",
 f2_label:"Reading flow",f2_title:"Reading Adventures",f2_desc:"Words stay large and focused, with read-to-me, read-by-myself, and read-aloud modes that guide attention line by line.",
 f3_label:"Reward loop",f3_title:"Rewards & Badges",f3_desc:"Coins, XP, streaks, and badge unlocks turn steady practice into momentum that kids want to keep going.",
@@ -484,6 +493,8 @@ age_row_5_reading:"🚀 Lengre skjønnlitterære og faglige tekster<br>📚 Mer 
 age_row_6_age:"10",
 age_row_6_math:"➗ Lang divisjon<br>🍕 Velg riktig brøk<br>🧠 Flerstegsoppgaver<br>🔢 Tallrekker<br>📐 Areal og omkrets",
 age_row_6_reading:"🪐 Tettere tekster med sterkere gjenfortelling<br>📖 Trygg lesing i både fortelling og fakta",
+footer_copy:"Geni er en læringsapp for barn 5-10 år med matteøving, valgfri lesing, offline bruk, foreldrekontroll og ingen reklame eller sporing.",
+footer_home:"Hjem",footer_parents:"For foreldre",footer_privacy:"Personvern",
 f1_label:"Matteflyt",f1_title:"Matteoppdrag",f1_desc:"Korte oppgaver føles raske og lekne, med fremgang, tilbakemelding med en gang og neste utfordring klar med én gang.",
 f2_label:"Leseflyt",f2_title:"Leseeventyr",f2_desc:"Ordene holder seg store og tydelige, med høytlesing, egenlesing og les-høyt-modus som leder oppmerksomheten linje for linje.",
 f3_label:"Belønningssløyfe",f3_title:"Belønninger og merker",f3_desc:"Mynter, XP, streaks og nye merker gjør jevn øving til fremgang barna får lyst til å fortsette med.",
@@ -528,6 +539,8 @@ age_row_5_reading:"🚀 Textos más largos de ficción y no ficción<br>📚 May
 age_row_6_age:"10",
 age_row_6_math:"➗ División larga<br>🍕 Elige la fracción correcta<br>🧠 Problemas de varios pasos<br>🔢 Secuencias numéricas<br>📐 Área y perímetro",
 age_row_6_reading:"🪐 Pasajes más densos con mejor recuerdo<br>📖 Lectura segura en ficción y textos informativos",
+footer_copy:"Geni es una app educativa para niños de 5 a 10 años con matemáticas, lectura opcional, juego sin conexión, controles parentales y sin anuncios ni rastreo.",
+footer_home:"Inicio",footer_parents:"Para padres",footer_privacy:"Privacidad",
 f1_label:"Flujo matemático",f1_title:"Misiones de matemáticas",f1_desc:"Los ejercicios cortos se sienten rápidos y como un juego, con progreso visible, feedback al instante y el siguiente reto listo enseguida.",
 f2_label:"Flujo de lectura",f2_title:"Aventuras de lectura",f2_desc:"Las palabras se mantienen grandes y claras, con modos para escuchar, leer solo o leer en voz alta que guían la atención línea por línea.",
 f3_label:"Ciclo de recompensas",f3_title:"Recompensas e insignias",f3_desc:"Monedas, XP, rachas y nuevas insignias convierten la práctica constante en impulso para seguir aprendiendo.",
@@ -572,6 +585,8 @@ age_row_5_reading:"🚀 Textos mais longos de ficção e não ficção<br>📚 C
 age_row_6_age:"10",
 age_row_6_math:"➗ Divisão longa<br>🍕 Escolha a fração certa<br>🧠 Problemas com vários passos<br>🔢 Sequências numéricas<br>📐 Área e perímetro",
 age_row_6_reading:"🪐 Passagens mais densas com melhor recordação<br>📖 Leitura confiante em ficção e fatos",
+footer_copy:"Geni é um app educativo para crianças de 5 a 10 anos com matemática, leitura opcional, uso offline, controles parentais e sem anúncios nem rastreamento.",
+footer_home:"Início",footer_parents:"Para pais",footer_privacy:"Privacidade",
 f1_label:"Fluxo de matemática",f1_title:"Missões de matemática",f1_desc:"Exercícios curtos parecem rápidos e divertidos, com progresso visível, feedback imediato e o próximo desafio pronto em seguida.",
 f2_label:"Fluxo de leitura",f2_title:"Aventuras de leitura",f2_desc:"As palavras ficam grandes e focadas, com modos para ouvir, ler sozinho e ler em voz alta que guiam a atenção linha por linha.",
 f3_label:"Ciclo de recompensa",f3_title:"Recompensas e insígnias",f3_desc:"Moedas, XP, sequências e novas insígnias transformam a prática constante em impulso para continuar aprendendo.",

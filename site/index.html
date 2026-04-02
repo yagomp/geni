@@ -7,20 +7,20 @@
 <meta name="description" content="Geni makes math and reading fun for kids aged 5-10. Daily missions, speech recognition, rewards, and parent controls. Download free on the App Store.">
 <meta name="keywords" content="kids learning app, math for kids, reading app children, educational game, daily missions, speech recognition, parent controls">
 <meta name="robots" content="index, follow">
-<meta name="theme-color" content="#FFD60A">
+<meta name="theme-color" content="#0433FF">
 <meta name="apple-mobile-web-app-title" content="Geni">
 <meta property="og:title" content="Geni - Fun Learning App for Kids">
 <meta property="og:description" content="Daily math and reading missions that make learning an adventure. For kids aged 5-10.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://geni.kids/icon.webp">
+<meta property="og:image" content="https://geni.kids/icon-mark.png">
 <meta property="og:url" content="https://geni.kids">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Geni - Fun Learning App for Kids">
 <meta name="twitter:description" content="Daily math and reading missions that make learning an adventure.">
-<meta name="twitter:image" content="https://geni.kids/icon.webp">
-<link rel="icon" type="image/webp" href="icon.webp">
-<link rel="apple-touch-icon" href="icon.png">
+<meta name="twitter:image" content="https://geni.kids/icon-mark.png">
+<link rel="icon" type="image/png" href="icon-mark.png">
+<link rel="apple-touch-icon" href="icon-mark.png">
 <link rel="canonical" href="https://geni.kids">
 <link rel="alternate" hreflang="en" href="https://geni.kids">
 <link rel="alternate" hreflang="nb" href="https://geni.kids?lang=nb">
@@ -30,9 +30,9 @@
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
---yellow:#FFD60A;--blue:#0066FF;--pink:#FF2E54;--green:#33C75A;
+--yellow:#0433FF;--blue:#0066FF;--pink:#FF2E54;--green:#33C75A;
 --purple:#B052DE;--orange:#FF9400;--cyan:#66D9F2;--peach:#F5D1B8;
---bg:#FFD60A;--card:#FFFFFF;--border:#000000;--gray:#E6E6E6;
+--bg:#0433FF;--card:#FFFFFF;--border:#000000;--gray:#E6E6E6;
 --shadow:6px 6px 0 #000;--shadow-sm:4px 4px 0 #000;
 --font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;
 }
@@ -46,15 +46,15 @@ img{max-width:100%;height:auto;display:block}
 .container{max-width:800px;margin:0 auto;padding:0 20px}
 
 /* NAV */
-nav{background:var(--card);border-bottom:4px solid var(--border);padding:10px 0;position:sticky;top:0;z-index:10}
-nav .container{display:flex;align-items:center;justify-content:space-between}
-.nav-logo{font-weight:900;font-size:1.4rem;display:flex;align-items:center;gap:8px;color:#000;text-transform:uppercase;letter-spacing:-0.5px}
-.nav-logo img{width:36px;height:36px}
+nav{background:var(--bg);border-bottom:0;padding:10px 0;position:sticky;top:0;z-index:10}
+nav .container{max-width:1120px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-weight:900;font-size:1.4rem;display:flex;align-items:center;gap:8px;color:#fff;text-transform:uppercase;letter-spacing:-0.5px}
+.nav-logo img{width:44px;height:44px;object-fit:contain;background:#fff;border:2px solid #000;border-radius:12px;padding:4px;box-shadow:var(--shadow-sm)}
 .nav-links{display:flex;gap:16px;align-items:center;font-weight:800;font-size:0.9rem}
-.nav-links a{color:#000;text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid transparent;padding:6px 0 2px}
-.nav-links a:hover{border-bottom-color:#000;text-decoration:none}
+.nav-links a{color:#fff;text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid transparent;padding:6px 0 2px}
+.nav-links a:hover{border-bottom-color:#fff;text-decoration:none}
 .lang-dropdown{position:relative}
-.lang-btn{background:none;border:none;border-bottom:3px solid transparent;padding:6px 4px 2px;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:0.5px;color:#000}
+.lang-btn{background:none;border:none;border-bottom:3px solid transparent;padding:6px 4px 2px;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:0.5px;color:#fff}
 .lang-btn:hover{opacity:0.7}
 .lang-btn:active{opacity:0.5}
 .lang-menu{display:none;position:absolute;right:0;top:100%;padding-top:4px;min-width:168px;z-index:20}
@@ -64,11 +64,16 @@ nav .container{display:flex;align-items:center;justify-content:space-between}
 .lang-menu button:hover{background:var(--yellow)}
 
 /* HERO */
-.hero{padding:64px 0 48px;text-align:center;position:relative}
-.hero h1{font-weight:900;font-size:clamp(3rem,8vw,4.5rem);line-height:1;margin-bottom:24px;text-transform:uppercase;letter-spacing:-2px}
-.hero-icon{width:200px;height:200px;margin:0 auto 28px;border-radius:0}
-.hero .app-store-badge{margin-bottom:32px}
-.hero p{font-size:1.2rem;max-width:480px;margin:0 auto;font-weight:700;border:4px solid #000;background:#fff;padding:12px 20px;box-shadow:var(--shadow)}
+.hero{padding:18px 0 24px;position:relative}
+.hero .container{max-width:1120px;display:grid;grid-template-columns:minmax(0,1fr) minmax(440px,560px);align-items:start;gap:28px}
+.hero-copy{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding-top:14px}
+.hero-title{margin-bottom:20px}
+.hero h1{font-weight:900;font-size:clamp(3.4rem,8vw,5.6rem);line-height:0.95;text-transform:uppercase;letter-spacing:-2.5px;max-width:6ch;color:#fff}
+.hero-meta{display:flex;flex-direction:column;align-items:flex-start}
+.hero .app-store-badge{margin-bottom:24px}
+.hero p{font-size:1.2rem;max-width:520px;font-weight:700;border:4px solid #000;background:#fff;padding:14px 20px;box-shadow:var(--shadow)}
+.hero-visual{display:flex;justify-content:flex-end;align-items:flex-start}
+.hero-icon{width:min(560px,48vw);height:auto;max-height:780px;display:block}
 .app-store-badge{display:inline-block;transition:opacity 0.2s}
 .app-store-badge:hover{opacity:0.85;text-decoration:none}
 .app-store-badge:active{opacity:0.7}
@@ -80,7 +85,7 @@ nav .container{display:flex;align-items:center;justify-content:space-between}
 .features h2{font-weight:900;font-size:2.2rem;text-align:center;margin-bottom:16px;text-transform:uppercase;letter-spacing:-1px}
 .features-intro{max-width:760px;margin:0 auto 36px;text-align:center;font-size:1rem;font-weight:700}
 .feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:stretch}
-.feature-card{background:var(--card);border:4px solid var(--border);box-shadow:var(--shadow);padding:22px;display:flex;flex-direction:column;gap:18px;min-height:340px;transition:transform 0.1s,box-shadow 0.1s}
+.feature-card{background:var(--card);border:4px solid var(--border);box-shadow:var(--shadow);padding:22px;display:flex;flex-direction:column;gap:18px;min-height:0;transition:transform 0.1s,box-shadow 0.1s}
 .feature-card:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 #000}
 .feature-card:nth-child(1){background:#FFF3B0}
 .feature-card:nth-child(2){background:#E8F4FD}
@@ -94,71 +99,7 @@ nav .container{display:flex;align-items:center;justify-content:space-between}
 .feature-emoji{font-size:1.15rem;line-height:1}
 .feature-copy h3{font-weight:900;font-size:1.15rem;line-height:1.1;text-transform:uppercase;letter-spacing:0.3px}
 .feature-copy p{font-size:0.95rem;color:#000;font-weight:600}
-.feature-preview{margin-top:auto;background:rgba(255,255,255,0.86);border:3px solid var(--border);padding:12px;box-shadow:var(--shadow-sm)}
-.preview-screen{background:#fff;border:3px solid var(--border);padding:12px;display:flex;flex-direction:column;gap:10px;min-height:172px;position:relative;overflow:hidden}
-.preview-topbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.preview-pill,.preview-chip,.preview-badge,.profile-label,.preview-word,.preview-language{border:2px solid var(--border);background:#fff;font-weight:800}
-.preview-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;font-size:0.72rem;text-transform:uppercase}
-.preview-pill--green{background:#DFF8E6}
-.preview-pill--blue{background:#DDEBFF}
-.preview-pill--pink{background:#FFD9E1}
-.preview-pill--orange{background:#FFE2BF}
-.preview-progress{height:10px;border:2px solid var(--border);background:#fff;overflow:hidden}
-.preview-progress span{display:block;height:100%;background:var(--green);transform-origin:left center}
-.preview-math-problem{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.preview-equation{font-size:1.7rem;font-weight:900;letter-spacing:-1px}
-.preview-answer{width:48px;height:48px;display:grid;place-items:center;border:3px solid var(--border);background:#FFFBEA;font-size:1.35rem;font-weight:900}
-.preview-answer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.preview-chip{padding:10px 0;text-align:center;font-size:0.95rem}
-.preview-chip--correct{background:#33C75A;color:#fff;animation:success-pop 2.8s ease-in-out infinite}
-.preview-footer-note{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:0.72rem;font-weight:800;text-transform:uppercase}
-.preview-next{opacity:0.65;animation:slide-next 2.8s ease-in-out infinite}
-.preview-reading-copy{display:flex;flex-direction:column;gap:8px}
-.preview-reading-line{font-size:1rem;font-weight:900;line-height:1.45}
-.preview-word{display:inline-block;padding:2px 6px;margin-right:4px;background:#FFF5A8}
-.preview-word--active{background:#33C75A;color:#fff;animation:lyric-pulse 1.8s ease-in-out infinite}
-.preview-word--next{background:#DDEBFF}
-.preview-reading-sub{font-size:0.82rem;font-weight:700;opacity:0.75}
-.preview-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.preview-stat{border:2px solid var(--border);background:#fff;padding:8px;text-align:center}
-.preview-stat strong{display:block;font-size:1rem}
-.preview-stat span{display:block;font-size:0.68rem;font-weight:800;text-transform:uppercase}
-.preview-xp{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:0.72rem;font-weight:800;text-transform:uppercase}
-.preview-xp-bar{flex:1;height:10px;border:2px solid var(--border);background:#fff;overflow:hidden}
-.preview-xp-bar span{display:block;height:100%;width:72%;background:linear-gradient(90deg,var(--yellow),var(--orange));animation:xp-fill 2.6s ease-in-out infinite}
-.preview-badges{display:flex;gap:8px;flex-wrap:wrap}
-.preview-badge{padding:8px 10px;font-size:0.8rem}
-.preview-badge--live{background:#FFF0B3;animation:badge-bounce 2.4s ease-in-out infinite}
-.preview-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.preview-key{height:34px;display:grid;place-items:center;border:2px solid var(--border);background:#fff;font-size:0.9rem;font-weight:900}
-.preview-dashboard{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.preview-panel{border:2px solid var(--border);background:#fff;padding:10px;font-size:0.78rem;font-weight:800;text-transform:uppercase;min-height:48px}
-.preview-panel strong{display:block;font-size:1rem}
-.preview-device{position:relative;border:3px solid var(--border);background:#fff;padding:10px;display:flex;flex-direction:column;gap:8px}
-.preview-device::after{content:"";position:absolute;top:12px;right:14px;width:34px;height:2px;background:#000;transform:rotate(-35deg)}
-.preview-status-list{display:flex;flex-direction:column;gap:6px}
-.preview-status{display:flex;align-items:center;justify-content:space-between;gap:8px;border:2px solid var(--border);background:#fff;padding:7px 8px;font-size:0.74rem;font-weight:800;text-transform:uppercase}
-.preview-status strong{font-size:0.72rem}
-.preview-profiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.preview-profile{border:2px solid var(--border);background:#fff;padding:10px;display:flex;flex-direction:column;gap:8px}
-.preview-avatar{width:40px;height:40px;display:grid;place-items:center;border:2px solid var(--border);background:#FFF7CC;font-size:1.2rem}
-.profile-label{display:inline-block;padding:4px 8px;font-size:0.68rem;text-transform:uppercase}
-.profile-progress{height:8px;border:2px solid var(--border);background:#fff;overflow:hidden}
-.profile-progress span{display:block;height:100%}
-.profile-progress--1 span{width:64%;background:var(--blue)}
-.profile-progress--2 span{width:42%;background:var(--pink)}
-.preview-languages{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.preview-language{padding:10px 8px;font-size:0.82rem;font-weight:900;text-align:center}
-.preview-language--active{background:#DFF8E6;animation:language-glow 2.4s ease-in-out infinite}
-.preview-language-note{font-size:0.75rem;font-weight:800;text-transform:uppercase;text-align:center}
-@keyframes success-pop{0%,18%,100%{transform:scale(1)}8%{transform:scale(1.08)}}
-@keyframes slide-next{0%,30%{opacity:0;transform:translateY(8px)}50%,100%{opacity:0.7;transform:translateY(0)}}
-@keyframes lyric-pulse{0%,100%{transform:translateY(0);box-shadow:0 0 0 0 transparent}50%{transform:translateY(-2px);box-shadow:0 4px 0 #000}}
-@keyframes xp-fill{0%,100%{width:72%}50%{width:88%}}
-@keyframes badge-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-@keyframes language-glow{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
 @media(prefers-reduced-motion:reduce){
-.feature-card,.feature-card:hover,.preview-chip--correct,.preview-next,.preview-word--active,.preview-xp-bar span,.preview-badge--live,.preview-language--active{animation:none;transform:none}
 html{scroll-behavior:auto}
 }
 
@@ -180,6 +121,9 @@ footer{background:#000;color:#fff;padding:20px 0;font-size:0.85rem}
 footer .container{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px}
 footer a{color:#fff;font-weight:700;text-decoration:underline}
 footer a:hover{color:#FFE566}
+.footer-brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:800;text-decoration:none}
+.footer-brand:hover{text-decoration:none}
+.footer-brand img{width:32px;height:32px;object-fit:contain}
 .footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px}
 
 /* MOBILE */
@@ -188,17 +132,20 @@ footer a:hover{color:#FFE566}
 }
 @media(max-width:600px){
 .feature-grid{grid-template-columns:1fr}
-.hero{padding:48px 0 32px}
-.hero-icon{width:160px;height:160px}
-.hero h1{font-size:2.5rem}
+.hero{padding:6px 0 20px}
+.hero .container{grid-template-columns:1fr;gap:24px}
+.hero-copy{align-items:center;text-align:center;padding-top:10px}
+.hero-title{margin-bottom:16px}
+.hero h1{font-size:2.9rem;max-width:none}
+.hero-meta{align-items:center}
+.hero p{margin:0 auto}
+.hero-visual{justify-content:center;margin-top:0}
+.hero-icon{width:min(400px,84vw);max-height:none}
 .parents-card{padding:28px 20px}
 footer .container{flex-direction:column;text-align:center}
 .nav-links{gap:10px;font-size:0.8rem;flex:1;justify-content:center}
 .nav-logo-text{display:none}
-.feature-card{min-height:auto;padding:18px}
-.preview-screen{min-height:154px}
-.preview-languages,.preview-dashboard,.preview-profiles,.preview-stats,.preview-answer-grid{grid-template-columns:1fr 1fr}
-.preview-answer-grid .preview-chip:last-child{grid-column:1/-1}
+.feature-card{padding:18px}
 }
 </style>
 <script type="application/ld+json">
@@ -219,7 +166,7 @@ footer .container{flex-direction:column;text-align:center}
 
 <nav aria-label="Main navigation">
 <div class="container">
-<a href="/" class="nav-logo" aria-label="Geni home"><img src="icon.webp" alt="" width="36" height="36" loading="eager"><span class="nav-logo-text"> Geni</span></a>
+<a href="/" class="nav-logo" aria-label="Geni home"><img src="icon-mark.png" alt="" width="44" height="44" loading="eager"><span class="nav-logo-text"> Geni</span></a>
 <div class="nav-links">
 <a href="parents.html" data-i18n="nav_parents">For Parents</a>
 <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
@@ -240,12 +187,20 @@ footer .container{flex-direction:column;text-align:center}
 
 <section class="hero" id="hero">
 <div class="container">
+<div class="hero-copy">
+<div class="hero-title">
 <h1 data-i18n="hero_title">Learning is an adventure</h1>
-<img class="hero-icon" src="icon.webp" alt="Geni app icon - a colorful brain illustration" width="200" height="200" loading="eager">
+</div>
+<div class="hero-meta">
 <a href="https://apps.apple.com/app/geni-kids/id6761134405" class="app-store-badge" id="appStoreLink">
 <img src="appstore-badge.svg" alt="Download on the App Store" width="160" height="54" loading="eager">
 </a>
 <p data-i18n="hero_sub">Daily math and reading missions for kids aged 5-10. Learn, play, repeat!</p>
+</div>
+</div>
+<div class="hero-visual">
+<img class="hero-icon" src="icon-hero-tight.png" alt="Geni mascot icon with a smiling brain, glasses, and a light bulb" width="1024" height="1108" loading="eager">
+</div>
 </div>
 </section>
 
@@ -261,28 +216,6 @@ footer .container{flex-direction:column;text-align:center}
 <h3 data-i18n="f1_title">Math Missions</h3>
 <p data-i18n="f1_desc">Short exercises feel fast and game-like, with progress, instant feedback, and the next challenge ready right away.</p>
 </div>
-<div class="feature-preview">
-<div class="preview-screen">
-<div class="preview-topbar">
-<span class="preview-pill preview-pill--blue" data-i18n="preview_math_progress">12 of 20</span>
-<span class="preview-pill preview-pill--green" data-i18n="preview_math_done">Nice work</span>
-</div>
-<div class="preview-progress"><span style="width:64%;animation:xp-fill 2.8s ease-in-out infinite"></span></div>
-<div class="preview-math-problem">
-<div class="preview-equation">8 + 6 =</div>
-<div class="preview-answer">14</div>
-</div>
-<div class="preview-answer-grid">
-<div class="preview-chip">12</div>
-<div class="preview-chip preview-chip--correct">14</div>
-<div class="preview-chip">16</div>
-</div>
-<div class="preview-footer-note">
-<span>+1 ⭐</span>
-<span class="preview-next" data-i18n="preview_math_next">Next: 9 + 7</span>
-</div>
-</div>
-</div>
 </article>
 
 <article class="feature-card">
@@ -290,28 +223,6 @@ footer .container{flex-direction:column;text-align:center}
 <div class="feature-label"><span class="feature-emoji" aria-hidden="true">📖</span><span data-i18n="f2_label">Reading flow</span></div>
 <h3 data-i18n="f2_title">Reading Adventures</h3>
 <p data-i18n="f2_desc">Words stay large and focused, with read-to-me, read-by-myself, and read-aloud modes that guide attention line by line.</p>
-</div>
-<div class="feature-preview">
-<div class="preview-screen">
-<div class="preview-topbar">
-<span class="preview-pill preview-pill--pink" data-i18n="preview_reading_mode">Read aloud</span>
-<span class="preview-pill" data-i18n="preview_reading_time">0:48 / 1:30</span>
-</div>
-<div class="preview-progress"><span style="width:53%;animation:xp-fill 2.4s ease-in-out infinite"></span></div>
-<div class="preview-reading-copy">
-<div class="preview-reading-line">
-<span class="preview-word" data-i18n="preview_reading_word_1">The</span>
-<span class="preview-word preview-word--active" data-i18n="preview_reading_word_2">sun</span>
-<span class="preview-word preview-word--next" data-i18n="preview_reading_word_3">wakes</span>
-<span class="preview-word" data-i18n="preview_reading_word_4">up</span>
-</div>
-<div class="preview-reading-line preview-reading-sub" data-i18n="preview_reading_line_2">and the little birds sing along</div>
-</div>
-<div class="preview-footer-note">
-<span>🎤</span>
-<span data-i18n="preview_reading_feedback">Listening and matching words</span>
-</div>
-</div>
 </div>
 </article>
 
@@ -321,25 +232,6 @@ footer .container{flex-direction:column;text-align:center}
 <h3 data-i18n="f3_title">Rewards & Badges</h3>
 <p data-i18n="f3_desc">Coins, XP, streaks, and badge unlocks turn steady practice into momentum that kids want to keep going.</p>
 </div>
-<div class="feature-preview">
-<div class="preview-screen">
-<div class="preview-stats">
-<div class="preview-stat"><strong>245</strong><span data-i18n="preview_rewards_coins">Coins</span></div>
-<div class="preview-stat"><strong>8</strong><span data-i18n="preview_rewards_level">Level</span></div>
-<div class="preview-stat"><strong>5🔥</strong><span data-i18n="preview_rewards_streak">Streak</span></div>
-</div>
-<div class="preview-xp">
-<span>XP</span>
-<div class="preview-xp-bar"><span></span></div>
-<span data-i18n="preview_rewards_ready">Almost there</span>
-</div>
-<div class="preview-badges">
-<span class="preview-badge">⭐ <span data-i18n="preview_rewards_focus">Focus</span></span>
-<span class="preview-badge preview-badge--live">🏅 <span data-i18n="preview_rewards_new">New badge</span></span>
-<span class="preview-badge">👑 <span data-i18n="preview_rewards_boss">Boss</span></span>
-</div>
-</div>
-</div>
 </article>
 
 <article class="feature-card">
@@ -347,24 +239,6 @@ footer .container{flex-direction:column;text-align:center}
 <div class="feature-label"><span class="feature-emoji" aria-hidden="true">🔒</span><span data-i18n="f4_label">Parent side</span></div>
 <h3 data-i18n="f4_title">Parent Controls</h3>
 <p data-i18n="f4_desc">A protected parent area keeps setup simple: enter the PIN, switch profiles, review progress, and change settings.</p>
-</div>
-<div class="feature-preview">
-<div class="preview-screen">
-<div class="preview-topbar">
-<span class="preview-pill preview-pill--orange" data-i18n="preview_parent_pin">Parent PIN</span>
-<span class="preview-pill" data-i18n="preview_parent_secure">Protected</span>
-</div>
-<div class="preview-pad">
-<div class="preview-key">1</div><div class="preview-key">2</div><div class="preview-key">3</div>
-<div class="preview-key">4</div><div class="preview-key">5</div><div class="preview-key">6</div>
-</div>
-<div class="preview-dashboard">
-<div class="preview-panel"><strong>2</strong><span data-i18n="preview_parent_profiles">Profiles</span></div>
-<div class="preview-panel"><strong>87%</strong><span data-i18n="preview_parent_progress">Progress</span></div>
-<div class="preview-panel"><strong>4</strong><span data-i18n="preview_parent_languages">Languages</span></div>
-<div class="preview-panel"><strong data-i18n="preview_parent_on">ON</strong><span data-i18n="preview_parent_settings">Settings</span></div>
-</div>
-</div>
 </div>
 </article>
 
@@ -374,20 +248,6 @@ footer .container{flex-direction:column;text-align:center}
 <h3 data-i18n="f5_title">Offline & Private</h3>
 <p data-i18n="f5_desc">The app works without internet and keeps data on the device, so the experience stays focused, fast, and ad-free.</p>
 </div>
-<div class="feature-preview">
-<div class="preview-screen">
-<div class="preview-device">
-<div class="preview-topbar">
-<span class="preview-pill preview-pill--green" data-i18n="preview_offline_local">On device</span>
-<span class="preview-pill" data-i18n="preview_offline_cloud">No cloud</span>
-</div>
-<div class="preview-status-list">
-<div class="preview-status"><span data-i18n="preview_offline_ads">Ads</span><strong data-i18n="preview_offline_off">OFF</strong></div>
-<div class="preview-status"><span data-i18n="preview_offline_tracking">Tracking</span><strong data-i18n="preview_offline_off">OFF</strong></div>
-<div class="preview-status"><span data-i18n="preview_offline_sync">Internet</span><strong data-i18n="preview_offline_optional">OPTIONAL</strong></div>
-</div>
-</div>
-</div>
 </article>
 
 <article class="feature-card">
@@ -396,26 +256,6 @@ footer .container{flex-direction:column;text-align:center}
 <h3 data-i18n="f6_title">Multiple Profiles</h3>
 <p data-i18n="f6_desc">Siblings can share one app while keeping their own avatars, level progress, and age-appropriate difficulty.</p>
 </div>
-<div class="feature-preview">
-<div class="preview-screen">
-<div class="preview-topbar">
-<span class="preview-pill preview-pill--blue" data-i18n="preview_profiles_title">Choose profile</span>
-<span class="preview-pill" data-i18n="preview_profiles_switch">Tap to switch</span>
-</div>
-<div class="preview-profiles">
-<div class="preview-profile">
-<div class="preview-avatar">🦊</div>
-<span class="profile-label" data-i18n="preview_profiles_child_1">Mia, age 6</span>
-<div class="profile-progress profile-progress--1"><span></span></div>
-</div>
-<div class="preview-profile">
-<div class="preview-avatar">🦁</div>
-<span class="profile-label" data-i18n="preview_profiles_child_2">Leo, age 8</span>
-<div class="profile-progress profile-progress--2"><span></span></div>
-</div>
-</div>
-</div>
-</div>
 </article>
 
 <article class="feature-card">
@@ -423,21 +263,6 @@ footer .container{flex-direction:column;text-align:center}
 <div class="feature-label"><span class="feature-emoji" aria-hidden="true">🌍</span><span data-i18n="f7_label">Language support</span></div>
 <h3 data-i18n="f7_title">Supported Languages</h3>
 <p data-i18n="f7_desc">English, Norwegian, Spanish, and Portuguese are built into the app, so families can choose the language that fits them best.</p>
-</div>
-<div class="feature-preview">
-<div class="preview-screen">
-<div class="preview-topbar">
-<span class="preview-pill preview-pill--green" data-i18n="preview_language_picker">Language</span>
-<span class="preview-pill" data-i18n="preview_language_parent">Parent dashboard</span>
-</div>
-<div class="preview-languages">
-<div class="preview-language preview-language--active" data-i18n="preview_language_english">🇬🇧 English</div>
-<div class="preview-language" data-i18n="preview_language_norwegian">🇳🇴 Norwegian</div>
-<div class="preview-language" data-i18n="preview_language_spanish">🇪🇸 Spanish</div>
-<div class="preview-language" data-i18n="preview_language_portuguese">🇵🇹 Portuguese</div>
-</div>
-<div class="preview-language-note" data-i18n="preview_language_note">Switch in seconds and keep each family comfortable</div>
-</div>
 </div>
 </article>
 
@@ -468,7 +293,10 @@ footer .container{flex-direction:column;text-align:center}
 
 <footer>
 <div class="container">
+<a href="/" class="footer-brand" aria-label="Geni home">
+<img src="icon-mark.png" alt="" width="32" height="32" loading="lazy">
 <span>&copy; <span id="year"></span> Geni</span>
+</a>
 </div>
 </footer>
 

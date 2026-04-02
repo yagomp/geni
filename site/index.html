@@ -34,6 +34,7 @@
 --purple:#B052DE;--orange:#FF9400;--cyan:#66D9F2;--peach:#F5D1B8;
 --bg:#0433FF;--card:#FFFFFF;--border:#000000;--gray:#E6E6E6;
 --shadow:6px 6px 0 #000;--shadow-sm:4px 4px 0 #000;
+--nav-height:76px;
 --font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;
 }
 html{scroll-behavior:smooth;font-size:16px}
@@ -46,10 +47,16 @@ img{max-width:100%;height:auto;display:block}
 .container{max-width:800px;margin:0 auto;padding:0 20px}
 
 /* NAV */
-nav{background:var(--bg);border-bottom:0;padding:10px 0;position:sticky;top:0;z-index:10}
-nav .container{max-width:1120px;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 16px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);font-weight:900;font-size:1.1rem;color:#000;text-transform:uppercase;letter-spacing:1px}
+nav{background:var(--bg);border-bottom:0;padding:10px 0;position:sticky;top:0;z-index:10;min-height:var(--nav-height);display:flex;align-items:center}
+nav .container{max-width:1120px;display:flex;align-items:center;justify-content:space-between;width:100%}
+.nav-logo{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 16px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);font-weight:900;font-size:1.05rem;line-height:1;color:#000;text-transform:uppercase;letter-spacing:1px}
 .nav-logo:hover{text-decoration:none}
+.nav-store{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.92);transform-origin:center;opacity:0;pointer-events:none;transition:opacity 0.2s ease,transform 0.2s ease}
+.nav-store .app-store-badge{display:block}
+.nav-store img{height:42px;width:auto}
+.nav-store-mobile{display:none;align-items:center;justify-content:center;height:48px;padding:0 12px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);font-weight:900;font-size:0.82rem;line-height:1;color:#000;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap}
+.nav-store-mobile:hover{text-decoration:none}
+nav.is-store-visible .nav-store{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
 .nav-links{display:flex;gap:16px;align-items:center;font-weight:800;font-size:0.9rem}
 .nav-links a{color:#fff;text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid transparent;padding:6px 0 2px}
 .nav-links a:hover{border-bottom-color:#fff;text-decoration:none}
@@ -67,16 +74,16 @@ nav .container{max-width:1120px;display:flex;align-items:center;justify-content:
 .nav-mobile{display:none}
 
 /* HERO */
-.hero{padding:18px 0 24px;position:relative}
-.hero .container{max-width:1120px;display:grid;grid-template-columns:minmax(0,1fr) minmax(440px,560px);align-items:start;gap:28px}
-.hero-copy{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding-top:14px}
+.hero{padding:clamp(24px,4vh,40px) 0 clamp(20px,3vh,28px);position:relative;min-height:calc(100svh - var(--nav-height));display:flex;align-items:center}
+.hero .container{max-width:1120px;display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,46vw);align-items:center;gap:clamp(20px,3vw,36px);width:100%}
+.hero-copy{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding-top:0}
 .hero-title{margin-bottom:20px}
 .hero h1{font-weight:900;font-size:clamp(3.4rem,8vw,5.6rem);line-height:0.95;text-transform:uppercase;letter-spacing:-2.5px;max-width:6ch;color:#fff}
 .hero-meta{display:flex;flex-direction:column;align-items:flex-start}
 .hero .app-store-badge{margin-bottom:24px}
 .hero p{font-size:1.2rem;max-width:520px;font-weight:700;color:#000;border:4px solid #000;background:#fff;padding:14px 20px;box-shadow:var(--shadow)}
 .hero-visual{display:flex;justify-content:flex-end;align-items:flex-start}
-.hero-icon{width:min(560px,48vw);height:auto;max-height:780px;display:block;transform-origin:center center;transition:transform 0.28s ease}
+.hero-icon{width:100%;max-width:560px;aspect-ratio:1024 / 1108;height:auto;max-height:none;object-fit:contain;display:block;transform-origin:center center;transition:transform 0.28s ease}
 .hero-visual:hover .hero-icon{transform:scale(1.06)}
 .app-store-badge{display:inline-block;transition:opacity 0.2s}
 .app-store-badge:hover{opacity:0.85;text-decoration:none}
@@ -108,18 +115,19 @@ nav .container{max-width:1120px;display:flex;align-items:center;justify-content:
 html{scroll-behavior:auto}
 }
 
-/* PARENTS CTA */
-.parents-cta{padding:48px 0}
-.parents-card{background:#fff;color:#000;border:4px solid var(--border);box-shadow:8px 8px 0 #000;padding:40px 32px;text-align:center}
-.parents-card h2{font-weight:900;font-size:1.8rem;margin-bottom:12px;text-transform:uppercase;letter-spacing:-0.5px;color:#000}
-.parents-card p{margin-bottom:24px;font-size:1.05rem;font-weight:600;color:#000}
-.btn-parents{display:inline-block;background:#000;color:#fff;font-weight:900;font-size:1.05rem;padding:16px 32px;border:4px solid var(--border);box-shadow:var(--shadow);font-family:var(--font);cursor:pointer;text-decoration:none;text-transform:uppercase;letter-spacing:0.5px}
-.btn-parents:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 var(--purple);text-decoration:none;background:var(--purple)}
-.btn-parents:active{transform:translate(4px,4px);box-shadow:0 0 0 #000}
-
-/* CTA BOTTOM */
-.cta-bottom{padding:48px 0 64px;text-align:center;background:#fff;color:#000;border-top:4px solid #000}
-.cta-bottom h2{font-weight:900;font-size:2.2rem;margin-bottom:24px;text-transform:uppercase;letter-spacing:-1px;color:#000}
+/* AGE TABLE */
+.age-table-section{padding:48px 0}
+.age-table-section .container{max-width:1120px}
+.age-table-card{background:#fff;color:#000;border:4px solid var(--border);box-shadow:8px 8px 0 #000;padding:32px 28px}
+.age-table-card h2{font-weight:900;font-size:1.8rem;margin-bottom:12px;text-transform:uppercase;letter-spacing:-0.5px;color:#000}
+.age-table-card p{margin-bottom:22px;font-size:1rem;font-weight:600;color:#000;max-width:none}
+.age-table-wrap{overflow:visible}
+.age-table{width:100%;border-collapse:collapse;background:#fff;table-layout:fixed}
+.age-table th,.age-table td{border:3px solid #000;padding:14px 12px;text-align:left;vertical-align:top}
+.age-table th{background:#FFF3B0;font-size:0.78rem;font-weight:900;text-transform:uppercase;letter-spacing:0.8px}
+.age-table td{font-size:0.95rem;font-weight:600;color:#000}
+.age-table td:first-child{font-weight:900;white-space:nowrap;width:88px}
+.age-cell-label{display:none}
 
 /* FOOTER */
 footer{background:var(--bg);color:#fff;padding:20px 0;font-size:0.85rem}
@@ -135,26 +143,40 @@ footer a:hover{color:#FFE566}
 .feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:600px){
+:root{--nav-height:74px}
 .feature-grid{grid-template-columns:1fr}
-.hero{padding:6px 0 20px}
-.hero .container{grid-template-columns:1fr;gap:24px}
+.hero{padding:20px 0 24px;min-height:calc(100svh - var(--nav-height))}
+.hero .container{grid-template-columns:1fr;gap:20px}
 .hero-copy{align-items:center;text-align:center;padding-top:10px}
 .hero-title{margin-bottom:16px}
-.hero h1{font-size:2.9rem;max-width:none}
+.hero h1{font-size:clamp(2.6rem,11vw,3.4rem);max-width:none}
 .hero-meta{align-items:center}
 .hero p{margin:0 auto}
 .hero-visual{justify-content:center;margin-top:0}
-.hero-icon{width:min(400px,84vw);max-height:none}
+.hero-icon{width:min(360px,82vw);max-width:100%;height:auto}
 .parents-card{padding:28px 20px}
 footer .container{flex-direction:column;text-align:center}
 .nav-menu-btn{display:inline-flex}
 .nav-links{display:none}
-.nav-mobile{display:none;position:absolute;top:100%;left:0;right:0;background:var(--bg);padding:8px 20px 20px;border-top:1px solid rgba(255,255,255,0.18)}
+.nav-mobile{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;padding:8px 20px 20px;border-top:3px solid #000;box-shadow:0 8px 0 #000}
 .nav-mobile.is-open{display:block}
 .nav-mobile-inner{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
-.nav-mobile a,.nav-mobile button{display:block;width:100%;padding:14px 0;color:#fff;font-weight:900;font-size:0.95rem;text-align:left;text-transform:uppercase;letter-spacing:0.5px;background:none;border:none;border-bottom:1px solid rgba(255,255,255,0.18);font-family:var(--font)}
+.nav-mobile a,.nav-mobile button{display:block;width:100%;padding:14px 0;color:#000;font-weight:900;font-size:0.95rem;text-align:left;text-transform:uppercase;letter-spacing:0.5px;background:none;border:none;border-bottom:1px solid rgba(0,0,0,0.15);font-family:var(--font)}
 .nav-mobile a:hover,.nav-mobile button:hover{text-decoration:none;opacity:0.8}
 .feature-card{padding:18px}
+.age-table-card{padding:22px 18px}
+.age-table-card p{margin-bottom:16px}
+.age-table thead{display:none}
+.age-table,.age-table tbody,.age-table tr,.age-table td{display:block;width:100%}
+.age-table tr{border:3px solid #000;background:#fff;margin-bottom:14px}
+.age-table tr:last-child{margin-bottom:0}
+.age-table td{border-width:0 0 2px 0;padding:12px 14px}
+.age-table td:last-child{border-bottom:0}
+.age-table td:first-child{width:auto;background:#FFF3B0;font-size:1rem}
+.age-cell-label{display:block;font-size:0.72rem;font-weight:900;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px}
+.nav-store{display:block}
+.nav-store .app-store-badge{display:none}
+.nav-store-mobile{display:inline-flex}
 }
 </style>
 <script type="application/ld+json">
@@ -171,12 +193,19 @@ footer .container{flex-direction:column;text-align:center}
 }
 </script>
 </head>
-<body>
+<body id="top">
 
 <nav aria-label="Main navigation">
 <div class="container">
-<a href="/" class="nav-logo" aria-label="Geni home">GENI</a>
+<a href="#top" class="nav-logo" aria-label="Geni home" onclick="closeMenu()">GENI</a>
+<div class="nav-store" aria-hidden="true">
+<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="app-store-badge" tabindex="-1">
+<img src="appstore-badge.svg" alt="Download on the App Store" width="160" height="54" loading="eager">
+</a>
+<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="nav-store-mobile" tabindex="-1" aria-label="Download on the App Store"> Download</a>
+</div>
 <div class="nav-links">
+<a href="#features-heading" data-i18n="nav_features">Features</a>
 <a href="parents.html" data-i18n="nav_parents">For Parents</a>
 <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
 <div class="lang-dropdown">
@@ -193,6 +222,7 @@ footer .container{flex-direction:column;text-align:center}
 </div>
 <div class="nav-mobile" id="mobileMenu">
 <div class="nav-mobile-inner">
+<a href="#features-heading" data-i18n="nav_features" onclick="closeMenu()">Features</a>
 <a href="parents.html" data-i18n="nav_parents" onclick="closeMenu()">For Parents</a>
 <a href="privacy.html" data-i18n="nav_privacy" onclick="closeMenu()">Privacy</a>
 <button type="button" onclick="applyLang('en')"><span aria-hidden="true">🇬🇧</span> English</button>
@@ -290,22 +320,55 @@ footer .container{flex-direction:column;text-align:center}
 </div>
 </section>
 
-<section class="parents-cta" aria-labelledby="parents-heading">
+<section class="age-table-section" aria-labelledby="age-table-heading">
 <div class="container">
-<div class="parents-card">
-<h2 id="parents-heading" data-i18n="parents_title"><span aria-hidden="true">👨‍👩‍👧‍👦</span> Built for parents who care</h2>
-<p data-i18n="parents_desc">Learn how Geni keeps your child safe and why no data ever leaves the device.</p>
-<a href="parents.html" class="btn-parents" data-i18n="parents_btn">Read more for parents</a>
+<div class="age-table-card">
+<h2 id="age-table-heading" data-i18n="age_table_title">Math and reading by age</h2>
+<p data-i18n="age_table_intro">Examples from the current app build, based on the exercise formats and reading content available now.</p>
+<div class="age-table-wrap">
+<table class="age-table">
+<thead>
+<tr>
+<th data-i18n="age_table_col_age">Age</th>
+<th data-i18n="age_table_col_math">Math</th>
+<th data-i18n="age_table_col_reading">Reading</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td data-i18n="age_row_1_age">5</td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_1_math">🍎 How many? Count the objects<br>⚖️ Which is bigger?<br>🔟 Fill the ten-frame<br>➕ Add the emoji groups</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_1_reading">Hidden for age 5 so the first experience stays math-first.</span></td>
+</tr>
+<tr>
+<td data-i18n="age_row_2_age">6</td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_2_math">➕ Solve the answer<br>➖ Try simple subtraction<br>❓ Find the missing number<br>✅ True or false?<br>🔟 Ten-frame warmups</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_2_reading">📖 Optional reading<br>🐱 Short, simple stories with read-to-me, read myself, and read aloud</span></td>
+</tr>
+<tr>
+<td data-i18n="age_row_3_age">7</td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_3_math">✖️ Multiplication facts<br>❓ Find the missing number<br>🧩 Number bonds<br>🎲 Dice addition<br>🔗 Match the pairs</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_3_reading">🌿 Guided story passages<br>🗣️ Line-by-line reading support</span></td>
+</tr>
+<tr>
+<td data-i18n="age_row_4_age">8</td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_4_math">✖️ Multiplication facts<br>✅ True or false?<br>➖ Visual subtraction<br>↔️ Which is bigger?<br>🎲 Dice addition</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_4_reading">📚 Longer stories and simple fact texts<br>🔊 Stronger independent reading</span></td>
+</tr>
+<tr>
+<td data-i18n="age_row_5_age">9</td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_5_math">✖️ Multiplication facts<br>➗ Division practice<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_5_reading">🚀 Longer fiction and nonfiction texts<br>📚 Stronger comprehension practice</span></td>
+</tr>
+<tr>
+<td data-i18n="age_row_6_age">10</td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_6_math">➗ Long division<br>🍕 Pick the right fraction<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_6_reading">🪐 Denser passages with stronger recall<br>📖 Confident reading across fiction and facts</span></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-</section>
-
-<section class="cta-bottom">
-<div class="container">
-<h2 data-i18n="cta_title">Start the adventure today <span aria-hidden="true">🚀</span></h2>
-<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="app-store-badge">
-<img src="appstore-badge.svg" alt="Download on the App Store" width="160" height="54" loading="lazy">
-</a>
 </div>
 </section>
 
@@ -323,6 +386,8 @@ footer .container{flex-direction:column;text-align:center}
 document.getElementById('year').textContent=new Date().getFullYear();
 var menuToggle=document.getElementById('menuToggle');
 var mobileMenu=document.getElementById('mobileMenu');
+var nav=document.querySelector('nav');
+var hero=document.getElementById('hero');
 function closeMenu(){
 if(!menuToggle||!mobileMenu)return;
 menuToggle.setAttribute('aria-expanded','false');
@@ -336,13 +401,45 @@ mobileMenu.classList.toggle('is-open',next);
 }
 if(menuToggle)menuToggle.addEventListener('click',toggleMenu);
 
+function updateNavStore(){
+if(!nav||!hero)return;
+var heroBottom=hero.getBoundingClientRect().bottom;
+nav.classList.toggle('is-store-visible',heroBottom<=80);
+}
+updateNavStore();
+window.addEventListener('scroll',updateNavStore,{passive:true});
+window.addEventListener('resize',updateNavStore);
+
 var T={
 en:{
-nav_parents:"For Parents",nav_privacy:"Privacy",
+nav_features:"Features",nav_parents:"For Parents",nav_privacy:"Privacy",
 hero_title:'Learning is an adventure',
 hero_sub:"Daily math and reading missions for kids aged 5\u201310. Learn, play, repeat!",
 features_title:"What makes Geni special",
 features_intro:"Parents can see the rhythm of the app before downloading: quick wins, guided reading, rewards, privacy, and a setup built for family life.",
+age_table_title:"Math and reading by age",
+age_table_intro:"A clearer view of what kids actually see in Geni at each age, based on the app's current math and reading setup.",
+age_table_col_age:"Age",
+age_table_col_math:"Math",
+age_table_col_reading:"Reading",
+age_row_1_age:"5",
+age_row_1_math:"🍎 How many? Count the objects<br>⚖️ Which is bigger?<br>🔟 Fill the ten-frame<br>➕ Add the emoji groups",
+age_row_1_reading:"Hidden for age 5 so the first experience stays math-first.",
+age_row_2_age:"6",
+age_row_2_math:"➕ Solve the answer<br>➖ Try simple subtraction<br>❓ Find the missing number<br>✅ True or false?<br>🔟 Ten-frame warmups",
+age_row_2_reading:"📖 Optional reading<br>🐱 Short, simple stories with read-to-me, read myself, and read aloud",
+age_row_3_age:"7",
+age_row_3_math:"✖️ Multiplication facts<br>❓ Find the missing number<br>🧩 Number bonds<br>🎲 Dice addition<br>🔗 Match the pairs",
+age_row_3_reading:"🌿 Guided story passages<br>🗣️ Line-by-line reading support",
+age_row_4_age:"8",
+age_row_4_math:"✖️ Multiplication facts<br>✅ True or false?<br>➖ Visual subtraction<br>↔️ Which is bigger?<br>🎲 Dice addition",
+age_row_4_reading:"📚 Longer stories and simple fact texts<br>🔊 Stronger independent reading",
+age_row_5_age:"9",
+age_row_5_math:"✖️ Multiplication facts<br>➗ Division practice<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter",
+age_row_5_reading:"🚀 Longer fiction and nonfiction texts<br>📚 Stronger comprehension practice",
+age_row_6_age:"10",
+age_row_6_math:"➗ Long division<br>🍕 Pick the right fraction<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter",
+age_row_6_reading:"🪐 Denser passages with stronger recall<br>📖 Confident reading across fiction and facts",
 f1_label:"Math flow",f1_title:"Math Missions",f1_desc:"Short exercises feel fast and game-like, with progress, instant feedback, and the next challenge ready right away.",
 f2_label:"Reading flow",f2_title:"Reading Adventures",f2_desc:"Words stay large and focused, with read-to-me, read-by-myself, and read-aloud modes that guide attention line by line.",
 f3_label:"Reward loop",f3_title:"Rewards & Badges",f3_desc:"Coins, XP, streaks, and badge unlocks turn steady practice into momentum that kids want to keep going.",
@@ -356,18 +453,37 @@ preview_rewards_coins:"Coins",preview_rewards_level:"Level",preview_rewards_stre
 preview_parent_pin:"Parent PIN",preview_parent_secure:"Protected",preview_parent_profiles:"Profiles",preview_parent_progress:"Progress",preview_parent_languages:"Languages",preview_parent_settings:"Settings",preview_parent_on:"ON",
 preview_offline_local:"On device",preview_offline_cloud:"No cloud",preview_offline_ads:"Ads",preview_offline_tracking:"Tracking",preview_offline_sync:"Internet",preview_offline_off:"OFF",preview_offline_optional:"Optional",
 preview_profiles_title:"Choose profile",preview_profiles_switch:"Tap to switch",preview_profiles_child_1:"Mia, age 6",preview_profiles_child_2:"Leo, age 8",
-preview_language_picker:"Language",preview_language_parent:"Parent dashboard",preview_language_english:"🇬🇧 English",preview_language_norwegian:"🇳🇴 Norwegian",preview_language_spanish:"🇪🇸 Spanish",preview_language_portuguese:"🇵🇹 Portuguese",preview_language_note:"Switch in seconds and keep each family comfortable",
-parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span> Built for parents who care',
-parents_desc:"Learn how Geni keeps your child safe and why no data ever leaves the device.",
-parents_btn:"Read more for parents",
-cta_title:'Start the adventure today <span aria-hidden="true">🚀</span>'
+preview_language_picker:"Language",preview_language_parent:"Parent dashboard",preview_language_english:"🇬🇧 English",preview_language_norwegian:"🇳🇴 Norwegian",preview_language_spanish:"🇪🇸 Spanish",preview_language_portuguese:"🇵🇹 Portuguese",preview_language_note:"Switch in seconds and keep each family comfortable"
 },
 nb:{
-nav_parents:"For foreldre",nav_privacy:"Personvern",
+nav_features:"Funksjoner",nav_parents:"For foreldre",nav_privacy:"Personvern",
 hero_title:'L\u00e6ring er et eventyr',
 hero_sub:"Daglige matte- og leseoppdrag for barn 5\u201310 \u00e5r. L\u00e6r, lek, gjenta!",
 features_title:"Hva gj\u00f8r Geni spesiell",
 features_intro:"Foreldre kan se rytmen i appen før nedlasting: raske mestringsøyeblikk, guidet lesing, belønninger, personvern og oppsett laget for familieliv.",
+age_table_title:"Matte og lesing etter alder",
+age_table_intro:"En tydeligere oversikt over hva barn faktisk møter i Geni på hvert alderstrinn, basert på dagens matte- og leseoppsett i appen.",
+age_table_col_age:"Alder",
+age_table_col_math:"Matte",
+age_table_col_reading:"Lesing",
+age_row_1_age:"5",
+age_row_1_math:"🍎 Hvor mange? Tell tingene<br>⚖️ Hvilken er størst?<br>🔟 Fyll tier-rammen<br>➕ Legg sammen emoji-grupper",
+age_row_1_reading:"Skjult for 5-åringer så den første opplevelsen holder seg matte-først.",
+age_row_2_age:"6",
+age_row_2_math:"➕ Finn svaret<br>➖ Prøv enkel subtraksjon<br>❓ Finn tallet som mangler<br>✅ Sant eller usant?<br>🔟 Oppvarming med tier-ramme",
+age_row_2_reading:"📖 Valgfri lesing<br>🐱 Korte, enkle historier med les for meg, les selv og les høyt",
+age_row_3_age:"7",
+age_row_3_math:"✖️ Gangeoppgaver<br>❓ Finn tallet som mangler<br>🧩 Tallvenner<br>🎲 Terning-addisjon<br>🔗 Koble riktige par",
+age_row_3_reading:"🌿 Guidede fortellinger<br>🗣️ Lesestøtte linje for linje",
+age_row_4_age:"8",
+age_row_4_math:"✖️ Gangeoppgaver<br>✅ Sant eller usant?<br>➖ Visuell subtraksjon<br>↔️ Hvilken er størst?<br>🎲 Terning-addisjon",
+age_row_4_reading:"📚 Lengre historier og enkle faktatekster<br>🔊 Mer selvstendig lesing",
+age_row_5_age:"9",
+age_row_5_math:"✖️ Gangeoppgaver<br>➗ Delingsoppgaver<br>🧠 Flerstegsoppgaver<br>🔢 Tallrekker<br>📐 Areal og omkrets",
+age_row_5_reading:"🚀 Lengre skjønnlitterære og faglige tekster<br>📚 Mer arbeid med forståelse",
+age_row_6_age:"10",
+age_row_6_math:"➗ Lang divisjon<br>🍕 Velg riktig brøk<br>🧠 Flerstegsoppgaver<br>🔢 Tallrekker<br>📐 Areal og omkrets",
+age_row_6_reading:"🪐 Tettere tekster med sterkere gjenfortelling<br>📖 Trygg lesing i både fortelling og fakta",
 f1_label:"Matteflyt",f1_title:"Matteoppdrag",f1_desc:"Korte oppgaver føles raske og lekne, med fremgang, tilbakemelding med en gang og neste utfordring klar med én gang.",
 f2_label:"Leseflyt",f2_title:"Leseeventyr",f2_desc:"Ordene holder seg store og tydelige, med høytlesing, egenlesing og les-høyt-modus som leder oppmerksomheten linje for linje.",
 f3_label:"Belønningssløyfe",f3_title:"Belønninger og merker",f3_desc:"Mynter, XP, streaks og nye merker gjør jevn øving til fremgang barna får lyst til å fortsette med.",
@@ -381,18 +497,37 @@ preview_rewards_coins:"Mynter",preview_rewards_level:"Nivå",preview_rewards_str
 preview_parent_pin:"Foreldre-PIN",preview_parent_secure:"Beskyttet",preview_parent_profiles:"Profiler",preview_parent_progress:"Fremgang",preview_parent_languages:"Språk",preview_parent_settings:"Innstillinger",preview_parent_on:"PÅ",
 preview_offline_local:"På enheten",preview_offline_cloud:"Ingen sky",preview_offline_ads:"Reklame",preview_offline_tracking:"Sporing",preview_offline_sync:"Internett",preview_offline_off:"AV",preview_offline_optional:"Valgfritt",
 preview_profiles_title:"Velg profil",preview_profiles_switch:"Trykk for å bytte",preview_profiles_child_1:"Mia, 6 år",preview_profiles_child_2:"Leo, 8 år",
-preview_language_picker:"Språk",preview_language_parent:"Foreldrepanel",preview_language_english:"🇬🇧 Engelsk",preview_language_norwegian:"🇳🇴 Norsk",preview_language_spanish:"🇪🇸 Spansk",preview_language_portuguese:"🇵🇹 Portugisisk",preview_language_note:"Bytt på sekunder og gjør appen komfortabel for hele familien",
-parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span> Bygget for foreldre som bryr seg',
-parents_desc:"Les om hvordan Geni holder barnet ditt trygt og hvorfor ingen data forlater enheten.",
-parents_btn:"Les mer for foreldre",
-cta_title:'Start eventyret i dag <span aria-hidden="true">🚀</span>'
+preview_language_picker:"Språk",preview_language_parent:"Foreldrepanel",preview_language_english:"🇬🇧 Engelsk",preview_language_norwegian:"🇳🇴 Norsk",preview_language_spanish:"🇪🇸 Spansk",preview_language_portuguese:"🇵🇹 Portugisisk",preview_language_note:"Bytt på sekunder og gjør appen komfortabel for hele familien"
 },
 es:{
-nav_parents:"Para padres",nav_privacy:"Privacidad",
+nav_features:"Funciones",nav_parents:"Para padres",nav_privacy:"Privacidad",
 hero_title:'Aprender es una aventura',
 hero_sub:"Misiones diarias de matem\u00E1ticas y lectura para ni\u00F1os de 5 a 10 a\u00F1os. \u00A1Aprende, juega y repite!",
 features_title:"Qu\u00E9 hace especial a Geni",
 features_intro:"Los padres pueden ver el ritmo de la app antes de descargarla: logros rápidos, lectura guiada, recompensas, privacidad y una configuración pensada para la vida en familia.",
+age_table_title:"Matemáticas y lectura por edad",
+age_table_intro:"Una vista más clara de lo que los niños ven de verdad en Geni a cada edad, según la configuración actual de matemáticas y lectura.",
+age_table_col_age:"Edad",
+age_table_col_math:"Matemáticas",
+age_table_col_reading:"Lectura",
+age_row_1_age:"5",
+age_row_1_math:"🍎 ¿Cuántos hay? Cuenta los objetos<br>⚖️ ¿Cuál es mayor?<br>🔟 Completa el marco de diez<br>➕ Suma los grupos de emojis",
+age_row_1_reading:"Oculta a los 5 años para que la primera experiencia siga centrada en matemáticas.",
+age_row_2_age:"6",
+age_row_2_math:"➕ Resuelve el resultado<br>➖ Prueba restas simples<br>❓ Encuentra el número que falta<br>✅ ¿Verdadero o falso?<br>🔟 Calentamiento con marco de diez",
+age_row_2_reading:"📖 Lectura opcional<br>🐱 Historias cortas y simples con leer para mí, leer solo y leer en voz alta",
+age_row_3_age:"7",
+age_row_3_math:"✖️ Multiplicaciones<br>❓ Encuentra el número que falta<br>🧩 Parejas de números<br>🎲 Suma con dados<br>🔗 Une las parejas correctas",
+age_row_3_reading:"🌿 Pasajes guiados<br>🗣️ Apoyo de lectura línea por línea",
+age_row_4_age:"8",
+age_row_4_math:"✖️ Multiplicaciones<br>✅ ¿Verdadero o falso?<br>➖ Resta visual<br>↔️ ¿Cuál es mayor?<br>🎲 Suma con dados",
+age_row_4_reading:"📚 Historias más largas y textos sencillos<br>🔊 Lectura más independiente",
+age_row_5_age:"9",
+age_row_5_math:"✖️ Multiplicaciones<br>➗ Práctica de división<br>🧠 Problemas de varios pasos<br>🔢 Secuencias numéricas<br>📐 Área y perímetro",
+age_row_5_reading:"🚀 Textos más largos de ficción y no ficción<br>📚 Mayor trabajo de comprensión",
+age_row_6_age:"10",
+age_row_6_math:"➗ División larga<br>🍕 Elige la fracción correcta<br>🧠 Problemas de varios pasos<br>🔢 Secuencias numéricas<br>📐 Área y perímetro",
+age_row_6_reading:"🪐 Pasajes más densos con mejor recuerdo<br>📖 Lectura segura en ficción y textos informativos",
 f1_label:"Flujo matemático",f1_title:"Misiones de matemáticas",f1_desc:"Los ejercicios cortos se sienten rápidos y como un juego, con progreso visible, feedback al instante y el siguiente reto listo enseguida.",
 f2_label:"Flujo de lectura",f2_title:"Aventuras de lectura",f2_desc:"Las palabras se mantienen grandes y claras, con modos para escuchar, leer solo o leer en voz alta que guían la atención línea por línea.",
 f3_label:"Ciclo de recompensas",f3_title:"Recompensas e insignias",f3_desc:"Monedas, XP, rachas y nuevas insignias convierten la práctica constante en impulso para seguir aprendiendo.",
@@ -406,18 +541,37 @@ preview_rewards_coins:"Monedas",preview_rewards_level:"Nivel",preview_rewards_st
 preview_parent_pin:"PIN de padres",preview_parent_secure:"Protegido",preview_parent_profiles:"Perfiles",preview_parent_progress:"Progreso",preview_parent_languages:"Idiomas",preview_parent_settings:"Ajustes",preview_parent_on:"ACTIVO",
 preview_offline_local:"En el dispositivo",preview_offline_cloud:"Sin nube",preview_offline_ads:"Anuncios",preview_offline_tracking:"Seguimiento",preview_offline_sync:"Internet",preview_offline_off:"DESACT.",preview_offline_optional:"Opcional",
 preview_profiles_title:"Elegir perfil",preview_profiles_switch:"Toca para cambiar",preview_profiles_child_1:"Mia, 6 años",preview_profiles_child_2:"Leo, 8 años",
-preview_language_picker:"Idioma",preview_language_parent:"Panel para padres",preview_language_english:"🇬🇧 Inglés",preview_language_norwegian:"🇳🇴 Noruego",preview_language_spanish:"🇪🇸 Español",preview_language_portuguese:"🇵🇹 Portugués",preview_language_note:"Cambia en segundos y haz que la app se sienta cómoda para toda la familia",
-parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span> Hecho para padres que se preocupan',
-parents_desc:"Descubre c\u00F3mo Geni mantiene seguro a tu hijo y por qu\u00E9 ning\u00FAn dato sale del dispositivo.",
-parents_btn:"Leer m\u00E1s para padres",
-cta_title:'Empieza la aventura hoy <span aria-hidden="true">🚀</span>'
+preview_language_picker:"Idioma",preview_language_parent:"Panel para padres",preview_language_english:"🇬🇧 Inglés",preview_language_norwegian:"🇳🇴 Noruego",preview_language_spanish:"🇪🇸 Español",preview_language_portuguese:"🇵🇹 Portugués",preview_language_note:"Cambia en segundos y haz que la app se sienta cómoda para toda la familia"
 },
 pt:{
-nav_parents:"Para pais",nav_privacy:"Privacidade",
+nav_features:"Recursos",nav_parents:"Para pais",nav_privacy:"Privacidade",
 hero_title:'Aprender \u00E9 uma aventura',
 hero_sub:"Miss\u00F5es di\u00E1rias de matem\u00E1tica e leitura para crian\u00E7as de 5 a 10 anos. Aprenda, brinque e repita!",
 features_title:"O que torna Geni especial",
 features_intro:"Os pais conseguem ver o ritmo do app antes de baixar: vitórias rápidas, leitura guiada, recompensas, privacidade e uma configuração pensada para a vida em família.",
+age_table_title:"Matemática e leitura por idade",
+age_table_intro:"Uma visão mais clara do que as crianças realmente veem no Geni em cada idade, com base na configuração atual de matemática e leitura.",
+age_table_col_age:"Idade",
+age_table_col_math:"Matemática",
+age_table_col_reading:"Leitura",
+age_row_1_age:"5",
+age_row_1_math:"🍎 Quantos há? Conte os objetos<br>⚖️ Qual é maior?<br>🔟 Complete o quadro de dez<br>➕ Some os grupos de emojis",
+age_row_1_reading:"Oculta aos 5 anos para que a primeira experiência continue focada em matemática.",
+age_row_2_age:"6",
+age_row_2_math:"➕ Resolva o resultado<br>➖ Tente subtrações simples<br>❓ Encontre o número que falta<br>✅ Verdadeiro ou falso?<br>🔟 Aquecimento com quadro de dez",
+age_row_2_reading:"📖 Leitura opcional<br>🐱 Histórias curtas e simples com ler para mim, ler sozinho e ler em voz alta",
+age_row_3_age:"7",
+age_row_3_math:"✖️ Multiplicações<br>❓ Encontre o número que falta<br>🧩 Pares numéricos<br>🎲 Soma com dados<br>🔗 Ligue os pares corretos",
+age_row_3_reading:"🌿 Passagens guiadas<br>🗣️ Apoio de leitura linha por linha",
+age_row_4_age:"8",
+age_row_4_math:"✖️ Multiplicações<br>✅ Verdadeiro ou falso?<br>➖ Subtração visual<br>↔️ Qual é maior?<br>🎲 Soma com dados",
+age_row_4_reading:"📚 Histórias mais longas e textos simples<br>🔊 Leitura mais independente",
+age_row_5_age:"9",
+age_row_5_math:"✖️ Multiplicações<br>➗ Prática de divisão<br>🧠 Problemas com vários passos<br>🔢 Sequências numéricas<br>📐 Área e perímetro",
+age_row_5_reading:"🚀 Textos mais longos de ficção e não ficção<br>📚 Compreensão mais forte",
+age_row_6_age:"10",
+age_row_6_math:"➗ Divisão longa<br>🍕 Escolha a fração certa<br>🧠 Problemas com vários passos<br>🔢 Sequências numéricas<br>📐 Área e perímetro",
+age_row_6_reading:"🪐 Passagens mais densas com melhor recordação<br>📖 Leitura confiante em ficção e fatos",
 f1_label:"Fluxo de matemática",f1_title:"Missões de matemática",f1_desc:"Exercícios curtos parecem rápidos e divertidos, com progresso visível, feedback imediato e o próximo desafio pronto em seguida.",
 f2_label:"Fluxo de leitura",f2_title:"Aventuras de leitura",f2_desc:"As palavras ficam grandes e focadas, com modos para ouvir, ler sozinho e ler em voz alta que guiam a atenção linha por linha.",
 f3_label:"Ciclo de recompensa",f3_title:"Recompensas e insígnias",f3_desc:"Moedas, XP, sequências e novas insígnias transformam a prática constante em impulso para continuar aprendendo.",
@@ -431,11 +585,7 @@ preview_rewards_coins:"Moedas",preview_rewards_level:"Nível",preview_rewards_st
 preview_parent_pin:"PIN dos pais",preview_parent_secure:"Protegido",preview_parent_profiles:"Perfis",preview_parent_progress:"Progresso",preview_parent_languages:"Idiomas",preview_parent_settings:"Ajustes",preview_parent_on:"ATIVO",
 preview_offline_local:"No dispositivo",preview_offline_cloud:"Sem nuvem",preview_offline_ads:"Anúncios",preview_offline_tracking:"Rastreamento",preview_offline_sync:"Internet",preview_offline_off:"DESL.",preview_offline_optional:"Opcional",
 preview_profiles_title:"Escolher perfil",preview_profiles_switch:"Toque para trocar",preview_profiles_child_1:"Mia, 6 anos",preview_profiles_child_2:"Leo, 8 anos",
-preview_language_picker:"Idioma",preview_language_parent:"Painel dos pais",preview_language_english:"🇬🇧 Inglês",preview_language_norwegian:"🇳🇴 Norueguês",preview_language_spanish:"🇪🇸 Espanhol",preview_language_portuguese:"🇵🇹 Português",preview_language_note:"Troque em segundos e deixe o app confortável para toda a família",
-parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span> Feito para pais que se importam',
-parents_desc:"Veja como Geni mantém seu filho seguro e por que nenhum dado sai do dispositivo.",
-parents_btn:"Ler mais para pais",
-cta_title:'Comece a aventura hoje <span aria-hidden="true">🚀</span>'
+preview_language_picker:"Idioma",preview_language_parent:"Painel dos pais",preview_language_english:"🇬🇧 Inglês",preview_language_norwegian:"🇳🇴 Norueguês",preview_language_spanish:"🇪🇸 Espanhol",preview_language_portuguese:"🇵🇹 Português",preview_language_note:"Troque em segundos e deixe o app confortável para toda a família"
 }
 };
 

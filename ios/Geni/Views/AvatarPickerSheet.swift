@@ -18,30 +18,20 @@ struct AvatarPickerSheet: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                LazyVGrid(columns: columns, spacing: 20) {
-                    ForEach(AvatarOption.all) { avatar in
-                        Button {
-                            HapticManager.selection()
-                            viewModel.updateAvatar(avatar.id)
-                            dismiss()
-                        } label: {
-                            VStack(spacing: 8) {
-                                Text(avatar.emoji)
-                                    .font(.system(size: 32))
-                                    .frame(width: 64, height: 64)
+                VStack(alignment: .leading, spacing: 16) {
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(AvatarOption.all) { avatar in
+                            avatarButton(avatar)
+                        }
+                    }
 
-                                if currentAvatarId == avatar.id {
-                                    Circle()
-                                        .fill(avatar.color)
-                                        .frame(width: 8, height: 8)
-                                }
-                            }
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(AvatarOption.extras) { avatar in
+                            avatarButton(avatar)
                         }
                     }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 16)
-                .foregroundStyle(.black)
+                .padding(20)
             }
             .background(GeniColor.lightYellow.ignoresSafeArea())
             .safeAreaInset(edge: .top) {
@@ -65,5 +55,24 @@ struct AvatarPickerSheet: View {
             }
         }
         .presentationDetents([.medium])
+    }
+
+    private func avatarButton(_ avatar: AvatarOption) -> some View {
+        Button {
+            HapticManager.selection()
+            viewModel.updateAvatar(avatar.id)
+            dismiss()
+        } label: {
+            Text(avatar.emoji)
+                .font(.system(size: 40))
+                .frame(maxWidth: .infinity)
+                .aspectRatio(1, contentMode: .fit)
+                .background(currentAvatarId == avatar.id ? avatar.color.opacity(0.2) : .white)
+                .overlay(
+                    Rectangle()
+                        .stroke(currentAvatarId == avatar.id ? avatar.color : GeniColor.border, lineWidth: currentAvatarId == avatar.id ? 4 : 2)
+                )
+        }
+        .foregroundStyle(.black)
     }
 }

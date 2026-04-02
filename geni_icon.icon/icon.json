@@ -1,13 +1,13 @@
 {
   "fill" : {
-    "solid" : "srgb:0.01680,0.19835,1.00000,1.00000"
+    "solid" : "display-p3:0.90869,0.94824,0.99512,1.00000"
   },
   "groups" : [
     {
       "layers" : [
         {
           "blend-mode" : "normal",
-          "fill" : "automatic",
+          "fill" : "none",
           "glass" : false,
           "hidden" : false,
           "image-name" : "geni_icon_v2.png",

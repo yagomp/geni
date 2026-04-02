@@ -75,19 +75,92 @@ nav .container{display:flex;align-items:center;justify-content:space-between}
 .app-store-badge img{height:54px;width:auto;display:block}
 
 /* FEATURES */
-.features{padding:48px 0;background:#fff;border-top:4px solid #000;border-bottom:4px solid #000}
-.features h2{font-weight:900;font-size:2.2rem;text-align:center;margin-bottom:36px;text-transform:uppercase;letter-spacing:-1px}
-.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.feature-card{background:var(--bg);border:4px solid var(--border);box-shadow:var(--shadow);padding:28px 24px;transition:transform 0.1s,box-shadow 0.1s}
+.features{padding:56px 0;background:#fff;border-top:4px solid #000;border-bottom:4px solid #000;overflow:hidden}
+.features .container{max-width:1120px}
+.features h2{font-weight:900;font-size:2.2rem;text-align:center;margin-bottom:16px;text-transform:uppercase;letter-spacing:-1px}
+.features-intro{max-width:760px;margin:0 auto 36px;text-align:center;font-size:1rem;font-weight:700}
+.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:stretch}
+.feature-card{background:var(--card);border:4px solid var(--border);box-shadow:var(--shadow);padding:22px;display:flex;flex-direction:column;gap:18px;min-height:340px;transition:transform 0.1s,box-shadow 0.1s}
 .feature-card:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 #000}
+.feature-card:nth-child(1){background:#FFF3B0}
 .feature-card:nth-child(2){background:#E8F4FD}
 .feature-card:nth-child(3){background:#E8FDE8}
 .feature-card:nth-child(4){background:#FDE8F0}
 .feature-card:nth-child(5){background:#F0E8FD}
 .feature-card:nth-child(6){background:#FDF0E8}
-.feature-emoji{font-size:3rem;margin-bottom:12px}
-.feature-card h3{font-weight:900;font-size:1.15rem;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.3px}
-.feature-card p{font-size:0.9rem;color:#000;font-weight:500}
+.feature-card:nth-child(7){background:#E8FBF7}
+.feature-copy{display:flex;flex-direction:column;gap:8px}
+.feature-label{display:inline-flex;align-items:center;gap:8px;font-size:0.72rem;font-weight:900;letter-spacing:0.8px;text-transform:uppercase}
+.feature-emoji{font-size:1.15rem;line-height:1}
+.feature-copy h3{font-weight:900;font-size:1.15rem;line-height:1.1;text-transform:uppercase;letter-spacing:0.3px}
+.feature-copy p{font-size:0.95rem;color:#000;font-weight:600}
+.feature-preview{margin-top:auto;background:rgba(255,255,255,0.86);border:3px solid var(--border);padding:12px;box-shadow:var(--shadow-sm)}
+.preview-screen{background:#fff;border:3px solid var(--border);padding:12px;display:flex;flex-direction:column;gap:10px;min-height:172px;position:relative;overflow:hidden}
+.preview-topbar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.preview-pill,.preview-chip,.preview-badge,.profile-label,.preview-word,.preview-language{border:2px solid var(--border);background:#fff;font-weight:800}
+.preview-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 8px;font-size:0.72rem;text-transform:uppercase}
+.preview-pill--green{background:#DFF8E6}
+.preview-pill--blue{background:#DDEBFF}
+.preview-pill--pink{background:#FFD9E1}
+.preview-pill--orange{background:#FFE2BF}
+.preview-progress{height:10px;border:2px solid var(--border);background:#fff;overflow:hidden}
+.preview-progress span{display:block;height:100%;background:var(--green);transform-origin:left center}
+.preview-math-problem{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.preview-equation{font-size:1.7rem;font-weight:900;letter-spacing:-1px}
+.preview-answer{width:48px;height:48px;display:grid;place-items:center;border:3px solid var(--border);background:#FFFBEA;font-size:1.35rem;font-weight:900}
+.preview-answer-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.preview-chip{padding:10px 0;text-align:center;font-size:0.95rem}
+.preview-chip--correct{background:#33C75A;color:#fff;animation:success-pop 2.8s ease-in-out infinite}
+.preview-footer-note{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:0.72rem;font-weight:800;text-transform:uppercase}
+.preview-next{opacity:0.65;animation:slide-next 2.8s ease-in-out infinite}
+.preview-reading-copy{display:flex;flex-direction:column;gap:8px}
+.preview-reading-line{font-size:1rem;font-weight:900;line-height:1.45}
+.preview-word{display:inline-block;padding:2px 6px;margin-right:4px;background:#FFF5A8}
+.preview-word--active{background:#33C75A;color:#fff;animation:lyric-pulse 1.8s ease-in-out infinite}
+.preview-word--next{background:#DDEBFF}
+.preview-reading-sub{font-size:0.82rem;font-weight:700;opacity:0.75}
+.preview-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.preview-stat{border:2px solid var(--border);background:#fff;padding:8px;text-align:center}
+.preview-stat strong{display:block;font-size:1rem}
+.preview-stat span{display:block;font-size:0.68rem;font-weight:800;text-transform:uppercase}
+.preview-xp{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:0.72rem;font-weight:800;text-transform:uppercase}
+.preview-xp-bar{flex:1;height:10px;border:2px solid var(--border);background:#fff;overflow:hidden}
+.preview-xp-bar span{display:block;height:100%;width:72%;background:linear-gradient(90deg,var(--yellow),var(--orange));animation:xp-fill 2.6s ease-in-out infinite}
+.preview-badges{display:flex;gap:8px;flex-wrap:wrap}
+.preview-badge{padding:8px 10px;font-size:0.8rem}
+.preview-badge--live{background:#FFF0B3;animation:badge-bounce 2.4s ease-in-out infinite}
+.preview-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.preview-key{height:34px;display:grid;place-items:center;border:2px solid var(--border);background:#fff;font-size:0.9rem;font-weight:900}
+.preview-dashboard{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.preview-panel{border:2px solid var(--border);background:#fff;padding:10px;font-size:0.78rem;font-weight:800;text-transform:uppercase;min-height:48px}
+.preview-panel strong{display:block;font-size:1rem}
+.preview-device{position:relative;border:3px solid var(--border);background:#fff;padding:10px;display:flex;flex-direction:column;gap:8px}
+.preview-device::after{content:"";position:absolute;top:12px;right:14px;width:34px;height:2px;background:#000;transform:rotate(-35deg)}
+.preview-status-list{display:flex;flex-direction:column;gap:6px}
+.preview-status{display:flex;align-items:center;justify-content:space-between;gap:8px;border:2px solid var(--border);background:#fff;padding:7px 8px;font-size:0.74rem;font-weight:800;text-transform:uppercase}
+.preview-status strong{font-size:0.72rem}
+.preview-profiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.preview-profile{border:2px solid var(--border);background:#fff;padding:10px;display:flex;flex-direction:column;gap:8px}
+.preview-avatar{width:40px;height:40px;display:grid;place-items:center;border:2px solid var(--border);background:#FFF7CC;font-size:1.2rem}
+.profile-label{display:inline-block;padding:4px 8px;font-size:0.68rem;text-transform:uppercase}
+.profile-progress{height:8px;border:2px solid var(--border);background:#fff;overflow:hidden}
+.profile-progress span{display:block;height:100%}
+.profile-progress--1 span{width:64%;background:var(--blue)}
+.profile-progress--2 span{width:42%;background:var(--pink)}
+.preview-languages{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.preview-language{padding:10px 8px;font-size:0.82rem;font-weight:900;text-align:center}
+.preview-language--active{background:#DFF8E6;animation:language-glow 2.4s ease-in-out infinite}
+.preview-language-note{font-size:0.75rem;font-weight:800;text-transform:uppercase;text-align:center}
+@keyframes success-pop{0%,18%,100%{transform:scale(1)}8%{transform:scale(1.08)}}
+@keyframes slide-next{0%,30%{opacity:0;transform:translateY(8px)}50%,100%{opacity:0.7;transform:translateY(0)}}
+@keyframes lyric-pulse{0%,100%{transform:translateY(0);box-shadow:0 0 0 0 transparent}50%{transform:translateY(-2px);box-shadow:0 4px 0 #000}}
+@keyframes xp-fill{0%,100%{width:72%}50%{width:88%}}
+@keyframes badge-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes language-glow{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){
+.feature-card,.feature-card:hover,.preview-chip--correct,.preview-next,.preview-word--active,.preview-xp-bar span,.preview-badge--live,.preview-language--active{animation:none;transform:none}
+html{scroll-behavior:auto}
+}
 
 /* PARENTS CTA */
 .parents-cta{padding:48px 0}
@@ -110,6 +183,9 @@ footer a:hover{color:#FFE566}
 .footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px}
 
 /* MOBILE */
+@media(max-width:900px){
+.feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 @media(max-width:600px){
 .feature-grid{grid-template-columns:1fr}
 .hero{padding:48px 0 32px}
@@ -119,6 +195,10 @@ footer a:hover{color:#FFE566}
 footer .container{flex-direction:column;text-align:center}
 .nav-links{gap:10px;font-size:0.8rem;flex:1;justify-content:center}
 .nav-logo-text{display:none}
+.feature-card{min-height:auto;padding:18px}
+.preview-screen{min-height:154px}
+.preview-languages,.preview-dashboard,.preview-profiles,.preview-stats,.preview-answer-grid{grid-template-columns:1fr 1fr}
+.preview-answer-grid .preview-chip:last-child{grid-column:1/-1}
 }
 </style>
 <script type="application/ld+json">
@@ -172,42 +252,193 @@ footer .container{flex-direction:column;text-align:center}
 <section class="features" aria-labelledby="features-heading">
 <div class="container">
 <h2 id="features-heading" data-i18n="features_title">What makes Geni special</h2>
+<p class="features-intro" data-i18n="features_intro">Parents can see the rhythm of the app before downloading: quick wins, guided reading, rewards, privacy, and a setup built for family life.</p>
 <div class="feature-grid">
 
 <article class="feature-card">
-<div class="feature-emoji" aria-hidden="true">🔢</div>
+<div class="feature-copy">
+<div class="feature-label"><span class="feature-emoji" aria-hidden="true">🔢</span><span data-i18n="f1_label">Math flow</span></div>
 <h3 data-i18n="f1_title">Math Missions</h3>
-<p data-i18n="f1_desc">Addition, subtraction, multiplication - with smart difficulty that adapts to your child.</p>
+<p data-i18n="f1_desc">Short exercises feel fast and game-like, with progress, instant feedback, and the next challenge ready right away.</p>
+</div>
+<div class="feature-preview">
+<div class="preview-screen">
+<div class="preview-topbar">
+<span class="preview-pill preview-pill--blue" data-i18n="preview_math_progress">12 of 20</span>
+<span class="preview-pill preview-pill--green" data-i18n="preview_math_done">Nice work</span>
+</div>
+<div class="preview-progress"><span style="width:64%;animation:xp-fill 2.8s ease-in-out infinite"></span></div>
+<div class="preview-math-problem">
+<div class="preview-equation">8 + 6 =</div>
+<div class="preview-answer">14</div>
+</div>
+<div class="preview-answer-grid">
+<div class="preview-chip">12</div>
+<div class="preview-chip preview-chip--correct">14</div>
+<div class="preview-chip">16</div>
+</div>
+<div class="preview-footer-note">
+<span>+1 ⭐</span>
+<span class="preview-next" data-i18n="preview_math_next">Next: 9 + 7</span>
+</div>
+</div>
+</div>
 </article>
 
 <article class="feature-card">
-<div class="feature-emoji" aria-hidden="true">📖</div>
+<div class="feature-copy">
+<div class="feature-label"><span class="feature-emoji" aria-hidden="true">📖</span><span data-i18n="f2_label">Reading flow</span></div>
 <h3 data-i18n="f2_title">Reading Adventures</h3>
-<p data-i18n="f2_desc">Three reading modes with speech recognition. Kids read aloud and get instant feedback.</p>
+<p data-i18n="f2_desc">Words stay large and focused, with read-to-me, read-by-myself, and read-aloud modes that guide attention line by line.</p>
+</div>
+<div class="feature-preview">
+<div class="preview-screen">
+<div class="preview-topbar">
+<span class="preview-pill preview-pill--pink" data-i18n="preview_reading_mode">Read aloud</span>
+<span class="preview-pill" data-i18n="preview_reading_time">0:48 / 1:30</span>
+</div>
+<div class="preview-progress"><span style="width:53%;animation:xp-fill 2.4s ease-in-out infinite"></span></div>
+<div class="preview-reading-copy">
+<div class="preview-reading-line">
+<span class="preview-word" data-i18n="preview_reading_word_1">The</span>
+<span class="preview-word preview-word--active" data-i18n="preview_reading_word_2">sun</span>
+<span class="preview-word preview-word--next" data-i18n="preview_reading_word_3">wakes</span>
+<span class="preview-word" data-i18n="preview_reading_word_4">up</span>
+</div>
+<div class="preview-reading-line preview-reading-sub" data-i18n="preview_reading_line_2">and the little birds sing along</div>
+</div>
+<div class="preview-footer-note">
+<span>🎤</span>
+<span data-i18n="preview_reading_feedback">Listening and matching words</span>
+</div>
+</div>
+</div>
 </article>
 
 <article class="feature-card">
-<div class="feature-emoji" aria-hidden="true">🏆</div>
+<div class="feature-copy">
+<div class="feature-label"><span class="feature-emoji" aria-hidden="true">🏆</span><span data-i18n="f3_label">Reward loop</span></div>
 <h3 data-i18n="f3_title">Rewards & Badges</h3>
-<p data-i18n="f3_desc">Earn coins, level up, unlock badges. Streaks and boss challenges keep kids motivated.</p>
+<p data-i18n="f3_desc">Coins, XP, streaks, and badge unlocks turn steady practice into momentum that kids want to keep going.</p>
+</div>
+<div class="feature-preview">
+<div class="preview-screen">
+<div class="preview-stats">
+<div class="preview-stat"><strong>245</strong><span data-i18n="preview_rewards_coins">Coins</span></div>
+<div class="preview-stat"><strong>8</strong><span data-i18n="preview_rewards_level">Level</span></div>
+<div class="preview-stat"><strong>5🔥</strong><span data-i18n="preview_rewards_streak">Streak</span></div>
+</div>
+<div class="preview-xp">
+<span>XP</span>
+<div class="preview-xp-bar"><span></span></div>
+<span data-i18n="preview_rewards_ready">Almost there</span>
+</div>
+<div class="preview-badges">
+<span class="preview-badge">⭐ <span data-i18n="preview_rewards_focus">Focus</span></span>
+<span class="preview-badge preview-badge--live">🏅 <span data-i18n="preview_rewards_new">New badge</span></span>
+<span class="preview-badge">👑 <span data-i18n="preview_rewards_boss">Boss</span></span>
+</div>
+</div>
+</div>
 </article>
 
 <article class="feature-card">
-<div class="feature-emoji" aria-hidden="true">🔒</div>
+<div class="feature-copy">
+<div class="feature-label"><span class="feature-emoji" aria-hidden="true">🔒</span><span data-i18n="f4_label">Parent side</span></div>
 <h3 data-i18n="f4_title">Parent Controls</h3>
-<p data-i18n="f4_desc">PIN-protected dashboard. Track progress, manage profiles, and control settings.</p>
+<p data-i18n="f4_desc">A protected parent area keeps setup simple: enter the PIN, switch profiles, review progress, and change settings.</p>
+</div>
+<div class="feature-preview">
+<div class="preview-screen">
+<div class="preview-topbar">
+<span class="preview-pill preview-pill--orange" data-i18n="preview_parent_pin">Parent PIN</span>
+<span class="preview-pill" data-i18n="preview_parent_secure">Protected</span>
+</div>
+<div class="preview-pad">
+<div class="preview-key">1</div><div class="preview-key">2</div><div class="preview-key">3</div>
+<div class="preview-key">4</div><div class="preview-key">5</div><div class="preview-key">6</div>
+</div>
+<div class="preview-dashboard">
+<div class="preview-panel"><strong>2</strong><span data-i18n="preview_parent_profiles">Profiles</span></div>
+<div class="preview-panel"><strong>87%</strong><span data-i18n="preview_parent_progress">Progress</span></div>
+<div class="preview-panel"><strong>4</strong><span data-i18n="preview_parent_languages">Languages</span></div>
+<div class="preview-panel"><strong data-i18n="preview_parent_on">ON</strong><span data-i18n="preview_parent_settings">Settings</span></div>
+</div>
+</div>
+</div>
 </article>
 
 <article class="feature-card">
-<div class="feature-emoji" aria-hidden="true">📱</div>
-<h3 data-i18n="f5_title">Offline First</h3>
-<p data-i18n="f5_desc">Works without internet. All data stays on the device. No ads, no tracking.</p>
+<div class="feature-copy">
+<div class="feature-label"><span class="feature-emoji" aria-hidden="true">📱</span><span data-i18n="f5_label">Private by design</span></div>
+<h3 data-i18n="f5_title">Offline & Private</h3>
+<p data-i18n="f5_desc">The app works without internet and keeps data on the device, so the experience stays focused, fast, and ad-free.</p>
+</div>
+<div class="feature-preview">
+<div class="preview-screen">
+<div class="preview-device">
+<div class="preview-topbar">
+<span class="preview-pill preview-pill--green" data-i18n="preview_offline_local">On device</span>
+<span class="preview-pill" data-i18n="preview_offline_cloud">No cloud</span>
+</div>
+<div class="preview-status-list">
+<div class="preview-status"><span data-i18n="preview_offline_ads">Ads</span><strong data-i18n="preview_offline_off">OFF</strong></div>
+<div class="preview-status"><span data-i18n="preview_offline_tracking">Tracking</span><strong data-i18n="preview_offline_off">OFF</strong></div>
+<div class="preview-status"><span data-i18n="preview_offline_sync">Internet</span><strong data-i18n="preview_offline_optional">OPTIONAL</strong></div>
+</div>
+</div>
+</div>
 </article>
 
 <article class="feature-card">
-<div class="feature-emoji" aria-hidden="true">👶</div>
+<div class="feature-copy">
+<div class="feature-label"><span class="feature-emoji" aria-hidden="true">👶</span><span data-i18n="f6_label">Family setup</span></div>
 <h3 data-i18n="f6_title">Multiple Profiles</h3>
-<p data-i18n="f6_desc">Add siblings with their own progress, avatars, and difficulty levels.</p>
+<p data-i18n="f6_desc">Siblings can share one app while keeping their own avatars, level progress, and age-appropriate difficulty.</p>
+</div>
+<div class="feature-preview">
+<div class="preview-screen">
+<div class="preview-topbar">
+<span class="preview-pill preview-pill--blue" data-i18n="preview_profiles_title">Choose profile</span>
+<span class="preview-pill" data-i18n="preview_profiles_switch">Tap to switch</span>
+</div>
+<div class="preview-profiles">
+<div class="preview-profile">
+<div class="preview-avatar">🦊</div>
+<span class="profile-label" data-i18n="preview_profiles_child_1">Mia, age 6</span>
+<div class="profile-progress profile-progress--1"><span></span></div>
+</div>
+<div class="preview-profile">
+<div class="preview-avatar">🦁</div>
+<span class="profile-label" data-i18n="preview_profiles_child_2">Leo, age 8</span>
+<div class="profile-progress profile-progress--2"><span></span></div>
+</div>
+</div>
+</div>
+</div>
+</article>
+
+<article class="feature-card">
+<div class="feature-copy">
+<div class="feature-label"><span class="feature-emoji" aria-hidden="true">🌍</span><span data-i18n="f7_label">Language support</span></div>
+<h3 data-i18n="f7_title">Supported Languages</h3>
+<p data-i18n="f7_desc">English, Norwegian, Spanish, and Portuguese are built into the app, so families can choose the language that fits them best.</p>
+</div>
+<div class="feature-preview">
+<div class="preview-screen">
+<div class="preview-topbar">
+<span class="preview-pill preview-pill--green" data-i18n="preview_language_picker">Language</span>
+<span class="preview-pill" data-i18n="preview_language_parent">Parent dashboard</span>
+</div>
+<div class="preview-languages">
+<div class="preview-language preview-language--active" data-i18n="preview_language_english">🇬🇧 English</div>
+<div class="preview-language" data-i18n="preview_language_norwegian">🇳🇴 Norwegian</div>
+<div class="preview-language" data-i18n="preview_language_spanish">🇪🇸 Spanish</div>
+<div class="preview-language" data-i18n="preview_language_portuguese">🇵🇹 Portuguese</div>
+</div>
+<div class="preview-language-note" data-i18n="preview_language_note">Switch in seconds and keep each family comfortable</div>
+</div>
+</div>
 </article>
 
 </div>
@@ -250,12 +481,21 @@ nav_parents:"For Parents",nav_privacy:"Privacy",
 hero_title:'Learning is an adventure',
 hero_sub:"Daily math and reading missions for kids aged 5\u201310. Learn, play, repeat!",
 features_title:"What makes Geni special",
-f1_title:"Math Missions",f1_desc:"Addition, subtraction, multiplication \u2013 with smart difficulty that adapts to your child.",
-f2_title:"Reading Adventures",f2_desc:"Three reading modes with speech recognition. Kids read aloud and get instant feedback.",
-f3_title:"Rewards & Badges",f3_desc:"Earn coins, level up, unlock badges. Streaks and boss challenges keep kids motivated.",
-f4_title:"Parent Controls",f4_desc:"PIN-protected dashboard. Track progress, manage profiles, and control settings.",
-f5_title:"Offline First",f5_desc:"Works without internet. All data stays on the device. No ads, no tracking.",
-f6_title:"Multiple Profiles",f6_desc:"Add siblings with their own progress, avatars, and difficulty levels.",
+features_intro:"Parents can see the rhythm of the app before downloading: quick wins, guided reading, rewards, privacy, and a setup built for family life.",
+f1_label:"Math flow",f1_title:"Math Missions",f1_desc:"Short exercises feel fast and game-like, with progress, instant feedback, and the next challenge ready right away.",
+f2_label:"Reading flow",f2_title:"Reading Adventures",f2_desc:"Words stay large and focused, with read-to-me, read-by-myself, and read-aloud modes that guide attention line by line.",
+f3_label:"Reward loop",f3_title:"Rewards & Badges",f3_desc:"Coins, XP, streaks, and badge unlocks turn steady practice into momentum that kids want to keep going.",
+f4_label:"Parent side",f4_title:"Parent Controls",f4_desc:"A protected parent area keeps setup simple: enter the PIN, switch profiles, review progress, and change settings.",
+f5_label:"Private by design",f5_title:"Offline & Private",f5_desc:"The app works without internet and keeps data on the device, so the experience stays focused, fast, and ad-free.",
+f6_label:"Family setup",f6_title:"Multiple Profiles",f6_desc:"Siblings can share one app while keeping their own avatars, level progress, and age-appropriate difficulty.",
+f7_label:"Language support",f7_title:"Supported Languages",f7_desc:"English, Norwegian, Spanish, and Portuguese are built into the app, so families can choose the language that fits them best.",
+preview_math_progress:"12 of 20",preview_math_done:"Nice work",preview_math_next:"Next: 9 + 7",
+preview_reading_mode:"Read aloud",preview_reading_time:"0:48 / 1:30",preview_reading_word_1:"The",preview_reading_word_2:"sun",preview_reading_word_3:"wakes",preview_reading_word_4:"up",preview_reading_line_2:"and the little birds sing along",preview_reading_feedback:"Listening and matching words",
+preview_rewards_coins:"Coins",preview_rewards_level:"Level",preview_rewards_streak:"Streak",preview_rewards_ready:"Almost there",preview_rewards_new:"New badge",preview_rewards_focus:"Focus",preview_rewards_boss:"Boss",
+preview_parent_pin:"Parent PIN",preview_parent_secure:"Protected",preview_parent_profiles:"Profiles",preview_parent_progress:"Progress",preview_parent_languages:"Languages",preview_parent_settings:"Settings",preview_parent_on:"ON",
+preview_offline_local:"On device",preview_offline_cloud:"No cloud",preview_offline_ads:"Ads",preview_offline_tracking:"Tracking",preview_offline_sync:"Internet",preview_offline_off:"OFF",preview_offline_optional:"Optional",
+preview_profiles_title:"Choose profile",preview_profiles_switch:"Tap to switch",preview_profiles_child_1:"Mia, age 6",preview_profiles_child_2:"Leo, age 8",
+preview_language_picker:"Language",preview_language_parent:"Parent dashboard",preview_language_english:"🇬🇧 English",preview_language_norwegian:"🇳🇴 Norwegian",preview_language_spanish:"🇪🇸 Spanish",preview_language_portuguese:"🇵🇹 Portuguese",preview_language_note:"Switch in seconds and keep each family comfortable",
 parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span> Built for parents who care',
 parents_desc:"Learn how Geni keeps your child safe and why no data ever leaves the device.",
 parents_btn:"Read more for parents",
@@ -266,12 +506,21 @@ nav_parents:"For foreldre",nav_privacy:"Personvern",
 hero_title:'L\u00e6ring er et eventyr',
 hero_sub:"Daglige matte- og leseoppdrag for barn 5\u201310 \u00e5r. L\u00e6r, lek, gjenta!",
 features_title:"Hva gj\u00f8r Geni spesiell",
-f1_title:"Matteoppdrag",f1_desc:"Addisjon, subtraksjon, multiplikasjon \u2013 med smart vanskelighetsgrad som tilpasser seg barnet ditt.",
-f2_title:"Leseeventyr",f2_desc:"Tre lesemodi med talegjenkjenning. Barn leser h\u00f8yt og f\u00e5r tilbakemelding med en gang.",
-f3_title:"Belønninger",f3_desc:"Tjen mynter, stig i level, l\u00e5s opp merker. Streaks og boss-utfordringer holder motivasjonen oppe.",
-f4_title:"Foreldrekontroll",f4_desc:"PIN-beskyttet kontrollpanel. F\u00f8lg fremgang, administrer profiler og innstillinger.",
-f5_title:"Fungerer offline",f5_desc:"Fungerer uten internett. All data forblir p\u00e5 enheten. Ingen reklame, ingen sporing.",
-f6_title:"Flere profiler",f6_desc:"Legg til s\u00f8sken med egen fremgang, avatar og vanskelighetsgrad.",
+features_intro:"Foreldre kan se rytmen i appen før nedlasting: raske mestringsøyeblikk, guidet lesing, belønninger, personvern og oppsett laget for familieliv.",
+f1_label:"Matteflyt",f1_title:"Matteoppdrag",f1_desc:"Korte oppgaver føles raske og lekne, med fremgang, tilbakemelding med en gang og neste utfordring klar med én gang.",
+f2_label:"Leseflyt",f2_title:"Leseeventyr",f2_desc:"Ordene holder seg store og tydelige, med høytlesing, egenlesing og les-høyt-modus som leder oppmerksomheten linje for linje.",
+f3_label:"Belønningssløyfe",f3_title:"Belønninger og merker",f3_desc:"Mynter, XP, streaks og nye merker gjør jevn øving til fremgang barna får lyst til å fortsette med.",
+f4_label:"Foreldreside",f4_title:"Foreldrekontroll",f4_desc:"Et beskyttet foreldreområde gjør oppsettet enkelt: tast inn PIN, bytt profiler, se fremgang og endre innstillinger.",
+f5_label:"Privat fra start",f5_title:"Offline og privat",f5_desc:"Appen fungerer uten internett og beholder data på enheten, så opplevelsen forblir fokusert, rask og uten reklame.",
+f6_label:"Familieoppsett",f6_title:"Flere profiler",f6_desc:"Søsken kan dele én app og likevel ha hver sin avatar, level-fremgang og vanskelighetsgrad som passer alderen.",
+f7_label:"Språkstøtte",f7_title:"Støttede språk",f7_desc:"Engelsk, norsk, spansk og portugisisk er bygget inn i appen, så familier kan velge språket som passer best.",
+preview_math_progress:"12 av 20",preview_math_done:"Bra jobbet",preview_math_next:"Neste: 9 + 7",
+preview_reading_mode:"Les høyt",preview_reading_time:"0:48 / 1:30",preview_reading_word_1:"Solen",preview_reading_word_2:"våkner",preview_reading_word_3:"stille",preview_reading_word_4:"nå",preview_reading_line_2:"og de små fuglene synger med",preview_reading_feedback:"Lytter og matcher ordene",
+preview_rewards_coins:"Mynter",preview_rewards_level:"Nivå",preview_rewards_streak:"Streak",preview_rewards_ready:"Nesten der",preview_rewards_new:"Nytt merke",preview_rewards_focus:"Fokus",preview_rewards_boss:"Boss",
+preview_parent_pin:"Foreldre-PIN",preview_parent_secure:"Beskyttet",preview_parent_profiles:"Profiler",preview_parent_progress:"Fremgang",preview_parent_languages:"Språk",preview_parent_settings:"Innstillinger",preview_parent_on:"PÅ",
+preview_offline_local:"På enheten",preview_offline_cloud:"Ingen sky",preview_offline_ads:"Reklame",preview_offline_tracking:"Sporing",preview_offline_sync:"Internett",preview_offline_off:"AV",preview_offline_optional:"Valgfritt",
+preview_profiles_title:"Velg profil",preview_profiles_switch:"Trykk for å bytte",preview_profiles_child_1:"Mia, 6 år",preview_profiles_child_2:"Leo, 8 år",
+preview_language_picker:"Språk",preview_language_parent:"Foreldrepanel",preview_language_english:"🇬🇧 Engelsk",preview_language_norwegian:"🇳🇴 Norsk",preview_language_spanish:"🇪🇸 Spansk",preview_language_portuguese:"🇵🇹 Portugisisk",preview_language_note:"Bytt på sekunder og gjør appen komfortabel for hele familien",
 parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span> Bygget for foreldre som bryr seg',
 parents_desc:"Les om hvordan Geni holder barnet ditt trygt og hvorfor ingen data forlater enheten.",
 parents_btn:"Les mer for foreldre",
@@ -282,12 +531,21 @@ nav_parents:"Para padres",nav_privacy:"Privacidad",
 hero_title:'Aprender es una aventura',
 hero_sub:"Misiones diarias de matem\u00E1ticas y lectura para ni\u00F1os de 5 a 10 a\u00F1os. \u00A1Aprende, juega y repite!",
 features_title:"Qu\u00E9 hace especial a Geni",
-f1_title:"Misiones de matem\u00E1ticas",f1_desc:"Suma, resta y multiplicaci\u00F3n con una dificultad inteligente que se adapta a tu hijo.",
-f2_title:"Aventuras de lectura",f2_desc:"Tres modos de lectura con reconocimiento de voz. Los ni\u00F1os leen en voz alta y reciben comentarios al instante.",
-f3_title:"Recompensas e insignias",f3_desc:"Gana monedas, sube de nivel y desbloquea insignias. Las rachas y los desaf\u00EDos especiales mantienen la motivaci\u00F3n.",
-f4_title:"Controles parentales",f4_desc:"Panel protegido con PIN. Sigue el progreso, administra perfiles y controla la configuraci\u00F3n.",
-f5_title:"Primero sin conexi\u00F3n",f5_desc:"Funciona sin internet. Todos los datos permanecen en el dispositivo. Sin anuncios ni seguimiento.",
-f6_title:"Varios perfiles",f6_desc:"Agrega hermanos con su propio progreso, avatar y nivel de dificultad.",
+features_intro:"Los padres pueden ver el ritmo de la app antes de descargarla: logros rápidos, lectura guiada, recompensas, privacidad y una configuración pensada para la vida en familia.",
+f1_label:"Flujo matemático",f1_title:"Misiones de matemáticas",f1_desc:"Los ejercicios cortos se sienten rápidos y como un juego, con progreso visible, feedback al instante y el siguiente reto listo enseguida.",
+f2_label:"Flujo de lectura",f2_title:"Aventuras de lectura",f2_desc:"Las palabras se mantienen grandes y claras, con modos para escuchar, leer solo o leer en voz alta que guían la atención línea por línea.",
+f3_label:"Ciclo de recompensas",f3_title:"Recompensas e insignias",f3_desc:"Monedas, XP, rachas y nuevas insignias convierten la práctica constante en impulso para seguir aprendiendo.",
+f4_label:"Zona para padres",f4_title:"Controles parentales",f4_desc:"Una zona protegida para padres simplifica la configuración: introduce el PIN, cambia perfiles, revisa el progreso y ajusta opciones.",
+f5_label:"Privada por diseño",f5_title:"Sin conexión y privada",f5_desc:"La app funciona sin internet y mantiene los datos en el dispositivo, para que la experiencia siga siendo enfocada, rápida y sin anuncios.",
+f6_label:"Configuración familiar",f6_title:"Varios perfiles",f6_desc:"Los hermanos pueden compartir una sola app y mantener su propio avatar, progreso de nivel y dificultad adecuada para su edad.",
+f7_label:"Idiomas compatibles",f7_title:"Idiomas disponibles",f7_desc:"La app incluye inglés, noruego, español y portugués para que cada familia pueda elegir el idioma que mejor le encaje.",
+preview_math_progress:"12 de 20",preview_math_done:"Muy bien",preview_math_next:"Sigue: 9 + 7",
+preview_reading_mode:"Leer en voz alta",preview_reading_time:"0:48 / 1:30",preview_reading_word_1:"El",preview_reading_word_2:"sol",preview_reading_word_3:"ya",preview_reading_word_4:"despierta",preview_reading_line_2:"y los pajaritos cantan al compás",preview_reading_feedback:"Escuchando y detectando palabras",
+preview_rewards_coins:"Monedas",preview_rewards_level:"Nivel",preview_rewards_streak:"Racha",preview_rewards_ready:"Casi listo",preview_rewards_new:"Nueva insignia",preview_rewards_focus:"Enfoque",preview_rewards_boss:"Jefe",
+preview_parent_pin:"PIN de padres",preview_parent_secure:"Protegido",preview_parent_profiles:"Perfiles",preview_parent_progress:"Progreso",preview_parent_languages:"Idiomas",preview_parent_settings:"Ajustes",preview_parent_on:"ACTIVO",
+preview_offline_local:"En el dispositivo",preview_offline_cloud:"Sin nube",preview_offline_ads:"Anuncios",preview_offline_tracking:"Seguimiento",preview_offline_sync:"Internet",preview_offline_off:"DESACT.",preview_offline_optional:"Opcional",
+preview_profiles_title:"Elegir perfil",preview_profiles_switch:"Toca para cambiar",preview_profiles_child_1:"Mia, 6 años",preview_profiles_child_2:"Leo, 8 años",
+preview_language_picker:"Idioma",preview_language_parent:"Panel para padres",preview_language_english:"🇬🇧 Inglés",preview_language_norwegian:"🇳🇴 Noruego",preview_language_spanish:"🇪🇸 Español",preview_language_portuguese:"🇵🇹 Portugués",preview_language_note:"Cambia en segundos y haz que la app se sienta cómoda para toda la familia",
 parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span> Hecho para padres que se preocupan',
 parents_desc:"Descubre c\u00F3mo Geni mantiene seguro a tu hijo y por qu\u00E9 ning\u00FAn dato sale del dispositivo.",
 parents_btn:"Leer m\u00E1s para padres",
@@ -298,12 +556,21 @@ nav_parents:"Para pais",nav_privacy:"Privacidade",
 hero_title:'Aprender \u00E9 uma aventura',
 hero_sub:"Miss\u00F5es di\u00E1rias de matem\u00E1tica e leitura para crian\u00E7as de 5 a 10 anos. Aprenda, brinque e repita!",
 features_title:"O que torna Geni especial",
-f1_title:"Miss\u00F5es de matem\u00E1tica",f1_desc:"Adi\u00E7\u00E3o, subtra\u00E7\u00E3o e multiplica\u00E7\u00E3o com dificuldade inteligente que se adapta ao seu filho.",
-f2_title:"Aventuras de leitura",f2_desc:"Tr\u00EAs modos de leitura com reconhecimento de fala. As crian\u00E7as leem em voz alta e recebem feedback na hora.",
-f3_title:"Recompensas e ins\u00EDgnias",f3_desc:"Ganhe moedas, suba de n\u00EDvel e desbloqueie ins\u00EDgnias. Sequ\u00EAncias e desafios especiais mant\u00EAm as crian\u00E7as motivadas.",
-f4_title:"Controles parentais",f4_desc:"Painel protegido por PIN. Acompanhe o progresso, gerencie perfis e controle as configura\u00E7\u00F5es.",
-f5_title:"Offline em primeiro lugar",f5_desc:"Funciona sem internet. Todos os dados ficam no dispositivo. Sem an\u00FAncios e sem rastreamento.",
-f6_title:"V\u00E1rios perfis",f6_desc:"Adicione irm\u00E3os com o pr\u00F3prio progresso, avatar e n\u00EDvel de dificuldade.",
+features_intro:"Os pais conseguem ver o ritmo do app antes de baixar: vitórias rápidas, leitura guiada, recompensas, privacidade e uma configuração pensada para a vida em família.",
+f1_label:"Fluxo de matemática",f1_title:"Missões de matemática",f1_desc:"Exercícios curtos parecem rápidos e divertidos, com progresso visível, feedback imediato e o próximo desafio pronto em seguida.",
+f2_label:"Fluxo de leitura",f2_title:"Aventuras de leitura",f2_desc:"As palavras ficam grandes e focadas, com modos para ouvir, ler sozinho e ler em voz alta que guiam a atenção linha por linha.",
+f3_label:"Ciclo de recompensa",f3_title:"Recompensas e insígnias",f3_desc:"Moedas, XP, sequências e novas insígnias transformam a prática constante em impulso para continuar aprendendo.",
+f4_label:"Área dos pais",f4_title:"Controles parentais",f4_desc:"Uma área protegida para os pais simplifica a configuração: digite o PIN, troque perfis, veja o progresso e ajuste as opções.",
+f5_label:"Privado por padrão",f5_title:"Offline e privado",f5_desc:"O app funciona sem internet e mantém os dados no dispositivo, para que a experiência continue focada, rápida e sem anúncios.",
+f6_label:"Configuração da família",f6_title:"Vários perfis",f6_desc:"Irmãos podem compartilhar um só app e ainda manter avatar, progresso de nível e dificuldade apropriada para cada idade.",
+f7_label:"Idiomas compatíveis",f7_title:"Idiomas suportados",f7_desc:"Inglês, norueguês, espanhol e português já vêm no app, para que cada família escolha o idioma que faz mais sentido.",
+preview_math_progress:"12 de 20",preview_math_done:"Mandou bem",preview_math_next:"Próximo: 9 + 7",
+preview_reading_mode:"Ler em voz alta",preview_reading_time:"0:48 / 1:30",preview_reading_word_1:"O",preview_reading_word_2:"sol",preview_reading_word_3:"já",preview_reading_word_4:"acordou",preview_reading_line_2:"e os passarinhos cantam juntos",preview_reading_feedback:"Ouvindo e combinando palavras",
+preview_rewards_coins:"Moedas",preview_rewards_level:"Nível",preview_rewards_streak:"Sequência",preview_rewards_ready:"Quase lá",preview_rewards_new:"Nova insígnia",preview_rewards_focus:"Foco",preview_rewards_boss:"Chefe",
+preview_parent_pin:"PIN dos pais",preview_parent_secure:"Protegido",preview_parent_profiles:"Perfis",preview_parent_progress:"Progresso",preview_parent_languages:"Idiomas",preview_parent_settings:"Ajustes",preview_parent_on:"ATIVO",
+preview_offline_local:"No dispositivo",preview_offline_cloud:"Sem nuvem",preview_offline_ads:"Anúncios",preview_offline_tracking:"Rastreamento",preview_offline_sync:"Internet",preview_offline_off:"DESL.",preview_offline_optional:"Opcional",
+preview_profiles_title:"Escolher perfil",preview_profiles_switch:"Toque para trocar",preview_profiles_child_1:"Mia, 6 anos",preview_profiles_child_2:"Leo, 8 anos",
+preview_language_picker:"Idioma",preview_language_parent:"Painel dos pais",preview_language_english:"🇬🇧 Inglês",preview_language_norwegian:"🇳🇴 Norueguês",preview_language_spanish:"🇪🇸 Espanhol",preview_language_portuguese:"🇵🇹 Português",preview_language_note:"Troque em segundos e deixe o app confortável para toda a família",
 parents_title:'<span aria-hidden="true">👨\u200D👩\u200D👧\u200D👦</span> Feito para pais que se importam',
 parents_desc:"Veja como Geni mantém seu filho seguro e por que nenhum dado sai do dispositivo.",
 parents_btn:"Ler mais para pais",

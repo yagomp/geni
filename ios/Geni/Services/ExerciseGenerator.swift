@@ -20,6 +20,10 @@ private enum EmojiPool {
 
 enum ExerciseGenerator {
     static func generateChapter(profile: ChildProfile, chapterType: ChapterType = .daily) -> [Exercise] {
+        if profile.age <= 5 {
+            return generateAgeFiveChapter(chapterType: chapterType)
+        }
+
         var exercises: [Exercise] = []
         let ops = profile.operationsEnabled
 
@@ -89,6 +93,10 @@ enum ExerciseGenerator {
     }
 
     static func generateSpotlightChapter(profile: ChildProfile, operation: MathOperation) -> [Exercise] {
+        if profile.age <= 5 {
+            return generateAgeFiveChapter(chapterType: .operationSpotlight)
+        }
+
         var exercises: [Exercise] = []
         let emojiFormats: Set<ExerciseFormat> = [.countingObjects, .visualAddition, .compareGroups, .tenFrame]
         let middleFormats: Set<ExerciseFormat> = [.numberBonds, .diceAddition, .evenOddSort, .visualSubtraction]
@@ -119,6 +127,109 @@ enum ExerciseGenerator {
             exercises.append(exercise)
         }
         return exercises
+    }
+
+    private static func generateAgeFiveChapter(chapterType: ChapterType) -> [Exercise] {
+        var exercises: [Exercise] = []
+
+        for i in 0..<20 {
+            let difficulty = ExerciseDifficulty.forIndex(i)
+            let format = pickAgeFiveFormat(index: i, chapterType: chapterType)
+
+            switch format {
+            case .visualAddition, .tenFrame:
+                exercises.append(generateAgeFiveEmojiExercise(format: format, difficulty: difficulty))
+            case .solveResult:
+                let (op1, op2) = fingerFriendlyAdditionOperands(difficulty: difficulty)
+                exercises.append(
+                    Exercise(
+                        operand1: op1,
+                        operand2: op2,
+                        operation: .addition,
+                        difficulty: difficulty,
+                        format: .solveResult
+                    )
+                )
+            default:
+                let (op1, op2) = fingerFriendlyAdditionOperands(difficulty: difficulty)
+                exercises.append(
+                    Exercise(
+                        operand1: op1,
+                        operand2: op2,
+                        operation: .addition,
+                        difficulty: difficulty,
+                        format: .solveResult
+                    )
+                )
+            }
+        }
+
+        return exercises
+    }
+
+    private static func pickAgeFiveFormat(index: Int, chapterType: ChapterType) -> ExerciseFormat {
+        if chapterType == .timeAttack || chapterType == .perfectRun || chapterType == .operationSpotlight {
+            return .solveResult
+        }
+
+        let starterFormats: [ExerciseFormat] = [
+            .visualAddition, .tenFrame, .solveResult, .visualAddition,
+            .tenFrame, .solveResult, .visualAddition, .tenFrame
+        ]
+
+        if index < starterFormats.count {
+            return starterFormats[index]
+        }
+
+        return [.visualAddition, .tenFrame, .solveResult].randomElement()!
+    }
+
+    private static func generateAgeFiveEmojiExercise(format: ExerciseFormat, difficulty: ExerciseDifficulty) -> Exercise {
+        switch format {
+        case .visualAddition:
+            let (left, right) = fingerFriendlyAdditionOperands(difficulty: difficulty)
+            return Exercise(
+                emojiFormat: .visualAddition,
+                emojiSymbol: EmojiPool.randomEmoji(),
+                count: left,
+                count2: right,
+                difficulty: difficulty
+            )
+        case .tenFrame:
+            let total = fingerFriendlyAdditionOperands(difficulty: difficulty).0
+            return Exercise(
+                emojiFormat: .tenFrame,
+                emojiSymbol: EmojiPool.randomEmoji(),
+                count: total,
+                difficulty: difficulty
+            )
+        default:
+            fatalError("Unsupported age 5 format: \(format)")
+        }
+    }
+
+    private static func fingerFriendlyAdditionOperands(difficulty: ExerciseDifficulty) -> (Int, Int) {
+        let maxTotal: Int
+        let minFirst: Int
+
+        switch difficulty {
+        case .warmup:
+            maxTotal = 5
+            minFirst = 1
+        case .normal:
+            maxTotal = 7
+            minFirst = 1
+        case .harder:
+            maxTotal = 9
+            minFirst = 2
+        case .challenge:
+            maxTotal = 10
+            minFirst = 3
+        }
+
+        let first = Int.random(in: minFirst..<maxTotal)
+        let second = Int.random(in: 1...(maxTotal - first))
+        return (first, second)
     }
 
     private static func pickFormat(index: Int, age: Int, ageGroup: AgeGroup, chapterType: ChapterType) -> ExerciseFormat {

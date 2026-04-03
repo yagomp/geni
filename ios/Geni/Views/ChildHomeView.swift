@@ -186,7 +186,9 @@ struct ChildHomeView: View {
     }
 
     private var missionCompleteCard: some View {
-        VStack(spacing: 16) {
+        let requiresReading = viewModel.persistence.activeProfile?.readingMode == .required
+
+        return VStack(spacing: 16) {
             Text("🎉")
                 .font(.system(size: 48))
 
@@ -200,7 +202,7 @@ struct ChildHomeView: View {
 
             HStack(spacing: 12) {
                 MissionCheckItem(label: L.s(.mathDone), done: true)
-                if viewModel.persistence.activeProfile?.readingMode != .hidden {
+                if requiresReading {
                     MissionCheckItem(label: L.s(.readingDone2), done: viewModel.todayReadingCompleted)
                 }
             }
@@ -351,7 +353,7 @@ struct ChildHomeView: View {
                     }
 
                     if !viewModel.challengeWindowStarted {
-                        Text(L.s(.finishMissionToUnlockChallenges))
+                        Text(challengeUnlockHint)
                             .font(.system(.caption, design: .rounded, weight: .bold))
                             .foregroundStyle(.black)
                     }
@@ -500,6 +502,15 @@ struct ChildHomeView: View {
         case .perfectRun: return L.s(.perfectRun)
         case .operationSpotlight: return L.s(.spotlightChapter)
         default: return L.s(.specialChallenge)
+        }
+    }
+
+    private var challengeUnlockHint: String {
+        switch viewModel.persistence.activeProfile?.readingMode {
+        case .required:
+            return L.s(.finishMissionToUnlockChallenges)
+        default:
+            return L.s(.finishMathToUnlockChallenges)
         }
     }
 }

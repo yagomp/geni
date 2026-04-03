@@ -111,60 +111,105 @@ class SpeechRecognitionService {
     var misreadIndices: Set<Int> = []
 
     func matchedWordCount(expected: [String]) -> Int {
-        let cleanExpected = expected.map { cleanWord($0) }
-        let cleanRecognized = recognizedWords.map { cleanWord($0) }
+        let cleanExpected = expected.map { normalizedWord($0) }
+        let cleanRecognized = recognizedWords.map { normalizedWord($0) }.filter { !$0.isEmpty }
         var matched = 0
         var rIdx = 0
+
+        misreadIndices = misreadIndices.filter { $0 < cleanExpected.count }
 
         for eIdx in 0..<cleanExpected.count {
             guard rIdx < cleanRecognized.count else { break }
 
-            if cleanRecognized[rIdx] == cleanExpected[eIdx] || levenshteinClose(cleanRecognized[rIdx], cleanExpected[eIdx]) {
+            let recognized = cleanRecognized[rIdx]
+            let expectedWord = cleanExpected[eIdx]
+
+            if isIgnorableRecognitionNoise(recognized) {
+                rIdx += 1
+                continue
+            }
+
+            if isAcceptedMatch(recognized, expectedWord) {
                 misreadIndices.remove(eIdx)
                 matched = eIdx + 1
                 rIdx += 1
+            } else if isPotentialPartialMatch(recognized, expectedWord) {
+                break
+            } else if rIdx + 1 < cleanRecognized.count,
+                      isAcceptedMatch(cleanRecognized[rIdx + 1], expectedWord) {
+                // A stray token showed up before the expected word.
+                rIdx += 1
+                misreadIndices.remove(eIdx)
+                matched = eIdx + 1
+                rIdx += 1
+            } else if eIdx + 1 < cleanExpected.count,
+                      isAcceptedMatch(recognized, cleanExpected[eIdx + 1]) {
+                // We only mark red when recognition has clearly moved past this word.
+                misreadIndices.insert(eIdx)
+                matched = eIdx + 1
             } else {
-                // Check if the user skipped this word and said the next one
-                if rIdx + 1 < cleanRecognized.count && eIdx + 1 < cleanExpected.count &&
-                   (cleanRecognized[rIdx + 1] == cleanExpected[eIdx] || levenshteinClose(cleanRecognized[rIdx + 1], cleanExpected[eIdx])) {
-                    // The extra recognized word was a misread — skip it
-                    rIdx += 1
-                    misreadIndices.remove(eIdx)
-                    matched = eIdx + 1
-                    rIdx += 1
-                } else if rIdx < cleanRecognized.count &&
-                          eIdx + 1 < cleanExpected.count &&
-                          (cleanRecognized[rIdx] == cleanExpected[eIdx + 1] || levenshteinClose(cleanRecognized[rIdx], cleanExpected[eIdx + 1])) {
-                    // User skipped a word — mark it misread and continue
-                    misreadIndices.insert(eIdx)
-                    matched = eIdx + 1
-                    // Don't advance rIdx — it matches the next expected word
-                } else {
-                    // Genuine mismatch at current position — mark misread but keep going
-                    misreadIndices.insert(eIdx)
-                    matched = eIdx + 1
-                    rIdx += 1
-                }
+                break
             }
         }
         return matched
     }
 
-    private func cleanWord(_ word: String) -> String {
+    private func normalizedWord(_ word: String) -> String {
         word.lowercased().filter { $0.isLetter || $0.isNumber }
     }
 
-    private func levenshteinClose(_ a: String, _ b: String) -> Bool {
-        if a == b { return true }
-        if abs(a.count - b.count) > 2 { return false }
-        let shorter = min(a.count, b.count)
-        guard shorter > 0 else { return false }
-        var common = 0
+    private func isIgnorableRecognitionNoise(_ word: String) -> Bool {
+        word.count <= 1
+    }
+
+    private func isAcceptedMatch(_ recognized: String, _ expected: String) -> Bool {
+        if recognized == expected { return true }
+        guard abs(recognized.count - expected.count) <= 1 else { return false }
+
+        switch L.selectedLanguage {
+        case .norwegian:
+            guard expected.count >= 4 else { return false }
+        default:
+            guard expected.count >= 5 else { return false }
+        }
+
+        return levenshteinDistance(recognized, expected) <= 1
+    }
+
+    private func isPotentialPartialMatch(_ recognized: String, _ expected: String) -> Bool {
+        guard !recognized.isEmpty, recognized.count < expected.count else { return false }
+        return expected.hasPrefix(recognized)
+    }
+
+    private func levenshteinDistance(_ a: String, _ b: String) -> Int {
+        if a == b { return 0 }
         let aArr = Array(a)
         let bArr = Array(b)
-        for i in 0..<min(aArr.count, bArr.count) {
-            if aArr[i] == bArr[i] { common += 1 }
+
+        guard !aArr.isEmpty else { return bArr.count }
+        guard !bArr.isEmpty else { return aArr.count }
+
+        var distances = Array(0...bArr.count)
+
+        for (i, charA) in aArr.enumerated() {
+            var previousDiagonal = distances[0]
+            distances[0] = i + 1
+
+            for (j, charB) in bArr.enumerated() {
+                let previous = distances[j + 1]
+                if charA == charB {
+                    distances[j + 1] = previousDiagonal
+                } else {
+                    distances[j + 1] = min(
+                        distances[j] + 1,
+                        distances[j + 1] + 1,
+                        previousDiagonal + 1
+                    )
+                }
+                previousDiagonal = previous
+            }
         }
-        return Double(common) / Double(max(a.count, b.count)) >= 0.6
+
+        return distances[bArr.count]
     }
 }

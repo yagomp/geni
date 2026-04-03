@@ -59,16 +59,6 @@ struct ReadingModeSelectionView: View {
 
                 VStack(spacing: 12) {
                     ReadingModeButton(
-                        title: L.s(.readByMyself),
-                        subtitle: L.s(.readBySelfDesc),
-                        icon: "👁️",
-                        color: GeniColor.blue
-                    ) {
-                        HapticManager.impact(.medium)
-                        onSelectMode(.readByMyself)
-                    }
-
-                    ReadingModeButton(
                         title: L.s(.readToMe),
                         subtitle: L.s(.readToMeDesc),
                         icon: "🔊",

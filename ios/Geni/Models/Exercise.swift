@@ -435,7 +435,7 @@ nonisolated struct Exercise: Identifiable, Sendable {
         case .diceAddition:
             return "🎲\(operand1) + 🎲\(operand2)"
         case .evenOddSort:
-            return "\(operand1) \(operation.symbol) \(operand2) = \(correctAnswer)"
+            return "\(operand1) \(operation.symbol) \(operand2)"
         case .visualSubtraction:
             return "\(emojiSymbol ?? "?")x\(operand1) - \(operand2)"
         case .multiStep:

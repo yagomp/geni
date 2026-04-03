@@ -197,6 +197,7 @@ nonisolated enum LocaleKey: String, Sendable {
     case bonusEarned
     case missionStreak
     case finishMissionToUnlockChallenges
+    case finishMathToUnlockChallenges
     case language
     case languageSystem
     case languageEnglish
@@ -532,6 +533,7 @@ nonisolated enum L {
         case .bonusEarned: return "Bonus earned"
         case .missionStreak: return "Mission Streak"
         case .finishMissionToUnlockChallenges: return "Finish today's mission to unlock challenges"
+        case .finishMathToUnlockChallenges: return "Finish today's math to unlock challenges"
         case .language: return "Language"
         case .languageSystem: return "System Default"
         case .languageEnglish: return "English"
@@ -768,6 +770,7 @@ nonisolated enum L {
         case .bonusEarned: return "Bonus opptjent"
         case .missionStreak: return "Oppdragsrekke"
         case .finishMissionToUnlockChallenges: return "Fullfor dagens oppdrag for a lase opp utfordringer"
+        case .finishMathToUnlockChallenges: return "Fullfor dagens matte for a lase opp utfordringer"
         case .language: return "Spr\u{00E5}k"
         case .languageSystem: return "Systemstandard"
         case .languageEnglish: return "Engelsk"
@@ -1004,6 +1007,7 @@ nonisolated enum L {
         case .bonusEarned: return "Bono ganado"
         case .missionStreak: return "Racha de misiones"
         case .finishMissionToUnlockChallenges: return "Completa la mision de hoy para desbloquear desafios"
+        case .finishMathToUnlockChallenges: return "Completa las mates de hoy para desbloquear desafios"
         case .language: return "Idioma"
         case .languageSystem: return "Predeterminado del sistema"
         case .languageEnglish: return "Ingl\u{00E9}s"
@@ -1240,6 +1244,7 @@ nonisolated enum L {
         case .bonusEarned: return "B\u{00F3}nus ganho"
         case .missionStreak: return "Sequ\u{00EA}ncia de miss\u{00F5}es"
         case .finishMissionToUnlockChallenges: return "Conclui a missao de hoje para desbloquear desafios"
+        case .finishMathToUnlockChallenges: return "Conclui a matematica de hoje para desbloquear desafios"
         case .language: return "Idioma"
         case .languageSystem: return "Padr\u{00E3}o do sistema"
         case .languageEnglish: return "Ingl\u{00EA}s"

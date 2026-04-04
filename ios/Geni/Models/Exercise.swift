@@ -22,6 +22,8 @@ nonisolated enum ExerciseFormat: String, Codable, Sendable {
 }
 
 nonisolated struct Exercise: Identifiable, Sendable {
+    static let maxCountableEmojis = 12
+
     let id: String
     let operand1: Int
     let operand2: Int
@@ -420,7 +422,10 @@ nonisolated struct Exercise: Identifiable, Sendable {
         case .countingObjects:
             return "\(emojiSymbol ?? "?") x\(operand1)"
         case .visualAddition:
-            return "\(emojiSymbol ?? "?")x\(operand1) + \(emojiSymbol ?? "?")x\(operand2)"
+            if shouldShowEmojiCounting {
+                return "\(emojiSymbol ?? "?")x\(operand1) + \(emojiSymbol ?? "?")x\(operand2)"
+            }
+            return equationPrompt
         case .compareGroups:
             return "\(emojiSymbol ?? "?")x\(operand1) vs \(emojiSymbolRight ?? "?")x\(operand2)"
         case .tenFrame:
@@ -437,7 +442,10 @@ nonisolated struct Exercise: Identifiable, Sendable {
         case .evenOddSort:
             return "\(operand1) \(operation.symbol) \(operand2)"
         case .visualSubtraction:
-            return "\(emojiSymbol ?? "?")x\(operand1) - \(operand2)"
+            if shouldShowEmojiCounting {
+                return "\(emojiSymbol ?? "?")x\(operand1) - \(operand2)"
+            }
+            return equationPrompt
         case .multiStep:
             return multiStepExpression ?? "\(operand1) \(operation.symbol) \(operand2)"
         case .numberSequence:
@@ -451,6 +459,25 @@ nonisolated struct Exercise: Identifiable, Sendable {
         default:
             return "\(operand1) \(operation.symbol) \(operand2)"
         }
+    }
+
+    var shouldShowEmojiCounting: Bool {
+        switch format {
+        case .countingObjects, .tenFrame:
+            return operand1 <= Self.maxCountableEmojis
+        case .visualAddition:
+            return operand1 + operand2 <= Self.maxCountableEmojis
+        case .visualSubtraction:
+            return operand1 <= Self.maxCountableEmojis
+        case .compareGroups:
+            return max(operand1, operand2) <= Self.maxCountableEmojis
+        default:
+            return false
+        }
+    }
+
+    var equationPrompt: String {
+        "\(operand1) \(operation.symbol) \(operand2) = ?"
     }
 
     var missingNumberPrompt: String {

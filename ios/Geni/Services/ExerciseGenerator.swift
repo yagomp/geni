@@ -672,8 +672,32 @@ enum ExerciseGenerator {
     }
 
     static func generateVisualSubtractionExercise(difficulty: ExerciseDifficulty, ageGroup: AgeGroup) -> Exercise {
-        let (a, b) = subtractionOperands(difficulty: difficulty, ageGroup: ageGroup)
+        let (a, b) = visualSubtractionOperands(difficulty: difficulty)
         return Exercise(middleFormat: .visualSubtraction, op1: a, op2: b, operation: .subtraction, difficulty: difficulty, emoji: EmojiPool.randomEmoji())
+    }
+
+    private static func visualSubtractionOperands(difficulty: ExerciseDifficulty) -> (Int, Int) {
+        let totalRange: ClosedRange<Int>
+        let removedRange: ClosedRange<Int>
+
+        switch difficulty {
+        case .warmup:
+            totalRange = 4...6
+            removedRange = 1...2
+        case .normal:
+            totalRange = 5...8
+            removedRange = 1...3
+        case .harder:
+            totalRange = 7...10
+            removedRange = 2...4
+        case .challenge:
+            totalRange = 9...Exercise.maxCountableEmojis
+            removedRange = 2...5
+        }
+
+        let total = Int.random(in: totalRange)
+        let removed = Int.random(in: 1...min(removedRange.upperBound, total - 1))
+        return (total, removed)
     }
 
     private static func generateOperands(operation: MathOperation, difficulty: ExerciseDifficulty, ageGroup: AgeGroup) -> (Int, Int) {

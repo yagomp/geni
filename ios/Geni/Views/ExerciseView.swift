@@ -415,15 +415,22 @@ struct ExerciseView: View {
                 .font(.system(size: iPadScale.value(28), weight: .bold, design: .rounded))
                 .foregroundStyle(GeniColor.border)
 
-            HStack(spacing: iPadScale.value(12)) {
-                emojiGrid(exercise.emojiSymbol ?? "🍎", count: exercise.operand1, columns: 3)
+            if exercise.shouldShowEmojiCounting {
+                HStack(spacing: iPadScale.value(12)) {
+                    emojiGrid(exercise.emojiSymbol ?? "🍎", count: exercise.operand1, columns: 3)
 
-                Text("➕")
-                    .font(.system(size: iPadScale.value(36), weight: .black, design: .rounded))
+                    Text("➕")
+                        .font(.system(size: iPadScale.value(36), weight: .black, design: .rounded))
 
-                emojiGrid(exercise.emojiSymbol ?? "🍎", count: exercise.operand2, columns: 3)
+                    emojiGrid(exercise.emojiSymbol ?? "🍎", count: exercise.operand2, columns: 3)
+                }
+                .padding(.vertical, 8)
+            } else {
+                Text(exercise.equationPrompt)
+                    .font(.system(size: iPadScale.value(40), weight: .black, design: .rounded))
+                    .foregroundStyle(GeniColor.border)
+                    .padding(.vertical, 16)
             }
-            .padding(.vertical, 8)
 
             HStack(spacing: 8) {
                 Text("=")
@@ -860,40 +867,40 @@ struct ExerciseView: View {
     private func visualSubtractionContent(_ exercise: Exercise) -> some View {
         let emoji = exercise.emojiSymbol ?? "🍎"
         let total = exercise.operand1
-        let removed = exercise.operand2
-        let remaining = exercise.correctAnswer
 
         return VStack(spacing: 24) {
-            // Emoji grid with X marks on removed items
-            let columns = min(total, 5)
-            let rows = (total + columns - 1) / columns
-            VStack(spacing: iPadScale.value(8)) {
-                ForEach(0..<rows, id: \.self) { row in
-                    HStack(spacing: iPadScale.value(8)) {
-                        ForEach(0..<columns, id: \.self) { col in
-                            let index = row * columns + col
-                            if index < total {
-                                let isCrossedOut = index >= remaining
-                                ZStack {
-                                    Text(emoji)
-                                        .font(.system(size: iPadScale.value(36)))
-                                        .opacity(isCrossedOut ? 0.4 : 1.0)
+            if exercise.shouldShowEmojiCounting {
+                let remaining = exercise.correctAnswer
+                let columns = min(total, 5)
+                let rows = (total + columns - 1) / columns
 
-                                    if isCrossedOut {
-                                        Text("\u{2716}")
-                                            .font(.system(size: iPadScale.value(32), weight: .bold))
-                                            .foregroundStyle(GeniColor.pink)
+                VStack(spacing: iPadScale.value(8)) {
+                    ForEach(0..<rows, id: \.self) { row in
+                        HStack(spacing: iPadScale.value(8)) {
+                            ForEach(0..<columns, id: \.self) { col in
+                                let index = row * columns + col
+                                if index < total {
+                                    let isCrossedOut = index >= remaining
+                                    ZStack {
+                                        Text(emoji)
+                                            .font(.system(size: iPadScale.value(36)))
+                                            .opacity(isCrossedOut ? 0.4 : 1.0)
+
+                                        if isCrossedOut {
+                                            Text("\u{2716}")
+                                                .font(.system(size: iPadScale.value(32), weight: .bold))
+                                                .foregroundStyle(GeniColor.pink)
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+                .padding(.vertical, 8)
             }
-            .padding(.vertical, 8)
 
-            // Subtraction expression
-            Text("\(total) \(MathOperation.subtraction.symbol) \(removed) = ?")
+            Text(exercise.equationPrompt)
                 .font(.system(size: iPadScale.value(36), weight: .black, design: .rounded))
                 .foregroundStyle(GeniColor.border)
 

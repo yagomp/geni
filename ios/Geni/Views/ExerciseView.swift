@@ -585,7 +585,7 @@ struct ExerciseView: View {
                                 .foregroundStyle(isMatched ? GeniColor.green : GeniColor.border)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: iPadScale.value(52))
-                                .background(isMatched ? GeniColor.green.opacity(0.1) : GeniColor.card)
+                                .background(GeniColor.card)
                                 .overlay(Rectangle().stroke(isMatched ? GeniColor.green : GeniColor.border, lineWidth: 3))
                                 .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
                                 .gesture(
@@ -632,7 +632,7 @@ struct ExerciseView: View {
                                 .foregroundStyle(isMatched ? GeniColor.green : GeniColor.border)
                                 .frame(maxWidth: .infinity)
                                 .frame(height: iPadScale.value(52))
-                                .background(isMatched ? GeniColor.green.opacity(0.1) : GeniColor.card)
+                                .background(GeniColor.card)
                                 .overlay(Rectangle().stroke(isMatched ? GeniColor.green : GeniColor.border, lineWidth: 3))
                                 .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
                         }

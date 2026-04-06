@@ -257,6 +257,7 @@ enum ExerciseGenerator {
             if roll < 4 { return .visualAddition }
             if roll < 5 { return .compareGroups }
             if roll < 6 { return .tenFrame }
+            if roll < 7 { return .matchConnect }
             if roll < 8 { return .solveResult }
             if roll < 9 { return .trueFalse }
             return .missingNumber

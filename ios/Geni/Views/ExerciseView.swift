@@ -533,6 +533,11 @@ struct ExerciseView: View {
     // MARK: - Match Connect (Draw a Line)
 
     private func matchConnectContent(_ exercise: Exercise) -> some View {
+        Text(L.s(.matchConnectInstruction))
+            .font(.system(size: iPadScale.value(18), weight: .semibold, design: .rounded))
+            .foregroundStyle(GeniColor.border)
+            .multilineTextAlignment(.leading)
+
         Text(L.s(.matchThePairs))
             .font(.system(size: iPadScale.value(28), weight: .bold, design: .rounded))
             .foregroundStyle(GeniColor.border)

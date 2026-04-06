@@ -116,6 +116,7 @@ nonisolated enum LocaleKey: String, Sendable {
     case howMany
     case howManyTotal
     case whichHasMore
+    case matchConnectInstruction
     case matchThePairs
     case whatComesNext
     case or
@@ -452,6 +453,7 @@ nonisolated enum L {
         case .howMany: return "How many?"
         case .howManyTotal: return "How many in total?"
         case .whichHasMore: return "Which has more?"
+        case .matchConnectInstruction: return "Draw lines to match the boxes."
         case .matchThePairs: return "Match the pairs"
         case .whatComesNext: return "What comes next?"
         case .or: return "or"
@@ -689,6 +691,7 @@ nonisolated enum L {
         case .howMany: return "Hvor mange?"
         case .howManyTotal: return "Hvor mange til sammen?"
         case .whichHasMore: return "Hvilken har flest?"
+        case .matchConnectInstruction: return "Tegn linjer for \u{00E5} matche boksene."
         case .matchThePairs: return "Koble sammen parene"
         case .whatComesNext: return "Hva kommer neste?"
         case .or: return "eller"
@@ -926,6 +929,7 @@ nonisolated enum L {
         case .howMany: return "¿Cuántos hay?"
         case .howManyTotal: return "¿Cuántos hay en total?"
         case .whichHasMore: return "¿Cuál tiene más?"
+        case .matchConnectInstruction: return "Dibuja líneas para unir las cajas."
         case .matchThePairs: return "Une las parejas"
         case .whatComesNext: return "\u{00BF}Qu\u{00E9} viene despu\u{00E9}s?"
         case .or: return "o"
@@ -1163,6 +1167,7 @@ nonisolated enum L {
         case .howMany: return "Quantos h\u{00E1}?"
         case .howManyTotal: return "Quantos h\u{00E1} ao todo?"
         case .whichHasMore: return "Qual tem mais?"
+        case .matchConnectInstruction: return "Desenha linhas para ligar as caixas."
         case .matchThePairs: return "Liga os pares"
         case .whatComesNext: return "O que vem a seguir?"
         case .or: return "ou"

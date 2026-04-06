@@ -1,3 +1,21 @@
 node_modules
 .env
 .expo
+
+# App Store Connect credentials and artifacts
+.asc/config.json
+.asc/artifacts/
+.asc/release/
+
+# Signing
+ios/profiles/*.mobileprovision
+ios/ExportOptions.plist
+
+# Cloudflare local state
+.wrangler/
+
+# Build artifacts
+build/
+
+# macOS
+.DS_Store

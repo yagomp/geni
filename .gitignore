@@ -22,4 +22,13 @@ build/
 
 # macOS
 .DS_Store
+
+# Temporary files
+tmp_app_info/
+tmp_localizations/
+
+# Node
+package-lock.json
+
+# Misc
 example_exercices/

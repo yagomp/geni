@@ -7,7 +7,9 @@
 
 **A learning app for kids — reading and math, built with privacy first.**
 
-[geni.kids](https://geni.kids) · [![Download on the App Store](https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83)](https://apps.apple.com/app/id6761134405)
+Website: [geni.kids](https://geni.kids) — learn more, see features, and read the blog.
+
+[![Download on the App Store](https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83)](https://apps.apple.com/app/id6761134405)
 
 ---
 

@@ -1,21 +1,32 @@
 # Geni
 
-**A guided reading app for kids — built with privacy first.**
+**A learning app for kids — reading and math, built with privacy first.**
 
 [![Download on the App Store](https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83)](https://apps.apple.com/app/id6761134405)
+[![Latest Release](https://img.shields.io/github/v/release/yagomp/geni?label=latest)](https://github.com/yagomp/geni/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-iOS%2017%2B-blue)](https://apps.apple.com/app/id6761134405)
+[![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-orange)](https://developer.apple.com/xcode/swiftui/)
 
 ---
 
 ## What is Geni?
 
-Geni helps children learn to read through guided reading sessions, comprehension exercises, and a progress map that keeps them motivated. Parents get a dashboard to track progress and manage profiles. The app works entirely on-device — no account required, no data leaves the family's iCloud.
+Geni is a learning app for children that combines guided reading and math practice in a single, fun experience. Kids follow a progress map, complete reading sessions with comprehension exercises, and solve math challenges — all while parents track their progress from a PIN-protected dashboard. The app works entirely on-device — no account required, no data leaves the family's iCloud.
 
 ## Features
 
+### Reading
 - **Guided reading** — age-appropriate texts with word-by-word highlighting and read-aloud support
 - **Speech recognition** — kids read aloud and the app listens for fluency practice
 - **Comprehension exercises** — auto-generated questions after each reading session
-- **Progress map** — visual journey that rewards completing missions
+
+### Math
+- **Math challenges** — exercises covering arithmetic and number sense, adapted to each child's level
+- **Progressive difficulty** — problems get harder as kids improve
+
+### General
+- **Progress map** — visual journey that rewards completing missions across reading and math
 - **Multiple child profiles** — switch between kids with a single tap
 - **iCloud sync** — progress syncs automatically across iPhone and iPad via the family's iCloud account
 - **Parental controls** — PIN-protected parent dashboard with per-child progress tracking

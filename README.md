@@ -1,12 +1,13 @@
 # Geni
 
-**A learning app for kids — reading and math, built with privacy first.**
-
-[![Download on the App Store](https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83)](https://apps.apple.com/app/id6761134405)
 [![Latest Release](https://img.shields.io/github/v/release/yagomp/geni?label=latest)](https://github.com/yagomp/geni/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-iOS%2017%2B-blue)](https://apps.apple.com/app/id6761134405)
 [![SwiftUI](https://img.shields.io/badge/UI-SwiftUI-orange)](https://developer.apple.com/xcode/swiftui/)
+
+**A learning app for kids — reading and math, built with privacy first.**
+
+[![Download on the App Store](https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83)](https://apps.apple.com/app/id6761134405)
 
 ---
 

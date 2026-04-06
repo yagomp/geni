@@ -2,10 +2,13 @@ node_modules
 .env
 .expo
 
-# App Store Connect credentials and artifacts
-.asc/config.json
-.asc/artifacts/
-.asc/release/
+# App Store Connect — entire directory
+.asc/
+
+# Project-specific clutter
+rork.json
+PLAN.md
+geni_icon-iOS-Default-1024x1024@1x.png
 
 # Signing
 ios/profiles/*.mobileprovision

@@ -52,8 +52,8 @@ img{max-width:100%;height:auto;display:block}
 .container{max-width:1120px;margin:0 auto;padding:0 20px}
 
 /* NAV */
-nav{background:var(--bg);border-bottom:0;padding:10px 0;position:sticky;top:0;z-index:10;min-height:var(--nav-height);display:flex;align-items:center}
-nav .container{max-width:1120px;display:flex;align-items:center;justify-content:space-between;width:100%;padding-right:28px;gap:16px}
+nav[aria-label="Main navigation"]{background:var(--bg);border-bottom:0;padding:10px 0;position:sticky;top:0;z-index:10;min-height:var(--nav-height);display:flex;align-items:center}
+nav[aria-label="Main navigation"] .container{max-width:1120px;display:flex;align-items:center;justify-content:space-between;width:100%;padding-right:28px;gap:16px}
 .nav-logo{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 16px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);font-weight:900;font-size:1.05rem;line-height:1;color:#000;text-transform:uppercase;letter-spacing:1px}
 .nav-logo:hover{text-decoration:none}
 .nav-store-desktop{display:inline-flex;align-items:center;opacity:0;pointer-events:none;transform:scale(0.92);transform-origin:center;transition:opacity 0.2s ease,transform 0.2s ease}
@@ -118,8 +118,10 @@ h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;line-height:1.1;letter-spaci
 .cta-box{background:#fff;border:4px solid #000;box-shadow:6px 6px 0 #000;padding:32px;margin:48px 0 0;text-align:center}
 .cta-box h2{color:#000;font-size:1.4rem;margin:0 0 10px}
 .cta-box p{color:#000;font-size:0.95rem;margin-bottom:24px;max-width:none}
-.cta-btn{display:inline-block;background:#000;color:#fff;font-weight:900;font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;padding:14px 28px;border:3px solid #000;transition:opacity 0.2s;text-decoration:none}
-.cta-btn:hover{opacity:0.85;text-decoration:none;color:#fff}
+.app-store-badge{display:inline-block;transition:opacity 0.2s}
+.app-store-badge:hover{opacity:0.85;text-decoration:none}
+.app-store-badge:active{opacity:0.7}
+.app-store-badge img{height:54px;width:auto;display:block}
 .back-link{display:inline-block;margin-top:48px;font-weight:800;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid #000;padding-bottom:2px;text-decoration:none}
 .back-link:hover{text-decoration:none;opacity:0.7}
 
@@ -168,12 +170,12 @@ footer .container{flex-direction:column;text-align:center}
 </div>
 </div>
 <div class="nav-store-desktop" aria-hidden="true">
-<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="nav-store-mobile" tabindex="-1" aria-label="Download on the App Store"><span aria-hidden="true">⬇</span>&nbsp;Download</a>
+<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="nav-store-mobile" tabindex="-1" aria-label="Download on the App Store"><span aria-hidden="true"></span>&nbsp;Download</a>
 </div>
 <button class="nav-menu-btn" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><span aria-hidden="true"></span></button>
 </div>
 <div class="nav-store-mobile-wrap" aria-hidden="true">
-<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="nav-store-mobile" tabindex="-1" aria-label="Download on the App Store"><span aria-hidden="true">⬇</span>&nbsp;Download</a>
+<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="nav-store-mobile" tabindex="-1" aria-label="Download on the App Store"><span aria-hidden="true"></span>&nbsp;Download</a>
 </div>
 <div class="nav-mobile" id="mobileMenu">
 <div class="nav-mobile-inner">
@@ -298,7 +300,9 @@ footer .container{flex-direction:column;text-align:center}
 <div class="cta-box">
 <h2>Try Geni — Free, No Subscription</h2>
 <p>Math and reading for kids ages 5–10. No data collection, no ads, works offline. Free on the App Store.</p>
-<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="cta-btn">Download on the App Store</a>
+<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="app-store-badge">
+<img src="../appstore-badge.svg" alt="Download on the App Store" width="160" height="54" loading="lazy">
+</a>
 </div>
 
 <a href="./" class="back-link">&larr; Back to Blog</a>

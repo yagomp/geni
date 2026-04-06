@@ -1,0 +1,35 @@
+# Geni
+
+> Geni is a fun math and reading learning app for kids aged 5–10, available on iOS. Daily missions, speech recognition for reading aloud, rewards, and PIN-protected parent controls — all 100% offline with zero data collection.
+
+## App
+
+- Platform: iOS (iPhone, iPad)
+- Age range: 5–10 years old
+- Languages: English, Norwegian, Spanish, Portuguese
+- Price: Free to download, no in-app purchases
+- App Store: https://apps.apple.com/app/geni-kids/id6761134405
+
+## Features
+
+- **Math missions**: Daily 20-exercise sessions covering addition, subtraction, multiplication, and division. Difficulty adapts automatically to the child's performance.
+- **Reading adventures**: Three modes — read-to-me, independent reading, and reading aloud with on-device speech recognition feedback.
+- **Rewards system**: Coins, XP, levels, badges, streaks, boss challenges, and time attacks to keep kids motivated.
+- **Parent controls**: PIN-protected parent dashboard for managing profiles, tracking progress, selecting math operations, and adjusting settings.
+- **Offline-first**: The app works completely offline. No servers, no cloud, no network requests during normal use.
+- **Multiple profiles**: Support for multiple child profiles on one device — ideal for families with more than one child.
+
+## Privacy
+
+Geni collects zero personal data. No accounts, no emails, no tracking. All data (profiles, progress, rewards, parent PIN) stays exclusively on the device. Audio from the reading feature is processed on-device by Apple's speech recognition and never transmitted. The app is COPPA-compliant by design.
+
+## Pages
+
+- [Home](https://geni.kids/): Overview of features, age-based curriculum, and download link.
+- [For Parents](https://geni.kids/parents.html): Detailed explanation of privacy, offline design, math adaptation, reading modes, and parent dashboard.
+- [Privacy Policy](https://geni.kids/privacy.html): Full privacy policy confirming zero data collection.
+
+## Contact
+
+- Email: hello@geni.kids
+- Website: https://geni.kids

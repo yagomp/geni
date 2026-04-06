@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geni Blog | Tips for Parents on Kids Learning Apps</title>
+<meta name="description" content="Practical guides and honest advice for parents choosing educational apps for kids ages 5-10. From the team behind Geni.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0433FF">
+<meta property="og:title" content="Geni Blog | Tips for Parents on Kids Learning Apps">
+<meta property="og:description" content="Practical guides and honest advice for parents choosing educational apps for kids ages 5-10.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://geni.kids/icon-mark.png">
+<meta property="og:url" content="https://geni.kids/blog/">
+<link rel="icon" type="image/png" href="../icon-mark.png">
+<link rel="apple-touch-icon" href="../icon-mark.png">
+<link rel="canonical" href="https://geni.kids/blog/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Blog","name":"Geni Blog","description":"Practical guides and honest advice for parents choosing educational apps for kids.","url":"https://geni.kids/blog/","publisher":{"@type":"Organization","name":"Geni App","url":"https://geni.kids","logo":{"@type":"ImageObject","url":"https://geni.kids/icon-mark.png"}}}
+</script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--yellow:#0433FF;--blue:#0066FF;--pink:#FF2E54;--green:#33C75A;
+--bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000;--border:#000000;
+--shadow:6px 6px 0 #000;--shadow-sm:4px 4px 0 #000;
+--nav-height:76px;
+--font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:var(--on-bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:#000;text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:4px solid #000;outline-offset:2px}
+img{max-width:100%;height:auto;display:block}
+.container{max-width:1120px;margin:0 auto;padding:0 20px}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:3px solid #000;height:var(--nav-height);display:flex;align-items:center}
+nav .container{max-width:1120px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 16px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);font-weight:900;font-size:1.1rem;color:#000;text-transform:uppercase;letter-spacing:1px}
+.nav-logo:hover{text-decoration:none}
+.nav-links{display:flex;gap:16px;align-items:center;font-weight:800;font-size:0.9rem}
+.nav-links a{color:var(--on-bg);text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid transparent;padding:6px 0 2px}
+.nav-links a:hover,.nav-links a[aria-current="page"]{border-bottom-color:var(--on-bg);text-decoration:none}
+.nav-menu-btn{display:none;align-items:center;justify-content:center;width:48px;height:48px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);color:#000;cursor:pointer}
+.nav-menu-btn span{display:block;width:18px;height:2px;background:#000;box-shadow:0 -6px 0 #000,0 6px 0 #000}
+.nav-mobile{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;padding:8px 20px 20px;border-top:3px solid #000;box-shadow:0 8px 0 #000}
+.nav-mobile.is-open{display:block}
+.nav-mobile-inner{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.nav-mobile a{display:block;width:100%;padding:14px 0;color:#000;font-weight:900;font-size:0.95rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid rgba(0,0,0,0.15)}
+.nav-mobile a:hover{text-decoration:none;opacity:0.8}
+
+/* BLOG INDEX */
+.blog-header{padding:48px 0 32px}
+.blog-header h1{font-size:clamp(2.4rem,6vw,4rem);font-weight:900;line-height:1;text-transform:uppercase;letter-spacing:-2px;margin-bottom:16px}
+.blog-header p{font-size:1.1rem;max-width:540px;font-weight:600}
+.post-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;padding-bottom:80px}
+.post-card{background:var(--card);border:3px solid #000;box-shadow:var(--shadow);padding:28px;display:flex;flex-direction:column;gap:12px;transition:transform 0.15s ease,box-shadow 0.15s ease}
+.post-card:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 #000;text-decoration:none}
+.post-tag{display:inline-block;background:#000;color:#fff;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:3px 10px}
+.post-card h2{font-size:1.3rem;font-weight:900;line-height:1.2;color:#000}
+.post-card p{font-size:0.95rem;color:#333;line-height:1.5;flex:1}
+.post-meta{font-size:0.8rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:0.5px}
+
+/* FOOTER */
+footer{border-top:3px solid #000;padding:32px 0;background:#fff}
+footer .container{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.footer-brand{display:flex;align-items:center;gap:10px;color:var(--on-bg);font-weight:800;text-decoration:none}
+.footer-brand:hover{text-decoration:none}
+.footer-copy{max-width:620px;font-size:0.92rem;line-height:1.5;color:var(--on-bg)}
+.footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px;justify-content:center}
+
+@media(max-width:760px){
+.nav-links{display:none}
+.nav-menu-btn{display:flex}
+nav{position:relative}
+.post-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav aria-label="Main navigation">
+<div class="container">
+<a href="../" class="nav-logo" aria-label="Geni home" onclick="closeMenu()">GENI</a>
+<div class="nav-links">
+<a href="/#features-heading">Features</a>
+<a href="../parents.html">For Parents</a>
+<a href="../privacy.html">Privacy</a>
+<a href="./" aria-current="page">Blog</a>
+</div>
+<button class="nav-menu-btn" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><span aria-hidden="true"></span></button>
+</div>
+<div class="nav-mobile" id="mobileMenu">
+<div class="nav-mobile-inner">
+<a href="/#features-heading" onclick="closeMenu()">Features</a>
+<a href="../parents.html" onclick="closeMenu()">For Parents</a>
+<a href="../privacy.html" onclick="closeMenu()">Privacy</a>
+<a href="./" onclick="closeMenu()" aria-current="page">Blog</a>
+</div>
+</div>
+</nav>
+
+<main>
+<div class="container">
+
+<header class="blog-header">
+<h1>Geni Blog</h1>
+<p>Practical guides for parents choosing learning apps that are safe, effective, and actually fun for kids.</p>
+</header>
+
+<div class="post-grid">
+<a href="free-learning-apps-kids-no-subscription.html" class="post-card">
+<span class="post-tag">App Guide</span>
+<h2>The Best Free Learning Apps for Kids With No Subscription (2026)</h2>
+<p>Most kids apps lock the good stuff behind a monthly fee. Here's how to spot the ones that are genuinely free — and what to look for beyond price.</p>
+<p class="post-meta">April 6, 2026 &middot; 6 min read</p>
+</a>
+</div>
+
+</div>
+</main>
+
+<footer>
+<div class="container">
+<a href="../" class="footer-brand" aria-label="Geni home">
+<span>&copy; <span id="year"></span> Geni</span>
+</a>
+<p class="footer-copy">Geni is a kids learning app for ages 5-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.</p>
+<div class="footer-links">
+<a href="../">Home</a>
+<a href="../parents.html">For Parents</a>
+<a href="../privacy.html">Privacy</a>
+<a href="./">Blog</a>
+</div>
+</div>
+</footer>
+
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+var menuToggle=document.getElementById('menuToggle');
+var mobileMenu=document.getElementById('mobileMenu');
+function closeMenu(){
+if(!menuToggle||!mobileMenu)return;
+menuToggle.setAttribute('aria-expanded','false');
+mobileMenu.classList.remove('is-open');
+}
+if(menuToggle)menuToggle.addEventListener('click',function(){
+var next=menuToggle.getAttribute('aria-expanded')!=='true';
+menuToggle.setAttribute('aria-expanded',String(next));
+mobileMenu.classList.toggle('is-open',next);
+});
+</script>
+</body>
+</html>

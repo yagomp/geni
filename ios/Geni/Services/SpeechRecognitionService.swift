@@ -106,19 +106,21 @@ class SpeechRecognitionService {
         recognitionRequest = nil
         recognitionTask = nil
         isListening = false
+        recognizedWords = []
+        recognizedText = ""
     }
 
     var misreadIndices: Set<Int> = []
 
-    func matchedWordCount(expected: [String]) -> Int {
+    func matchedWordCount(expected: [String], startFrom: Int = 0) -> Int {
         let cleanExpected = expected.map { normalizedWord($0) }
         let cleanRecognized = recognizedWords.map { normalizedWord($0) }.filter { !$0.isEmpty }
-        var matched = 0
+        var matched = startFrom
         var rIdx = 0
 
         misreadIndices = misreadIndices.filter { $0 < cleanExpected.count }
 
-        for eIdx in 0..<cleanExpected.count {
+        for eIdx in startFrom..<cleanExpected.count {
             guard rIdx < cleanRecognized.count else { break }
 
             let recognized = cleanRecognized[rIdx]

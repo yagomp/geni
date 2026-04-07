@@ -252,7 +252,7 @@ class ReadingViewModel {
             highlightTask = Task {
                 let expectedWords = words.map { $0.text }
                 while !Task.isCancelled && matchedWordCount < words.count {
-                    let count = recognitionService.matchedWordCount(expected: expectedWords)
+                    let count = recognitionService.matchedWordCount(expected: expectedWords, startFrom: matchedWordCount)
                     if count > matchedWordCount {
                         matchedWordCount = count
                         HapticManager.impact(.light)

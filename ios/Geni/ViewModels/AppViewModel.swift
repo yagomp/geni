@@ -246,7 +246,7 @@ class AppViewModel {
             missionMathXP = xpGain
             currentScreen = .missionTransition
         } else {
-            if profile.readingMode == .hidden || profile.readingMode == .optional {
+            if (profile.readingMode == .hidden || profile.readingMode == .optional) && final.chapterType == .daily {
                 rewardState.dailyCompletedAt = Date()
             }
             currentScreen = .chapterComplete

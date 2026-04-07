@@ -61,9 +61,13 @@ img{max-width:100%;height:auto;display:block}
 
 /* NAV - same as landing */
 nav{background:var(--bg);border-bottom:0;padding:10px 0;position:sticky;top:0;z-index:10}
-nav .container{max-width:1120px;display:flex;align-items:center;justify-content:space-between}
+nav .container{max-width:1120px;display:flex;align-items:center;justify-content:space-between;position:relative}
 .nav-logo{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 16px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);font-weight:900;font-size:1.1rem;color:#000;text-transform:uppercase;letter-spacing:1px}
 .nav-logo:hover{text-decoration:none}
+.nav-store-desktop{display:inline-flex;align-items:center;}
+.nav-store-mobile-wrap{display:none}
+.nav-store-mobile{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 12px;background:#fff;border:3px solid #000;border-radius:999px;box-shadow:var(--shadow-sm);font-weight:900;font-size:0.82rem;line-height:1;color:#000;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap}
+.nav-store-mobile:hover{text-decoration:none}
 .nav-links{display:flex;gap:16px;align-items:center;font-weight:800;font-size:0.9rem}
 .nav-links a{color:var(--on-bg);text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid transparent;padding:6px 0 2px}
 .nav-links a:hover{border-bottom-color:var(--on-bg);text-decoration:none}
@@ -115,7 +119,7 @@ footer a:hover{color:#FFE566}
 .footer-copy{max-width:620px;font-size:0.92rem;line-height:1.5;color:var(--on-bg)}
 .footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px;justify-content:center;text-align:center}
 
-@media(max-width:600px){.info-card{padding:20px 16px}footer .container{flex-direction:column;text-align:center}.footer-brand,.footer-copy,.footer-links{width:100%;justify-content:center;text-align:center}.footer-links{flex-wrap:wrap;gap:12px 20px}.nav-menu-btn{display:inline-flex}.nav-links{display:none}.nav-mobile{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;padding:8px 20px 20px;border-top:3px solid #000;box-shadow:0 8px 0 #000}.nav-mobile.is-open{display:block}.nav-mobile-inner{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:8px}.nav-mobile a,.nav-mobile button{display:block;width:100%;padding:14px 0;color:#000;font-weight:900;font-size:0.95rem;text-align:left;text-transform:uppercase;letter-spacing:0.5px;background:none;border:none;border-bottom:1px solid rgba(0,0,0,0.15);font-family:var(--font)}.nav-mobile a:hover,.nav-mobile button:hover{text-decoration:none;opacity:0.8}.theme-picker-mobile{padding:10px 0 4px}}
+@media(max-width:600px){.info-card{padding:20px 16px}footer .container{flex-direction:column;text-align:center}.footer-brand,.footer-copy,.footer-links{width:100%;justify-content:center;text-align:center}.footer-links{flex-wrap:wrap;gap:12px 20px}.nav-menu-btn{display:inline-flex}.nav-links{display:none}.nav-mobile{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;padding:8px 20px 20px;border-top:3px solid #000;box-shadow:0 8px 0 #000}.nav-mobile.is-open{display:block}.nav-mobile-inner{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:8px}.nav-mobile a,.nav-mobile button{display:block;width:100%;padding:14px 0;color:#000;font-weight:900;font-size:0.95rem;text-align:left;text-transform:uppercase;letter-spacing:0.5px;background:none;border:none;border-bottom:1px solid rgba(0,0,0,0.15);font-family:var(--font)}.nav-mobile a:hover,.nav-mobile button:hover{text-decoration:none;opacity:0.8}.theme-picker-mobile{padding:10px 0 4px}.nav-store-desktop{display:none}.nav-store-mobile-wrap{display:inline-flex;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);}}
 </style>
 </head>
 <body>
@@ -125,6 +129,8 @@ footer a:hover{color:#FFE566}
 <a href="/#top" class="nav-logo" aria-label="Geni home" onclick="closeMenu()">GENI</a>
 <div class="nav-links">
 <a href="/#features-heading" data-i18n="nav_features">Features</a>
+<a href="math.html" data-i18n="nav_math">Math</a>
+<a href="reading.html" data-i18n="nav_reading">Reading</a>
 <a href="parents.html" data-i18n="nav_parents">For Parents</a>
 <a href="privacy.html" data-i18n="nav_privacy">Privacy</a>
 <a href="blog/">Blog</a>
@@ -145,11 +151,19 @@ footer a:hover{color:#FFE566}
 </div></div>
 </div>
 </div>
+<div class="nav-store-desktop" aria-hidden="true">
+<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="nav-store-mobile" tabindex="-1" aria-label="Download on the App Store"><span aria-hidden="true"></span>&nbsp;Download</a>
+</div>
 <button class="nav-menu-btn" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><span aria-hidden="true"></span></button>
+</div>
+<div class="nav-store-mobile-wrap" aria-hidden="true">
+<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="nav-store-mobile" tabindex="-1" aria-label="Download on the App Store"><span aria-hidden="true"></span>&nbsp;Download</a>
 </div>
 <div class="nav-mobile" id="mobileMenu">
 <div class="nav-mobile-inner">
 <a href="/#features-heading" data-i18n="nav_features" onclick="closeMenu()">Features</a>
+<a href="math.html" data-i18n="nav_math" onclick="closeMenu()">Math</a>
+<a href="reading.html" data-i18n="nav_reading" onclick="closeMenu()">Reading</a>
 <a href="parents.html" data-i18n="nav_parents" onclick="closeMenu()">For Parents</a>
 <a href="privacy.html" data-i18n="nav_privacy" onclick="closeMenu()">Privacy</a>
 <a href="blog/" onclick="closeMenu()">Blog</a>
@@ -461,10 +475,10 @@ var els=document.querySelectorAll('[data-i18n]');
 for(var i=0;i<els.length;i++){
 var k=els[i].getAttribute('data-i18n');
 var t={
-en:{nav_features:'Features',nav_parents:'For Parents',nav_privacy:'Privacy',theme_label:'Theme',theme_standard:'Standard',theme_ocean:'Ocean',theme_blossom:'Blossom',footer_copy:'Geni is a kids learning app for ages 5-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.',footer_home:'Home',footer_parents:'For Parents',footer_privacy:'Privacy'},
-nb:{nav_features:'Funksjoner',nav_parents:'For foreldre',nav_privacy:'Personvern',theme_label:'Tema',theme_standard:'Standard',theme_ocean:'Hav',theme_blossom:'Blomst',footer_copy:'Geni er en læringsapp for barn 5-10 år med matteøving, valgfri lesing, offline bruk, foreldrekontroll og ingen reklame eller sporing.',footer_home:'Hjem',footer_parents:'For foreldre',footer_privacy:'Personvern'},
-es:{nav_features:'Funciones',nav_parents:'Para padres',nav_privacy:'Privacidad',theme_label:'Tema',theme_standard:'Estándar',theme_ocean:'Océano',theme_blossom:'Floración',footer_copy:'Geni es una app educativa para niños de 5 a 10 años con matemáticas, lectura opcional, juego sin conexión, controles parentales y sin anuncios ni rastreo.',footer_home:'Inicio',footer_parents:'Para padres',footer_privacy:'Privacidad'},
-pt:{nav_features:'Recursos',nav_parents:'Para pais',nav_privacy:'Privacidade',theme_label:'Tema',theme_standard:'Padrão',theme_ocean:'Oceano',theme_blossom:'Florescer',footer_copy:'Geni é um app educativo para crianças de 5 a 10 anos com matemática, leitura opcional, uso offline, controles parentais e sem anúncios nem rastreamento.',footer_home:'Início',footer_parents:'Para pais',footer_privacy:'Privacidade'}
+en:{nav_features:'Features',nav_math:'Math',nav_reading:'Reading',nav_parents:'For Parents',nav_privacy:'Privacy',theme_label:'Theme',theme_standard:'Standard',theme_ocean:'Ocean',theme_blossom:'Blossom',footer_copy:'Geni is a kids learning app for ages 5-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.',footer_home:'Home',footer_parents:'For Parents',footer_privacy:'Privacy'},
+nb:{nav_features:'Funksjoner',nav_math:'Matte',nav_reading:'Lesing',nav_parents:'For foreldre',nav_privacy:'Personvern',theme_label:'Tema',theme_standard:'Standard',theme_ocean:'Hav',theme_blossom:'Blomst',footer_copy:'Geni er en læringsapp for barn 5-10 år med matteøving, valgfri lesing, offline bruk, foreldrekontroll og ingen reklame eller sporing.',footer_home:'Hjem',footer_parents:'For foreldre',footer_privacy:'Personvern'},
+es:{nav_features:'Funciones',nav_math:'Matem\u00E1ticas',nav_reading:'Lectura',nav_parents:'Para padres',nav_privacy:'Privacidad',theme_label:'Tema',theme_standard:'Estándar',theme_ocean:'Océano',theme_blossom:'Floración',footer_copy:'Geni es una app educativa para niños de 5 a 10 años con matemáticas, lectura opcional, juego sin conexión, controles parentales y sin anuncios ni rastreo.',footer_home:'Inicio',footer_parents:'Para padres',footer_privacy:'Privacidad'},
+pt:{nav_features:'Recursos',nav_math:'Matem\u00E1tica',nav_reading:'Leitura',nav_parents:'Para pais',nav_privacy:'Privacidade',theme_label:'Tema',theme_standard:'Padrão',theme_ocean:'Oceano',theme_blossom:'Florescer',footer_copy:'Geni é um app educativo para crianças de 5 a 10 anos com matemática, leitura opcional, uso offline, controles parentais e sem anúncios nem rastreamento.',footer_home:'Início',footer_parents:'Para pais',footer_privacy:'Privacidade'}
 }[lang];
 if(t[k])els[i].textContent=t[k];
 }

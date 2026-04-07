@@ -37,7 +37,6 @@
 --purple:#B052DE;--orange:#FF9400;--cyan:#66D9F2;--peach:#F5D1B8;
 --bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000;--border:#000000;--gray:#E6E6E6;
 --shadow:6px 6px 0 #000;--shadow-sm:4px 4px 0 #000;
---nav-height:76px;
 --font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;
 }
 body[data-theme="standard"]{--bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000}
@@ -50,43 +49,6 @@ a:hover{text-decoration:underline}
 a:focus-visible,button:focus-visible{outline:4px solid #000;outline-offset:2px}
 img{max-width:100%;height:auto;display:block}
 .container{max-width:1120px;margin:0 auto;padding:0 20px}
-
-/* NAV */
-nav[aria-label="Main navigation"]{background:var(--bg);border-bottom:0;padding:10px 0;position:sticky;top:0;z-index:10;min-height:var(--nav-height);display:flex;align-items:center}
-nav[aria-label="Main navigation"] .container{max-width:1120px;display:flex;align-items:center;justify-content:space-between;width:100%;padding-right:28px;gap:16px}
-.nav-logo{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 16px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);font-weight:900;font-size:1.05rem;line-height:1;color:#000;text-transform:uppercase;letter-spacing:1px}
-.nav-logo:hover{text-decoration:none}
-.nav-store-desktop{display:inline-flex;align-items:center;opacity:0;pointer-events:none;transform:scale(0.92);transform-origin:center;transition:opacity 0.2s ease,transform 0.2s ease}
-.nav-store-mobile-wrap{display:none}
-.nav-store-mobile{display:inline-flex;align-items:center;justify-content:center;height:48px;padding:0 12px;background:#fff;border:3px solid #000;border-radius:999px;box-shadow:var(--shadow-sm);font-weight:900;font-size:0.82rem;line-height:1;color:#000;text-transform:uppercase;letter-spacing:0.5px;white-space:nowrap}
-.nav-store-mobile:hover{text-decoration:none}
-nav.is-store-visible .nav-store-desktop{opacity:1;pointer-events:auto;transform:scale(1)}
-.nav-links{display:flex;gap:16px;align-items:center;font-weight:800;font-size:0.9rem;margin-left:auto}
-.nav-links a{color:var(--on-bg);text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid transparent;padding:6px 0 2px}
-.nav-links a:hover,.nav-links a[aria-current="page"]{border-bottom-color:var(--on-bg);text-decoration:none}
-.nav-menu-btn{display:none;align-items:center;justify-content:center;width:48px;height:48px;background:#fff;border:3px solid #000;box-shadow:var(--shadow-sm);color:#000;cursor:pointer}
-.nav-menu-btn span{display:block;width:18px;height:2px;background:#000;box-shadow:0 -6px 0 #000,0 6px 0 #000}
-.lang-dropdown{position:relative}
-.lang-btn{background:none;border:none;border-bottom:3px solid transparent;padding:6px 4px 2px;font-weight:900;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-transform:uppercase;letter-spacing:0.5px;color:var(--on-bg)}
-.lang-btn:hover{opacity:0.7}
-.lang-menu{display:none;position:absolute;right:0;top:100%;padding-top:4px;min-width:168px;z-index:20}
-.lang-menu-inner{background:var(--card);border:3px solid var(--border);box-shadow:var(--shadow-sm)}
-.lang-dropdown:hover .lang-menu{display:block}
-.lang-menu button{display:block;width:100%;background:none;border:none;padding:8px 12px;font-weight:800;font-size:0.85rem;cursor:pointer;font-family:var(--font);text-align:left;color:#000;white-space:nowrap}
-.lang-menu button:hover{background:var(--bg)}
-.theme-picker{display:flex;align-items:center;gap:8px}
-.theme-options{display:flex;align-items:center;gap:8px}
-.theme-dot{width:18px;height:18px;border-radius:999px;border:3px solid #000;box-shadow:1px 1px 0 #000;cursor:pointer}
-.theme-dot[data-theme="standard"]{background:#FFF7E0}
-.theme-dot[data-theme="ocean"]{background:#E6F2FF}
-.theme-dot[data-theme="blossom"]{background:#FFEDEF}
-.theme-dot.is-active{outline:3px solid var(--accent);outline-offset:2px}
-.nav-mobile{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;padding:8px 20px 20px;border-top:3px solid #000;box-shadow:0 8px 0 #000}
-.nav-mobile.is-open{display:block}
-.nav-mobile-inner{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
-.nav-mobile a,.nav-mobile button{display:block;width:100%;padding:14px 0;color:#000;font-weight:900;font-size:0.95rem;text-align:left;text-transform:uppercase;letter-spacing:0.5px;background:none;border:none;border-bottom:1px solid rgba(0,0,0,0.15);font-family:var(--font)}
-.nav-mobile a:hover,.nav-mobile button:hover{text-decoration:none;opacity:0.8}
-.theme-picker-mobile{padding:10px 0 4px}
 
 /* FOOTER */
 footer{background:var(--bg);color:var(--on-bg);padding:20px 0;font-size:0.85rem;border-top:4px solid #000}
@@ -125,82 +87,19 @@ h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;line-height:1.1;letter-spaci
 .back-link{display:inline-block;margin-top:48px;font-weight:800;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.5px;border-bottom:3px solid #000;padding-bottom:2px;text-decoration:none}
 .back-link:hover{text-decoration:none;opacity:0.7}
 
-@media(max-width:1024px){
-.nav-menu-btn{display:inline-flex}
-.nav-links{display:none}
-.nav-store-desktop{display:none}
-.nav-store-mobile-wrap{display:inline-flex;position:absolute;left:50%;top:50%;opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(0.92);transform-origin:center;transition:opacity 0.2s ease,transform 0.2s ease}
-nav.is-store-visible .nav-store-mobile-wrap{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
-}
 @media(max-width:600px){
-:root{--nav-height:74px}
+
 footer .container{flex-direction:column;text-align:center}
 .footer-brand,.footer-copy,.footer-links{width:100%;justify-content:center;text-align:center}
 .footer-links{flex-wrap:wrap;gap:12px 20px}
-.theme-dot{box-shadow:2px 2px 0 #000}
+
 .article-wrap{padding:32px 20px 60px}
 }
 </style>
 </head>
 <body>
 
-<nav aria-label="Main navigation" class="is-store-visible">
-<div class="container">
-<a href="../" class="nav-logo" aria-label="Geni home" onclick="closeMenu()">GENI</a>
-<div class="nav-links">
-<a href="../#features-heading">Features</a>
-<a href="../math.html">Math</a>
-<a href="../reading.html">Reading</a>
-<a href="../parents.html">For Parents</a>
-<a href="../privacy.html">Privacy</a>
-<a href="./" aria-current="page">Blog</a>
-<div class="theme-picker" aria-label="Theme selector">
-<div class="theme-options">
-<button class="theme-dot" type="button" data-theme="standard" aria-label="Standard theme"></button>
-<button class="theme-dot" type="button" data-theme="ocean" aria-label="Ocean theme"></button>
-<button class="theme-dot" type="button" data-theme="blossom" aria-label="Blossom theme"></button>
-</div>
-</div>
-<div class="lang-dropdown">
-<button class="lang-btn" id="langBtn" type="button"><span aria-hidden="true">🇬🇧</span> EN</button>
-<div class="lang-menu" id="langMenu"><div class="lang-menu-inner">
-<button onclick="applyLang('en')"><span aria-hidden="true">🇬🇧</span> English</button>
-<button onclick="applyLang('nb')"><span aria-hidden="true">🇳🇴</span> Norsk</button>
-<button onclick="applyLang('es')"><span aria-hidden="true">🇪🇸</span> Espa&ntilde;ol</button>
-<button onclick="applyLang('pt')"><span aria-hidden="true">🇵🇹</span> Portugu&ecirc;s</button>
-</div></div>
-</div>
-</div>
-<div class="nav-store-desktop" aria-hidden="true">
-<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="nav-store-mobile" tabindex="-1" aria-label="Download on the App Store"><span aria-hidden="true"></span>&nbsp;Download</a>
-</div>
-<button class="nav-menu-btn" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><span aria-hidden="true"></span></button>
-</div>
-<div class="nav-store-mobile-wrap" aria-hidden="true">
-<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="nav-store-mobile" tabindex="-1" aria-label="Download on the App Store"><span aria-hidden="true"></span>&nbsp;Download</a>
-</div>
-<div class="nav-mobile" id="mobileMenu">
-<div class="nav-mobile-inner">
-<a href="../#features-heading" onclick="closeMenu()">Features</a>
-<a href="../math.html" onclick="closeMenu()">Math</a>
-<a href="../reading.html" onclick="closeMenu()">Reading</a>
-<a href="../parents.html" onclick="closeMenu()">For Parents</a>
-<a href="../privacy.html" onclick="closeMenu()">Privacy</a>
-<a href="./" onclick="closeMenu()" aria-current="page">Blog</a>
-<button type="button" onclick="applyLang('en')"><span aria-hidden="true">🇬🇧</span> English</button>
-<button type="button" onclick="applyLang('nb')"><span aria-hidden="true">🇳🇴</span> Norsk</button>
-<button type="button" onclick="applyLang('es')"><span aria-hidden="true">🇪🇸</span> Espa&ntilde;ol</button>
-<button type="button" onclick="applyLang('pt')"><span aria-hidden="true">🇵🇹</span> Portugu&ecirc;s</button>
-<div class="theme-picker-mobile">
-<div class="theme-options">
-<button class="theme-dot" type="button" data-theme="standard" aria-label="Standard theme"></button>
-<button class="theme-dot" type="button" data-theme="ocean" aria-label="Ocean theme"></button>
-<button class="theme-dot" type="button" data-theme="blossom" aria-label="Blossom theme"></button>
-</div>
-</div>
-</div>
-</div>
-</nav>
+<script src="../nav.js"></script>
 
 <main>
 <article class="article-wrap">
@@ -332,37 +231,7 @@ footer .container{flex-direction:column;text-align:center}
 
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
-var menuToggle=document.getElementById('menuToggle');
-var mobileMenu=document.getElementById('mobileMenu');
-var themeButtons=document.querySelectorAll('.theme-dot');
-var themeColorMeta=document.querySelector('meta[name="theme-color"]');
-function closeMenu(){
-if(!menuToggle||!mobileMenu)return;
-menuToggle.setAttribute('aria-expanded','false');
-mobileMenu.classList.remove('is-open');
-}
-function toggleMenu(){
-if(!menuToggle||!mobileMenu)return;
-var next=menuToggle.getAttribute('aria-expanded')!=='true';
-menuToggle.setAttribute('aria-expanded',String(next));
-mobileMenu.classList.toggle('is-open',next);
-}
-if(menuToggle)menuToggle.addEventListener('click',toggleMenu);
-function applyTheme(theme){
-var value=(theme==='ocean'||theme==='blossom')?theme:'standard';
-document.body.setAttribute('data-theme',value);
-for(var i=0;i<themeButtons.length;i++){
-themeButtons[i].classList.toggle('is-active',themeButtons[i].getAttribute('data-theme')===value);
-}
-if(themeColorMeta){
-themeColorMeta.setAttribute('content',value==='ocean'?'#E6F2FF':value==='blossom'?'#FFEDEF':'#FFF7E0');
-}
-try{localStorage.setItem('geni_theme',value)}catch(e){}
-}
-for(var i=0;i<themeButtons.length;i++){
-themeButtons[i].addEventListener('click',function(){applyTheme(this.getAttribute('data-theme'));});
-}
-try{applyTheme(localStorage.getItem('geni_theme')||'standard')}catch(e){applyTheme('standard')}
+
 var langFlags={en:'🇬🇧',nb:'🇳🇴',es:'🇪🇸',pt:'🇵🇹'};
 var langCodes={en:'EN',nb:'NO',es:'ES',pt:'PT'};
 function normalizeLang(v){if(!v)return'en';if(v.indexOf('nb')===0||v.indexOf('nn')===0||v.indexOf('no')===0)return'nb';if(v.indexOf('es')===0)return'es';if(v.indexOf('pt')===0)return'pt';return'en';}

@@ -149,6 +149,13 @@ class SpeechRecognitionService {
                 // We only mark red when recognition has clearly moved past this word.
                 misreadIndices.insert(eIdx)
                 matched = eIdx + 1
+            } else if rIdx + 1 < cleanRecognized.count,
+                      eIdx + 1 < cleanExpected.count,
+                      isAcceptedMatch(cleanRecognized[rIdx + 1], cleanExpected[eIdx + 1]) {
+                // Child mispronounced this word and moved on to the next expected word.
+                misreadIndices.insert(eIdx)
+                matched = eIdx + 1
+                rIdx += 1
             } else {
                 break
             }

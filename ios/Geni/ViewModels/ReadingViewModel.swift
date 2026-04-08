@@ -251,12 +251,33 @@ class ReadingViewModel {
 
             highlightTask = Task {
                 let expectedWords = words.map { $0.text }
+                var attemptsWhileStuck = 0
+                var wasRecognizingWords = false
                 while !Task.isCancelled && matchedWordCount < words.count {
+                    let wordsNonEmpty = !recognitionService.recognizedWords.isEmpty
+                    // Detect session end: went non-empty → empty means child spoke and session closed
+                    if wasRecognizingWords && !wordsNonEmpty {
+                        attemptsWhileStuck += 1
+                    }
+                    wasRecognizingWords = wordsNonEmpty
+
                     let count = recognitionService.matchedWordCount(expected: expectedWords, startFrom: matchedWordCount)
                     if count > matchedWordCount {
                         matchedWordCount = count
+                        attemptsWhileStuck = 0
+                        wasRecognizingWords = false
                         HapticManager.impact(.light)
                     }
+
+                    // After 2 failed attempts on the same word, mark it red and advance
+                    if attemptsWhileStuck >= 2 {
+                        recognitionService.misreadIndices.insert(matchedWordCount)
+                        matchedWordCount += 1
+                        attemptsWhileStuck = 0
+                        wasRecognizingWords = false
+                        HapticManager.impact(.light)
+                    }
+
                     try? await Task.sleep(for: .milliseconds(200))
                 }
 

@@ -51,95 +51,87 @@ struct ChildHomeView: View {
     }
 
     private func headerSection(profile: ChildProfile?, avatar: AvatarOption, rewards: RewardState) -> some View {
-        HStack(alignment: .top, spacing: 16) {
-            // Active profile on the left
+        HStack(alignment: .top, spacing: 12) {
+            // Emoji box — tappable only in single-profile mode
+            let emojiBox = Text(avatar.emoji)
+                .font(.system(size: 38))
+                .frame(width: 68, height: 68)
+                .background(.white)
+                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+
             if hasMultipleProfiles {
-                activeProfileLabel(avatar: avatar, profile: profile, rewards: rewards)
+                emojiBox
             } else {
                 Button {
                     HapticManager.selection()
                     showAvatarPicker = true
                 } label: {
-                    activeProfileLabel(avatar: avatar, profile: profile, rewards: rewards)
+                    emojiBox
                 }
             }
 
-            // Sibling avatars with extra spacing from the active profile
-            if hasMultipleProfiles {
-                HStack(spacing: 10) {
-                    ForEach(viewModel.persistence.profiles.filter { $0.id != viewModel.persistence.activeProfileId }) { p in
-                        let pAvatar = AvatarOption.find(p.avatarId)
-                        Button {
-                            HapticManager.impact(.medium)
-                            viewModel.selectProfile(p)
-                        } label: {
-                            VStack(spacing: 4) {
-                                Text(pAvatar.emoji)
-                                    .font(.system(size: 20))
-                                    .frame(width: 42, height: 42)
-                                    .background(.white)
-                                    .overlay(
-                                        Rectangle()
-                                            .stroke(GeniColor.border, lineWidth: 2)
-                                    )
-                                    .background(
-                                        Rectangle()
-                                            .fill(GeniColor.border)
-                                            .offset(x: 2, y: 2)
-                                    )
+            // Name + level + siblings + settings all in one row, top-aligned
+            HStack(alignment: .top, spacing: 0) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(profile?.nickname ?? "")
+                        .font(.system(.title2, design: .rounded, weight: .black))
+                        .foregroundStyle(GeniColor.border)
 
-                                Text(p.nickname)
-                                    .font(.system(.caption2, design: .rounded, weight: .bold))
-                                    .foregroundStyle(GeniColor.border)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-                                    .frame(width: 42)
+                    Text("\(L.s(.level)) \(rewards.level)")
+                        .font(.system(.subheadline, design: .rounded, weight: .bold))
+                        .foregroundStyle(.black)
+                }
+
+                Spacer()
+
+                // Siblings — wide gap from name, tight spacing between each other
+                if hasMultipleProfiles {
+                    HStack(spacing: 10) {
+                        ForEach(viewModel.persistence.profiles.filter { $0.id != viewModel.persistence.activeProfileId }) { p in
+                            let pAvatar = AvatarOption.find(p.avatarId)
+                            Button {
+                                HapticManager.impact(.medium)
+                                viewModel.selectProfile(p)
+                            } label: {
+                                VStack(spacing: 4) {
+                                    Text(pAvatar.emoji)
+                                        .font(.system(size: 20))
+                                        .frame(width: 42, height: 42)
+                                        .background(.white)
+                                        .overlay(
+                                            Rectangle()
+                                                .stroke(GeniColor.border, lineWidth: 2)
+                                        )
+                                        .background(
+                                            Rectangle()
+                                                .fill(GeniColor.border)
+                                                .offset(x: 2, y: 2)
+                                        )
+
+                                    Text(p.nickname)
+                                        .font(.system(.caption2, design: .rounded, weight: .bold))
+                                        .foregroundStyle(GeniColor.border)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.7)
+                                        .frame(width: 42)
+                                }
                             }
                         }
                     }
+                    .padding(.trailing, 12)
                 }
-                .padding(.leading, 12)
-            }
 
-            Spacer()
-
-            // Settings icon — aligned to the top of the sibling boxes
-            Button {
-                HapticManager.selection()
-                viewModel.showParentSettings = true
-            } label: {
-                Text("⚙️")
-                    .font(.system(size: 30))
-                    .frame(width: 42, height: 42)
-                    .zoomSource(id: "settings", in: settingsNamespace)
-            }
-        }
-    }
-
-    private func activeProfileLabel(avatar: AvatarOption, profile: ChildProfile?, rewards: RewardState) -> some View {
-        HStack(spacing: 12) {
-            Text(avatar.emoji)
-                .font(.system(size: 38))
-                .frame(width: 68, height: 68)
-                .background(.white)
-                .overlay(
-                    Rectangle()
-                        .stroke(GeniColor.border, lineWidth: 3)
-                )
-                .background(
-                    Rectangle()
-                        .fill(GeniColor.border)
-                        .offset(x: 3, y: 3)
-                )
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(profile?.nickname ?? "")
-                    .font(.system(.title2, design: .rounded, weight: .black))
-                    .foregroundStyle(GeniColor.border)
-
-                Text("\(L.s(.level)) \(rewards.level)")
-                    .font(.system(.subheadline, design: .rounded, weight: .bold))
-                    .foregroundStyle(.black)
+                // Settings — same row, same top alignment as text and siblings
+                Button {
+                    HapticManager.selection()
+                    viewModel.showParentSettings = true
+                } label: {
+                    Text("⚙️")
+                        .font(.system(size: 30))
+                        .frame(width: 42, height: 42)
+                        .zoomSource(id: "settings", in: settingsNamespace)
+                }
             }
         }
     }

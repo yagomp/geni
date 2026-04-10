@@ -147,19 +147,22 @@
     else document.addEventListener('DOMContentLoaded', fn);
   }
 
+  // Define closeMenu immediately so applyLang() can call it safely during
+  // initial page load (before DOMContentLoaded fires).
+  window.closeMenu = function () {
+    var t = document.getElementById('menuToggle');
+    var m = document.getElementById('mobileMenu');
+    if (!t || !m) return;
+    t.setAttribute('aria-expanded', 'false');
+    m.classList.remove('is-open');
+  };
+
   onReady(function () {
     var nav         = document.querySelector('nav[aria-label="Main navigation"]');
     var menuToggle  = document.getElementById('menuToggle');
     var mobileMenu  = document.getElementById('mobileMenu');
     var themeBtns   = document.querySelectorAll('.theme-dot');
     var themeColor  = document.querySelector('meta[name="theme-color"]');
-
-    // Mobile menu
-    window.closeMenu = function () {
-      if (!menuToggle || !mobileMenu) return;
-      menuToggle.setAttribute('aria-expanded', 'false');
-      mobileMenu.classList.remove('is-open');
-    };
     if (menuToggle) {
       menuToggle.addEventListener('click', function () {
         var open = menuToggle.getAttribute('aria-expanded') !== 'true';

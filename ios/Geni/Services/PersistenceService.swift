@@ -85,6 +85,15 @@ class PersistenceService {
         savePinToKeychain(pin)
     }
 
+    func clearPin() {
+        parentPin = nil
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: pinKeychainKey
+        ]
+        SecItemDelete(query as CFDictionary)
+    }
+
     func verifyPin(_ pin: String) -> Bool {
         parentPin == pin
     }

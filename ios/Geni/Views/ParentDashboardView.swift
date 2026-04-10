@@ -12,6 +12,7 @@ struct ParentDashboardView: View {
     @State private var editingProfile: ChildProfile? = nil
     @State private var newPin = ""
     @State private var showSetPin = false
+    @State private var showDisablePin = false
     @State private var selectedLanguage: AppLanguage = L.selectedLanguage
     @State private var languageManager = LanguageManager.shared
     @State private var showContactSheet = false
@@ -736,11 +737,44 @@ struct ParentDashboardView: View {
                 .padding(12)
                 .brutalistCard(color: GeniColor.card, borderWidth: 3)
             }
+
+            if pinSet {
+                Button {
+                    HapticManager.selection()
+                    showDisablePin = true
+                } label: {
+                    HStack(spacing: 0) {
+                        Text("🔓")
+                            .font(.system(size: 22))
+                            .frame(width: 40)
+
+                        Text(L.s(.disablePin))
+                            .font(.system(.body, design: .rounded, weight: .semibold))
+                            .foregroundStyle(.red)
+
+                        Spacer()
+
+                        Text("›")
+                            .font(.system(.title3, design: .rounded, weight: .bold))
+                            .foregroundStyle(.red)
+                    }
+                    .padding(12)
+                    .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                }
+            }
         }
         .sheet(isPresented: $showSetPin) {
             SetPinView { pin in
                 viewModel.persistence.setPin(pin)
                 showSetPin = false
+            }
+        }
+        .sheet(isPresented: $showDisablePin) {
+            if let currentPin = viewModel.persistence.parentPin {
+                DisablePinView(currentPin: currentPin) {
+                    viewModel.persistence.clearPin()
+                    showDisablePin = false
+                }
             }
         }
     }
@@ -842,6 +876,9 @@ struct SafariView: UIViewControllerRepresentable {
 struct SetPinView: View {
     let onSet: (String) -> Void
     @State private var pin = ""
+    @State private var firstPin = ""
+    @State private var confirming = false
+    @State private var showMismatch = false
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -850,9 +887,15 @@ struct SetPinView: View {
                 GeniColor.lightYellow.ignoresSafeArea()
 
                 VStack(spacing: 24) {
-                    Text(L.s(.setPin))
+                    Text(confirming ? L.s(.confirmPin) : L.s(.setPin))
                         .font(.system(.title, design: .rounded, weight: .black))
                         .foregroundStyle(.black)
+
+                    if showMismatch {
+                        Text(L.s(.pinMismatch))
+                            .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                            .foregroundStyle(.red)
+                    }
 
                     HStack(spacing: 16) {
                         ForEach(0..<4, id: \.self) { i in
@@ -900,8 +943,21 @@ struct SetPinView: View {
                                 } else if pin.count < 4 {
                                     pin += key
                                     if pin.count == 4 {
-                                        HapticManager.notification(.success)
-                                        onSet(pin)
+                                        if !confirming {
+                                            firstPin = pin
+                                            pin = ""
+                                            confirming = true
+                                            showMismatch = false
+                                        } else if pin == firstPin {
+                                            HapticManager.notification(.success)
+                                            onSet(pin)
+                                        } else {
+                                            HapticManager.notification(.error)
+                                            pin = ""
+                                            firstPin = ""
+                                            confirming = false
+                                            showMismatch = true
+                                        }
                                     }
                                 }
                             } label: {
@@ -923,6 +979,104 @@ struct SetPinView: View {
                                         .fill(GeniColor.border)
                                         .offset(x: 3, y: 3)
                                 )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct DisablePinView: View {
+    let currentPin: String
+    let onDisable: () -> Void
+    @State private var pin = ""
+    @State private var showError = false
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                GeniColor.lightYellow.ignoresSafeArea()
+
+                VStack(spacing: 24) {
+                    Text(L.s(.disablePin))
+                        .font(.system(.title, design: .rounded, weight: .black))
+                        .foregroundStyle(.black)
+
+                    if showError {
+                        Text(L.s(.wrongPin))
+                            .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                            .foregroundStyle(.red)
+                    }
+
+                    HStack(spacing: 16) {
+                        ForEach(0..<4, id: \.self) { i in
+                            Rectangle()
+                                .fill(i < pin.count ? GeniColor.blue : Color.gray.opacity(0.2))
+                                .frame(width: 20, height: 20)
+                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                        }
+                    }
+
+                    pinPadView
+                }
+                .padding(24)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(L.s(.cancel)) { dismiss() }
+                }
+            }
+        }
+    }
+
+    private var pinPadView: some View {
+        let numbers = [
+            ["1", "2", "3"],
+            ["4", "5", "6"],
+            ["7", "8", "9"],
+            ["", "0", "DEL"]
+        ]
+        return VStack(spacing: 12) {
+            ForEach(numbers, id: \.description) { row in
+                HStack(spacing: 12) {
+                    ForEach(row, id: \.self) { key in
+                        if key.isEmpty {
+                            Color.clear.frame(width: 72, height: 52)
+                        } else {
+                            Button {
+                                HapticManager.selection()
+                                if key == "DEL" {
+                                    if !pin.isEmpty { pin.removeLast() }
+                                    showError = false
+                                } else if pin.count < 4 {
+                                    pin += key
+                                    if pin.count == 4 {
+                                        if pin == currentPin {
+                                            HapticManager.notification(.success)
+                                            onDisable()
+                                        } else {
+                                            HapticManager.notification(.error)
+                                            pin = ""
+                                            showError = true
+                                        }
+                                    }
+                                }
+                            } label: {
+                                Group {
+                                    if key == "DEL" {
+                                        Text("⌫").font(.system(.title3, design: .rounded, weight: .bold))
+                                    } else {
+                                        Text(key).font(.system(.title2, design: .rounded, weight: .bold))
+                                    }
+                                }
+                                .foregroundStyle(GeniColor.border)
+                                .frame(width: 72, height: 52)
+                                .background(GeniColor.card)
+                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                                .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
                             }
                         }
                     }

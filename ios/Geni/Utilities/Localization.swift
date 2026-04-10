@@ -83,6 +83,9 @@ nonisolated enum LocaleKey: String, Sendable {
     case pin
     case pinDescription
     case pinRequired
+    case confirmPin
+    case pinMismatch
+    case disablePin
     case wrongPin
     case badgeFirstChapter
     case badgeFirstChapterDesc
@@ -422,6 +425,9 @@ nonisolated enum L {
         case .pin: return "PIN"
         case .pinDescription: return "Prevents kids from accessing parent settings"
         case .pinRequired: return "Enter your 4-digit PIN"
+        case .confirmPin: return "Confirm your PIN"
+        case .pinMismatch: return "PINs don't match — try again"
+        case .disablePin: return "Disable PIN"
         case .wrongPin: return "Wrong PIN"
         case .badgeFirstChapter: return "First Steps"
         case .badgeFirstChapterDesc: return "Complete your first chapter"
@@ -662,6 +668,9 @@ nonisolated enum L {
         case .pin: return "PIN"
         case .pinDescription: return "Hindrer barn fra å åpne foreldreinnstillinger"
         case .pinRequired: return "Skriv inn din 4-sifrede PIN"
+        case .confirmPin: return "Bekreft PIN-koden din"
+        case .pinMismatch: return "PIN-kodene stemmer ikke — pr\u{00F8}v igjen"
+        case .disablePin: return "Deaktiver PIN"
         case .wrongPin: return "Feil PIN"
         case .badgeFirstChapter: return "F\u{00F8}rste steg"
         case .badgeFirstChapterDesc: return "Fullf\u{00F8}r ditt f\u{00F8}rste kapittel"
@@ -902,6 +911,9 @@ nonisolated enum L {
         case .pin: return "PIN"
         case .pinDescription: return "Impide que los ni\u{00F1}os accedan a los ajustes de padres"
         case .pinRequired: return "Introduce tu PIN de 4 d\u{00ED}gitos"
+        case .confirmPin: return "Confirma tu PIN"
+        case .pinMismatch: return "Los PIN no coinciden \u{2014} int\u{00E9}ntalo de nuevo"
+        case .disablePin: return "Desactivar PIN"
         case .wrongPin: return "PIN incorrecto"
         case .badgeFirstChapter: return "Primeros pasos"
         case .badgeFirstChapterDesc: return "Completa tu primer cap\u{00ED}tulo"
@@ -1142,6 +1154,9 @@ nonisolated enum L {
         case .pin: return "PIN"
         case .pinDescription: return "Impede as crian\u{00E7}as de aceder \u{00E0}s configura\u{00E7}\u{00F5}es dos pais"
         case .pinRequired: return "Insere o teu PIN de 4 d\u{00ED}gitos"
+        case .confirmPin: return "Confirma o teu PIN"
+        case .pinMismatch: return "Os PIN n\u{00E3}o coincidem \u{2014} tenta novamente"
+        case .disablePin: return "Desativar PIN"
         case .wrongPin: return "PIN incorreto"
         case .badgeFirstChapter: return "Primeiros passos"
         case .badgeFirstChapterDesc: return "Conclui o teu primeiro cap\u{00ED}tulo"

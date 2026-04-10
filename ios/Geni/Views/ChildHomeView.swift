@@ -44,7 +44,7 @@ struct ChildHomeView: View {
                 viewModel.persistence.saveProfile(profile)
                 viewModel.selectProfile(profile)
                 showProfileCreation = false
-            }, onBack: {
+            }, existingNames: viewModel.persistence.profiles.map(\.nickname), onBack: {
                 showProfileCreation = false
             })
         }

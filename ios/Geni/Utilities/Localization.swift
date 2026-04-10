@@ -8,6 +8,7 @@ nonisolated enum LocaleKey: String, Sendable {
     case createProfile
     case nickname
     case nicknamePlaceholder
+    case nameTaken
     case age
     case chooseAvatar
     case letsGo
@@ -350,6 +351,7 @@ nonisolated enum L {
         case .createProfile: return "Create Profile"
         case .nickname: return "Nickname"
         case .nicknamePlaceholder: return "Your name"
+        case .nameTaken: return "This name is already taken"
         case .age: return "Age"
         case .chooseAvatar: return "Choose Avatar"
         case .letsGo: return "Let\u{2019}s go!"
@@ -593,6 +595,7 @@ nonisolated enum L {
         case .createProfile: return "Lag profil"
         case .nickname: return "Kallenavn"
         case .nicknamePlaceholder: return "Ditt navn"
+        case .nameTaken: return "Dette navnet er allerede i bruk"
         case .age: return "Alder"
         case .chooseAvatar: return "Velg avatar"
         case .letsGo: return "Kj\u{00F8}r!"
@@ -836,6 +839,7 @@ nonisolated enum L {
         case .createProfile: return "Crear perfil"
         case .nickname: return "Apodo"
         case .nicknamePlaceholder: return "Tu nombre"
+        case .nameTaken: return "Este nombre ya est\u{00E1} en uso"
         case .age: return "Edad"
         case .chooseAvatar: return "Elegir avatar"
         case .letsGo: return "\u{00A1}Vamos!"
@@ -1079,6 +1083,7 @@ nonisolated enum L {
         case .createProfile: return "Criar perfil"
         case .nickname: return "Alcunha"
         case .nicknamePlaceholder: return "O teu nome"
+        case .nameTaken: return "Este nome j\u{00E1} est\u{00E1} em uso"
         case .age: return "Idade"
         case .chooseAvatar: return "Escolher avatar"
         case .letsGo: return "Vamos!"

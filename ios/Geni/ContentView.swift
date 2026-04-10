@@ -167,7 +167,7 @@ struct ContentView: View {
                     viewModel.completeOnboarding(profile: profile)
                 }
                 showProfileCreation = false
-            }, onBack: {
+            }, existingNames: viewModel.persistence.profiles.map(\.nickname), onBack: {
                 showProfileCreation = false
             })
         }

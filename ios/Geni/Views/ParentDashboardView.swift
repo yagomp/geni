@@ -149,7 +149,7 @@ struct ParentDashboardView: View {
                     ThemeManager.shared.current = profile.theme
                 }
                 showProfileCreation = false
-            }, onBack: {
+            }, existingNames: viewModel.persistence.profiles.map(\.nickname), onBack: {
                 showProfileCreation = false
             })
         }
@@ -160,7 +160,7 @@ struct ParentDashboardView: View {
                     ThemeManager.shared.current = updated.theme
                 }
                 editingProfile = nil
-            }, editingProfile: profile, onBack: {
+            }, existingNames: viewModel.persistence.profiles.filter { $0.id != profile.id }.map(\.nickname), editingProfile: profile, onBack: {
                 editingProfile = nil
             })
         }

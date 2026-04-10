@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ProfileCreationView: View {
     let onComplete: (ChildProfile) -> Void
+    var existingNames: [String] = []
     var editingProfile: ChildProfile? = nil
     var onBack: (() -> Void)? = nil
 
@@ -11,6 +12,11 @@ struct ProfileCreationView: View {
         case .ocean: return Color(red: 0.9, green: 0.95, blue: 1.0)
         case .blossom: return Color(red: 1.0, green: 0.93, blue: 0.95)
         }
+    }
+
+    private var isDuplicate: Bool {
+        let trimmed = nickname.trimmingCharacters(in: .whitespaces).lowercased()
+        return !trimmed.isEmpty && existingNames.contains { $0.trimmingCharacters(in: .whitespaces).lowercased() == trimmed }
     }
 
     @State private var nickname: String = ""
@@ -31,7 +37,7 @@ struct ProfileCreationView: View {
                         if let onBack {
                             Button {
                                 HapticManager.selection()
-                                if var existing = editingProfile {
+                                if var existing = editingProfile, !isDuplicate {
                                     existing.nickname = nickname
                                     existing.age = age
                                     existing.avatarId = selectedAvatar
@@ -85,7 +91,7 @@ struct ProfileCreationView: View {
                             .background(GeniColor.card)
                             .overlay(
                                 Rectangle()
-                                    .stroke(GeniColor.border, lineWidth: 3)
+                                    .stroke(isDuplicate ? Color.red : GeniColor.border, lineWidth: 3)
                             )
                             .background(
                                 Rectangle()
@@ -94,6 +100,13 @@ struct ProfileCreationView: View {
                             )
                             .autocorrectionDisabled()
                             .textInputAutocapitalization(.words)
+
+                        if isDuplicate {
+                            Text(L.s(.nameTaken))
+                                .font(.system(.caption, design: .rounded, weight: .semibold))
+                                .foregroundStyle(.red)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                     }
 
                     VStack(spacing: 6) {
@@ -277,8 +290,8 @@ struct ProfileCreationView: View {
                         }
                     }
                     .buttonStyle(BrutalistButton(color: GeniColor.green))
-                    .disabled(nickname.trimmingCharacters(in: .whitespaces).isEmpty)
-                    .opacity(nickname.trimmingCharacters(in: .whitespaces).isEmpty ? 0.5 : 1)
+                    .disabled(nickname.trimmingCharacters(in: .whitespaces).isEmpty || isDuplicate)
+                    .opacity(nickname.trimmingCharacters(in: .whitespaces).isEmpty || isDuplicate ? 0.5 : 1)
                     .padding(.horizontal, 24)
                     .padding(.vertical, 16)
             }

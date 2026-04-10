@@ -142,6 +142,7 @@ struct ChildHomeView: View {
                 emoji: "🔥",
                 value: "\(rewards.streakCount)",
                 label: rewards.streakCount == 1 ? L.s(.day) : L.s(.days),
+                sublabel: L.s(.streak),
                 color: GeniColor.orange
             )
 
@@ -173,7 +174,7 @@ struct ChildHomeView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .brutalistCard(color: GeniColor.card, borderWidth: 3)
-                .zoomSource(id: "rewards", in: rewardsNamespace)
+                .overlay(Color.clear.zoomSource(id: "rewards", in: rewardsNamespace))
             }
         }
     }
@@ -581,6 +582,7 @@ struct StatBubble: View {
     let emoji: String
     let value: String
     let label: String
+    var sublabel: String? = nil
     let color: Color
 
     var body: some View {
@@ -592,11 +594,21 @@ struct StatBubble: View {
                 .font(.system(.headline, design: .rounded, weight: .black))
                 .foregroundStyle(GeniColor.border)
 
-            Text(label)
-                .font(.system(.caption2, design: .rounded, weight: .medium))
-                .foregroundStyle(.black)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
+            VStack(spacing: 1) {
+                Text(label)
+                    .font(.system(.caption2, design: .rounded, weight: .medium))
+                    .foregroundStyle(.black)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+
+                if let sublabel {
+                    Text(sublabel)
+                        .font(.system(.caption2, design: .rounded, weight: .bold))
+                        .foregroundStyle(.black)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
+                }
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)

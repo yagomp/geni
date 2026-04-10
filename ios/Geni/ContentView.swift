@@ -4,6 +4,8 @@ struct ContentView: View {
     @State private var viewModel = AppViewModel()
     @State private var showProfileCreation = false
     @State private var languageManager = LanguageManager.shared
+    @Namespace private var rewardsZoom
+    @Namespace private var settingsZoom
 
     var body: some View {
         ZStack {
@@ -37,7 +39,7 @@ struct ContentView: View {
                 .transition(.opacity)
 
             case .childHome:
-                ChildHomeView(viewModel: viewModel)
+                ChildHomeView(viewModel: viewModel, rewardsNamespace: rewardsZoom, settingsNamespace: settingsZoom)
                     .transition(.opacity)
 
             case .exercise:
@@ -171,10 +173,23 @@ struct ContentView: View {
         }
         .fullScreenCover(isPresented: $viewModel.showParentSettings) {
             ParentDashboardView(viewModel: viewModel)
+                .zoomDestination(id: "settings", in: settingsZoom)
         }
         .fullScreenCover(isPresented: $viewModel.showRewards) {
             RewardsView(rewards: viewModel.rewardState)
+                .zoomDestination(id: "rewards", in: rewardsZoom)
         }
         .id(languageManager.current.rawValue)
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func zoomDestination<ID: Hashable>(id: ID, in namespace: Namespace.ID) -> some View {
+        if #available(iOS 18.0, *) {
+            self.navigationTransition(.zoom(sourceID: id, in: namespace))
+        } else {
+            self
+        }
     }
 }

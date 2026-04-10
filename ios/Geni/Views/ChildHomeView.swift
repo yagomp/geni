@@ -2,6 +2,9 @@ import SwiftUI
 
 struct ChildHomeView: View {
     let viewModel: AppViewModel
+    let rewardsNamespace: Namespace.ID
+    let settingsNamespace: Namespace.ID
+    @Namespace private var avatarZoom
     @State private var showAvatarPicker = false
     @State private var showProfileSwitcher = false
     @State private var showProfileCreation = false
@@ -37,6 +40,7 @@ struct ChildHomeView: View {
         }
         .sheet(isPresented: $showAvatarPicker) {
             AvatarPickerSheet(viewModel: viewModel)
+                .zoomDestination(id: "avatar", in: avatarZoom)
         }
         .sheet(isPresented: $showProfileSwitcher) {
             ProfileSwitcherSheet(
@@ -55,6 +59,7 @@ struct ChildHomeView: View {
                     }
                 }
             )
+            .zoomDestination(id: "avatar", in: avatarZoom)
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
         }
@@ -93,6 +98,7 @@ struct ChildHomeView: View {
                                 .fill(GeniColor.border)
                                 .offset(x: 3, y: 3)
                         )
+                        .zoomSource(id: "avatar", in: avatarZoom)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(profile?.nickname ?? "")
@@ -130,6 +136,7 @@ struct ChildHomeView: View {
             } label: {
                 Text("⚙️")
                     .font(.system(size: 24))
+                    .zoomSource(id: "settings", in: settingsNamespace)
             }
         }
     }
@@ -171,6 +178,7 @@ struct ChildHomeView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                .zoomSource(id: "rewards", in: rewardsNamespace)
             }
         }
     }
@@ -756,6 +764,26 @@ struct ProfileSwitcherSheet: View {
 
                 Spacer()
             }
+        }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func zoomSource<ID: Hashable>(id: ID, in namespace: Namespace.ID) -> some View {
+        if #available(iOS 18.0, *) {
+            self.matchedTransitionSource(id: id, in: namespace)
+        } else {
+            self
+        }
+    }
+
+    @ViewBuilder
+    func zoomDestination<ID: Hashable>(id: ID, in namespace: Namespace.ID) -> some View {
+        if #available(iOS 18.0, *) {
+            self.navigationTransition(.zoom(sourceID: id, in: namespace))
+        } else {
+            self
         }
     }
 }

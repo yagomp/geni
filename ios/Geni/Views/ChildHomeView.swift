@@ -51,7 +51,7 @@ struct ChildHomeView: View {
     }
 
     private func headerSection(profile: ChildProfile?, avatar: AvatarOption, rewards: RewardState) -> some View {
-        HStack(spacing: 16) {
+        HStack(alignment: .top, spacing: 16) {
             // Active profile on the left
             if hasMultipleProfiles {
                 activeProfileLabel(avatar: avatar, profile: profile, rewards: rewards)
@@ -64,11 +64,9 @@ struct ChildHomeView: View {
                 }
             }
 
-            Spacer()
-
-            // Sibling avatars + settings on the right
-            HStack(spacing: 12) {
-                if hasMultipleProfiles {
+            // Sibling avatars with extra spacing from the active profile
+            if hasMultipleProfiles {
+                HStack(spacing: 10) {
                     ForEach(viewModel.persistence.profiles.filter { $0.id != viewModel.persistence.activeProfileId }) { p in
                         let pAvatar = AvatarOption.find(p.avatarId)
                         Button {
@@ -100,15 +98,20 @@ struct ChildHomeView: View {
                         }
                     }
                 }
+                .padding(.leading, 12)
+            }
 
-                Button {
-                    HapticManager.selection()
-                    viewModel.showParentSettings = true
-                } label: {
-                    Text("⚙️")
-                        .font(.system(size: 24))
-                        .zoomSource(id: "settings", in: settingsNamespace)
-                }
+            Spacer()
+
+            // Settings icon — aligned to the top of the sibling boxes
+            Button {
+                HapticManager.selection()
+                viewModel.showParentSettings = true
+            } label: {
+                Text("⚙️")
+                    .font(.system(size: 30))
+                    .frame(width: 42, height: 42)
+                    .zoomSource(id: "settings", in: settingsNamespace)
             }
         }
     }

@@ -717,7 +717,7 @@ struct ParentDashboardView: View {
                             .font(.system(.body, design: .rounded, weight: .semibold))
                             .foregroundStyle(.black)
 
-                        Text(L.s(.pin))
+                        Text(L.s(.pinDescription))
                             .font(.system(.caption, design: .rounded))
                             .foregroundStyle(.black.opacity(0.5))
                     }

@@ -81,6 +81,7 @@ nonisolated enum LocaleKey: String, Sendable {
     case recommended
     case custom
     case pin
+    case pinDescription
     case pinRequired
     case wrongPin
     case badgeFirstChapter
@@ -419,6 +420,7 @@ nonisolated enum L {
         case .recommended: return "Recommended"
         case .custom: return "Custom"
         case .pin: return "PIN"
+        case .pinDescription: return "Prevents kids from accessing parent settings"
         case .pinRequired: return "Enter your 4-digit PIN"
         case .wrongPin: return "Wrong PIN"
         case .badgeFirstChapter: return "First Steps"
@@ -658,6 +660,7 @@ nonisolated enum L {
         case .recommended: return "Anbefalt"
         case .custom: return "Tilpasset"
         case .pin: return "PIN"
+        case .pinDescription: return "Hindrer barn fra å åpne foreldreinnstillinger"
         case .pinRequired: return "Skriv inn din 4-sifrede PIN"
         case .wrongPin: return "Feil PIN"
         case .badgeFirstChapter: return "F\u{00F8}rste steg"
@@ -897,6 +900,7 @@ nonisolated enum L {
         case .recommended: return "Recomendado"
         case .custom: return "Personalizado"
         case .pin: return "PIN"
+        case .pinDescription: return "Impide que los ni\u{00F1}os accedan a los ajustes de padres"
         case .pinRequired: return "Introduce tu PIN de 4 d\u{00ED}gitos"
         case .wrongPin: return "PIN incorrecto"
         case .badgeFirstChapter: return "Primeros pasos"
@@ -1136,6 +1140,7 @@ nonisolated enum L {
         case .recommended: return "Recomendado"
         case .custom: return "Personalizado"
         case .pin: return "PIN"
+        case .pinDescription: return "Impede as crian\u{00E7}as de aceder \u{00E0}s configura\u{00E7}\u{00F5}es dos pais"
         case .pinRequired: return "Insere o teu PIN de 4 d\u{00ED}gitos"
         case .wrongPin: return "PIN incorreto"
         case .badgeFirstChapter: return "Primeiros passos"

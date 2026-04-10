@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact - Geni App</title>
+<meta name="description" content="Get in touch with the Geni team. We'd love to hear from you.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0433FF">
+<meta name="apple-mobile-web-app-title" content="Geni">
+<meta property="og:title" content="Contact - Geni App">
+<meta property="og:description" content="Get in touch with the Geni team.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://geni.kids/icon-mark.png">
+<meta property="og:url" content="https://geni.kids/contact.html">
+<link rel="icon" type="image/png" href="icon-mark.png">
+<link rel="apple-touch-icon" href="icon-mark.png">
+<link rel="canonical" href="https://geni.kids/contact.html">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--yellow:#0433FF;--blue:#0066FF;--purple:#B052DE;
+--bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000;--border:#000;
+--shadow:6px 6px 0 #000;--shadow-sm:4px 4px 0 #000;
+--font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;
+}
+body[data-theme="standard"]{--bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000}
+body[data-theme="ocean"]{--bg:#E6F2FF;--card:#F2F7FF;--accent:#2E73D1;--on-bg:#000000}
+body[data-theme="blossom"]{--bg:#FFEDEF;--card:#FFF7FA;--accent:#E0487A;--on-bg:#000000}
+html{font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:var(--on-bg);line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:#000;text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:4px solid #000;outline-offset:2px}
+img{max-width:100%;height:auto;display:block}
+.container{max-width:800px;margin:0 auto;padding:0 20px}
+
+.content{padding:48px 0 60px}
+h1{font-weight:900;font-size:2rem;text-align:center;margin-bottom:8px;text-transform:uppercase;letter-spacing:-0.5px}
+.subtitle{text-align:center;margin-bottom:36px;font-size:0.95rem;color:#444}
+
+.contact-card{background:var(--card);border:4px solid var(--border);box-shadow:var(--shadow);padding:32px 28px}
+
+label{display:block;font-weight:800;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+input,textarea,select{width:100%;font-family:var(--font);font-size:0.95rem;padding:10px 12px;border:3px solid var(--border);background:#fff;color:#000;outline:none;margin-bottom:20px;appearance:none;-webkit-appearance:none}
+input:focus,textarea:focus{border-color:var(--accent);box-shadow:4px 4px 0 var(--accent)}
+textarea{resize:vertical;min-height:140px}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:520px){.form-row{grid-template-columns:1fr}}
+
+.submit-btn{display:inline-block;padding:14px 32px;background:var(--accent);color:#fff;font-family:var(--font);font-weight:900;font-size:1rem;text-transform:uppercase;letter-spacing:1px;border:3px solid var(--border);box-shadow:var(--shadow-sm);cursor:pointer;transition:transform 0.1s,box-shadow 0.1s;width:100%}
+.submit-btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #000}
+.submit-btn:active{transform:translate(0,0);box-shadow:none}
+
+.success-msg{display:none;background:#d4edda;border:3px solid #28a745;padding:16px;margin-top:20px;font-weight:700;font-size:0.95rem;text-align:center}
+.error-msg{display:none;background:#f8d7da;border:3px solid #dc3545;padding:16px;margin-top:20px;font-weight:700;font-size:0.95rem;text-align:center}
+
+footer{background:var(--bg);color:var(--on-bg);padding:20px 0;font-size:0.85rem;border-top:4px solid #000}
+footer .container{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:16px}
+footer a{color:var(--on-bg);font-weight:700;text-decoration:underline}
+footer a:hover{color:#FFE566}
+.footer-brand{display:flex;align-items:center;gap:10px;color:var(--on-bg);font-weight:800;text-decoration:none}
+.footer-brand:hover{text-decoration:none}
+.footer-copy{max-width:620px;font-size:0.92rem;line-height:1.5;color:var(--on-bg)}
+.footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px;justify-content:center;text-align:center}
+
+@media(max-width:600px){.contact-card{padding:20px 16px}footer .container{flex-direction:column;text-align:center}.footer-brand,.footer-copy,.footer-links{width:100%;justify-content:center;text-align:center}.footer-links{flex-wrap:wrap;gap:12px 20px}}
+</style>
+</head>
+<body>
+
+<script src="nav.js"></script>
+
+<main class="content">
+<div class="container">
+
+<div id="content-en">
+<h1>Contact Us</h1>
+<p class="subtitle">Have a question or feedback? We'd love to hear from you.</p>
+
+<div class="contact-card">
+<form id="contact-form-en" action="https://api.web3forms.com/submit" method="POST">
+  <input type="hidden" name="_language" value="en">
+
+  <div class="form-row">
+    <div>
+      <label for="name-en">Your Name</label>
+      <input type="text" id="name-en" name="name" required placeholder="Jane Smith">
+    </div>
+    <div>
+      <label for="email-en">Your Email</label>
+      <input type="email" id="email-en" name="email" required placeholder="jane@example.com">
+    </div>
+  </div>
+
+  <label for="subject-en">Subject</label>
+  <input type="text" id="subject-en" name="subject" placeholder="Question about the app">
+
+  <label for="message-en">Message</label>
+  <textarea id="message-en" name="message" required placeholder="Tell us how we can help..."></textarea>
+
+  <button type="submit" class="submit-btn">Send Message</button>
+</form>
+<div class="success-msg" id="success-en">Message sent! We'll get back to you soon.</div>
+<div class="error-msg" id="error-en">Something went wrong. Please try again.</div>
+</div>
+</div>
+
+<div id="content-nb" hidden>
+<h1>Kontakt oss</h1>
+<p class="subtitle">Har du et spørsmål eller tilbakemelding? Vi hører gjerne fra deg.</p>
+
+<div class="contact-card">
+<form id="contact-form-nb" action="https://api.web3forms.com/submit" method="POST">
+  <input type="hidden" name="_language" value="nb">
+
+  <div class="form-row">
+    <div>
+      <label for="name-nb">Navn</label>
+      <input type="text" id="name-nb" name="name" required placeholder="Kari Nordmann">
+    </div>
+    <div>
+      <label for="email-nb">E-post</label>
+      <input type="email" id="email-nb" name="email" required placeholder="kari@eksempel.no">
+    </div>
+  </div>
+
+  <label for="subject-nb">Emne</label>
+  <input type="text" id="subject-nb" name="subject" placeholder="Spørsmål om appen">
+
+  <label for="message-nb">Melding</label>
+  <textarea id="message-nb" name="message" required placeholder="Fortell oss hvordan vi kan hjelpe..."></textarea>
+
+  <button type="submit" class="submit-btn">Send melding</button>
+</form>
+<div class="success-msg" id="success-nb">Melding sendt! Vi svarer deg snart.</div>
+<div class="error-msg" id="error-nb">Noe gikk galt. Vennligst prøv igjen.</div>
+</div>
+</div>
+
+<div id="content-es" hidden>
+<h1>Contáctanos</h1>
+<p class="subtitle">¿Tienes alguna pregunta o comentario? Nos encantaría saber de ti.</p>
+
+<div class="contact-card">
+<form id="contact-form-es" action="https://api.web3forms.com/submit" method="POST">
+  <input type="hidden" name="_language" value="es">
+
+  <div class="form-row">
+    <div>
+      <label for="name-es">Tu nombre</label>
+      <input type="text" id="name-es" name="name" required placeholder="María García">
+    </div>
+    <div>
+      <label for="email-es">Tu correo</label>
+      <input type="email" id="email-es" name="email" required placeholder="maria@ejemplo.com">
+    </div>
+  </div>
+
+  <label for="subject-es">Asunto</label>
+  <input type="text" id="subject-es" name="subject" placeholder="Pregunta sobre la app">
+
+  <label for="message-es">Mensaje</label>
+  <textarea id="message-es" name="message" required placeholder="Cuéntanos cómo podemos ayudarte..."></textarea>
+
+  <button type="submit" class="submit-btn">Enviar mensaje</button>
+</form>
+<div class="success-msg" id="success-es">¡Mensaje enviado! Te responderemos pronto.</div>
+<div class="error-msg" id="error-es">Algo salió mal. Por favor intenta de nuevo.</div>
+</div>
+</div>
+
+<div id="content-pt" hidden>
+<h1>Fale Conosco</h1>
+<p class="subtitle">Tem alguma dúvida ou feedback? Adoraríamos ouvir você.</p>
+
+<div class="contact-card">
+<form id="contact-form-pt" action="https://api.web3forms.com/submit" method="POST">
+  <input type="hidden" name="_language" value="pt">
+
+  <div class="form-row">
+    <div>
+      <label for="name-pt">Seu nome</label>
+      <input type="text" id="name-pt" name="name" required placeholder="Maria Silva">
+    </div>
+    <div>
+      <label for="email-pt">Seu e-mail</label>
+      <input type="email" id="email-pt" name="email" required placeholder="maria@exemplo.com">
+    </div>
+  </div>
+
+  <label for="subject-pt">Assunto</label>
+  <input type="text" id="subject-pt" name="subject" placeholder="Pergunta sobre o app">
+
+  <label for="message-pt">Mensagem</label>
+  <textarea id="message-pt" name="message" required placeholder="Conte-nos como podemos ajudar..."></textarea>
+
+  <button type="submit" class="submit-btn">Enviar mensagem</button>
+</form>
+<div class="success-msg" id="success-pt">Mensagem enviada! Responderemos em breve.</div>
+<div class="error-msg" id="error-pt">Algo deu errado. Por favor tente novamente.</div>
+</div>
+</div>
+
+</div>
+</main>
+
+<footer>
+<div class="container">
+<a href="/" class="footer-brand" aria-label="Geni home">
+<span>&copy; <span id="year"></span> Geni</span>
+</a>
+<p class="footer-copy" data-i18n="footer_copy">Geni is a kids learning app for ages 5-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.</p>
+<div class="footer-links">
+<a href="/" data-i18n="footer_home">Home</a>
+<a href="parents.html" data-i18n="footer_parents">For Parents</a>
+<a href="privacy.html" data-i18n="footer_privacy">Privacy</a>
+<a href="blog/">Blog</a>
+</div>
+</div>
+</footer>
+
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+
+var LANG_META={
+en:{code:"EN",flag:"🇬🇧",title:"Contact - Geni App"},
+nb:{code:"NO",flag:"🇳🇴",title:"Kontakt - Geni App"},
+es:{code:"ES",flag:"🇪🇸",title:"Contacto - Geni App"},
+pt:{code:"PT",flag:"🇵🇹",title:"Contato - Geni App"}
+};
+function normalizeLang(value){
+if(!value)return"";
+if(value.indexOf("nb")===0||value.indexOf("nn")===0||value.indexOf("no")===0)return"nb";
+if(value.indexOf("es")===0)return"es";
+if(value.indexOf("pt")===0)return"pt";
+return"en";
+}
+var lang='en';
+try{var s=localStorage.getItem('geni_lang');if(s)lang=normalizeLang(s)}catch(e){}
+try{var p=new URLSearchParams(location.search);if(p.get('lang'))lang=normalizeLang(p.get('lang'))}catch(e){}
+if(!lang||lang==='en')lang=normalizeLang(navigator.language||'en');
+function applyLang(l){
+lang=normalizeLang(l);
+try{localStorage.setItem('geni_lang',lang)}catch(e){}
+document.documentElement.lang=lang;
+document.getElementById('langBtn').innerHTML='<span aria-hidden="true">'+LANG_META[lang].flag+'</span> '+LANG_META[lang].code;
+closeMenu();
+document.getElementById('content-en').hidden=lang!=='en';
+document.getElementById('content-nb').hidden=lang!=='nb';
+document.getElementById('content-es').hidden=lang!=='es';
+document.getElementById('content-pt').hidden=lang!=='pt';
+document.title=LANG_META[lang].title;
+var els=document.querySelectorAll('[data-i18n]');
+for(var i=0;i<els.length;i++){
+var k=els[i].getAttribute('data-i18n');
+var t={
+en:{footer_copy:'Geni is a kids learning app for ages 5-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.',footer_home:'Home',footer_parents:'For Parents',footer_privacy:'Privacy'},
+nb:{footer_copy:'Geni er en læringsapp for barn 5-10 år med matteøving, valgfri lesing, offline bruk, foreldrekontroll og ingen reklame eller sporing.',footer_home:'Hjem',footer_parents:'For foreldre',footer_privacy:'Personvern'},
+es:{footer_copy:'Geni es una app educativa para niños de 5 a 10 años con matemáticas, lectura opcional, juego sin conexión, controles parentales y sin anuncios ni rastreo.',footer_home:'Inicio',footer_parents:'Para padres',footer_privacy:'Privacidad'},
+pt:{footer_copy:'Geni é um app educativo para crianças de 5 a 10 anos com matemática, leitura opcional, uso offline, controles parentais e sem anúncios nem rastreamento.',footer_home:'Início',footer_parents:'Para pais',footer_privacy:'Privacidade'}
+}[lang];
+if(t&&t[k])els[i].textContent=t[k];
+}
+}
+applyLang(lang);
+
+// Form submission via Web3Forms
+['en','nb','es','pt'].forEach(function(l){
+var form=document.getElementById('contact-form-'+l);
+if(!form)return;
+form.addEventListener('submit',function(e){
+e.preventDefault();
+var btn=form.querySelector('.submit-btn');
+btn.disabled=true;
+var fd=new FormData(form);
+fetch('https://api.web3forms.com/submit',{
+method:'POST',
+headers:{'Content-Type':'application/json','Accept':'application/json'},
+body:JSON.stringify({
+access_key:'REDACTED_WEB3FORMS_KEY',
+name:fd.get('name'),
+email:fd.get('email'),
+subject:fd.get('subject')||'Message from Geni contact form',
+message:fd.get('message')
+})
+}).then(function(r){return r.json()}).then(function(d){
+if(d.success){
+form.reset();
+form.style.display='none';
+document.getElementById('success-'+l).style.display='block';
+}else{
+document.getElementById('error-'+l).style.display='block';
+btn.disabled=false;
+}
+}).catch(function(){
+document.getElementById('error-'+l).style.display='block';
+btn.disabled=false;
+});
+});
+});
+</script>
+
+</body>
+</html>

@@ -46,6 +46,7 @@ nonisolated enum LocaleKey: String, Sendable {
     case enterPin
     case setPin
     case changePin
+    case contactSupport
     case operations
     case profiles
     case addProfile
@@ -383,6 +384,7 @@ nonisolated enum L {
         case .enterPin: return "Enter PIN"
         case .setPin: return "Set PIN"
         case .changePin: return "Change PIN"
+        case .contactSupport: return "Contact Us"
         case .operations: return "Operations"
         case .profiles: return "Profiles"
         case .addProfile: return "Add Profile"
@@ -621,6 +623,7 @@ nonisolated enum L {
         case .enterPin: return "Skriv inn PIN"
         case .setPin: return "Sett PIN"
         case .changePin: return "Endre PIN"
+        case .contactSupport: return "Kontakt oss"
         case .operations: return "Regnearter"
         case .profiles: return "Profiler"
         case .addProfile: return "Legg til profil"
@@ -859,6 +862,7 @@ nonisolated enum L {
         case .enterPin: return "Introducir PIN"
         case .setPin: return "Crear PIN"
         case .changePin: return "Cambiar PIN"
+        case .contactSupport: return "Cont\u{00E1}ctanos"
         case .operations: return "Operaciones"
         case .profiles: return "Perfiles"
         case .addProfile: return "Agregar perfil"
@@ -1097,6 +1101,7 @@ nonisolated enum L {
         case .enterPin: return "Inserir PIN"
         case .setPin: return "Definir PIN"
         case .changePin: return "Alterar PIN"
+        case .contactSupport: return "Fale conosco"
         case .operations: return "Opera\u{00E7}\u{00F5}es"
         case .profiles: return "Perfis"
         case .addProfile: return "Adicionar perfil"

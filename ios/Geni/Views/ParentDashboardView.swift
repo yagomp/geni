@@ -128,6 +128,7 @@ struct ParentDashboardView: View {
                     reminderSection
                     iCloudSyncSection
                     pinSection
+                    contactSection
                 }
                 .padding(iPadScale.padding)
                 .foregroundStyle(.black)
@@ -724,6 +725,38 @@ struct ParentDashboardView: View {
             SetPinView { pin in
                 viewModel.persistence.setPin(pin)
                 showSetPin = false
+            }
+        }
+    }
+
+    private var contactSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L.s(.contactSupport))
+                .font(.system(.headline, design: .rounded, weight: .bold))
+
+            Link(destination: URL(string: "https://geni.kids/contact.html")!) {
+                HStack(spacing: 12) {
+                    Text("✉️")
+                        .font(.system(size: 22))
+                        .frame(width: 40)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(L.s(.contactSupport))
+                            .font(.system(.body, design: .rounded, weight: .semibold))
+                            .foregroundStyle(GeniColor.blue)
+                        Text("geni.kids/contact")
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundStyle(.black)
+                    }
+
+                    Spacer()
+
+                    Text("›")
+                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .foregroundStyle(GeniColor.blue)
+                }
+                .padding(12)
+                .brutalistCard(color: GeniColor.card, borderWidth: 3)
             }
         }
     }

@@ -236,7 +236,7 @@ lang=normalizeLang(l);
 try{localStorage.setItem('geni_lang',lang)}catch(e){}
 document.documentElement.lang=lang;
 document.getElementById('langBtn').innerHTML='<span aria-hidden="true">'+LANG_META[lang].flag+'</span> '+LANG_META[lang].code;
-closeMenu();
+if(window.closeMenu) window.closeMenu();
 document.getElementById('content-en').hidden=lang!=='en';
 document.getElementById('content-nb').hidden=lang!=='nb';
 document.getElementById('content-es').hidden=lang!=='es';
@@ -277,9 +277,7 @@ message:fd.get('message')
 })
 }).then(function(r){return r.json()}).then(function(d){
 if(d.success){
-form.reset();
-form.style.display='none';
-document.getElementById('success-'+l).style.display='block';
+window.location.href='/thankyou.html';
 }else{
 document.getElementById('error-'+l).style.display='block';
 btn.disabled=false;

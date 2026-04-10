@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You - Geni App</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0433FF">
+<link rel="icon" type="image/png" href="icon-mark.png">
+<link rel="apple-touch-icon" href="icon-mark.png">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000;--border:#000;--shadow:6px 6px 0 #000;--shadow-sm:4px 4px 0 #000;--font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif}
+body[data-theme="ocean"]{--bg:#E6F2FF;--card:#F2F7FF;--accent:#2E73D1}
+body[data-theme="blossom"]{--bg:#FFEDEF;--card:#FFF7FA;--accent:#E0487A}
+html{font-size:16px}
+body{font-family:var(--font);background:var(--bg);color:var(--on-bg);line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+a{color:#000;text-decoration:none}
+a:hover{text-decoration:underline}
+.container{max-width:800px;margin:0 auto;padding:0 20px}
+.content{flex:1;display:flex;align-items:center;justify-content:center;padding:60px 20px}
+.card{background:var(--card);border:4px solid var(--border);box-shadow:var(--shadow);padding:48px 40px;text-align:center;max-width:480px;width:100%}
+.icon{font-size:56px;margin-bottom:20px}
+h1{font-weight:900;font-size:1.8rem;text-transform:uppercase;letter-spacing:-0.5px;margin-bottom:12px}
+p{font-size:0.95rem;color:#333;margin-bottom:28px}
+.btn{display:inline-block;padding:14px 28px;background:var(--accent);color:#fff;font-family:var(--font);font-weight:900;font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;border:3px solid var(--border);box-shadow:var(--shadow-sm);transition:transform 0.1s,box-shadow 0.1s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #000;text-decoration:none}
+</style>
+</head>
+<body>
+
+<script src="nav.js"></script>
+
+<main class="content">
+<div class="card">
+<div class="icon">✅</div>
+<h1 id="ty-title">Message Sent!</h1>
+<p id="ty-msg">Thanks for reaching out. We'll get back to you as soon as we can.</p>
+<a href="/" class="btn" id="ty-btn">Back to Home</a>
+</div>
+</main>
+
+<script src="footer.js"></script>
+
+<script>
+var msgs={
+en:{title:'Message Sent!',msg:"Thanks for reaching out. We'll get back to you as soon as we can.",btn:'Back to Home'},
+nb:{title:'Melding sendt!',msg:'Takk for at du tok kontakt. Vi svarer deg s\u00E5 snart vi kan.',btn:'Tilbake til forsiden'},
+es:{title:'¡Mensaje enviado!',msg:'Gracias por ponerte en contacto. Te responderemos lo antes posible.',btn:'Volver al inicio'},
+pt:{title:'Mensagem enviada!',msg:'Obrigado por entrar em contato. Responderemos o mais r\u00E1pido poss\u00EDvel.',btn:'Voltar ao in\u00EDcio'}
+};
+function normalizeLang(v){
+if(!v)return'en';
+if(v.indexOf('nb')===0||v.indexOf('nn')===0||v.indexOf('no')===0)return'nb';
+if(v.indexOf('es')===0)return'es';
+if(v.indexOf('pt')===0)return'pt';
+return'en';
+}
+var lang='en';
+try{var s=localStorage.getItem('geni_lang');if(s)lang=normalizeLang(s)}catch(e){}
+if(lang==='en')lang=normalizeLang(navigator.language||'en');
+var m=msgs[lang]||msgs.en;
+document.getElementById('ty-title').textContent=m.title;
+document.getElementById('ty-msg').textContent=m.msg;
+document.getElementById('ty-btn').textContent=m.btn;
+document.documentElement.lang=lang;
+// applyLang stub so footer.js patch works on language switch
+window.applyLang=function(l){
+lang=normalizeLang(l);
+try{localStorage.setItem('geni_lang',lang)}catch(e){}
+document.documentElement.lang=lang;
+if(window.closeMenu)window.closeMenu();
+var mm=msgs[lang]||msgs.en;
+document.getElementById('ty-title').textContent=mm.title;
+document.getElementById('ty-msg').textContent=mm.msg;
+document.getElementById('ty-btn').textContent=mm.btn;
+try{document.getElementById('langBtn').innerHTML='<span aria-hidden="true">{f}</span> {c}'.replace('{f}',({en:'🇬🇧',nb:'🇳🇴',es:'🇪🇸',pt:'🇵🇹'})[lang]).replace('{c}',({en:'EN',nb:'NO',es:'ES',pt:'PT'})[lang])}catch(ex){}
+};
+applyLang(lang);
+</script>
+
+</body>
+</html>

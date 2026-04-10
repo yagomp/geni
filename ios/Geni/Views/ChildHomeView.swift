@@ -52,37 +52,41 @@ struct ChildHomeView: View {
 
     private func headerSection(profile: ChildProfile?, avatar: AvatarOption, rewards: RewardState) -> some View {
         HStack(spacing: 16) {
-            Group {
+            HStack(spacing: 10) {
+                // Active profile — large, tappable to change avatar (single profile) or non-interactive label
                 if hasMultipleProfiles {
-                    Menu {
-                        ForEach(viewModel.persistence.profiles) { p in
-                            let isActive = p.id == viewModel.persistence.activeProfileId
-                            let pAvatar = AvatarOption.find(p.avatarId)
-                            Button {
-                                HapticManager.impact(.medium)
-                                if p.id != viewModel.persistence.activeProfileId {
-                                    viewModel.selectProfile(p)
-                                }
-                            } label: {
-                                Text((isActive ? "✅ " : "") + pAvatar.emoji + "  " + p.nickname)
-                            }
-                        }
-                        Divider()
-                        Button {
-                            HapticManager.selection()
-                            showProfileCreation = true
-                        } label: {
-                            Text("➕  " + L.s(.addProfile))
-                        }
-                    } label: {
-                        avatarLabel(avatar: avatar, profile: profile, rewards: rewards)
-                    }
+                    activeProfileLabel(avatar: avatar, profile: profile, rewards: rewards)
                 } else {
                     Button {
                         HapticManager.selection()
                         showAvatarPicker = true
                     } label: {
-                        avatarLabel(avatar: avatar, profile: profile, rewards: rewards)
+                        activeProfileLabel(avatar: avatar, profile: profile, rewards: rewards)
+                    }
+                }
+
+                // Sibling avatars — small tappable bubbles, one tap = instant switch
+                if hasMultipleProfiles {
+                    ForEach(viewModel.persistence.profiles.filter { $0.id != viewModel.persistence.activeProfileId }) { p in
+                        let pAvatar = AvatarOption.find(p.avatarId)
+                        Button {
+                            HapticManager.impact(.medium)
+                            viewModel.selectProfile(p)
+                        } label: {
+                            Text(pAvatar.emoji)
+                                .font(.system(size: 20))
+                                .frame(width: 42, height: 42)
+                                .background(.white)
+                                .overlay(
+                                    Rectangle()
+                                        .stroke(GeniColor.border, lineWidth: 2)
+                                )
+                                .background(
+                                    Rectangle()
+                                        .fill(GeniColor.border)
+                                        .offset(x: 2, y: 2)
+                                )
+                        }
                     }
                 }
             }
@@ -100,7 +104,7 @@ struct ChildHomeView: View {
         }
     }
 
-    private func avatarLabel(avatar: AvatarOption, profile: ChildProfile?, rewards: RewardState) -> some View {
+    private func activeProfileLabel(avatar: AvatarOption, profile: ChildProfile?, rewards: RewardState) -> some View {
         HStack(spacing: 12) {
             Text(avatar.emoji)
                 .font(.system(size: 28))
@@ -124,20 +128,6 @@ struct ChildHomeView: View {
                 Text("\(L.s(.level)) \(rewards.level)")
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
                     .foregroundStyle(.black)
-            }
-
-            if hasMultipleProfiles {
-                HStack(spacing: 4) {
-                    Text("🔄")
-                        .font(.system(size: 12))
-                    Text(L.s(.changeProfile))
-                        .font(.system(.caption, design: .rounded, weight: .bold))
-                        .foregroundStyle(GeniColor.border)
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(.white)
-                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
             }
         }
     }

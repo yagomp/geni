@@ -164,6 +164,8 @@ struct ChildHomeView: View {
                     Text("\(rewards.coins)")
                         .font(.system(.headline, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
+                        .contentTransition(.numericText())
+                        .animation(.spring(response: 0.4), value: rewards.coins)
 
                     Text(L.s(.coins))
                         .font(.system(.caption2, design: .rounded, weight: .medium))
@@ -593,6 +595,8 @@ struct StatBubble: View {
             Text(value)
                 .font(.system(.headline, design: .rounded, weight: .black))
                 .foregroundStyle(GeniColor.border)
+                .contentTransition(.numericText())
+                .animation(.spring(response: 0.4), value: value)
 
             VStack(spacing: 1) {
                 Text(label)

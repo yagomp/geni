@@ -4,9 +4,7 @@ struct ChildHomeView: View {
     let viewModel: AppViewModel
     let rewardsNamespace: Namespace.ID
     let settingsNamespace: Namespace.ID
-    @Namespace private var avatarZoom
     @State private var showAvatarPicker = false
-    @State private var showProfileSwitcher = false
     @State private var showProfileCreation = false
 
     private var hasMultipleProfiles: Bool {
@@ -40,28 +38,6 @@ struct ChildHomeView: View {
         }
         .sheet(isPresented: $showAvatarPicker) {
             AvatarPickerSheet(viewModel: viewModel)
-                .zoomDestination(id: "avatar", in: avatarZoom)
-        }
-        .sheet(isPresented: $showProfileSwitcher) {
-            ProfileSwitcherSheet(
-                profiles: viewModel.persistence.profiles,
-                activeProfileId: viewModel.persistence.activeProfileId,
-                onSelect: { profile in
-                    showProfileSwitcher = false
-                    if profile.id != viewModel.persistence.activeProfileId {
-                        viewModel.selectProfile(profile)
-                    }
-                },
-                onAddProfile: {
-                    showProfileSwitcher = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                        showProfileCreation = true
-                    }
-                }
-            )
-            .zoomDestination(id: "avatar", in: avatarZoom)
-            .presentationDetents([.medium])
-            .presentationDragIndicator(.visible)
         }
         .fullScreenCover(isPresented: $showProfileCreation) {
             ProfileCreationView(onComplete: { profile in
@@ -76,54 +52,37 @@ struct ChildHomeView: View {
 
     private func headerSection(profile: ChildProfile?, avatar: AvatarOption, rewards: RewardState) -> some View {
         HStack(spacing: 16) {
-            Button {
-                HapticManager.selection()
+            Group {
                 if hasMultipleProfiles {
-                    showProfileSwitcher = true
-                } else {
-                    showAvatarPicker = true
-                }
-            } label: {
-                HStack(spacing: 12) {
-                    Text(avatar.emoji)
-                        .font(.system(size: 28))
-                        .frame(width: 56, height: 56)
-                        .background(.white)
-                        .overlay(
-                            Rectangle()
-                                .stroke(GeniColor.border, lineWidth: 3)
-                        )
-                        .background(
-                            Rectangle()
-                                .fill(GeniColor.border)
-                                .offset(x: 3, y: 3)
-                        )
-                        .zoomSource(id: "avatar", in: avatarZoom)
-
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(profile?.nickname ?? "")
-                            .font(.system(.title2, design: .rounded, weight: .black))
-                            .foregroundStyle(GeniColor.border)
-
-                        HStack(spacing: 4) {
-                            Text("\(L.s(.level)) \(rewards.level)")
-                                .font(.system(.subheadline, design: .rounded, weight: .bold))
-                                .foregroundStyle(.black)
+                    Menu {
+                        ForEach(viewModel.persistence.profiles) { p in
+                            let isActive = p.id == viewModel.persistence.activeProfileId
+                            let pAvatar = AvatarOption.find(p.avatarId)
+                            Button {
+                                HapticManager.impact(.medium)
+                                if p.id != viewModel.persistence.activeProfileId {
+                                    viewModel.selectProfile(p)
+                                }
+                            } label: {
+                                Text((isActive ? "✅ " : "") + pAvatar.emoji + "  " + p.nickname)
+                            }
                         }
+                        Divider()
+                        Button {
+                            HapticManager.selection()
+                            showProfileCreation = true
+                        } label: {
+                            Text("➕  " + L.s(.addProfile))
+                        }
+                    } label: {
+                        avatarLabel(avatar: avatar, profile: profile, rewards: rewards)
                     }
-
-                    if hasMultipleProfiles {
-                        HStack(spacing: 4) {
-                            Text("🔄")
-                                .font(.system(size: 12))
-                            Text(L.s(.changeProfile))
-                                .font(.system(.caption, design: .rounded, weight: .bold))
-                                .foregroundStyle(GeniColor.border)
-                        }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(.white)
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                } else {
+                    Button {
+                        HapticManager.selection()
+                        showAvatarPicker = true
+                    } label: {
+                        avatarLabel(avatar: avatar, profile: profile, rewards: rewards)
                     }
                 }
             }
@@ -137,6 +96,48 @@ struct ChildHomeView: View {
                 Text("⚙️")
                     .font(.system(size: 24))
                     .zoomSource(id: "settings", in: settingsNamespace)
+            }
+        }
+    }
+
+    private func avatarLabel(avatar: AvatarOption, profile: ChildProfile?, rewards: RewardState) -> some View {
+        HStack(spacing: 12) {
+            Text(avatar.emoji)
+                .font(.system(size: 28))
+                .frame(width: 56, height: 56)
+                .background(.white)
+                .overlay(
+                    Rectangle()
+                        .stroke(GeniColor.border, lineWidth: 3)
+                )
+                .background(
+                    Rectangle()
+                        .fill(GeniColor.border)
+                        .offset(x: 3, y: 3)
+                )
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(profile?.nickname ?? "")
+                    .font(.system(.title2, design: .rounded, weight: .black))
+                    .foregroundStyle(GeniColor.border)
+
+                Text("\(L.s(.level)) \(rewards.level)")
+                    .font(.system(.subheadline, design: .rounded, weight: .bold))
+                    .foregroundStyle(.black)
+            }
+
+            if hasMultipleProfiles {
+                HStack(spacing: 4) {
+                    Text("🔄")
+                        .font(.system(size: 12))
+                    Text(L.s(.changeProfile))
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .foregroundStyle(GeniColor.border)
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(.white)
+                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
             }
         }
     }
@@ -677,111 +678,11 @@ struct ChallengeCountdown: View {
     }
 }
 
-struct ProfileSwitcherSheet: View {
-    let profiles: [ChildProfile]
-    let activeProfileId: String?
-    let onSelect: (ChildProfile) -> Void
-    let onAddProfile: () -> Void
-
-    var body: some View {
-        ZStack {
-            GeniColor.background.ignoresSafeArea()
-
-            VStack(spacing: 24) {
-                Text(L.s(.whosPlaying))
-                    .font(.system(.title, design: .rounded, weight: .black))
-                    .foregroundStyle(GeniColor.border)
-                    .padding(.top, 8)
-
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 100), spacing: 16)], spacing: 16) {
-                    ForEach(profiles) { profile in
-                        let avatar = AvatarOption.find(profile.avatarId)
-                        let isActive = profile.id == activeProfileId
-
-                        Button {
-                            HapticManager.impact(.medium)
-                            onSelect(profile)
-                        } label: {
-                            VStack(spacing: 8) {
-                                Text(avatar.emoji)
-                                    .font(.system(size: 36))
-
-                                Text(profile.nickname)
-                                    .font(.system(.subheadline, design: .rounded, weight: .black))
-                                    .foregroundStyle(GeniColor.border)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.7)
-
-                                if isActive {
-                                    Text("✅")
-                                        .font(.system(size: 14))
-                                }
-                            }
-                            .padding(.vertical, 14)
-                            .padding(.horizontal, 8)
-                            .frame(maxWidth: .infinity)
-                            .background(GeniColor.card)
-                            .overlay(
-                                Rectangle()
-                                    .stroke(isActive ? GeniColor.green : GeniColor.border, lineWidth: isActive ? 4 : 3)
-                            )
-                            .background(
-                                Rectangle()
-                                    .fill(isActive ? GeniColor.green : GeniColor.border)
-                                    .offset(x: 3, y: 3)
-                            )
-                        }
-                    }
-
-                    Button {
-                        HapticManager.impact(.medium)
-                        onAddProfile()
-                    } label: {
-                        VStack(spacing: 8) {
-                            Text("➕")
-                                .font(.system(size: 36))
-
-                            Text(L.s(.add))
-                                .font(.system(.subheadline, design: .rounded, weight: .black))
-                                .foregroundStyle(GeniColor.border)
-                        }
-                        .padding(.vertical, 14)
-                        .padding(.horizontal, 8)
-                        .frame(maxWidth: .infinity)
-                        .background(GeniColor.card)
-                        .overlay(
-                            Rectangle()
-                                .stroke(GeniColor.border, lineWidth: 3)
-                        )
-                        .background(
-                            Rectangle()
-                                .fill(GeniColor.border)
-                                .offset(x: 3, y: 3)
-                        )
-                    }
-                }
-                .padding(.horizontal, 24)
-
-                Spacer()
-            }
-        }
-    }
-}
-
 private extension View {
     @ViewBuilder
     func zoomSource<ID: Hashable>(id: ID, in namespace: Namespace.ID) -> some View {
         if #available(iOS 18.0, *) {
             self.matchedTransitionSource(id: id, in: namespace)
-        } else {
-            self
-        }
-    }
-
-    @ViewBuilder
-    func zoomDestination<ID: Hashable>(id: ID, in namespace: Namespace.ID) -> some View {
-        if #available(iOS 18.0, *) {
-            self.navigationTransition(.zoom(sourceID: id, in: namespace))
         } else {
             self
         }

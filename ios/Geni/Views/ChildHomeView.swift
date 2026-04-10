@@ -141,8 +141,10 @@ struct ChildHomeView: View {
             StatBubble(
                 emoji: "🔥",
                 value: "\(rewards.streakCount)",
-                label: rewards.streakCount == 1 ? L.s(.day) : L.s(.days),
-                sublabel: L.s(.streak),
+                label: {
+                    let combined = "\(rewards.streakCount == 1 ? L.s(.day) : L.s(.days)) \(L.s(.streak).lowercased())"
+                    return combined.prefix(1).uppercased() + combined.dropFirst()
+                }(),
                 color: GeniColor.orange
             )
 
@@ -584,7 +586,6 @@ struct StatBubble: View {
     let emoji: String
     let value: String
     let label: String
-    var sublabel: String? = nil
     let color: Color
 
     var body: some View {
@@ -598,21 +599,11 @@ struct StatBubble: View {
                 .contentTransition(.numericText())
                 .animation(.spring(response: 0.4), value: value)
 
-            VStack(spacing: 1) {
-                Text(label)
-                    .font(.system(.caption2, design: .rounded, weight: .medium))
-                    .foregroundStyle(.black)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-
-                if let sublabel {
-                    Text(sublabel)
-                        .font(.system(.caption2, design: .rounded, weight: .bold))
-                        .foregroundStyle(.black)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.7)
-                }
-            }
+            Text(label)
+                .font(.system(.caption2, design: .rounded, weight: .medium))
+                .foregroundStyle(.black)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)

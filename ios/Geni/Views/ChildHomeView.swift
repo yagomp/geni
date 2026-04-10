@@ -52,20 +52,22 @@ struct ChildHomeView: View {
 
     private func headerSection(profile: ChildProfile?, avatar: AvatarOption, rewards: RewardState) -> some View {
         HStack(spacing: 16) {
-            HStack(spacing: 10) {
-                // Active profile — large, tappable to change avatar (single profile) or non-interactive label
-                if hasMultipleProfiles {
+            // Active profile on the left
+            if hasMultipleProfiles {
+                activeProfileLabel(avatar: avatar, profile: profile, rewards: rewards)
+            } else {
+                Button {
+                    HapticManager.selection()
+                    showAvatarPicker = true
+                } label: {
                     activeProfileLabel(avatar: avatar, profile: profile, rewards: rewards)
-                } else {
-                    Button {
-                        HapticManager.selection()
-                        showAvatarPicker = true
-                    } label: {
-                        activeProfileLabel(avatar: avatar, profile: profile, rewards: rewards)
-                    }
                 }
+            }
 
-                // Sibling avatars — small tappable bubbles, one tap = instant switch
+            Spacer()
+
+            // Sibling avatars + settings on the right
+            HStack(spacing: 12) {
                 if hasMultipleProfiles {
                     ForEach(viewModel.persistence.profiles.filter { $0.id != viewModel.persistence.activeProfileId }) { p in
                         let pAvatar = AvatarOption.find(p.avatarId)
@@ -73,33 +75,40 @@ struct ChildHomeView: View {
                             HapticManager.impact(.medium)
                             viewModel.selectProfile(p)
                         } label: {
-                            Text(pAvatar.emoji)
-                                .font(.system(size: 20))
-                                .frame(width: 42, height: 42)
-                                .background(.white)
-                                .overlay(
-                                    Rectangle()
-                                        .stroke(GeniColor.border, lineWidth: 2)
-                                )
-                                .background(
-                                    Rectangle()
-                                        .fill(GeniColor.border)
-                                        .offset(x: 2, y: 2)
-                                )
+                            VStack(spacing: 4) {
+                                Text(pAvatar.emoji)
+                                    .font(.system(size: 20))
+                                    .frame(width: 42, height: 42)
+                                    .background(.white)
+                                    .overlay(
+                                        Rectangle()
+                                            .stroke(GeniColor.border, lineWidth: 2)
+                                    )
+                                    .background(
+                                        Rectangle()
+                                            .fill(GeniColor.border)
+                                            .offset(x: 2, y: 2)
+                                    )
+
+                                Text(p.nickname)
+                                    .font(.system(.caption2, design: .rounded, weight: .bold))
+                                    .foregroundStyle(GeniColor.border)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.7)
+                                    .frame(width: 42)
+                            }
                         }
                     }
                 }
-            }
 
-            Spacer()
-
-            Button {
-                HapticManager.selection()
-                viewModel.showParentSettings = true
-            } label: {
-                Text("⚙️")
-                    .font(.system(size: 24))
-                    .zoomSource(id: "settings", in: settingsNamespace)
+                Button {
+                    HapticManager.selection()
+                    viewModel.showParentSettings = true
+                } label: {
+                    Text("⚙️")
+                        .font(.system(size: 24))
+                        .zoomSource(id: "settings", in: settingsNamespace)
+                }
             }
         }
     }
@@ -107,8 +116,8 @@ struct ChildHomeView: View {
     private func activeProfileLabel(avatar: AvatarOption, profile: ChildProfile?, rewards: RewardState) -> some View {
         HStack(spacing: 12) {
             Text(avatar.emoji)
-                .font(.system(size: 28))
-                .frame(width: 56, height: 56)
+                .font(.system(size: 38))
+                .frame(width: 68, height: 68)
                 .background(.white)
                 .overlay(
                     Rectangle()

@@ -697,34 +697,44 @@ struct ParentDashboardView: View {
     }
 
     private var pinSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        let pinSet = viewModel.persistence.parentPin != nil
+
+        return VStack(alignment: .leading, spacing: 12) {
             Text(L.s(.pin))
                 .font(.system(.headline, design: .rounded, weight: .bold))
 
-            if viewModel.persistence.parentPin != nil {
-                Button {
-                    HapticManager.selection()
-                    showSetPin = true
-                } label: {
-                    HStack {
-                        Text("🔒")
-                        Text(L.s(.changePin))
+            Button {
+                HapticManager.selection()
+                showSetPin = true
+            } label: {
+                HStack(spacing: 0) {
+                    Text(pinSet ? "🔒" : "🔓")
+                        .font(.system(size: 22))
+                        .frame(width: 40)
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(pinSet ? L.s(.changePin) : L.s(.setPin))
+                            .font(.system(.body, design: .rounded, weight: .semibold))
+                            .foregroundStyle(.black)
+
+                        Text(L.s(.pin))
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundStyle(.black.opacity(0.5))
                     }
-                    .font(.system(.body, design: .rounded, weight: .bold))
-                    .foregroundStyle(GeniColor.blue)
+
+                    Spacer()
+
+                    Circle()
+                        .fill(pinSet ? GeniColor.green : Color.gray.opacity(0.3))
+                        .frame(width: 10, height: 10)
+                        .padding(.trailing, 8)
+
+                    Text("›")
+                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .foregroundStyle(.black)
                 }
-            } else {
-                Button {
-                    HapticManager.selection()
-                    showSetPin = true
-                } label: {
-                    HStack {
-                        Text("🔓")
-                        Text(L.s(.setPin))
-                    }
-                    .font(.system(.body, design: .rounded, weight: .bold))
-                    .foregroundStyle(GeniColor.blue)
-                }
+                .padding(12)
+                .brutalistCard(color: GeniColor.card, borderWidth: 3)
             }
         }
         .sheet(isPresented: $showSetPin) {

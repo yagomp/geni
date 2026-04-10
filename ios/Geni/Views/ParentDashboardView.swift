@@ -1,4 +1,5 @@
 import SwiftUI
+import SafariServices
 
 struct ParentDashboardView: View {
     @Bindable var viewModel: AppViewModel
@@ -13,6 +14,7 @@ struct ParentDashboardView: View {
     @State private var showSetPin = false
     @State private var selectedLanguage: AppLanguage = L.selectedLanguage
     @State private var languageManager = LanguageManager.shared
+    @State private var showContactSheet = false
 
     var body: some View {
         NavigationStack {
@@ -127,14 +129,18 @@ struct ParentDashboardView: View {
                     progressOverviewSection
                     reminderSection
                     iCloudSyncSection
-                    pinSection
                     contactSection
+                    pinSection
                 }
                 .padding(iPadScale.padding)
                 .foregroundStyle(.black)
             }
         }
         .navigationBarHidden(true)
+        .sheet(isPresented: $showContactSheet) {
+            SafariView(url: URL(string: "https://geni.kids/contact.html")!)
+                .ignoresSafeArea()
+        }
         .fullScreenCover(isPresented: $showProfileCreation) {
             ProfileCreationView(onComplete: { profile in
                 viewModel.persistence.saveProfile(profile)
@@ -734,26 +740,24 @@ struct ParentDashboardView: View {
             Text(L.s(.contactSupport))
                 .font(.system(.headline, design: .rounded, weight: .bold))
 
-            Link(destination: URL(string: "https://geni.kids/contact.html")!) {
+            Button {
+                HapticManager.selection()
+                showContactSheet = true
+            } label: {
                 HStack(spacing: 12) {
                     Text("✉️")
                         .font(.system(size: 22))
                         .frame(width: 40)
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(L.s(.contactSupport))
-                            .font(.system(.body, design: .rounded, weight: .semibold))
-                            .foregroundStyle(GeniColor.blue)
-                        Text("geni.kids/contact")
-                            .font(.system(.caption, design: .rounded))
-                            .foregroundStyle(.black)
-                    }
+                    Text(L.s(.contactSupport))
+                        .font(.system(.body, design: .rounded, weight: .semibold))
+                        .foregroundStyle(.black)
 
                     Spacer()
 
                     Text("›")
                         .font(.system(.title3, design: .rounded, weight: .bold))
-                        .foregroundStyle(GeniColor.blue)
+                        .foregroundStyle(.black)
                 }
                 .padding(12)
                 .brutalistCard(color: GeniColor.card, borderWidth: 3)
@@ -815,6 +819,14 @@ struct ParentDashboardView: View {
             }
         }
     }
+}
+
+struct SafariView: UIViewControllerRepresentable {
+    let url: URL
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        SFSafariViewController(url: url)
+    }
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
 }
 
 struct SetPinView: View {

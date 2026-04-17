@@ -24,12 +24,13 @@ class ChapterViewModel {
     var timeRemaining: Int = 60
     var isTimedMode: Bool = false
     var timerTask: Task<Void, Never>? = nil
+    var isAwaitingAdvance: Bool = false
 
     init(profile: ChildProfile, chapter: ChapterProgress, exercises: [Exercise], startIndex: Int = 0) {
         self.profile = profile
         self.chapter = chapter
         self.exercises = exercises
-        self.currentIndex = startIndex
+        self.currentIndex = min(startIndex, exercises.count)
         self.isTimedMode = chapter.chapterType == .timeAttack
 
         if isTimedMode {
@@ -52,6 +53,7 @@ class ChapterViewModel {
 
     func submitAnswer(_ answer: Int, persistence: PersistenceService) {
         guard let exercise = currentExercise else { return }
+        guard !isAwaitingAdvance else { return }
         attempts += 1
 
         let actualCorrectAnswer: Int
@@ -116,8 +118,7 @@ class ChapterViewModel {
                 secondCorrect: attempts == 2 ? true : nil,
                 attempts: attempts
             )
-            chapter.exerciseResults.append(result)
-            persistence.saveChapterProgress(chapter)
+            recordCompletedExercise(result, persistence: persistence)
 
             advanceAfterDelay()
         } else if attempts >= 2 {
@@ -134,8 +135,7 @@ class ChapterViewModel {
                 secondCorrect: false,
                 attempts: attempts
             )
-            chapter.exerciseResults.append(result)
-            persistence.saveChapterProgress(chapter)
+            recordCompletedExercise(result, persistence: persistence)
 
             advanceAfterDelay()
         } else {
@@ -155,6 +155,7 @@ class ChapterViewModel {
     func submitMatch(leftIndex: Int, rightIndex: Int, persistence: PersistenceService) {
         guard let exercise = currentExercise,
               let correctIndices = exercise.correctMatchIndices else { return }
+        guard !isAwaitingAdvance else { return }
 
         if correctIndices[leftIndex] == rightIndex {
             completedMatches.append((leftIndex, rightIndex))
@@ -172,8 +173,7 @@ class ChapterViewModel {
                     secondCorrect: nil,
                     attempts: 1
                 )
-                chapter.exerciseResults.append(result)
-                persistence.saveChapterProgress(chapter)
+                recordCompletedExercise(result, persistence: persistence)
                 advanceAfterDelay()
             }
         } else {
@@ -186,7 +186,14 @@ class ChapterViewModel {
         }
     }
 
+    private func recordCompletedExercise(_ result: ExerciseResult, persistence: PersistenceService) {
+        chapter.exerciseResults.append(result)
+        chapter.completedExerciseCount = max(chapter.completedExerciseCount, currentIndex + 1)
+        persistence.saveChapterProgress(chapter)
+    }
+
     private func advanceAfterDelay() {
+        isAwaitingAdvance = true
         Task {
             try? await Task.sleep(for: .seconds(1.5))
             showFeedback = false
@@ -197,6 +204,7 @@ class ChapterViewModel {
             evenOddStep = 0
             completedMatches = []
             currentIndex += 1
+            isAwaitingAdvance = false
         }
     }
 

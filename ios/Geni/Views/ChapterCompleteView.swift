@@ -47,7 +47,7 @@ struct ChapterCompleteView: View {
                             icon: "✅",
                             color: GeniColor.green,
                             label: L.s(.correct),
-                            value: "\(chapter.correctCount)/\(chapter.exerciseResults.count)"
+                            value: "\(chapter.correctCount)/\(chapter.completedExerciseCount)"
                         )
 
                         RewardRow(

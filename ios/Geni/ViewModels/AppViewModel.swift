@@ -131,7 +131,7 @@ class AppViewModel {
                 } else {
                     exercises = ExerciseGenerator.generateChapter(profile: profile)
                 }
-                let startIndex = min(existing.exerciseResults.count, exercises.count)
+                let startIndex = min(existing.completedExerciseCount, exercises.count)
                 if startIndex >= exercises.count {
                     completeChapter(existing)
                     return
@@ -183,10 +183,16 @@ class AppViewModel {
 
     func completeChapter(_ chapter: ChapterProgress) {
         guard let profile = persistence.activeProfile else { return }
+        guard chapter.status != .completed else {
+            chapterViewModel?.completedChapter = chapter
+            currentScreen = .chapterComplete
+            return
+        }
 
         var final = chapter
         final.status = .completed
         final.completedAt = Date()
+        final.completedExerciseCount = max(final.completedExerciseCount, final.exerciseResults.count)
         final.calculateRewards()
 
         persistence.saveChapterProgress(final)
@@ -436,7 +442,7 @@ class AppViewModel {
 
     var todayChapterExercisesCompleted: Int {
         guard let profile = persistence.activeProfile else { return 0 }
-        return persistence.todayChapter(for: profile.id)?.exerciseResults.count ?? 0
+        return persistence.todayChapter(for: profile.id)?.completedExerciseCount ?? 0
     }
 
     var completedChapterCount: Int {

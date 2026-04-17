@@ -52,4 +52,36 @@ struct GeniTests {
         }
     }
 
+    @Test func comparisonExercisesAlwaysShowDifferentResults() async throws {
+        for operation in [MathOperation.addition, .subtraction, .multiplication, .division] {
+            for _ in 0..<100 {
+                let exercise = Exercise(
+                    operand1: 10,
+                    operand2: 2,
+                    operation: operation,
+                    difficulty: .normal,
+                    format: .comparison
+                )
+
+                let left = try #require(exercise.comparisonLeft)
+                let right = try #require(exercise.comparisonRight)
+
+                #expect(evaluate(left) != evaluate(right))
+            }
+        }
+    }
+
+    private func evaluate(_ expression: (Int, MathOperation, Int)) -> Int {
+        switch expression.1 {
+        case .addition:
+            expression.0 + expression.2
+        case .subtraction:
+            expression.0 - expression.2
+        case .multiplication:
+            expression.0 * expression.2
+        case .division:
+            expression.0 / expression.2
+        }
+    }
+
 }

@@ -200,6 +200,22 @@ struct GuidedReadingView: View {
                 .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
             }
 
+            if readingVM.mode == .listenToMeRead {
+                Button {
+                    HapticManager.selection()
+                    readingVM.skipCurrentListenWord()
+                } label: {
+                    Image(systemName: "forward.end.fill")
+                        .font(.system(size: 18, weight: .black))
+                        .foregroundStyle(.white)
+                        .frame(width: 52, height: 52)
+                        .background(GeniColor.orange)
+                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                        .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                }
+                .accessibilityLabel(L.s(.next))
+            }
+
             if readingVM.mode != .listenToMeRead && readingVM.currentWordIndex >= readingVM.words.count / 2 {
                 Button {
                     HapticManager.impact(.heavy)
@@ -229,8 +245,19 @@ struct GuidedReadingView: View {
             Spacer()
         }
         .padding(16)
-        .background(GeniColor.green)
+        .background(feedbackColor)
         .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
         .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+    }
+
+    private var feedbackColor: Color {
+        switch readingVM.feedbackTone {
+        case .success:
+            GeniColor.green
+        case .guidance:
+            GeniColor.orange
+        case .error:
+            GeniColor.pink
+        }
     }
 }

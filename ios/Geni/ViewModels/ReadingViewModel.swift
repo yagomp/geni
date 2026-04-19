@@ -3,6 +3,12 @@ import SwiftUI
 @Observable
 @MainActor
 class ReadingViewModel {
+    enum FeedbackTone {
+        case success
+        case guidance
+        case error
+    }
+
     let profile: ChildProfile
     let readingText: ReadingText
     var mode: ReadingMode
@@ -21,6 +27,7 @@ class ReadingViewModel {
     var matchedWordCount: Int = 0
     var feedbackMessage: String = ""
     var showFeedback: Bool = false
+    var feedbackTone: FeedbackTone = .success
 
     private var timerTask: Task<Void, Never>?
     private var highlightTask: Task<Void, Never>?
@@ -49,7 +56,8 @@ class ReadingViewModel {
 
     var progress: Double {
         guard !words.isEmpty else { return 0 }
-        return Double(currentWordIndex) / Double(words.count)
+        let completedWords = mode == .listenToMeRead ? matchedWordCount : currentWordIndex
+        return Double(min(completedWords, words.count)) / Double(words.count)
     }
 
     var timeProgress: Double {
@@ -78,7 +86,7 @@ class ReadingViewModel {
             if mode == .listenToMeRead {
                 let isMisread = recognitionService?.misreadIndices.contains(i) == true
                 if i < matchedWordCount && isMisread {
-                    wordStr.foregroundColor = Color(GeniColor.pink)
+                    wordStr.foregroundColor = Color(GeniColor.orange)
                     wordStr.underlineStyle = .single
                 } else if i < matchedWordCount {
                     wordStr.foregroundColor = Color(GeniColor.green)
@@ -126,7 +134,7 @@ class ReadingViewModel {
         if mode == .readToMe {
             speechService?.pause()
         } else if mode == .listenToMeRead {
-            recognitionService?.stopListening()
+            recognitionService?.stopListening(clearTranscript: false)
         }
     }
 
@@ -151,6 +159,10 @@ class ReadingViewModel {
         elapsedSeconds = 0
         matchedWordCount = 0
         isCompleted = false
+        feedbackMessage = ""
+        showFeedback = false
+        feedbackTone = .success
+        recognitionService?.resetTranscript(clearMisreads: true)
         start()
     }
 
@@ -160,7 +172,7 @@ class ReadingViewModel {
         timerTask?.cancel()
         highlightTask?.cancel()
         speechService?.stop()
-        recognitionService?.stopListening()
+        recognitionService?.stopListening(clearTranscript: true)
     }
 
     func completeReading() {
@@ -239,11 +251,14 @@ class ReadingViewModel {
 
     private func startListenMode() {
         guard let recognitionService else { return }
+        recognitionService.resetTranscript(clearMisreads: false)
+        currentWordIndex = matchedWordCount
 
         Task {
             let granted = await recognitionService.requestPermissions()
             guard granted else {
                 feedbackMessage = L.s(.micPermissionNeeded)
+                feedbackTone = .error
                 showFeedback = true
                 return
             }
@@ -251,39 +266,66 @@ class ReadingViewModel {
 
             highlightTask = Task {
                 let expectedWords = words.map { $0.text }
-                var attemptsWhileStuck = 0
-                var wasRecognizingWords = false
-                while !Task.isCancelled && matchedWordCount < words.count {
-                    let wordsNonEmpty = !recognitionService.recognizedWords.isEmpty
-                    // Detect session end: went non-empty → empty means child spoke and session closed
-                    if wasRecognizingWords && !wordsNonEmpty {
-                        attemptsWhileStuck += 1
-                    }
-                    wasRecognizingWords = wordsNonEmpty
+                var lastProgressAt = Date()
+                var lastFeedbackAt = Date.distantPast
+                var lastTranscriptVersion = recognitionService.transcriptVersion
+                var lastTranscriptUpdateAt = recognitionService.lastTranscriptUpdateAt ?? Date()
 
+                while !Task.isCancelled && matchedWordCount < words.count {
                     let count = recognitionService.matchedWordCount(expected: expectedWords, startFrom: matchedWordCount)
                     if count > matchedWordCount {
                         matchedWordCount = count
-                        attemptsWhileStuck = 0
-                        wasRecognizingWords = false
+                        currentWordIndex = count
+                        lastProgressAt = Date()
+                        lastTranscriptVersion = recognitionService.transcriptVersion
+                        lastTranscriptUpdateAt = recognitionService.lastTranscriptUpdateAt ?? lastProgressAt
+                        if feedbackTone != .error {
+                            showFeedback = false
+                            feedbackMessage = ""
+                        }
                         HapticManager.impact(.light)
                     }
 
-                    // After 2 failed attempts on the same word, mark it red and advance
-                    if attemptsWhileStuck >= 2 {
-                        recognitionService.misreadIndices.insert(matchedWordCount)
-                        matchedWordCount += 1
-                        attemptsWhileStuck = 0
-                        wasRecognizingWords = false
-                        HapticManager.impact(.light)
+                    if recognitionService.transcriptVersion != lastTranscriptVersion {
+                        lastTranscriptVersion = recognitionService.transcriptVersion
+                        lastTranscriptUpdateAt = recognitionService.lastTranscriptUpdateAt ?? Date()
                     }
 
-                    try? await Task.sleep(for: .milliseconds(200))
+                    let now = Date()
+                    let stalledFor = now.timeIntervalSince(lastProgressAt)
+                    let transcriptQuietFor = now.timeIntervalSince(lastTranscriptUpdateAt)
+
+                    if let error = recognitionService.error, !error.isEmpty {
+                        feedbackMessage = error
+                        feedbackTone = .error
+                        showFeedback = true
+                    } else if stalledFor >= listenWarningSeconds,
+                              transcriptQuietFor >= 1.0,
+                              now.timeIntervalSince(lastFeedbackAt) >= 2.0 {
+                        feedbackMessage = L.s(.letsKeepGoing)
+                        feedbackTone = .guidance
+                        showFeedback = true
+                        lastFeedbackAt = now
+                    }
+
+                    if stalledFor >= listenAutoAdvanceSeconds && transcriptQuietFor >= 1.5 {
+                        skipCurrentListenWord()
+                        lastProgressAt = now
+                        lastFeedbackAt = now
+                        lastTranscriptUpdateAt = now
+                        recognitionService.resetTranscript(clearMisreads: false)
+                        if !recognitionService.isListening {
+                            recognitionService.startListening()
+                        }
+                    }
+
+                    try? await Task.sleep(for: .milliseconds(150))
                 }
 
                 guard !Task.isCancelled else { return }
                 if matchedWordCount >= words.count {
                     feedbackMessage = L.s(.amazingReading)
+                    feedbackTone = .success
                     showFeedback = true
                     HapticManager.notification(.success)
                     try? await Task.sleep(for: .seconds(1.5))
@@ -292,5 +334,29 @@ class ReadingViewModel {
                 }
             }
         }
+    }
+
+    func skipCurrentListenWord() {
+        guard mode == .listenToMeRead, matchedWordCount < words.count else { return }
+
+        recognitionService?.misreadIndices.insert(matchedWordCount)
+        matchedWordCount += 1
+        currentWordIndex = matchedWordCount
+        feedbackMessage = L.s(.letsKeepGoing)
+        feedbackTone = .guidance
+        showFeedback = true
+        HapticManager.impact(.light)
+    }
+
+    private var listenWarningSeconds: TimeInterval {
+        switch profile.ageGroup {
+        case .young: return 2.5
+        case .middle: return 3.0
+        case .older: return 3.5
+        }
+    }
+
+    private var listenAutoAdvanceSeconds: TimeInterval {
+        listenWarningSeconds + 2.0
     }
 }

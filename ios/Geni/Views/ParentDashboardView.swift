@@ -378,7 +378,7 @@ struct ParentDashboardView: View {
                 let chapters = viewModel.persistence.loadAllChapters(for: profile.id)
                 let completedChapters = chapters.filter { $0.status == .completed }
                 let totalCorrect = completedChapters.reduce(0) { $0 + $1.correctCount }
-                let totalExercises = completedChapters.reduce(0) { $0 + $1.exerciseResults.count }
+                let totalExercises = completedChapters.reduce(0) { $0 + $1.completedExerciseCount }
                 let accuracy = totalExercises > 0 ? Int(Double(totalCorrect) / Double(totalExercises) * 100) : 0
 
                 VStack(spacing: 12) {
@@ -461,7 +461,7 @@ struct ParentDashboardView: View {
                                         }
                                     }
 
-                                    Text("\(ch.correctCount)/\(ch.exerciseResults.count)")
+                                    Text("\(ch.correctCount)/\(ch.completedExerciseCount)")
                                         .font(.system(.caption2, design: .monospaced, weight: .bold))
                                         .foregroundStyle(.black)
                                 }

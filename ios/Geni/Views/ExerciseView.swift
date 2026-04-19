@@ -86,7 +86,7 @@ struct ExerciseView: View {
             .animation(.spring(response: 0.4), value: chapterVM.showFeedback)
         }
         .onChange(of: chapterVM.currentIndex) { _, newValue in
-            if newValue >= 20 {
+            if newValue >= chapterVM.totalExercises {
                 chapterVM.stopTimer()
                 onComplete(chapterVM.chapter)
             }
@@ -533,120 +533,199 @@ struct ExerciseView: View {
     // MARK: - Match Connect (Draw a Line)
 
     private func matchConnectContent(_ exercise: Exercise) -> some View {
-        Text(L.s(.matchConnectInstruction))
-            .font(.system(size: iPadScale.value(18), weight: .semibold, design: .rounded))
-            .foregroundStyle(GeniColor.border)
-            .multilineTextAlignment(.leading)
-
-        Text(L.s(.matchThePairs))
-            .font(.system(size: iPadScale.value(28), weight: .bold, design: .rounded))
-            .foregroundStyle(GeniColor.border)
-
         let leftLabels = exercise.matchLeftLabels ?? []
         let rightLabels = exercise.matchRightLabels ?? []
-        let correctIndices = exercise.correctMatchIndices ?? []
         let pairCount = leftLabels.count
 
-        return GeometryReader { geo in
-            ZStack {
-                // Draw completed match lines
-                Canvas { context, size in
-                    for (leftIdx, rightIdx) in chapterVM.completedMatches {
-                        let leftY = matchItemY(index: leftIdx, count: pairCount, height: size.height)
-                        let rightY = matchItemY(index: rightIdx, count: pairCount, height: size.height)
-                        var path = Path()
-                        path.move(to: CGPoint(x: size.width * 0.38, y: leftY))
-                        path.addLine(to: CGPoint(x: size.width * 0.62, y: rightY))
-                        context.stroke(path, with: .color(GeniColor.green), lineWidth: 4)
-                    }
+        return VStack(spacing: 16) {
+            Text(L.s(.matchConnectInstruction))
+                .font(.system(size: iPadScale.value(18), weight: .semibold, design: .rounded))
+                .foregroundStyle(GeniColor.border)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                    // Active drag line
-                    if let sourceIdx = chapterVM.activeDragSource, let pos = chapterVM.activeDragPosition {
-                        let leftY = matchItemY(index: sourceIdx, count: pairCount, height: size.height)
-                        var path = Path()
-                        path.move(to: CGPoint(x: size.width * 0.38, y: leftY))
-                        path.addLine(to: pos)
-                        context.stroke(path, with: .color(GeniColor.blue), lineWidth: 3)
-                    }
+            Text(L.s(.matchThePairs))
+                .font(.system(size: iPadScale.value(28), weight: .bold, design: .rounded))
+                .foregroundStyle(GeniColor.border)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                    // Wrong match flash
-                    if let wrong = chapterVM.wrongMatchPair {
-                        let leftY = matchItemY(index: wrong.0, count: pairCount, height: size.height)
-                        let rightY = matchItemY(index: wrong.1, count: pairCount, height: size.height)
-                        var path = Path()
-                        path.move(to: CGPoint(x: size.width * 0.38, y: leftY))
-                        path.addLine(to: CGPoint(x: size.width * 0.62, y: rightY))
-                        context.stroke(path, with: .color(GeniColor.pink), lineWidth: 4)
-                    }
+            GeometryReader { geo in
+                let leftAnchorX = matchLeftAnchorX(width: geo.size.width)
+                let rightAnchorX = matchRightAnchorX(width: geo.size.width)
+                let hoveredTargetIndex = chapterVM.activeDragPoints.last.flatMap {
+                    matchDropTarget(
+                        near: $0,
+                        count: pairCount,
+                        size: geo.size
+                    )
                 }
 
-                HStack(spacing: 0) {
-                    // Left column
-                    VStack(spacing: 12) {
-                        ForEach(0..<pairCount, id: \.self) { i in
-                            let isMatched = chapterVM.completedMatches.contains { $0.0 == i }
-                            Text(leftLabels[i])
-                                .font(.system(size: iPadScale.value(20), weight: .black, design: .rounded))
-                                .foregroundStyle(isMatched ? GeniColor.green : GeniColor.border)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: iPadScale.value(52))
-                                .background(GeniColor.card)
-                                .overlay(Rectangle().stroke(isMatched ? GeniColor.green : GeniColor.border, lineWidth: 3))
-                                .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
-                                .gesture(
-                                    DragGesture(minimumDistance: 5)
-                                        .onChanged { value in
-                                            if !isMatched {
-                                                chapterVM.activeDragSource = i
-                                                chapterVM.activeDragPosition = value.location
-                                            }
-                                        }
-                                        .onEnded { value in
-                                            guard chapterVM.activeDragSource == i else { return }
-                                            // Hit test against right items
-                                            let dropX = value.location.x
-                                            let dropY = value.location.y
-                                            for j in 0..<pairCount {
-                                                let rightY = matchItemY(index: j, count: pairCount, height: geo.size.height)
-                                                let rightCenterX = geo.size.width * 0.62
-                                                let dist = sqrt(pow(dropX - rightCenterX, 2) + pow(dropY - rightY, 2))
-                                                if dist < iPadScale.value(50) {
-                                                    let alreadyMatched = chapterVM.completedMatches.contains { $0.1 == j }
-                                                    if !alreadyMatched {
-                                                        chapterVM.submitMatch(leftIndex: i, rightIndex: j, persistence: persistence)
-                                                    }
-                                                    break
+                ZStack {
+                    Canvas { context, size in
+                        for stroke in chapterVM.completedMatches {
+                            context.stroke(
+                                matchPath(from: stroke.points),
+                                with: .color(GeniColor.green),
+                                style: matchStrokeStyle
+                            )
+                        }
+
+                        if chapterVM.activeDragSource != nil, !chapterVM.activeDragPoints.isEmpty {
+                            context.stroke(
+                                matchPath(from: chapterVM.activeDragPoints),
+                                with: .color(GeniColor.blue),
+                                style: matchStrokeStyle
+                            )
+                        }
+
+                        if let wrongStroke = chapterVM.wrongMatchStroke {
+                            context.stroke(
+                                matchPath(from: wrongStroke.points),
+                                with: .color(GeniColor.pink),
+                                style: matchStrokeStyle
+                            )
+                        }
+                    }
+
+                    HStack(spacing: 0) {
+                        VStack(spacing: 12) {
+                            ForEach(0..<pairCount, id: \.self) { i in
+                                let isMatched = chapterVM.completedMatches.contains { $0.leftIndex == i }
+                                Text(leftLabels[i])
+                                    .font(.system(size: iPadScale.value(20), weight: .black, design: .rounded))
+                                    .foregroundStyle(isMatched ? GeniColor.green : GeniColor.border)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: iPadScale.value(52))
+                                    .background(GeniColor.card)
+                                    .overlay(Rectangle().stroke(isMatched ? GeniColor.green : GeniColor.border, lineWidth: 3))
+                                    .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                                    .gesture(
+                                        DragGesture(minimumDistance: 0, coordinateSpace: .named("matchConnectArea"))
+                                            .onChanged { value in
+                                                guard !isMatched else { return }
+
+                                                if chapterVM.activeDragSource != i {
+                                                    chapterVM.beginMatchDrag(
+                                                        from: i,
+                                                        startPoint: CGPoint(
+                                                            x: leftAnchorX,
+                                                            y: matchItemY(index: i, count: pairCount, height: geo.size.height)
+                                                        )
+                                                    )
                                                 }
+                                                chapterVM.updateMatchDrag(to: value.location)
                                             }
-                                            chapterVM.activeDragSource = nil
-                                            chapterVM.activeDragPosition = nil
-                                        }
-                                )
-                        }
-                    }
-                    .frame(maxWidth: .infinity)
+                                            .onEnded { value in
+                                                guard chapterVM.activeDragSource == i else { return }
 
-                    Spacer().frame(width: geo.size.width * 0.24)
+                                                let matchedIndex = matchDropTarget(
+                                                    near: value.location,
+                                                    count: pairCount,
+                                                    size: geo.size
+                                                )
+                                                let targetPoint = matchedIndex.map {
+                                                    CGPoint(
+                                                        x: rightAnchorX,
+                                                        y: matchItemY(index: $0, count: pairCount, height: geo.size.height)
+                                                    )
+                                                }
 
-                    // Right column
-                    VStack(spacing: 12) {
-                        ForEach(0..<pairCount, id: \.self) { j in
-                            let isMatched = chapterVM.completedMatches.contains { $0.1 == j }
-                            Text(rightLabels[j])
-                                .font(.system(size: iPadScale.value(22), weight: .black, design: .rounded))
-                                .foregroundStyle(isMatched ? GeniColor.green : GeniColor.border)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: iPadScale.value(52))
-                                .background(GeniColor.card)
-                                .overlay(Rectangle().stroke(isMatched ? GeniColor.green : GeniColor.border, lineWidth: 3))
-                                .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                                                chapterVM.endMatchDrag(
+                                                    from: i,
+                                                    finalPoint: value.location,
+                                                    rightIndex: matchedIndex,
+                                                    snappedTargetPoint: targetPoint,
+                                                    persistence: persistence
+                                                )
+                                            }
+                                    )
+                            }
                         }
+                        .frame(maxWidth: .infinity)
+
+                        Spacer().frame(width: geo.size.width * 0.24)
+
+                        VStack(spacing: 12) {
+                            ForEach(0..<pairCount, id: \.self) { j in
+                                let isMatched = chapterVM.completedMatches.contains { $0.rightIndex == j }
+                                let isHovered = hoveredTargetIndex == j && !isMatched
+                                Text(rightLabels[j])
+                                    .font(.system(size: iPadScale.value(22), weight: .black, design: .rounded))
+                                    .foregroundStyle(
+                                        isMatched ? GeniColor.green : (isHovered ? GeniColor.blue : GeniColor.border)
+                                    )
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: iPadScale.value(52))
+                                    .background(isHovered ? GeniColor.blue.opacity(0.12) : GeniColor.card)
+                                    .overlay(
+                                        Rectangle().stroke(
+                                            isMatched ? GeniColor.green : (isHovered ? GeniColor.blue : GeniColor.border),
+                                            lineWidth: 3
+                                        )
+                                    )
+                                    .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
                     }
-                    .frame(maxWidth: .infinity)
                 }
+                .coordinateSpace(name: "matchConnectArea")
             }
+            .frame(height: iPadScale.value(CGFloat(pairCount) * 64 + 20))
         }
-        .frame(height: iPadScale.value(CGFloat(pairCount) * 64 + 20))
+    }
+
+    private var matchStrokeStyle: StrokeStyle {
+        StrokeStyle(
+            lineWidth: iPadScale.value(6),
+            lineCap: .round,
+            lineJoin: .round
+        )
+    }
+
+    private func matchPath(from points: [CGPoint]) -> Path {
+        var path = Path()
+        guard let firstPoint = points.first else { return path }
+
+        path.move(to: firstPoint)
+        for point in points.dropFirst() {
+            path.addLine(to: point)
+        }
+        return path
+    }
+
+    private func matchLeftAnchorX(width: CGFloat) -> CGFloat {
+        width * 0.38
+    }
+
+    private func matchRightAnchorX(width: CGFloat) -> CGFloat {
+        width * 0.62
+    }
+
+    private func matchDropTarget(near point: CGPoint, count: Int, size: CGSize) -> Int? {
+        let rightX = matchRightAnchorX(width: size.width)
+        let horizontalTolerance = iPadScale.value(88)
+        let verticalTolerance = iPadScale.value(44)
+
+        var bestMatch: (index: Int, distance: CGFloat)?
+
+        for index in 0..<count {
+            guard !chapterVM.completedMatches.contains(where: { $0.rightIndex == index }) else { continue }
+
+            let targetY = matchItemY(index: index, count: count, height: size.height)
+            let dx = abs(point.x - rightX)
+            let dy = abs(point.y - targetY)
+
+            guard dx <= horizontalTolerance, dy <= verticalTolerance else { continue }
+
+            let distance = hypot(dx, dy)
+            if let bestMatch, bestMatch.distance <= distance {
+                continue
+            }
+            bestMatch = (index, distance)
+        }
+
+        return bestMatch?.index
     }
 
     private func matchItemY(index: Int, count: Int, height: CGFloat) -> CGFloat {

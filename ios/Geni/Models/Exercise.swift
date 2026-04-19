@@ -146,27 +146,14 @@ nonisolated struct Exercise: Identifiable, Sendable {
             self.proposedAnswer = nil
             self.comparisonLeft = (operand1, operation, operand2)
 
-            let rightAnswer = answer + Int.random(in: -3...3)
-            let safeRight = max(rightAnswer, 0)
-            let rOp2 = max(Int.random(in: 1...max(operand2, 2)), 1)
-            let rOp1: Int
-            switch operation {
-            case .addition: rOp1 = safeRight - rOp2
-            case .subtraction: rOp1 = safeRight + rOp2
-            case .multiplication: rOp1 = rOp2 > 0 ? safeRight / max(rOp2, 1) : safeRight
-            case .division: rOp1 = safeRight * max(rOp2, 1)
-            }
-            let safeROp1 = max(rOp1, 0)
-            self.comparisonRight = (safeROp1, operation, rOp2)
-
             let leftVal = answer
-            let rightVal: Int
-            switch operation {
-            case .addition: rightVal = safeROp1 + rOp2
-            case .subtraction: rightVal = safeROp1 - rOp2
-            case .multiplication: rightVal = safeROp1 * rOp2
-            case .division: rightVal = rOp2 > 0 ? safeROp1 / rOp2 : 0
-            }
+            let rightVal = Self.distinctComparisonTarget(from: leftVal)
+            let rightOperands = Self.comparisonOperands(
+                for: rightVal,
+                operation: operation,
+                referenceOperand2: operand2
+            )
+            self.comparisonRight = (rightOperands.0, operation, rightOperands.1)
 
             if leftVal >= rightVal {
                 self.options = [0, 1]
@@ -501,6 +488,43 @@ nonisolated struct Exercise: Identifiable, Sendable {
 
     var trueFalseIsCorrect: Bool {
         proposedAnswer == correctAnswer
+    }
+
+    private static func distinctComparisonTarget(from answer: Int) -> Int {
+        let lowerBound = max(0, answer - 3)
+        let upperBound = answer + 3
+        let candidates = Array(lowerBound...upperBound).filter { $0 != answer }
+        return candidates.randomElement() ?? (answer + 1)
+    }
+
+    private static func comparisonOperands(
+        for target: Int,
+        operation: MathOperation,
+        referenceOperand2: Int
+    ) -> (Int, Int) {
+        switch operation {
+        case .addition:
+            let right = target > 0 ? Int.random(in: 0...target) : 0
+            return (target - right, right)
+
+        case .subtraction:
+            let right = Int.random(in: 0...max(referenceOperand2 + 3, 3))
+            return (target + right, right)
+
+        case .multiplication:
+            if target == 0 {
+                let factor = Int.random(in: 1...max(referenceOperand2, 2))
+                return (0, factor)
+            }
+
+            let divisors = (1...target).filter { target.isMultiple(of: $0) }
+            let right = divisors.randomElement() ?? 1
+            return (target / right, right)
+
+        case .division:
+            let divisor = Int.random(in: 1...max(referenceOperand2, 2))
+            return (target * divisor, divisor)
+        }
     }
 }
 

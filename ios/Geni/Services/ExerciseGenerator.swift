@@ -38,7 +38,7 @@ enum ExerciseGenerator {
             if format == .matchConnect {
                 let exercise = generateMatchConnectExercise(difficulty: difficulty, ageGroup: profile.ageGroup, ops: ops)
                 exercises.append(exercise)
-                i += 3
+                i += 1
             } else if emojiFormats.contains(format) {
                 exercises.append(generateEmojiExercise(format: format, difficulty: difficulty))
                 i += 1
@@ -73,7 +73,7 @@ enum ExerciseGenerator {
 
             if format == .matchConnect {
                 exercises.append(generateMatchConnectExercise(difficulty: difficulty, ageGroup: profile.ageGroup, ops: ops))
-                i += 3
+                i += 1
             } else if emojiFormats.contains(format) {
                 exercises.append(generateEmojiExercise(format: format, difficulty: difficulty))
                 i += 1
@@ -597,39 +597,23 @@ enum ExerciseGenerator {
 
     static func generateMatchConnectExercise(difficulty: ExerciseDifficulty, ageGroup: AgeGroup, ops: [MathOperation]) -> Exercise {
         let pairCount = difficulty == .warmup ? 3 : 4
-        var leftLabels: [String] = []
-        var rightLabels: [String] = []
-        var answers: [Int] = []
+        let availableOps = ops.isEmpty ? [.addition] : ops
+        var pairs: [(label: String, answer: Int)] = []
+        var usedAnswers = Set<Int>()
 
         for _ in 0..<pairCount {
-            let op = ops[Int.random(in: 0..<ops.count)]
-            let (a, b) = generateOperands(operation: op, difficulty: difficulty, ageGroup: ageGroup)
-            let result: Int
-            switch op {
-            case .addition: result = a + b
-            case .subtraction: result = a - b
-            case .multiplication: result = a * b
-            case .division: result = a / b
-            }
-            leftLabels.append("\(a) \(op.symbol) \(b)")
-            answers.append(result)
+            let pair = generateUniqueMatchConnectPair(
+                difficulty: difficulty,
+                ageGroup: ageGroup,
+                ops: availableOps,
+                usedAnswers: usedAnswers
+            )
+            pairs.append(pair)
+            usedAnswers.insert(pair.answer)
         }
 
-        // Ensure unique answers - regenerate if duplicates
-        var seen = Set<Int>()
-        for i in 0..<answers.count {
-            while seen.contains(answers[i]) {
-                answers[i] += 1
-                let op = ops[Int.random(in: 0..<ops.count)]
-                let newA = answers[i]
-                let newB = Int.random(in: 1...3)
-                leftLabels[i] = "\(newA - newB) \(op.symbol) \(newB)"
-                answers[i] = newA
-            }
-            seen.insert(answers[i])
-        }
-
-        rightLabels = answers.map { "\($0)" }
+        let leftLabels = pairs.map { $0.label }
+        let rightLabels = pairs.map { "\($0.answer)" }
 
         // Shuffle right side and build index mapping
         var shuffledIndices = Array(0..<pairCount)
@@ -641,6 +625,55 @@ enum ExerciseGenerator {
         }
 
         return Exercise(matchLeft: leftLabels, matchRight: shuffledRight, correctIndices: correctIndices, difficulty: difficulty)
+    }
+
+    private static func generateUniqueMatchConnectPair(
+        difficulty: ExerciseDifficulty,
+        ageGroup: AgeGroup,
+        ops: [MathOperation],
+        usedAnswers: Set<Int>
+    ) -> (label: String, answer: Int) {
+        for _ in 0..<100 {
+            let operation = ops.randomElement() ?? .addition
+            let (lhs, rhs) = generateOperands(operation: operation, difficulty: difficulty, ageGroup: ageGroup)
+            let answer = evaluate(lhs, rhs, using: operation)
+
+            guard !usedAnswers.contains(answer) else { continue }
+            return ("\(lhs) \(operation.symbol) \(rhs)", answer)
+        }
+
+        return fallbackMatchConnectPair(usedAnswers: usedAnswers, preferredOperations: ops)
+    }
+
+    private static func fallbackMatchConnectPair(
+        usedAnswers: Set<Int>,
+        preferredOperations: [MathOperation]
+    ) -> (label: String, answer: Int) {
+        let operations = preferredOperations.isEmpty ? [.addition] : preferredOperations
+
+        for answer in 0...500 where !usedAnswers.contains(answer) {
+            let operation = operations.first ?? .addition
+            return (matchConnectLabel(for: answer, operation: operation), answer)
+        }
+
+        let answer = (usedAnswers.max() ?? -1) + 1
+        let operation = operations.first ?? .addition
+        return (matchConnectLabel(for: answer, operation: operation), answer)
+    }
+
+    private static func matchConnectLabel(for answer: Int, operation: MathOperation) -> String {
+        switch operation {
+        case .addition:
+            let rhs = answer == 0 ? 0 : min(answer, 3)
+            return "\(answer - rhs) \(operation.symbol) \(rhs)"
+        case .subtraction:
+            let rhs = max(1, min(3, answer + 1))
+            return "\(answer + rhs) \(operation.symbol) \(rhs)"
+        case .multiplication:
+            return "\(answer) \(operation.symbol) 1"
+        case .division:
+            return "\(answer) \(operation.symbol) 1"
+        }
     }
 
     static func generateNumberBondExercise(difficulty: ExerciseDifficulty) -> Exercise {
@@ -711,6 +744,19 @@ enum ExerciseGenerator {
             return multiplicationOperands(difficulty: difficulty, ageGroup: ageGroup)
         case .division:
             return divisionOperands(difficulty: difficulty, ageGroup: ageGroup)
+        }
+    }
+
+    private static func evaluate(_ lhs: Int, _ rhs: Int, using operation: MathOperation) -> Int {
+        switch operation {
+        case .addition:
+            lhs + rhs
+        case .subtraction:
+            lhs - rhs
+        case .multiplication:
+            lhs * rhs
+        case .division:
+            lhs / rhs
         }
     }
 

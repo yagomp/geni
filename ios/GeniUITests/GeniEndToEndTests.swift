@@ -4,7 +4,7 @@ import XCTest
 /// state is wiped on every launch and a hidden `ui.state` element exposes the view model state.
 final class GeniEndToEndTests: XCTestCase {
     private var app: XCUIApplication!
-    private let shotDir = "/tmp/geni-e2e"
+    private let shotDir = "/tmp/geni-e2e-evidence/screenshots"
     private var matchExercisesSeen = 0
     private var wrongMatchConnections = 0
 
@@ -84,14 +84,17 @@ final class GeniEndToEndTests: XCTestCase {
     }
 
     private func dismissCelebrations(settle: TimeInterval = 1.5) {
+        // Each dismissal schedules the next overlay after 0.3s. Let its entrance
+        // finish before asking XCTest for a hit point on the new button.
+        Thread.sleep(forTimeInterval: settle)
         var idle = 0
         while idle < 3 {
             let level = element("levelUp.dismiss")
             let badge = element("badge.dismiss")
             if level.exists && level.isHittable {
-                level.tap(); idle = 0
+                level.tap(); Thread.sleep(forTimeInterval: settle); idle = 0
             } else if badge.exists && badge.isHittable {
-                badge.tap(); idle = 0
+                badge.tap(); Thread.sleep(forTimeInterval: settle); idle = 0
             } else {
                 Thread.sleep(forTimeInterval: settle / 3)
                 idle += 1
@@ -162,7 +165,7 @@ final class GeniEndToEndTests: XCTestCase {
         XCTAssertTrue(element("profile.step.3").waitForExistence(timeout: 5), "Return did not reach step 3. state: \(state())")
         if let theme {
             tap("profile.theme.\(theme)")
-            XCTAssertTrue(waitFor(2) { self.element("profile.theme.\(theme)").isSelected }, "theme \(theme) not selected")
+            expectThemeSelected(theme)
         }
     }
 
@@ -207,6 +210,10 @@ final class GeniEndToEndTests: XCTestCase {
         XCTAssertEqual(selectedOps(), ops, "operations not applied in edit form")
         tap("profile.save")
         XCTAssertTrue(element("parent.edit.\(name)").waitForExistence(timeout: 10), "\(name) missing after saving operations")
+    }
+
+    private func expectThemeSelected(_ theme: String) {
+        XCTAssertTrue(waitFor(2) { self.element("profile.theme.\(theme)").isSelected }, "theme \(theme) not selected")
     }
 
     private func selectedOps() -> Set<String> {
@@ -530,7 +537,7 @@ final class GeniEndToEndTests: XCTestCase {
         XCTAssertEqual(app.textFields["profile.name"].value as? String, "Bo")
         XCTAssertTrue(element("profile.age.8").isSelected, "age 8 not selected")
         XCTAssertEqual(selectedOps(), ["addition", "division"], "custom operations lost on open")
-        XCTAssertTrue(element("profile.theme.ocean").isSelected)
+        expectThemeSelected("ocean")
         screenshot("10-edit-profile-bo")
 
         // Back with an empty name does not save an empty name
@@ -555,7 +562,7 @@ final class GeniEndToEndTests: XCTestCase {
         // Saved edit persisted with ops intact
         tap("home.settings")
         tap("parent.edit.Bo")
-        XCTAssertTrue(element("profile.theme.blossom").isSelected, "theme edit not saved")
+        expectThemeSelected("blossom")
         XCTAssertEqual(selectedOps(), ["addition", "division"], "operations lost after saving edit")
         XCTAssertTrue(element("profile.age.8").isSelected)
         screenshot("11-edit-profile-after-save")
@@ -615,6 +622,8 @@ final class GeniEndToEndTests: XCTestCase {
         screenshot("26-parent-dashboard")
         app.scrollViews.firstMatch.swipeUp()
         screenshot("27-parent-dashboard-scrolled")
+        // The dashboard header scrolls with its content.
+        app.scrollViews.firstMatch.swipeDown()
         tap("parent.back")
         waitScreen("childHome")
 

@@ -96,6 +96,7 @@ struct ThemeTiles: View {
                 }
                 .buttonStyle(KidPressStyle())
                 .accessibilityLabel(theme.displayName)
+                .accessibilityAddTraits(draft.theme == theme ? .isSelected : [])
                 .accessibilityIdentifier("profile.theme.\(theme.rawValue)")
             }
         }
@@ -125,6 +126,7 @@ struct CornerStyleTiles: View {
                 }
                 .buttonStyle(KidPressStyle())
                 .accessibilityLabel(L.s(style == .rounded ? .cornersRounded : .cornersSharp))
+                .accessibilityAddTraits(draft.cornerStyle == style ? .isSelected : [])
                 .accessibilityIdentifier("profile.corners.\(style.rawValue)")
             }
         }

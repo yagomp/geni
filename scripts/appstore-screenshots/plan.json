@@ -1,0 +1,134 @@
+{
+  "appId": "6761134405",
+  "version": "1.2.0",
+  "versionId": "1aedb79e-6564-4516-94c9-672925e46d1a",
+  "bundleId": "com.yagomp.geni",
+  "languages": {
+    "en": {
+      "ascLocale": "en-US",
+      "appLanguage": "english",
+      "appleLanguage": "en",
+      "appleLocale": "en_US"
+    },
+    "no": {
+      "ascLocale": "no",
+      "appLanguage": "norwegian",
+      "appleLanguage": "nb",
+      "appleLocale": "nb_NO"
+    }
+  },
+  "shots": [
+    {
+      "id": "01",
+      "screens": [
+        "onboarding1",
+        "onboarding2"
+      ],
+      "captions": {
+        "en": "Made for your child",
+        "no": "Laget for ditt barn"
+      }
+    },
+    {
+      "id": "02",
+      "screens": [
+        "onboarding3"
+      ],
+      "captions": {
+        "en": "Their colors, their style",
+        "no": "Dine farger, din stil"
+      }
+    },
+    {
+      "id": "03",
+      "screens": [
+        "storeHome"
+      ],
+      "captions": {
+        "en": "Daily missions motivate",
+        "no": "Daglige oppdrag motiverer"
+      }
+    },
+    {
+      "id": "04",
+      "screens": [
+        "storeExercise"
+      ],
+      "captions": {
+        "en": "Learn by playing",
+        "no": "Lær gjennom lek"
+      }
+    },
+    {
+      "id": "05",
+      "screens": [
+        "clockRead",
+        "clockSet"
+      ],
+      "captions": {
+        "en": "Learn to tell time",
+        "no": "Lær klokka"
+      }
+    },
+    {
+      "id": "06",
+      "screens": [
+        "storeMatch"
+      ],
+      "captions": {
+        "en": "Make the connection",
+        "no": "Finn parene"
+      }
+    },
+    {
+      "id": "07",
+      "screens": [
+        "guidedReading"
+      ],
+      "captions": {
+        "en": "Read with guidance",
+        "no": "Les med veiledning"
+      }
+    },
+    {
+      "id": "08",
+      "screens": [
+        "storeRewards"
+      ],
+      "captions": {
+        "en": "Earn rewards",
+        "no": "Tjen belønninger"
+      }
+    },
+    {
+      "id": "09",
+      "screens": [
+        "storeBadge"
+      ],
+      "captions": {
+        "en": "Celebrate progress",
+        "no": "Feire fremgang"
+      }
+    },
+    {
+      "id": "10",
+      "screens": [
+        "parentDashboard"
+      ],
+      "captions": {
+        "en": "Built for parents",
+        "no": "Laget for foreldre"
+      }
+    }
+  ],
+  "simulators": {
+    "iphone": {
+      "udid": "B0B5D7B2-D70D-4621-8B4A-23A0F1E03067",
+      "directory": "iphone-6.7"
+    },
+    "ipad": {
+      "udid": "EE0FE5EC-BB55-4D35-AB76-A04D3A10A50C",
+      "directory": "ipad-12.9"
+    }
+  }
+}

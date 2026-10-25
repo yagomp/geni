@@ -12,6 +12,11 @@ struct ClockExerciseView: View {
         self.persistence = persistence
         // Never begin a setting exercise with the answer already on the face.
         _setTime = State(initialValue: ClockTime(hour: exercise.correctAnswer == 0 ? 6 : 12, minute: 0))
+        #if DEBUG
+        if DesignPreview.screen == "clockSet" {
+            _setTime = State(initialValue: ClockTime(hour: 3, minute: 0))
+        }
+        #endif
     }
 
     private var target: ClockTime { exercise.clockTimes?.first ?? ClockTime(totalMinutes: exercise.correctAnswer) }

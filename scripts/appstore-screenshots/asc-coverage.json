@@ -1,0 +1,194 @@
+{
+  "checkedAt": "2026-10-25",
+  "appId": "6761134405",
+  "version": "1.2.0",
+  "versionId": "1aedb79e-6564-4516-94c9-672925e46d1a",
+  "localizations": [
+    {
+      "locale": "en-US",
+      "id": "f3b9068b-8b3d-4602-a750-0dd11e9ffe5f",
+      "sets": [
+        {
+          "id": "a7e71946-bf90-48be-adcb-946e10377eda",
+          "displayType": "APP_IPHONE_67",
+          "screenshots": [
+            {
+              "id": "e68fa203-b2bb-468c-aced-5b4d670b6fb4",
+              "fileName": "screenshot-11.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "3f3b94f3-f283-4bc6-9d1a-236f89106096",
+              "fileName": "screenshot-2.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "70adf745-b424-46ae-8d27-5d9ea5680fdd",
+              "fileName": "screenshot-3.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "218c89d1-ef78-4c93-b347-076bfb4c4315",
+              "fileName": "screenshot-4.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "f0f5a9ae-0449-40e1-95e9-8fd5395b9355",
+              "fileName": "screenshot-5.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "89d77250-aa9a-4bd1-af2d-44099d08f00e",
+              "fileName": "screenshot-6.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "7091abc8-13bb-4bfe-8220-847e42703d3f",
+              "fileName": "screenshot-7.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "e3279ee5-0a80-4d31-b0ea-3b4e79937dec",
+              "fileName": "screenshot-8.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "d579f079-404b-4b61-8fae-f071067fb170",
+              "fileName": "screenshot-9.png",
+              "state": "COMPLETE"
+            }
+          ]
+        },
+        {
+          "id": "54713d3b-6e69-4d82-b11d-6c38c2e4620b",
+          "displayType": "APP_IPAD_PRO_3GEN_129",
+          "screenshots": [
+            {
+              "id": "861de6aa-809c-47d6-88be-6dace0c142a1",
+              "fileName": "screenshot-1.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "661bfc15-ebcb-4c59-a63f-971ce7cd9d06",
+              "fileName": "screenshot-2.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "a287e9ab-e566-4f01-ba6f-b88ec5ba6e26",
+              "fileName": "screenshot-3.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "6df581a2-3ffb-4c13-9b48-e22030b2b95f",
+              "fileName": "screenshot-4.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "c36bbe9d-ce97-4d57-b0de-9ff76d61f81e",
+              "fileName": "screenshot-5.png",
+              "state": "COMPLETE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "locale": "es-ES",
+      "id": "7ad748c2-8111-429b-bd6c-035f6dc8f52d",
+      "sets": []
+    },
+    {
+      "locale": "no",
+      "id": "7ed07317-f45d-4919-af91-0469929e9cc6",
+      "sets": [
+        {
+          "id": "ed1c8a59-b588-41c1-8766-1b996d0a585c",
+          "displayType": "APP_IPAD_PRO_3GEN_129",
+          "screenshots": [
+            {
+              "id": "275329ab-d8cd-446b-b5e8-04f9a09398cc",
+              "fileName": "screenshot-1.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "4014a2a9-7c6d-4cac-a663-a7dc5508f41b",
+              "fileName": "screenshot-2.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "70c4da09-69dd-4f95-9508-756cfce28569",
+              "fileName": "screenshot-3.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "e1255261-f1b6-4f99-b8a9-f48b5471678f",
+              "fileName": "screenshot-4.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "013eb8a1-ff0b-427b-982e-1f0d3e2104e2",
+              "fileName": "screenshot-5.png",
+              "state": "COMPLETE"
+            }
+          ]
+        },
+        {
+          "id": "adfc7f3e-2cae-4c1c-987d-2d95e4edd9d9",
+          "displayType": "APP_IPHONE_67",
+          "screenshots": [
+            {
+              "id": "95bd0848-4b20-4170-99f7-815a567c25ea",
+              "fileName": "screenshot-11.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "8f15998d-174e-4069-9330-33f645f80efa",
+              "fileName": "screenshot-2.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "0bae25c9-c30e-474b-b24d-3ed1b6de2a69",
+              "fileName": "screenshot-3.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "d012b922-4637-4308-b3cd-bc944195cdf2",
+              "fileName": "screenshot-4.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "3e8b1630-6821-441b-93ce-bbce7dda03bd",
+              "fileName": "screenshot-5.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "ad983b18-c8d1-4ffd-9c84-174ed037ed98",
+              "fileName": "screenshot-6.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "53baed3b-d108-4951-bdee-98444293ca94",
+              "fileName": "screenshot-7.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "dfdd950b-3190-4fd0-a936-2d4a6a3fd11e",
+              "fileName": "screenshot-8.png",
+              "state": "COMPLETE"
+            },
+            {
+              "id": "88c31caa-9103-402a-bf61-6365868d823b",
+              "fileName": "screenshot-9.png",
+              "state": "COMPLETE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "locale": "pt-PT",
+      "id": "e8e1e21e-addd-4ede-a172-f02fc3543310",
+      "sets": []
+    }
+  ]
+}

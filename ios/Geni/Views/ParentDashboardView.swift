@@ -133,6 +133,9 @@ struct ParentDashboardView: View {
                     profilesSection
                     languageSection
                     progressOverviewSection
+                        #if DEBUG
+                        .id("designPreview.parentProgress")
+                        #endif
                     reminderSection
                     iCloudSyncSection
                     contactSection
@@ -141,6 +144,9 @@ struct ParentDashboardView: View {
                 .padding(iPadScale.padding)
                 .foregroundStyle(.black)
             }
+            #if DEBUG
+            .designPreviewParentScroll()
+            #endif
         }
         .buttonStyle(KidPressStyle())
         .navigationBarHidden(true)

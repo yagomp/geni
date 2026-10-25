@@ -19,7 +19,7 @@ struct ProfileOnboardingFlow: View {
         #if DEBUG
         if let previewStep = DesignPreview.onboardingStep {
             step = previewStep
-            if previewStep > 1 { draft.nickname = "Mia" }
+            if previewStep > 1 { draft.nickname = "Daniel" }
         }
         #endif
         _draft = State(initialValue: draft)
@@ -39,6 +39,10 @@ struct ProfileOnboardingFlow: View {
         .animation(.easeInOut(duration: 0.25), value: draft.theme)
         .environment(\.geniCornerRadius, draft.cornerRadius)
         .task(id: step) {
+            #if DEBUG
+            // Keep the name/age screen visible without a keyboard in marketing captures.
+            if DesignPreview.onboardingStep != nil { return }
+            #endif
             guard step == 2 else {
                 nameFocused = false
                 return

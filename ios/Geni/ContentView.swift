@@ -1,7 +1,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    #if DEBUG
+    @State private var viewModel = DesignPreview.makeViewModel()
+    #else
     @State private var viewModel = AppViewModel()
+    #endif
     @State private var showProfileCreation = false
     @State private var languageManager = LanguageManager.shared
     @Namespace private var rewardsZoom

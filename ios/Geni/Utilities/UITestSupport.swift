@@ -9,6 +9,8 @@ enum UITestSupport {
 
     /// `-uiTestReset` wipes persisted state so every UI test starts from a fresh install.
     static func resetIfRequested() {
+        // Design previews use their own local store; never reset real profiles or iCloud.
+        guard DesignPreview.screen == nil else { return }
         guard ProcessInfo.processInfo.arguments.contains("-uiTestReset") else { return }
         if let bundleId = Bundle.main.bundleIdentifier {
             UserDefaults.standard.removePersistentDomain(forName: bundleId)

@@ -111,7 +111,7 @@ struct RewardsView: View {
             Text(avatar.emoji)
                 .font(.system(size: expanded ? 76 : 52))
                 .frame(width: expanded ? 124 : 88, height: expanded ? 124 : 88)
-                .background(avatar.color.soft(0.5))
+                .background(GeniColor.background)
                 .clipShape(GeniShape())
                 .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
                 .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))

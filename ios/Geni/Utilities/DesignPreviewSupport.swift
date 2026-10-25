@@ -161,7 +161,7 @@ enum DesignPreview {
         rewards.totalChaptersCompleted = 12
         rewards.totalCorrectAnswers = 228
         rewards.totalReadingSessions = 8
-        rewards.totalReadingMinutes = 40
+        rewards.totalReadingMinutes = 22
         rewards.badgesUnlocked = ["first_chapter", "streak_3", "perfect_chapter", "chapters_10", "correct_100", "first_reading", "reading_5"]
 
         // Real exercise results make parent accuracy and recent-chapter rows meaningful.

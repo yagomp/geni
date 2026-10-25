@@ -95,7 +95,7 @@ struct ChildHomeView: View {
                 Text(avatar.emoji)
                     .font(.system(size: expanded ? 52 : 38))
                     .frame(width: expanded ? 88 : 64, height: expanded ? 88 : 64)
-                    .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                    .brutalistCard(color: GeniColor.background, borderWidth: 3)
             }
             .buttonStyle(KidPressStyle())
             .accessibilityLabel(L.s(hasMultipleProfiles ? .selectProfile : .chooseAvatar))
@@ -121,7 +121,7 @@ struct ChildHomeView: View {
                                 Text(AvatarOption.find(sibling.avatarId).emoji)
                                     .font(.system(size: expanded ? 44 : 32))
                                     .frame(width: expanded ? 88 : 64, height: expanded ? 88 : 64)
-                                    .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                                    .brutalistCard(color: GeniColor.background, borderWidth: 3)
                             }
                             .buttonStyle(KidPressStyle())
                             .accessibilityLabel(sibling.nickname)

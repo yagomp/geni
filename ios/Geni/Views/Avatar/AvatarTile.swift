@@ -31,7 +31,7 @@ struct AvatarPreview: View {
         Text(avatar.emoji)
             .font(.system(size: size * 0.6))
             .frame(width: size, height: size)
-            .background(avatar.color.soft(0.55))
+            .background(GeniColor.background)
             .clipShape(shape)
             .overlay(shape.stroke(GeniColor.border, lineWidth: 3))
             .background(shape.fill(GeniColor.border).offset(x: size >= 120 ? 6 : 4, y: size >= 120 ? 6 : 4))

@@ -31,6 +31,8 @@ class ReadingViewModel {
 
     private var timerTask: Task<Void, Never>?
     private var highlightTask: Task<Void, Never>?
+    private var permissionTask: Task<Void, Never>?
+    private var sessionGeneration = 0
 
     init(profile: ChildProfile, readingText: ReadingText, mode: ReadingMode, date: String) {
         self.profile = profile
@@ -111,6 +113,8 @@ class ReadingViewModel {
     }
 
     func start() {
+        guard !isPlaying, !isCompleted else { return }
+        sessionGeneration += 1
         isPlaying = true
         isPaused = false
         startTimer()
@@ -126,6 +130,8 @@ class ReadingViewModel {
     }
 
     func pause() {
+        sessionGeneration += 1
+        permissionTask?.cancel()
         isPaused = true
         isPlaying = false
         timerTask?.cancel()
@@ -139,6 +145,8 @@ class ReadingViewModel {
     }
 
     func resume() {
+        guard isPaused, !isCompleted else { return }
+        sessionGeneration += 1
         isPaused = false
         isPlaying = true
         startTimer()
@@ -148,8 +156,9 @@ class ReadingViewModel {
             startSelfPacedHighlighting()
         case .readToMe:
             speechService?.resume()
+            trackReadToMeProgress()
         case .listenToMeRead:
-            recognitionService?.startListening()
+            startListenMode()
         }
     }
 
@@ -167,6 +176,8 @@ class ReadingViewModel {
     }
 
     func stop() {
+        sessionGeneration += 1
+        permissionTask?.cancel()
         isPlaying = false
         isPaused = false
         timerTask?.cancel()
@@ -224,7 +235,12 @@ class ReadingViewModel {
         guard let speechService else { return }
         let rate = speechService.speechRate(for: profile.ageGroup)
         speechService.speak(readingText.content, rate: rate)
+        trackReadToMeProgress()
+    }
 
+    private func trackReadToMeProgress() {
+        guard let speechService else { return }
+        highlightTask?.cancel()
         highlightTask = Task {
             while !Task.isCancelled && !speechService.didFinishSpeaking {
                 if let range = speechService.currentWordRange {
@@ -251,12 +267,20 @@ class ReadingViewModel {
 
     private func startListenMode() {
         guard let recognitionService else { return }
+        permissionTask?.cancel()
+        highlightTask?.cancel()
         recognitionService.resetTranscript(clearMisreads: false)
         currentWordIndex = matchedWordCount
+        feedbackMessage = ""
+        showFeedback = false
+        feedbackTone = .success
 
-        Task {
+        let generation = sessionGeneration
+        permissionTask = Task {
             let granted = await recognitionService.requestPermissions()
+            guard !Task.isCancelled, generation == sessionGeneration, isPlaying else { return }
             guard granted else {
+                pause()
                 feedbackMessage = L.s(.micPermissionNeeded)
                 feedbackTone = .error
                 showFeedback = true
@@ -272,6 +296,17 @@ class ReadingViewModel {
                 var lastTranscriptUpdateAt = recognitionService.lastTranscriptUpdateAt ?? Date()
 
                 while !Task.isCancelled && matchedWordCount < words.count {
+                    guard recognitionService.isAvailable,
+                          recognitionService.isListening,
+                          recognitionService.error?.isEmpty != false else {
+                        let message = recognitionService.error.flatMap { $0.isEmpty ? nil : $0 }
+                            ?? L.s(.speechRecognitionUnavailable)
+                        pause()
+                        feedbackMessage = message
+                        feedbackTone = .error
+                        showFeedback = true
+                        return
+                    }
                     let count = recognitionService.matchedWordCount(expected: expectedWords, startFrom: matchedWordCount)
                     if count > matchedWordCount {
                         matchedWordCount = count
@@ -295,13 +330,9 @@ class ReadingViewModel {
                     let stalledFor = now.timeIntervalSince(lastProgressAt)
                     let transcriptQuietFor = now.timeIntervalSince(lastTranscriptUpdateAt)
 
-                    if let error = recognitionService.error, !error.isEmpty {
-                        feedbackMessage = error
-                        feedbackTone = .error
-                        showFeedback = true
-                    } else if stalledFor >= listenWarningSeconds,
-                              transcriptQuietFor >= 1.0,
-                              now.timeIntervalSince(lastFeedbackAt) >= 2.0 {
+                    if stalledFor >= listenWarningSeconds,
+                       transcriptQuietFor >= 1.0,
+                       now.timeIntervalSince(lastFeedbackAt) >= 2.0 {
                         feedbackMessage = L.s(.letsKeepGoing)
                         feedbackTone = .guidance
                         showFeedback = true
@@ -314,9 +345,6 @@ class ReadingViewModel {
                         lastFeedbackAt = now
                         lastTranscriptUpdateAt = now
                         recognitionService.resetTranscript(clearMisreads: false)
-                        if !recognitionService.isListening {
-                            recognitionService.startListening()
-                        }
                     }
 
                     try? await Task.sleep(for: .milliseconds(150))
@@ -337,7 +365,7 @@ class ReadingViewModel {
     }
 
     func skipCurrentListenWord() {
-        guard mode == .listenToMeRead, matchedWordCount < words.count else { return }
+        guard mode == .listenToMeRead, isPlaying, matchedWordCount < words.count else { return }
 
         recognitionService?.misreadIndices.insert(matchedWordCount)
         matchedWordCount += 1

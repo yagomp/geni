@@ -67,6 +67,15 @@ nonisolated struct ChapterProgress: Codable, Identifiable, Sendable {
         completedExerciseCount >= 20
     }
 
+    /// Conflict rule for sync: completed beats in-progress, then more answers wins.
+    func isMoreProgressed(than other: ChapterProgress) -> Bool {
+        if status != other.status { return status == .completed }
+        if completedExerciseCount != other.completedExerciseCount {
+            return completedExerciseCount > other.completedExerciseCount
+        }
+        return exerciseResults.count > other.exerciseResults.count
+    }
+
     mutating func calculateRewards() {
         let total = exerciseResults.count
         guard total > 0 else { return }

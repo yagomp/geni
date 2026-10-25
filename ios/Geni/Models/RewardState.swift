@@ -52,6 +52,23 @@ nonisolated struct RewardState: Codable, Sendable {
         }
     }
 
+    /// Combines two copies of the same child's rewards without going backwards:
+    /// the more-progressed copy is the base, unlocks are unioned and lifetime totals never drop.
+    func merged(with other: RewardState) -> RewardState {
+        func progress(_ s: RewardState) -> (Int, Int, Int) {
+            (s.totalChaptersCompleted + s.totalReadingSessions, s.level, s.xp)
+        }
+        var result = progress(other) > progress(self) ? other : self
+        let fallback = progress(other) > progress(self) ? self : other
+        result.badgesUnlocked += fallback.badgesUnlocked.filter { !result.badgesUnlocked.contains($0) }
+        result.cosmeticsUnlocked += fallback.cosmeticsUnlocked.filter { !result.cosmeticsUnlocked.contains($0) }
+        result.totalChaptersCompleted = max(totalChaptersCompleted, other.totalChaptersCompleted)
+        result.totalCorrectAnswers = max(totalCorrectAnswers, other.totalCorrectAnswers)
+        result.totalReadingSessions = max(totalReadingSessions, other.totalReadingSessions)
+        result.totalReadingMinutes = max(totalReadingMinutes, other.totalReadingMinutes)
+        return result
+    }
+
     mutating func updateStreak(for dateString: String) {
         guard let lastDate = lastPlayedDate else {
             streakCount = 1

@@ -48,28 +48,41 @@ class AppViewModel {
     var missionReadingCoins: Int = 0
     var missionBonusCoins: Int = 0
 
-    init() {
-        self.persistence = PersistenceService()
-        self.cloudSync = CloudSyncService()
+    convenience init() {
+        self.init(persistence: PersistenceService(), cloudSync: CloudSyncService())
+    }
+
+    init(persistence: PersistenceService, cloudSync: CloudSyncService) {
+        self.persistence = persistence
+        self.cloudSync = cloudSync
         self.notificationService = NotificationService()
         self.isPremium = UserDefaults.standard.bool(forKey: "geni_is_premium")
-        determineInitialScreen()
 
-        // Pull cloud data on launch (handles new device scenario)
+        // Pull cloud data before loading rewards (handles new device scenario)
         cloudSync.pullFromCloud(persistence: persistence)
-        if persistence.profiles.count > 0 && currentScreen == .welcome && persistence.hasOnboarded {
-            determineInitialScreen()
-        }
+        determineInitialScreen()
 
         // Handle incoming changes from other devices
         cloudSync.onExternalChange = { [weak self] in
-            guard let self else { return }
-            self.persistence.loadAll()
-            if let profile = self.persistence.activeProfile {
-                self.loadRewards(for: profile.id)
-                self.refreshTodayStatus()
-            }
+            self?.applyExternalCloudChange()
         }
+    }
+
+    func applyExternalCloudChange() {
+        cloudSync.pullFromCloud(persistence: persistence, force: true)
+        reloadActiveProfile()
+    }
+
+    /// Re-reads the active child's cached state after storage changed underneath it.
+    private func reloadActiveProfile() {
+        guard let profile = persistence.activeProfile else {
+            // The active child was removed, e.g. deleted on another device
+            if persistence.hasOnboarded { determineInitialScreen() }
+            return
+        }
+        loadRewards(for: profile.id)
+        refreshTodayStatus()
+        ThemeManager.shared.current = profile.theme
     }
 
     func determineInitialScreen() {
@@ -104,15 +117,30 @@ class AppViewModel {
     }
 
     func selectProfile(_ profile: ChildProfile) {
-        // Save current profile's rewards before switching
-        if let currentId = persistence.activeProfileId {
-            persistence.saveRewardState(rewardState, for: currentId)
-        }
+        // Rewards are persisted whenever they change, so the cached copy is never written back here:
+        // it may belong to a deleted child or predate a cloud import.
         persistence.setActiveProfile(profile.id)
         loadRewards(for: profile.id)
         refreshTodayStatus()
         ThemeManager.shared.current = profile.theme
         currentScreen = .childHome
+    }
+
+    func saveProfile(_ profile: ChildProfile) {
+        persistence.saveProfile(profile)
+        if persistence.activeProfileId == profile.id {
+            ThemeManager.shared.current = profile.theme
+        }
+        cloudSync.pushToCloud(persistence: persistence)
+    }
+
+    func deleteProfile(_ id: String) {
+        let wasActive = persistence.activeProfileId == id
+        persistence.deleteProfile(id)
+        if wasActive {
+            reloadActiveProfile()
+        }
+        cloudSync.pushToCloud(persistence: persistence)
     }
 
     func startChapter(type: ChapterType = .daily, spotlightOp: MathOperation? = nil) {
@@ -132,16 +160,17 @@ class AppViewModel {
                     exercises = ExerciseGenerator.generateChapter(profile: profile)
                 }
                 let startIndex = min(existing.completedExerciseCount, exercises.count)
-                if startIndex >= exercises.count {
-                    completeChapter(existing)
-                    return
-                }
                 chapterViewModel = ChapterViewModel(
                     profile: profile,
                     chapter: existing,
                     exercises: exercises,
                     startIndex: startIndex
                 )
+                // Every answer was saved before the app left; finish instead of resuming
+                if startIndex >= exercises.count {
+                    completeChapter(existing)
+                    return
+                }
             } else if persistence.todayChapter(for: profile.id) == nil {
                 let chapter = ChapterProgress(childId: profile.id, date: today)
                 let exercises: [Exercise]
@@ -183,9 +212,15 @@ class AppViewModel {
 
     func completeChapter(_ chapter: ChapterProgress) {
         guard let profile = persistence.activeProfile else { return }
-        guard chapter.status != .completed else {
-            chapterViewModel?.completedChapter = chapter
-            currentScreen = .chapterComplete
+        // Idempotent: rewards are only awarded the first time a chapter is persisted as completed
+        let persisted = persistence.loadAllChapters(for: chapter.childId).first { $0.id == chapter.id }
+        if let alreadyCompleted = [persisted, chapter].compactMap({ $0 }).first(where: { $0.status == .completed }) {
+            if chapterViewModel?.completedChapter == nil {
+                chapterViewModel?.completedChapter = alreadyCompleted
+            }
+            if currentScreen == .exercise {
+                currentScreen = .chapterComplete
+            }
             return
         }
 
@@ -556,6 +591,9 @@ class AppViewModel {
         if rewardState.totalCorrectAnswers >= 100 { tryAdd("correct_100") }
         if chapter.stars == 5 { tryAdd("perfect_chapter") }
         if chapter.firstTryCount >= 15 { tryAdd("fast_solver") }
+        if chapter.exerciseResults.contains(where: { $0.operationType == .multiplication && $0.wasCorrect }) {
+            tryAdd("mul_master")
+        }
 
         if rewardState.todayMathCompleted && rewardState.todayReadingCompleted {
             tryAdd("full_chapter")

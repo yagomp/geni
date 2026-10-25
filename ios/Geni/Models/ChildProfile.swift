@@ -93,6 +93,10 @@ nonisolated struct TopicProgress: Codable, Sendable {
         topicStars[topic.rawValue, default: 0] += count
     }
 
+    func merged(with other: TopicProgress) -> TopicProgress {
+        TopicProgress(topicStars: topicStars.merging(other.topicStars, uniquingKeysWith: max))
+    }
+
     func isUnlocked(_ topic: MathTopic) -> Bool {
         if topic.order == 0 { return true }
         guard let prev = MathTopic.allCases.first(where: { $0.order == topic.order - 1 }) else { return true }

@@ -4,8 +4,11 @@ enum ReadingContentService {
     static func textForToday(profile: ChildProfile, date: String) -> ReadingText {
         let texts = allTexts.filter { $0.ageGroup == profile.ageGroup }
         guard !texts.isEmpty else { return allTexts[0] }
-        let hash = abs(date.hashValue)
-        return texts[hash % texts.count]
+        // FNV-1a stays stable across launches, unlike Swift's randomized hashValue.
+        let hash = (date + ":" + profile.id).utf8.reduce(UInt64(14695981039346656037)) {
+            ($0 ^ UInt64($1)) &* 1099511628211
+        }
+        return texts[Int(hash % UInt64(texts.count))]
     }
 
     static func parseWords(from text: String) -> [ReadingWord] {

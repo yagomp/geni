@@ -1,15 +1,32 @@
 import Foundation
 
+/// The slice of `NSUbiquitousKeyValueStore` used for sync, so tests can use an in-memory store.
+protocol CloudKeyValueStore: AnyObject {
+    func data(forKey aKey: String) -> Data?
+    func set(_ aData: Data?, forKey aKey: String)
+    func double(forKey aKey: String) -> Double
+    func set(_ value: Double, forKey aKey: String)
+    func bool(forKey aKey: String) -> Bool
+    func set(_ value: Bool, forKey aKey: String)
+    func removeObject(forKey aKey: String)
+    @discardableResult func synchronize() -> Bool
+}
+
+extension NSUbiquitousKeyValueStore: CloudKeyValueStore {}
+
 @Observable
 @MainActor
 class CloudSyncService {
-    private let store = NSUbiquitousKeyValueStore.default
-    private let defaults = UserDefaults.standard
+    private let store: any CloudKeyValueStore
+    private let defaults: UserDefaults
+    private let checkICloudAvailable: () -> Bool
 
     private let profilesKey = "sync_profiles"
     private let chaptersPrefix = "sync_chapters_"
     private let rewardsPrefix = "sync_rewards_"
     private let readingsPrefix = "sync_readings_"
+    private let topicsPrefix = "sync_topics_"
+    private let deletedProfilesKey = "sync_deleted_profiles"
     private let onboardedKey = "sync_onboarded"
     private let lastModifiedKey = "sync_last_modified"
     private let syncEnabledKey = "geni_icloud_sync_enabled"
@@ -33,10 +50,17 @@ class CloudSyncService {
     var onExternalChange: (() -> Void)? = nil
 
     var isICloudAvailable: Bool {
-        FileManager.default.ubiquityIdentityToken != nil
+        checkICloudAvailable()
     }
 
-    init() {
+    init(
+        store: any CloudKeyValueStore = NSUbiquitousKeyValueStore.default,
+        defaults: UserDefaults = .standard,
+        isICloudAvailable: @escaping () -> Bool = { FileManager.default.ubiquityIdentityToken != nil }
+    ) {
+        self.store = store
+        self.defaults = defaults
+        self.checkICloudAvailable = isICloudAvailable
         syncEnabled = defaults.object(forKey: syncEnabledKey) as? Bool ?? true
         if let interval = defaults.object(forKey: lastSyncKey) as? Double {
             lastSyncDate = Date(timeIntervalSince1970: interval)
@@ -44,7 +68,7 @@ class CloudSyncService {
 
         NotificationCenter.default.addObserver(
             forName: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
-            object: store,
+            object: store as AnyObject,
             queue: .main
         ) { [weak self] notification in
             Task { @MainActor in
@@ -68,22 +92,48 @@ class CloudSyncService {
         syncError = nil
 
         do {
-            let profilesData = try encoder.encode(persistence.profiles)
+            // Keep deletions made on other devices that this one hasn't pulled yet
+            let deleted = persistence.deletedProfileIds.union(remoteDeletedProfileIds())
+            let profiles = persistence.profiles.filter { !deleted.contains($0.id) }
+
+            let profilesData = try encoder.encode(profiles)
             store.set(profilesData, forKey: profilesKey)
             store.set(persistence.hasOnboarded, forKey: onboardedKey)
+            store.set(try encoder.encode(Array(deleted).sorted()), forKey: deletedProfilesKey)
+            for id in deleted {
+                for prefix in [chaptersPrefix, rewardsPrefix, readingsPrefix, topicsPrefix] {
+                    store.removeObject(forKey: prefix + id)
+                }
+            }
 
-            for profile in persistence.profiles {
-                let chapters = persistence.loadAllChapters(for: profile.id)
+            // Merge with what's already in the cloud so another device's unpulled progress survives
+            for profile in profiles {
+                let chapters = PersistenceService.mergeById(
+                    persistence.loadAllChapters(for: profile.id),
+                    remote([ChapterProgress].self, forKey: chaptersPrefix + profile.id) ?? []
+                ) { $0.isMoreProgressed(than: $1) }
                 let chaptersData = try encoder.encode(chapters)
                 store.set(chaptersData, forKey: chaptersPrefix + profile.id)
 
-                let rewards = persistence.loadRewardState(for: profile.id)
+                var rewards = persistence.loadRewardState(for: profile.id)
+                if let remoteRewards = remote(RewardState.self, forKey: rewardsPrefix + profile.id) {
+                    rewards = rewards.merged(with: remoteRewards)
+                }
                 let rewardsData = try encoder.encode(rewards)
                 store.set(rewardsData, forKey: rewardsPrefix + profile.id)
 
-                let readings = persistence.loadAllReadingSessions(for: profile.id)
+                let readings = PersistenceService.mergeById(
+                    persistence.loadAllReadingSessions(for: profile.id),
+                    remote([ReadingSession].self, forKey: readingsPrefix + profile.id) ?? []
+                ) { $0.isMoreProgressed(than: $1) }
                 let readingsData = try encoder.encode(readings)
                 store.set(readingsData, forKey: readingsPrefix + profile.id)
+
+                var topics = persistence.loadTopicProgress(for: profile.id)
+                if let remoteTopics = remote(TopicProgress.self, forKey: topicsPrefix + profile.id) {
+                    topics = topics.merged(with: remoteTopics)
+                }
+                store.set(try encoder.encode(topics), forKey: topicsPrefix + profile.id)
             }
 
             store.set(Date().timeIntervalSince1970, forKey: lastModifiedKey)
@@ -100,7 +150,8 @@ class CloudSyncService {
 
     // MARK: - Pull
 
-    func pullFromCloud(persistence: PersistenceService) {
+    /// `force` skips the timestamp check; used when iCloud reports an incoming change.
+    func pullFromCloud(persistence: PersistenceService, force: Bool = false) {
         guard syncEnabled, isICloudAvailable else { return }
         store.synchronize()
 
@@ -112,7 +163,7 @@ class CloudSyncService {
         let remoteTimestamp = store.double(forKey: lastModifiedKey)
         let localTimestamp = defaults.double(forKey: lastSyncKey)
 
-        if persistence.profiles.isEmpty || remoteTimestamp > localTimestamp {
+        if force || persistence.profiles.isEmpty || remoteTimestamp > localTimestamp {
             applyRemoteData(persistence: persistence, profiles: profiles)
         }
     }
@@ -146,20 +197,13 @@ class CloudSyncService {
         var chapters: [String: [ChapterProgress]] = [:]
         var rewards: [String: RewardState] = [:]
         var readings: [String: [ReadingSession]] = [:]
+        var topics: [String: TopicProgress] = [:]
 
         for profile in profiles {
-            if let data = store.data(forKey: chaptersPrefix + profile.id),
-               let decoded = try? decoder.decode([ChapterProgress].self, from: data) {
-                chapters[profile.id] = decoded
-            }
-            if let data = store.data(forKey: rewardsPrefix + profile.id),
-               let decoded = try? decoder.decode(RewardState.self, from: data) {
-                rewards[profile.id] = decoded
-            }
-            if let data = store.data(forKey: readingsPrefix + profile.id),
-               let decoded = try? decoder.decode([ReadingSession].self, from: data) {
-                readings[profile.id] = decoded
-            }
+            chapters[profile.id] = remote([ChapterProgress].self, forKey: chaptersPrefix + profile.id)
+            rewards[profile.id] = remote(RewardState.self, forKey: rewardsPrefix + profile.id)
+            readings[profile.id] = remote([ReadingSession].self, forKey: readingsPrefix + profile.id)
+            topics[profile.id] = remote(TopicProgress.self, forKey: topicsPrefix + profile.id)
         }
 
         let hasOnboarded = store.bool(forKey: onboardedKey)
@@ -169,10 +213,21 @@ class CloudSyncService {
             chapters: chapters,
             rewards: rewards,
             readings: readings,
+            topicProgress: topics,
+            deletedProfileIds: remoteDeletedProfileIds(),
             hasOnboarded: hasOnboarded
         )
 
         lastSyncDate = Date()
         defaults.set(lastSyncDate!.timeIntervalSince1970, forKey: lastSyncKey)
+    }
+
+    private func remote<T: Decodable>(_ type: T.Type, forKey key: String) -> T? {
+        guard let data = store.data(forKey: key) else { return nil }
+        return try? decoder.decode(type, from: data)
+    }
+
+    private func remoteDeletedProfileIds() -> Set<String> {
+        Set(remote([String].self, forKey: deletedProfilesKey) ?? [])
     }
 }

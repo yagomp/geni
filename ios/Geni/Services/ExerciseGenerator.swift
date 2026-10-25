@@ -94,7 +94,7 @@ enum ExerciseGenerator {
 
     static func generateSpotlightChapter(profile: ChildProfile, operation: MathOperation) -> [Exercise] {
         if profile.age <= 5 {
-            return generateAgeFiveChapter(chapterType: .operationSpotlight)
+            return generateAgeFiveChapter(chapterType: .operationSpotlight, spotlightOp: operation)
         }
 
         var exercises: [Exercise] = []
@@ -129,11 +129,16 @@ enum ExerciseGenerator {
         return exercises
     }
 
-    private static func generateAgeFiveChapter(chapterType: ChapterType) -> [Exercise] {
+    private static func generateAgeFiveChapter(chapterType: ChapterType, spotlightOp: MathOperation? = nil) -> [Exercise] {
         var exercises: [Exercise] = []
 
         for i in 0..<20 {
             let difficulty = ExerciseDifficulty.forIndex(i)
+            if let spotlightOp, spotlightOp != .addition {
+                let (op1, op2) = ageFiveOperands(for: spotlightOp, difficulty: difficulty)
+                exercises.append(Exercise(operand1: op1, operand2: op2, operation: spotlightOp, difficulty: difficulty, format: .solveResult))
+                continue
+            }
             let format = pickAgeFiveFormat(index: i, chapterType: chapterType)
 
             switch format {
@@ -205,6 +210,34 @@ enum ExerciseGenerator {
             )
         default:
             fatalError("Unsupported age 5 format: \(format)")
+        }
+    }
+
+    private static func ageFiveOperands(for operation: MathOperation, difficulty: ExerciseDifficulty) -> (Int, Int) {
+        switch operation {
+        case .addition:
+            return fingerFriendlyAdditionOperands(difficulty: difficulty)
+        case .subtraction:
+            let (total, part) = fingerFriendlyAdditionOperands(difficulty: difficulty)
+            return (total + part, part)
+        case .multiplication:
+            let maxFactor: Int
+            switch difficulty {
+            case .warmup: maxFactor = 2
+            case .normal: maxFactor = 3
+            case .harder, .challenge: maxFactor = 4
+            }
+            return (Int.random(in: 1...maxFactor), Int.random(in: 1...maxFactor))
+        case .division:
+            let maxQuotient: Int
+            switch difficulty {
+            case .warmup: maxQuotient = 2
+            case .normal: maxQuotient = 3
+            case .harder, .challenge: maxQuotient = 5
+            }
+            let divisor = Int.random(in: 1...2)
+            let quotient = Int.random(in: 1...maxQuotient)
+            return (divisor * quotient, divisor)
         }
     }
 

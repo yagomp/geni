@@ -86,13 +86,12 @@ struct ExerciseView: View {
             .animation(.spring(response: 0.4), value: chapterVM.showFeedback)
         }
         .onChange(of: chapterVM.currentIndex) { _, newValue in
-            if newValue >= chapterVM.totalExercises {
-                chapterVM.stopTimer()
+            if newValue >= chapterVM.totalExercises, chapterVM.claimCompletion() {
                 onComplete(chapterVM.chapter)
             }
         }
         .onChange(of: chapterVM.isTimeUp) { _, isUp in
-            if isUp {
+            if isUp, chapterVM.claimCompletion() {
                 onComplete(chapterVM.chapter)
             }
         }

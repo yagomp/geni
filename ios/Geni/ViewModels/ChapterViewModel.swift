@@ -31,6 +31,8 @@ class ChapterViewModel {
     var isTimedMode: Bool = false
     var timerTask: Task<Void, Never>? = nil
     var isAwaitingAdvance: Bool = false
+    private(set) var wrongMatchCount: Int = 0
+    private(set) var hasCompleted: Bool = false
 
     init(profile: ChildProfile, chapter: ChapterProgress, exercises: [Exercise], startIndex: Int = 0) {
         self.profile = profile
@@ -202,7 +204,10 @@ class ChapterViewModel {
     func submitMatch(leftIndex: Int, rightIndex: Int, pathPoints: [CGPoint], persistence: PersistenceService) {
         guard let exercise = currentExercise,
               let correctIndices = exercise.correctMatchIndices else { return }
-        guard !isAwaitingAdvance else { return }
+        guard !isAwaitingAdvance,
+              correctIndices.indices.contains(leftIndex),
+              !completedMatches.contains(where: { $0.leftIndex == leftIndex || $0.rightIndex == rightIndex })
+        else { return }
 
         let stroke = MatchStroke(leftIndex: leftIndex, rightIndex: rightIndex, points: pathPoints)
 
@@ -218,14 +223,15 @@ class ChapterViewModel {
                 let result = ExerciseResult(
                     chapterId: chapter.id,
                     exercise: exercise,
-                    firstCorrect: true,
-                    secondCorrect: nil,
-                    attempts: 1
+                    firstCorrect: wrongMatchCount == 0,
+                    secondCorrect: wrongMatchCount == 1 ? true : nil,
+                    attempts: wrongMatchCount + 1
                 )
                 recordCompletedExercise(result, persistence: persistence)
                 advanceAfterDelay()
             }
         } else {
+            wrongMatchCount += 1
             wrongMatchStroke = stroke
             HapticManager.wrongAnswer()
             Task {
@@ -247,6 +253,7 @@ class ChapterViewModel {
         isAwaitingAdvance = true
         Task {
             try? await Task.sleep(for: .seconds(1.5))
+            guard !hasCompleted else { return }
             showFeedback = false
             showAnswer = false
             selectedAnswer = nil
@@ -254,6 +261,7 @@ class ChapterViewModel {
             attempts = 0
             evenOddStep = 0
             completedMatches = []
+            wrongMatchCount = 0
             resetActiveMatchDrag()
             wrongMatchStroke = nil
             currentIndex += 1
@@ -287,6 +295,14 @@ class ChapterViewModel {
                 }
             }
         }
+    }
+
+    /// Returns true exactly once; the timer and the final answer can both end a chapter.
+    func claimCompletion() -> Bool {
+        guard !hasCompleted else { return false }
+        hasCompleted = true
+        stopTimer()
+        return true
     }
 
     func stopTimer() {

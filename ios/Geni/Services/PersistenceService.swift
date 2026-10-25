@@ -12,8 +12,9 @@ class PersistenceService {
     private let activeProfileKey = "geni_active_profile"
     private let readingKeyPrefix = "geni_reading_"
     private let topicProgressKeyPrefix = "geni_topics_"
+    private let deletedProfilesKey = "geni_deleted_profiles"
 
-    private let defaults = UserDefaults.standard
+    private let defaults: UserDefaults
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
@@ -22,7 +23,8 @@ class PersistenceService {
     var parentPin: String? = nil
     var activeProfileId: String? = nil
 
-    init() {
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
         loadAll()
     }
 
@@ -65,9 +67,24 @@ class PersistenceService {
     func deleteProfile(_ id: String) {
         profiles.removeAll { $0.id == id }
         persistProfiles()
+        removeChildData(for: id)
+        var deleted = deletedProfileIds
+        deleted.insert(id)
+        defaults.set(Array(deleted).sorted(), forKey: deletedProfilesKey)
         if activeProfileId == id {
             activeProfileId = profiles.first?.id
             defaults.set(activeProfileId, forKey: activeProfileKey)
+        }
+    }
+
+    /// IDs of deleted profiles, synced so other devices drop them too.
+    var deletedProfileIds: Set<String> {
+        Set(defaults.stringArray(forKey: deletedProfilesKey) ?? [])
+    }
+
+    private func removeChildData(for childId: String) {
+        for prefix in [rewardsKeyPrefix, chaptersKeyPrefix, readingKeyPrefix, topicProgressKeyPrefix] {
+            defaults.removeObject(forKey: prefix + childId)
         }
     }
 
@@ -162,7 +179,9 @@ class PersistenceService {
 
     func todayChapter(for childId: String) -> ChapterProgress? {
         let today = todayString()
-        return loadAllChapters(for: childId).first { $0.date == today && $0.chapterType == .daily }
+        let chapters = loadAllChapters(for: childId).filter { $0.date == today && $0.chapterType == .daily }
+        // Two devices can each start today's chapter; a completed one wins.
+        return chapters.first { $0.status == .completed } ?? chapters.first
     }
 
     func todayString() -> String {
@@ -212,47 +231,75 @@ class PersistenceService {
 
     // MARK: - Cloud Sync
 
+    /// Merges a cloud snapshot into local storage. Local progress that hasn't synced yet is kept.
     func applyCloudData(
         profiles cloudProfiles: [ChildProfile],
         chapters: [String: [ChapterProgress]],
         rewards: [String: RewardState],
         readings: [String: [ReadingSession]],
+        topicProgress: [String: TopicProgress] = [:],
+        deletedProfileIds cloudDeleted: Set<String> = [],
         hasOnboarded cloudOnboarded: Bool
     ) {
-        // Upsert profiles
-        for cloudProfile in cloudProfiles {
+        let deleted = deletedProfileIds.union(cloudDeleted)
+        defaults.set(Array(deleted).sorted(), forKey: deletedProfilesKey)
+
+        // Upsert profiles, honoring deletions from either side
+        for cloudProfile in cloudProfiles where !deleted.contains(cloudProfile.id) {
             if let index = profiles.firstIndex(where: { $0.id == cloudProfile.id }) {
                 profiles[index] = cloudProfile
             } else {
                 profiles.append(cloudProfile)
             }
         }
+        profiles.removeAll { deleted.contains($0.id) }
+        deleted.forEach(removeChildData)
         persistProfiles()
 
-        // Replace per-child data
-        for (childId, childChapters) in chapters {
-            if let data = try? encoder.encode(childChapters) {
+        // Merge per-child data
+        for (childId, childChapters) in chapters where !deleted.contains(childId) {
+            let merged = Self.mergeById(loadAllChapters(for: childId), childChapters) { $0.isMoreProgressed(than: $1) }
+            if let data = try? encoder.encode(merged) {
                 defaults.set(data, forKey: chaptersKeyPrefix + childId)
             }
         }
-        for (childId, childRewards) in rewards {
-            if let data = try? encoder.encode(childRewards) {
-                defaults.set(data, forKey: rewardsKeyPrefix + childId)
-            }
+        for (childId, childRewards) in rewards where !deleted.contains(childId) {
+            saveRewardState(loadRewardState(for: childId).merged(with: childRewards), for: childId)
         }
-        for (childId, childReadings) in readings {
-            if let data = try? encoder.encode(childReadings) {
+        for (childId, childReadings) in readings where !deleted.contains(childId) {
+            let merged = Self.mergeById(loadAllReadingSessions(for: childId), childReadings) { $0.isMoreProgressed(than: $1) }
+            if let data = try? encoder.encode(merged) {
                 defaults.set(data, forKey: readingKeyPrefix + childId)
             }
+        }
+        for (childId, childTopics) in topicProgress where !deleted.contains(childId) {
+            saveTopicProgress(loadTopicProgress(for: childId).merged(with: childTopics), for: childId)
         }
 
         if cloudOnboarded && !hasOnboarded {
             completeOnboarding()
         }
 
-        if activeProfileId == nil, let first = profiles.first {
+        if activeProfile == nil, let first = profiles.first {
             setActiveProfile(first.id)
         }
+    }
+
+    /// Union by id, keeping local order; `prefersRemote(remote, local)` decides conflicts.
+    static func mergeById<T: Identifiable>(
+        _ local: [T],
+        _ remote: [T],
+        prefersRemote: (T, T) -> Bool
+    ) -> [T] where T.ID == String {
+        var merged = local
+        for item in remote {
+            if let index = merged.firstIndex(where: { $0.id == item.id }) {
+                if prefersRemote(item, merged[index]) { merged[index] = item }
+            } else {
+                merged.append(item)
+            }
+        }
+        return merged
     }
 
     private func persistProfiles() {

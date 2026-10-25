@@ -24,6 +24,12 @@ nonisolated struct ReadingSession: Codable, Identifiable, Sendable {
         self.coinsEarned = 0
     }
 
+    /// Conflict rule for sync: completed beats unfinished, then longer reading wins.
+    func isMoreProgressed(than other: ReadingSession) -> Bool {
+        if isCompleted != other.isCompleted { return isCompleted }
+        return readingTimeSeconds > other.readingTimeSeconds
+    }
+
     mutating func complete() {
         isCompleted = true
         completedAt = Date()

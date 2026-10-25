@@ -16,6 +16,8 @@ class SpeechRecognitionService {
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private var audioEngine: AVAudioEngine?
+    private var listeningGeneration = 0
+    private var processedRecognizedWords: [String] = []
 
     init() {
         let locale = Locale(identifier: L.speechLocaleIdentifier)
@@ -36,6 +38,7 @@ class SpeechRecognitionService {
     }
 
     func startListening() {
+        stopListening(clearTranscript: false)
         error = nil
         let locale = Locale(identifier: L.speechLocaleIdentifier)
         recognizer = SFSpeechRecognizer(locale: locale)
@@ -45,8 +48,6 @@ class SpeechRecognitionService {
             error = L.s(.speechRecognitionUnavailable)
             return
         }
-
-        stopListening(clearTranscript: false)
 
         let engine = AVAudioEngine()
         self.audioEngine = engine
@@ -70,21 +71,19 @@ class SpeechRecognitionService {
             request.append(buffer)
         }
 
+        let generation = listeningGeneration
         recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, err in
             Task { @MainActor in
-                guard let self else { return }
+                guard let self, self.listeningGeneration == generation else { return }
                 if let result {
                     self.updateTranscript(result.bestTranscription.formattedString)
                 }
-                if result?.isFinal == true {
+                if err != nil {
+                    self.error = L.s(.speechRecognitionUnavailable)
+                    self.stopListening(clearTranscript: false)
+                } else if result?.isFinal == true {
                     // Recognition ended naturally — restart without clearing progress.
-                    self.stopListening(clearTranscript: false)
                     self.startListening()
-                } else if err != nil {
-                    self.stopListening(clearTranscript: false)
-                    if self.isAvailable {
-                        self.startListening()
-                    }
                 }
             }
         }
@@ -100,6 +99,7 @@ class SpeechRecognitionService {
     }
 
     func stopListening(clearTranscript: Bool = true) {
+        listeningGeneration += 1
         audioEngine?.stop()
         audioEngine?.inputNode.removeTap(onBus: 0)
         recognitionRequest?.endAudio()
@@ -114,6 +114,7 @@ class SpeechRecognitionService {
     }
 
     func resetTranscript(clearMisreads: Bool = false) {
+        processedRecognizedWords = []
         recognizedWords = []
         recognizedText = ""
         lastTranscriptUpdateAt = nil
@@ -128,32 +129,30 @@ class SpeechRecognitionService {
     func matchedWordCount(expected: [String], startFrom: Int = 0) -> Int {
         let cleanExpected = expected.map { normalizedWord($0) }
         let cleanRecognized = recognizedWords.map { normalizedWord($0) }.filter { !$0.isEmpty }
-        var matched = startFrom
+        var matched = min(max(0, startFrom), cleanExpected.count)
+
+        // Partial results include earlier words. Only consume the new or revised suffix.
+        let processedCount = zip(cleanRecognized, processedRecognizedWords)
+            .prefix { $0 == $1 }.count
+        processedRecognizedWords = Array(cleanRecognized.prefix(processedCount))
 
         misreadIndices = misreadIndices.filter { $0 < cleanExpected.count }
 
-        for recognized in cleanRecognized {
-            if isIgnorableRecognitionNoise(recognized) {
-                continue
-            }
+        for recognized in cleanRecognized.dropFirst(processedCount) {
+            guard matched < cleanExpected.count else { break }
 
-            guard !cleanExpected.isEmpty else { break }
-
-            let searchStart = max(0, matched - 3)
+            let searchStart = matched
             let searchEnd = min(cleanExpected.count - 1, matched + 5)
             let candidateRange = searchStart...searchEnd
 
-            if matched < cleanExpected.count && isPotentialPartialMatch(recognized, cleanExpected[matched]) {
+            if isPotentialPartialMatch(recognized, cleanExpected[matched]) {
                 break
             }
+            processedRecognizedWords.append(recognized)
 
             guard let matchedIndex = candidateRange.first(where: {
                 isAcceptedMatch(recognized, cleanExpected[$0])
             }) else {
-                continue
-            }
-
-            if matchedIndex < matched {
                 continue
             }
 
@@ -173,10 +172,6 @@ class SpeechRecognitionService {
         word
             .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: Locale(identifier: L.speechLocaleIdentifier))
             .filter { $0.isLetter || $0.isNumber }
-    }
-
-    private func isIgnorableRecognitionNoise(_ word: String) -> Bool {
-        word.count <= 1
     }
 
     private func isAcceptedMatch(_ recognized: String, _ expected: String) -> Bool {

@@ -77,7 +77,10 @@ struct ContentView: View {
                     mathCoins: viewModel.missionMathCoins,
                     onContinue: {
                         viewModel.continueToMissionReading()
-                    }
+                    },
+                    onFinish: viewModel.canFinishMissionWithoutReading ? {
+                        viewModel.finishMissionWithoutReading()
+                    } : nil
                 )
                 .transition(.scale.combined(with: .opacity))
 

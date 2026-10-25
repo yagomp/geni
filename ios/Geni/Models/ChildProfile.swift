@@ -52,6 +52,13 @@ nonisolated enum MathTopic: String, Codable, CaseIterable, Sendable {
         return all[all.index(after: idx)]
     }
 
+    func formats(for age: Int) -> [ExerciseFormat] {
+        if self == .timeAndCalendar && age >= 6 {
+            return [.clockRead, .clockRead, .clockSet, .solveResult]
+        }
+        return formats(for: AgeGroup.from(age: age))
+    }
+
     func formats(for ageGroup: AgeGroup) -> [ExerciseFormat] {
         if ageGroup == .older {
             switch self {
@@ -59,7 +66,7 @@ nonisolated enum MathTopic: String, Codable, CaseIterable, Sendable {
             case .addSubBasic: return [.solveResult, .missingNumber, .multiStep, .trueFalse]
             case .strategies: return [.multiStep, .numberBonds, .matchConnect, .missingNumber]
             case .tensCrossing: return [.solveResult, .multiStep, .numberBonds, .missingNumber]
-            case .timeAndCalendar: return [.matchConnect, .solveResult, .multiStep]
+            case .timeAndCalendar: return [.clockRead, .clockRead, .clockSet, .solveResult]
             case .largerNumbers: return [.solveResult, .comparison, .matchConnect, .multiStep]
             case .addSubAdvanced: return [.multiStep, .missingNumber, .matchConnect, .longDivision]
             case .problemSolving: return [.multiStep, .matchConnect, .numberSequence, .solveResult]
@@ -72,7 +79,7 @@ nonisolated enum MathTopic: String, Codable, CaseIterable, Sendable {
         case .addSubBasic: return [.solveResult, .visualSubtraction, .visualAddition, .trueFalse]
         case .strategies: return [.diceAddition, .numberBonds, .matchConnect, .missingNumber]
         case .tensCrossing: return [.tenFrame, .solveResult, .numberBonds, .missingNumber]
-        case .timeAndCalendar: return [.matchConnect, .solveResult, .trueFalse]
+        case .timeAndCalendar: return ageGroup == .young ? [.matchConnect, .solveResult, .trueFalse] : [.clockRead, .clockRead, .clockSet, .solveResult]
         case .largerNumbers: return [.solveResult, .comparison, .matchConnect, .missingNumber]
         case .addSubAdvanced: return [.solveResult, .missingNumber, .matchConnect, .trueFalse]
         case .problemSolving: return [.matchConnect, .solveResult, .missingNumber]
@@ -127,6 +134,8 @@ nonisolated struct ChildProfile: Codable, Identifiable, Sendable, Hashable {
     var adaptiveDifficultyEnabled: Bool
     let createdAt: Date
     var theme: AppTheme
+    /// Parent switch for the optional reading at age 6. Absent in older saved data, which means on.
+    var readingEnabled: Bool?
 
     init(nickname: String, age: Int, avatarId: String) {
         self.id = UUID().uuidString
@@ -147,7 +156,7 @@ nonisolated struct ChildProfile: Codable, Identifiable, Sendable, Hashable {
     var readingMode: ReadingRequirement {
         switch age {
         case ...5: return .hidden
-        case 6: return .optional
+        case 6: return readingEnabled == false ? .hidden : .optional
         default: return .required
         }
     }

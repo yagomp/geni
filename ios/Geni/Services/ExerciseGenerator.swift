@@ -35,7 +35,11 @@ enum ExerciseGenerator {
         while i < 20 {
             let difficulty = ExerciseDifficulty.forIndex(i)
             let format = pickFormat(index: i, age: profile.age, ageGroup: profile.ageGroup, chapterType: chapterType)
-            if format == .matchConnect {
+            // Six-year-olds don't get topic chapters, so clocks come through the daily mission.
+            if profile.age == 6, chapterType == .daily, let clockFormat = ageSixClockSlots[i] {
+                exercises.append(generateClockExercise(format: clockFormat, age: profile.age, difficulty: difficulty))
+                i += 1
+            } else if format == .matchConnect {
                 let exercise = generateMatchConnectExercise(difficulty: difficulty, ageGroup: profile.ageGroup, ops: ops)
                 exercises.append(exercise)
                 i += 1
@@ -58,18 +62,30 @@ enum ExerciseGenerator {
         return exercises
     }
 
+    /// One read-the-clock in the first half and one in the second half of each daily chapter.
+    private static let ageSixClockSlots: [Int: ExerciseFormat] = [6: .clockRead, 14: .clockRead]
+
     static func generateTopicChapter(profile: ChildProfile, topic: MathTopic) -> [Exercise] {
         var exercises: [Exercise] = []
         let ops = profile.operationsEnabled
         let emojiFormats: Set<ExerciseFormat> = [.countingObjects, .visualAddition, .compareGroups, .tenFrame]
         let middleFormats: Set<ExerciseFormat> = [.numberBonds, .diceAddition, .evenOddSort, .visualSubtraction]
         let olderFormats: Set<ExerciseFormat> = [.multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision]
-        let topicFormats = topic.formats(for: profile.ageGroup)
+        let topicFormats = topic.formats(for: profile.age)
 
         var i = 0
         while i < 20 {
             let difficulty = ExerciseDifficulty.forIndex(i)
-            let format = topicFormats[Int.random(in: 0..<topicFormats.count)]
+            // Four clock activities and one number activity in each difficulty block.
+            let clockSchedule: [ExerciseFormat] = [.clockRead, .clockSet, .clockRead, .clockSet, .solveResult]
+            var format = topic == .timeAndCalendar && profile.age >= 6
+                ? clockSchedule[i % clockSchedule.count] : topicFormats.randomElement()!
+            if profile.age == 6 && format == .clockSet && difficulty != .warmup { format = .clockRead }
+            if format.isClock {
+                exercises.append(generateClockExercise(format: format, age: profile.age, difficulty: difficulty))
+                i += 1
+                continue
+            }
 
             if format == .matchConnect {
                 exercises.append(generateMatchConnectExercise(difficulty: difficulty, ageGroup: profile.ageGroup, ops: ops))
@@ -90,6 +106,15 @@ enum ExerciseGenerator {
             }
         }
         return exercises
+    }
+
+    static func generateClockExercise(format: ExerciseFormat, age: Int, difficulty: ExerciseDifficulty) -> Exercise {
+        guard let step = ClockRules.minuteStep(age: age, difficulty: difficulty, format: format) else {
+            return generateExercise(operation: .addition, difficulty: difficulty, ageGroup: .young)
+        }
+        let count = format == .clockMatch ? (age == 6 ? 2 : 3) : 1
+        let times = Array(stride(from: 0, to: 720, by: step)).shuffled().prefix(count).map { ClockTime(totalMinutes: $0) }
+        return Exercise(clockFormat: format, times: times, minuteStep: step, difficulty: difficulty)
     }
 
     static func generateSpotlightChapter(profile: ChildProfile, operation: MathOperation) -> [Exercise] {

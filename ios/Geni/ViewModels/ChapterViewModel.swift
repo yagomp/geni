@@ -72,7 +72,7 @@ class ChapterViewModel {
         switch exercise.format {
         case .solveResult, .countingObjects, .visualAddition, .tenFrame,
              .numberBonds, .diceAddition, .visualSubtraction,
-             .multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision:
+             .multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision, .clockRead, .clockSet:
             actualCorrectAnswer = exercise.correctAnswer
         case .missingNumber:
             actualCorrectAnswer = exercise.missingNumberCorrectAnswer
@@ -86,7 +86,7 @@ class ChapterViewModel {
             } else {
                 actualCorrectAnswer = exercise.correctAnswer % 2 == 0 ? 0 : 1
             }
-        case .matchConnect:
+        case .matchConnect, .clockMatch:
             actualCorrectAnswer = answer
         }
 
@@ -135,7 +135,7 @@ class ChapterViewModel {
             advanceAfterDelay()
         } else if attempts >= 2 {
             feedbackCorrect = false
-            feedbackMessage = "\(actualCorrectAnswer)"
+            feedbackMessage = exercise.format.isClock ? ClockTime(totalMinutes: actualCorrectAnswer).digital : "\(actualCorrectAnswer)"
             showAnswer = true
             showFeedback = true
             HapticManager.wrongAnswer()
@@ -162,6 +162,11 @@ class ChapterViewModel {
                 selectedAnswer = nil
             }
         }
+    }
+
+    func submitClockTime(_ time: ClockTime, persistence: PersistenceService) {
+        guard let exercise = currentExercise, exercise.format == .clockSet, !showFeedback else { return }
+        submitAnswer(time.snapped(to: exercise.clockMinuteStep).totalMinutes, persistence: persistence)
     }
 
     func beginMatchDrag(from leftIndex: Int, startPoint: CGPoint) {

@@ -261,7 +261,6 @@ class AppViewModel {
         }
 
         let newBadges = checkBadges(chapter: final)
-        persistence.saveRewardState(rewardState, for: profile.id)
 
         chapterViewModel?.completedChapter = final
         chapterViewModel?.xpEarned = xpGain
@@ -279,20 +278,22 @@ class AppViewModel {
 
         HapticManager.coinReward()
 
-        if final.chapterType == .daily && !rewardState.todayReadingCompleted
-            && persistence.activeProfile?.readingMode == .required {
+        // Math alone completes the day unless reading is required
+        if final.chapterType == .daily && profile.readingMode != .required {
+            rewardState.dailyCompletedAt = Date()
+        }
+
+        if final.chapterType == .daily && !rewardState.todayReadingCompleted && profile.readingMode != .hidden {
             isMissionFlow = true
             missionMathCoins = final.coinsEarned
             missionMathStars = final.stars
             missionMathXP = xpGain
             currentScreen = .missionTransition
         } else {
-            if (profile.readingMode == .hidden || profile.readingMode == .optional) && final.chapterType == .daily {
-                rewardState.dailyCompletedAt = Date()
-            }
             currentScreen = .chapterComplete
         }
 
+        persistence.saveRewardState(rewardState, for: profile.id)
         cloudSync.pushToCloud(persistence: persistence)
     }
 
@@ -334,11 +335,12 @@ class AppViewModel {
         rewardState.totalReadingMinutes += max(1, final.readingTimeSeconds / 60)
         rewardState.todayReadingCompleted = true
         rewardState.lastReadingDate = persistence.todayString()
-        if rewardState.todayMathCompleted {
+        // Optional reading must not restart a challenge window that math already opened
+        if rewardState.todayMathCompleted && (profile.readingMode == .required || rewardState.dailyCompletedAt == nil) {
             rewardState.dailyCompletedAt = Date()
         }
 
-        var xpGain = 50
+        let xpGain = 50
         rewardState.addXP(xpGain)
 
         var bonusAwarded = false
@@ -431,6 +433,16 @@ class AppViewModel {
         completedReadingSession = nil
         currentScreen = .readingMode
         _ = text
+    }
+
+    /// Optional-reading profiles may end the mission after math; the day is already complete.
+    var canFinishMissionWithoutReading: Bool {
+        persistence.activeProfile?.readingMode == .optional
+    }
+
+    func finishMissionWithoutReading() {
+        guard canFinishMissionWithoutReading else { return }
+        returnHome()
     }
 
     func switchProfile() {

@@ -214,6 +214,9 @@ struct ExerciseView: View {
                 fractionPickContent(exercise)
             case .longDivision:
                 longDivisionContent(exercise)
+            case .clockRead, .clockSet, .clockMatch:
+                ClockExerciseView(exercise: exercise, chapterVM: chapterVM, persistence: persistence)
+                    .id(exercise.id)
             }
         }
     }

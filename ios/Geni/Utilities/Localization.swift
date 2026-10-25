@@ -344,6 +344,12 @@ nonisolated enum L {
 
     private static func english(_ key: LocaleKey) -> String {
         switch key {
+        case .clockRead: return "What time is it?"
+        case .clockSet: return "Set the clock"
+        case .clockMatch: return "Match the clocks"
+        case .clockCheck: return "Check"
+        case .clockHourHand: return "Hour hand"
+        case .clockMinuteHand: return "Minute hand"
         case .appName: return "Geni"
         case .welcome: return "Welcome to Geni!"
         case .welcomeSubtitle: return "Learning is an adventure"
@@ -588,6 +594,12 @@ nonisolated enum L {
 
     private static func norwegian(_ key: LocaleKey) -> String {
         switch key {
+        case .clockRead: return "Hva er klokka?"
+        case .clockSet: return "Still klokka"
+        case .clockMatch: return "Koble klokkene"
+        case .clockCheck: return "Sjekk"
+        case .clockHourHand: return "Timeviser"
+        case .clockMinuteHand: return "Minuttviser"
         case .appName: return "Geni"
         case .welcome: return "Velkommen til Geni!"
         case .welcomeSubtitle: return "L\u{00E6}ring er et eventyr"
@@ -832,6 +844,12 @@ nonisolated enum L {
 
     private static func spanish(_ key: LocaleKey) -> String {
         switch key {
+        case .clockRead: return "¿Qué hora es?"
+        case .clockSet: return "Pon la hora"
+        case .clockMatch: return "Une los relojes"
+        case .clockCheck: return "Comprobar"
+        case .clockHourHand: return "Manecilla de las horas"
+        case .clockMinuteHand: return "Manecilla de los minutos"
         case .appName: return "Geni"
         case .welcome: return "\u{00A1}Bienvenido a Geni!"
         case .welcomeSubtitle: return "Aprender es una aventura"
@@ -1076,6 +1094,12 @@ nonisolated enum L {
 
     private static func portuguese(_ key: LocaleKey) -> String {
         switch key {
+        case .clockRead: return "Que horas são?"
+        case .clockSet: return "Acerta o relógio"
+        case .clockMatch: return "Liga os relógios"
+        case .clockCheck: return "Verificar"
+        case .clockHourHand: return "Ponteiro das horas"
+        case .clockMinuteHand: return "Ponteiro dos minutos"
         case .appName: return "Geni"
         case .welcome: return "Bem-vindo ao Geni!"
         case .welcomeSubtitle: return "Aprender \u{00E9} uma aventura"

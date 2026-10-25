@@ -171,19 +171,23 @@ struct BrutalistCard: ViewModifier {
 struct BrutalistButton: ButtonStyle {
     let color: Color
     let textColor: Color
+    var fontSize: CGFloat?
+    var verticalPadding: CGFloat?
     @Environment(\.geniCornerRadius) private var radiusOverride
 
-    init(color: Color = ThemeManager.shared.buttonColor, textColor: Color? = nil) {
+    init(color: Color = ThemeManager.shared.buttonColor, textColor: Color? = nil, fontSize: CGFloat? = nil, verticalPadding: CGFloat? = nil) {
         self.color = color
         self.textColor = textColor ?? color.readableText
+        self.fontSize = fontSize
+        self.verticalPadding = verticalPadding
     }
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: iPadScale.isIPad ? 24 : 20, weight: .black, design: .rounded))
+            .font(.system(size: fontSize ?? (iPadScale.isIPad ? 24 : 20), weight: .black, design: .rounded))
             .foregroundStyle(textColor)
             .padding(.horizontal, iPadScale.largePadding)
-            .padding(.vertical, iPadScale.isIPad ? 24 : 18)
+            .padding(.vertical, verticalPadding ?? (iPadScale.isIPad ? 24 : 18))
             .frame(maxWidth: .infinity)
             .background(color)
             .background(GeniColor.background)
@@ -231,6 +235,18 @@ enum iPadScale {
     static func value(_ base: CGFloat) -> CGFloat { base * factor }
     static var padding: CGFloat { isIPad ? 40 : 20 }
     static var largePadding: CGFloat { isIPad ? 56 : 32 }
+}
+
+/// Passed by width-aware screen containers; compact iPad windows keep the phone controls.
+private struct GeniExpandedLayoutKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+extension EnvironmentValues {
+    var geniExpandedLayout: Bool {
+        get { self[GeniExpandedLayoutKey.self] }
+        set { self[GeniExpandedLayoutKey.self] = newValue }
+    }
 }
 
 /// Square back button used on kid screens instead of the "◀️" emoji.

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct RewardsStrip: View {
+    @Environment(\.geniExpandedLayout) private var expanded
     let rewards: RewardState
     let action: () -> Void
 
@@ -11,7 +12,7 @@ struct RewardsStrip: View {
         } label: {
             HStack(spacing: 8) {
                 HStack(spacing: 4) {
-                    CoinIcon(size: 28)
+                    CoinIcon(size: expanded ? 40 : 28)
                     Text("\(rewards.coins)")
                         .accessibilityIdentifier("home.coins")
                 }
@@ -36,12 +37,12 @@ struct RewardsStrip: View {
                     .font(.system(size: 18, weight: .black))
                     .accessibilityHidden(true)
             }
-            .font(.system(size: 28, weight: .black, design: .rounded))
+            .font(.system(size: expanded ? 36 : 28, weight: .black, design: .rounded))
             .monospacedDigit()
             .contentTransition(.numericText())
             .padding(.horizontal, 16)
             .frame(maxWidth: .infinity)
-            .frame(height: 64)
+            .frame(height: expanded ? 88 : 64)
             .brutalistCard(color: GeniColor.card, borderWidth: 3)
         }
         .buttonStyle(KidPressStyle())

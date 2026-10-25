@@ -3,11 +3,12 @@ import SwiftUI
 /// Two pictures and one next action. Every state keeps the same row and action positions.
 struct TodayCard: View {
     let summary: TodaySummary
+    @Environment(\.geniExpandedLayout) private var expanded
     var compact = false
     let perform: (TodaySummary.Action) -> Void
 
     var body: some View {
-        VStack(spacing: compact ? 12 : 16) {
+        VStack(spacing: expanded ? (compact ? 16 : 24) : (compact ? 12 : 16)) {
             HStack(spacing: 12) {
                 TaskTile(
                     emoji: "🔢",
@@ -21,7 +22,7 @@ struct TodayCard: View {
                 if let reading = summary.reading {
                     Rectangle()
                         .fill(GeniColor.lightGray)
-                        .frame(width: 1, height: 112)
+                        .frame(width: 1, height: expanded ? 200 : 112)
                         .accessibilityHidden(true)
 
                     TaskTile(
@@ -49,11 +50,11 @@ struct TodayCard: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
                     }
-                    .font(.system(.title3, design: .rounded, weight: .black))
+                    .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
                     .foregroundStyle(tint.readableText)
                     .padding(.horizontal, 12)
                     .frame(maxWidth: .infinity)
-                    .frame(height: compact ? 56 : 60)
+                    .frame(height: expanded ? 88 : (compact ? 56 : 60))
                     .background(tint, in: GeniShape())
                     .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
                     .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
@@ -62,14 +63,14 @@ struct TodayCard: View {
                 .accessibilityIdentifier(action.identifier)
             } else if let headline = summary.headlineKey {
                 Text("🎉 \(L.s(headline))")
-                    .font(.system(.title3, design: .rounded, weight: .black))
+                    .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                     .frame(maxWidth: .infinity)
-                    .frame(height: compact ? 56 : 60)
+                    .frame(height: expanded ? 88 : (compact ? 56 : 60))
             }
         }
-        .padding(compact ? 12 : 16)
+        .padding(expanded ? (compact ? 16 : 24) : (compact ? 12 : 16))
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .brutalistCard(color: GeniColor.card, borderWidth: 3)
         .accessibilityElement(children: .contain)
@@ -85,13 +86,14 @@ private struct TaskTile: View {
     let tint: Color
     var progress: Int? = nil
     var isBonus = false
+    @Environment(\.geniExpandedLayout) private var expanded
     var compact = false
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: expanded ? (compact ? 6 : 10) : 4) {
             Text(emoji)
-                .font(.system(size: compact ? 72 : 80))
-                .frame(width: 88, height: compact ? 80 : 88)
+                .font(.system(size: expanded ? (compact ? 88 : 128) : (compact ? 72 : 80)))
+                .frame(width: expanded ? (compact ? 112 : 152) : 88, height: expanded ? (compact ? 100 : 148) : (compact ? 80 : 88))
                 .overlay(alignment: .topTrailing) {
                     if state == .done {
                         SelectionCheckDot()
@@ -99,15 +101,15 @@ private struct TaskTile: View {
                 }
 
             Text(title)
-                .font(.system(.title3, design: .rounded, weight: .black))
+                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
                 .foregroundStyle(.black)
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
-                .frame(height: 24)
+                .frame(height: expanded ? (compact ? 32 : 36) : 24)
 
             status
-                .font(.system(.subheadline, design: .rounded, weight: .heavy))
-                .frame(height: 32)
+                .font(.system(expanded ? .title3 : .subheadline, design: .rounded, weight: .heavy))
+                .frame(height: expanded ? (compact ? 32 : 44) : 32)
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)
@@ -118,13 +120,13 @@ private struct TaskTile: View {
     @ViewBuilder private var status: some View {
         if state == .done {
             Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 24, weight: .black))
+                .font(.system(size: expanded ? 32 : 24, weight: .black))
                 .foregroundStyle(GeniColor.green.deep())
         } else if let progress {
             VStack(spacing: 4) {
                 ProgressView(value: Double(progress), total: 20)
                     .tint(tint)
-                    .frame(width: 88)
+                    .frame(width: expanded ? 148 : 88)
                 Text("\(progress)/20").monospacedDigit()
             }
         } else if isBonus {

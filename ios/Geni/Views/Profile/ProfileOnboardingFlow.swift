@@ -106,37 +106,41 @@ struct ProfileOnboardingFlow: View {
     private func stepContent(availableSize: CGSize) -> some View {
         switch step {
         case 1: avatarStep(availableSize: availableSize)
-        case 2: nameAgeStep
-        default: lookStep
+        case 2: nameAgeStep(availableSize: availableSize)
+        default: lookStep(availableSize: availableSize)
         }
     }
 
     private func avatarStep(availableSize: CGSize) -> some View {
-        let count = availableSize.width >= 380 || iPadScale.isIPad ? 6 : 5
+        let expanded = iPadScale.isIPad && availableSize.width >= 620
+        let count = expanded ? (availableSize.width > availableSize.height ? 7 : 6) : (availableSize.width >= 380 || iPadScale.isIPad ? 6 : 5)
         let rows = (AvatarOption.catalog.count + count - 1) / count
         // Room between cards so each avatar reads as its own card.
-        let gap: CGFloat = 18
-        // 12pt on each edge contains the 1.06 selection scale, check and 4pt shadow.
-        let tileSize = min((availableSize.width - 24 - CGFloat(count - 1) * gap) / CGFloat(count),
-                           (availableSize.height - 24 - CGFloat(rows - 1) * gap) / CGFloat(rows))
+        let gap: CGFloat = expanded ? 28 : 18
+        // Leave room for the selection scale, check dot and offset shadow.
+        let tileSize = min(expanded ? 120 : .infinity, min((availableSize.width - (expanded ? 40 : 24) - CGFloat(count - 1) * gap) / CGFloat(count),
+                           (availableSize.height - (expanded ? 40 : 24) - CGFloat(rows - 1) * gap) / CGFloat(rows)))
         let columns = Array(repeating: GridItem(.fixed(tileSize), spacing: gap), count: count)
-        // Spread the rows over the free height instead of leaving it empty above and below.
-        let rowGap = min(44, max(gap, (availableSize.height - 24 - CGFloat(rows) * tileSize) / CGFloat(rows - 1) * 0.8))
+        // Compact steps retain their original row spacing; large tiles use a steady gap.
+        let rowGap = expanded ? gap : min(44, max(gap, (availableSize.height - 24 - CGFloat(rows) * tileSize) / CGFloat(rows - 1) * 0.8))
         return AvatarGrid(options: AvatarOption.catalog, selection: avatarSelection, idPrefix: "profile.avatar",
-                          columns: columns, spacing: rowGap, emojiSize: tileSize * 0.62)
-            .padding(12)
+                          columns: columns, spacing: rowGap, emojiSize: tileSize * 0.62,
+                          tileSize: expanded ? tileSize : nil)
+            .padding(expanded ? 20 : 12)
     }
 
-    private var nameAgeStep: some View {
-        VStack(spacing: 0) {
+    private func nameAgeStep(availableSize: CGSize) -> some View {
+        let expanded = iPadScale.isIPad && availableSize.width >= 620
+        let controlHeight: CGFloat = expanded ? min(104, max(64, availableSize.height * 0.22)) : 56
+        return VStack(spacing: expanded ? 12 : 0) {
             HStack(spacing: 12) {
                 Button { go(to: 1) } label: {
-                    AvatarPreview(avatar: AvatarOption.find(draft.avatarId), size: 56, bounces: false)
+                    AvatarPreview(avatar: AvatarOption.find(draft.avatarId), size: controlHeight, bounces: false)
                 }
                 .buttonStyle(KidPressStyle())
                 .accessibilityLabel(L.s(.chooseAvatar))
 
-                ProfileNameField(draft: draft, height: 56) {
+                ProfileNameField(draft: draft, height: controlHeight) {
                     if draft.canSave { go(to: 3) }
                 }
                 .focused($nameFocused)
@@ -145,28 +149,30 @@ struct ProfileOnboardingFlow: View {
             // Keep the selected chip's check dot below the age label.
             VStack(alignment: .leading, spacing: 12) {
                 ProfileSectionLabel(text: L.s(.age))
-                    .frame(height: 20)
-                AgeChips(draft: draft, height: 56)
+                    .frame(height: expanded ? 32 : 20)
+                AgeChips(draft: draft, height: controlHeight)
             }
         }
     }
 
-    private var lookStep: some View {
-        VStack(alignment: .leading, spacing: 36) {
+    private func lookStep(availableSize: CGSize) -> some View {
+        let expanded = iPadScale.isIPad && availableSize.width >= 620
+        let tileHeight: CGFloat = expanded ? min(200, max(72, (availableSize.height - 180) / 2)) : 96
+        return VStack(alignment: .leading, spacing: expanded ? 48 : 36) {
             VStack(alignment: .leading, spacing: 12) {
-                sectionLabel(.pickColor)
-                ThemeTiles(draft: draft)
+                sectionLabel(.pickColor, expanded: expanded)
+                ThemeTiles(draft: draft, height: tileHeight)
             }
             VStack(alignment: .leading, spacing: 12) {
-                sectionLabel(.pickShape)
-                CornerStyleTiles(draft: draft)
+                sectionLabel(.pickShape, expanded: expanded)
+                CornerStyleTiles(draft: draft, height: expanded ? tileHeight * 0.85 : 96)
             }
         }
     }
 
-    private func sectionLabel(_ key: LocaleKey) -> some View {
+    private func sectionLabel(_ key: LocaleKey, expanded: Bool) -> some View {
         Text(L.s(key))
-            .font(.system(.headline, design: .rounded, weight: .black))
+            .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
             .foregroundStyle(GeniColor.border)
     }
 }

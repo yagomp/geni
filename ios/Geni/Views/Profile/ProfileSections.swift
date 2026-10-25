@@ -5,6 +5,7 @@ import SwiftUI
 
 /// The 64pt name field. The duplicate-name message lives in `ProfileNameMessage`.
 struct ProfileNameField: View {
+    @Environment(\.geniExpandedLayout) private var expanded
     @Bindable var draft: ProfileDraft
     var height: CGFloat = 64
     var onSubmit: () -> Void = {}
@@ -13,7 +14,7 @@ struct ProfileNameField: View {
     var body: some View {
         let shape = GeniShape(scale: 0.6, override: radiusOverride)
         TextField(L.s(.nicknamePlaceholder), text: $draft.nickname)
-            .font(.system(.title3, design: .rounded, weight: .bold))
+            .font(.system(expanded ? .largeTitle : .title3, design: .rounded, weight: .bold))
             .foregroundStyle(.black)
             .padding(.horizontal, 16)
             .frame(maxWidth: .infinity, minHeight: height)
@@ -47,6 +48,7 @@ struct ProfileNameMessage: View {
 
 /// Ages 5–10 in one row of 64pt chips.
 struct AgeChips: View {
+    @Environment(\.geniExpandedLayout) private var expanded
     let draft: ProfileDraft
     var height: CGFloat = 64
 
@@ -58,7 +60,7 @@ struct AgeChips: View {
                     draft.setAge(age)
                 } label: {
                     Text("\(age)")
-                        .font(.system(size: 28, weight: .black, design: .rounded))
+                        .font(.system(size: expanded ? 40 : 28, weight: .black, design: .rounded))
                         .foregroundStyle(GeniColor.border)
                         .frame(maxWidth: .infinity)
                         .frame(height: height)
@@ -74,6 +76,7 @@ struct AgeChips: View {
 
 /// Three big colour swatches, one per theme; no text.
 struct ThemeTiles: View {
+    @Environment(\.geniExpandedLayout) private var expanded
     let draft: ProfileDraft
     var height: CGFloat = 96
 
@@ -97,7 +100,7 @@ struct ThemeTiles: View {
             }
         }
         // Reserve the selected tile's 1.06 scale, check dot and offset shadow on both sides.
-        .frame(maxWidth: 420)
+        .frame(maxWidth: expanded ? 760 : 420)
         .padding(16)
         .frame(maxWidth: .infinity)
     }
@@ -105,7 +108,9 @@ struct ThemeTiles: View {
 
 /// Each tile is the corner sample, with the same selection treatment as the colour row.
 struct CornerStyleTiles: View {
+    @Environment(\.geniExpandedLayout) private var expanded
     let draft: ProfileDraft
+    var height: CGFloat = 96
 
     var body: some View {
         HStack(spacing: 12) {
@@ -114,7 +119,7 @@ struct CornerStyleTiles: View {
                     HapticManager.selection()
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { draft.cornerStyle = style }
                 } label: {
-                    CornerSample(radius: style == .rounded ? 16 : 0,
+                    CornerSample(height: height, radius: style == .rounded ? (expanded ? 28 : 16) : 0,
                                  isSelected: draft.cornerStyle == style,
                                  tint: draft.theme.previewSwatch)
                 }
@@ -123,13 +128,14 @@ struct CornerStyleTiles: View {
                 .accessibilityIdentifier("profile.corners.\(style.rawValue)")
             }
         }
-        .frame(maxWidth: 420)
+        .frame(maxWidth: expanded ? 760 : 420)
         .padding(16)
         .frame(maxWidth: .infinity)
     }
 }
 
 private struct CornerSample: View {
+    var height: CGFloat = 96
     let radius: CGFloat
     let isSelected: Bool
     let tint: Color
@@ -137,7 +143,7 @@ private struct CornerSample: View {
     var body: some View {
         Color.clear
             .frame(maxWidth: .infinity)
-            .frame(height: 96)
+            .frame(height: height)
             .selectableTile(isSelected: isSelected, tint: tint,
                             restingFill: GeniColor.card, selectedFill: GeniColor.card, shapeScale: 1,
                             restingShadow: GeniColor.border)
@@ -214,11 +220,12 @@ struct ReadingRow: View {
 
 /// Small bold label above a section.
 struct ProfileSectionLabel: View {
+    @Environment(\.geniExpandedLayout) private var expanded
     let text: String
 
     var body: some View {
         Text(text)
-            .font(.system(.headline, design: .rounded, weight: .black))
+            .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
             .foregroundStyle(.black)
             .frame(maxWidth: .infinity, alignment: .leading)
     }

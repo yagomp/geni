@@ -4,10 +4,11 @@ import SwiftUI
 struct ChallengesCard: View {
     let viewModel: AppViewModel
     let summary: TodaySummary
+    @Environment(\.geniExpandedLayout) private var expanded
     var compact = false
 
     private var columnCount: Int {
-        items.count <= 3 ? items.count : (items.count + 1) / 2
+        expanded && items.count <= 5 ? items.count : (items.count <= 3 ? items.count : (items.count + 1) / 2)
     }
 
     private var items: [ChallengeItem] {
@@ -50,7 +51,7 @@ struct ChallengesCard: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("🎮 \(L.s(.challengesTitle))")
-                    .font(.system(.headline, design: .rounded, weight: .black))
+                    .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
                     .lineLimit(1)
                     .minimumScaleFactor(0.75)
                 Spacer(minLength: 8)
@@ -61,7 +62,7 @@ struct ChallengesCard: View {
                         .accessibilityHidden(true)
                 }
             }
-            .frame(height: 28)
+            .frame(height: expanded ? 36 : 28)
 
             let games = items
             VStack(spacing: 8) {
@@ -76,7 +77,7 @@ struct ChallengesCard: View {
             }
             .frame(maxHeight: .infinity)
         }
-        .padding(12)
+        .padding(expanded ? 24 : 12)
         .frame(maxWidth: .infinity)
         .brutalistCard(color: GeniColor.card, borderWidth: 3)
     }
@@ -86,8 +87,8 @@ struct ChallengesCard: View {
             let enabled = summary.showsExtras && item.isAvailable
             VStack(spacing: 4) {
                 Text(item.emoji)
-                    .font(.system(size: compact ? 32 : 36))
-                    .frame(width: compact ? 48 : 52, height: compact ? 48 : 52)
+                    .font(.system(size: expanded ? 72 : (compact ? 32 : 36)))
+                    .frame(width: expanded ? 88 : (compact ? 48 : 52), height: expanded ? 88 : (compact ? 48 : 52))
                     .grayscale(enabled ? 0 : 1)
                     .opacity(enabled ? 1 : 0.35)
                     .overlay(alignment: .topTrailing) {
@@ -96,11 +97,11 @@ struct ChallengesCard: View {
                         }
                     }
                 Text(item.title)
-                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .font(.system(size: expanded ? 17 : 12, weight: .bold, design: .rounded))
                     .foregroundStyle(enabled ? Color.black : Color.black.opacity(0.45))
                     .lineLimit(1)
                     .minimumScaleFactor(0.65)
-                    .frame(height: 16)
+                    .frame(height: expanded ? 24 : 16)
             }
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
@@ -125,6 +126,7 @@ private struct ChallengeItem: Identifiable {
 }
 
 struct ChallengeCountdown: View {
+    @Environment(\.geniExpandedLayout) private var expanded
     let viewModel: AppViewModel
 
     var body: some View {
@@ -135,7 +137,7 @@ struct ChallengeCountdown: View {
                 Text("⏳").accessibilityHidden(true)
                 Text(time).monospacedDigit()
             }
-            .font(.system(.subheadline, design: .rounded, weight: .black))
+            .font(.system(expanded ? .title3 : .subheadline, design: .rounded, weight: .black))
             .foregroundStyle((seconds <= 60 ? GeniColor.pink : GeniColor.green).deep())
             .padding(.horizontal, 10)
             .frame(height: 28)

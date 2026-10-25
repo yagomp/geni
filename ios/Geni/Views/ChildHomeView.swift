@@ -19,9 +19,11 @@ struct ChildHomeView: View {
             GeniColor.lightYellow.ignoresSafeArea()
 
             GeometryReader { geo in
-                VStack(spacing: 12) {
-                    headerSection(profile: profile, avatar: avatar)
-                        .frame(height: hasMultipleProfiles ? 72 : 64)
+                let expanded = iPadScale.isIPad && geo.size.width >= 700 && geo.size.height >= 800
+                let spacing: CGFloat = expanded ? 20 : 12
+                VStack(spacing: spacing) {
+                    headerSection(profile: profile, avatar: avatar, expanded: expanded)
+                        .frame(height: expanded ? 88 : (hasMultipleProfiles ? 72 : 64))
 
                     RewardsStrip(rewards: viewModel.rewardState) {
                         viewModel.showRewards = true
@@ -34,10 +36,12 @@ struct ChildHomeView: View {
                         GeometryReader { remaining in
                             // State never changes these heights. Reserve 206pt for two
                             // challenge rows; Today needs 236pt on the smallest iPhone.
-                            let cardSpace = remaining.size.height - 12
-                            let todayHeight = min(cardSpace - 206, max(236, cardSpace * 0.56))
-                            let compact = todayHeight < 264
-                            VStack(spacing: 12) {
+                            let cardSpace = remaining.size.height - spacing
+                            let challengeRows = (3 + (profile?.operationsEnabled.count ?? 0)) > 5 ? 2 : 1
+                            let challengeHeight: CGFloat = expanded ? (challengeRows == 1 ? 216 : 352) : 206
+                            let todayHeight = expanded ? cardSpace - challengeHeight : min(cardSpace - 206, max(236, cardSpace * 0.56))
+                            let compact = todayHeight < (expanded ? 420 : 264)
+                            VStack(spacing: spacing) {
                                 TodayCard(summary: summary, compact: compact) { action in
                                     if action.isReading {
                                         viewModel.startReading()
@@ -54,11 +58,13 @@ struct ChildHomeView: View {
                     }
                     .frame(maxHeight: .infinity)
                 }
-                .frame(maxWidth: 720)
+                .frame(maxWidth: expanded ? 820 : 720)
+                .environment(\.geniExpandedLayout, expanded)
                 .padding(.horizontal, iPadScale.padding)
                 // Includes the cards' 4pt offset shadows, including on a home-button iPhone.
-                .padding(.vertical, 12)
-                .frame(width: geo.size.width, height: geo.size.height, alignment: .top)
+                .padding(.vertical, expanded ? 24 : 12)
+                .frame(maxHeight: expanded ? 1120 : .infinity)
+                .frame(width: geo.size.width, height: geo.size.height, alignment: expanded ? .center : .top)
             }
             .foregroundStyle(GeniColor.border)
         }
@@ -76,7 +82,7 @@ struct ChildHomeView: View {
         }
     }
 
-    private func headerSection(profile: ChildProfile?, avatar: AvatarOption) -> some View {
+    private func headerSection(profile: ChildProfile?, avatar: AvatarOption, expanded: Bool) -> some View {
         HStack(spacing: 8) {
             Button {
                 HapticManager.selection()
@@ -87,8 +93,8 @@ struct ChildHomeView: View {
                 }
             } label: {
                 Text(avatar.emoji)
-                    .font(.system(size: 38))
-                    .frame(width: 64, height: 64)
+                    .font(.system(size: expanded ? 52 : 38))
+                    .frame(width: expanded ? 88 : 64, height: expanded ? 88 : 64)
                     .brutalistCard(color: GeniColor.card, borderWidth: 3)
             }
             .buttonStyle(KidPressStyle())
@@ -96,7 +102,7 @@ struct ChildHomeView: View {
             .accessibilityIdentifier("home.avatar")
 
             Text(profile?.nickname ?? "")
-                .font(.system(.title2, design: .rounded, weight: .black))
+                .font(.system(expanded ? .largeTitle : .title2, design: .rounded, weight: .black))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
                 .layoutPriority(1)
@@ -113,8 +119,8 @@ struct ChildHomeView: View {
                                 viewModel.selectProfile(sibling)
                             } label: {
                                 Text(AvatarOption.find(sibling.avatarId).emoji)
-                                    .font(.system(size: 32))
-                                    .frame(width: 64, height: 64)
+                                    .font(.system(size: expanded ? 44 : 32))
+                                    .frame(width: expanded ? 88 : 64, height: expanded ? 88 : 64)
                                     .brutalistCard(color: GeniColor.card, borderWidth: 3)
                             }
                             .buttonStyle(KidPressStyle())
@@ -125,8 +131,8 @@ struct ChildHomeView: View {
                     .padding(4)
                 }
                 .scrollIndicators(.hidden)
-                .frame(minWidth: 72, idealWidth: 72, maxWidth: 144)
-                .frame(height: 72)
+                .frame(minWidth: 72, idealWidth: expanded ? 96 : 72, maxWidth: expanded ? 192 : 144)
+                .frame(height: expanded ? 96 : 72)
             }
 
             Button {
@@ -134,8 +140,8 @@ struct ChildHomeView: View {
                 viewModel.showParentSettings = true
             } label: {
                 Text("⚙️")
-                    .font(.system(size: 30))
-                    .frame(width: 44, height: 56)
+                    .font(.system(size: expanded ? 40 : 30))
+                    .frame(width: expanded ? 64 : 44, height: expanded ? 72 : 56)
                     .zoomSource(id: "settings", in: settingsNamespace)
             }
             .buttonStyle(KidPressStyle())

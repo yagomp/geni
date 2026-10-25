@@ -15,11 +15,23 @@ struct StepScaffold<Content: View>: View {
     @ViewBuilder let content: (CGSize) -> Content
 
     var body: some View {
-        VStack(spacing: 8) {
+        if iPadScale.isIPad {
+            GeometryReader { available in
+                let expanded = available.size.width >= 700
+                let maxWidth: CGFloat = expanded ? (available.size.width > available.size.height ? 1120 : 1000) : 560
+                scaffold(expanded: expanded, maxWidth: maxWidth)
+            }
+        } else {
+            scaffold(expanded: false, maxWidth: 560)
+        }
+    }
+
+    private func scaffold(expanded: Bool, maxWidth: CGFloat) -> some View {
+        VStack(spacing: expanded ? 20 : 8) {
             topBar
 
             Text(title)
-                .font(.system(.title, design: .rounded, weight: .black))
+                .font(expanded ? .system(size: 40, weight: .black, design: .rounded) : .system(.title, design: .rounded, weight: .black))
                 .foregroundStyle(.black)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
@@ -28,17 +40,16 @@ struct StepScaffold<Content: View>: View {
                 .transition(.opacity)
                 .accessibilityAddTraits(.isHeader)
 
-            // A fixed-size layout when it fits; scrolls (without bouncing) only when it can't.
-            // ViewThatFits would build the content twice, duplicating the focused name field.
+            // A single content tree keeps focus stable. Wide iPad steps fit without scrolling.
             GeometryReader { geo in
-                if allowsScrolling {
+                if allowsScrolling && !expanded {
                     ScrollView {
                         content(geo.size)
                             .frame(maxWidth: .infinity, minHeight: geo.size.height)
                     }
                     .scrollBounceBehavior(.basedOnSize)
                     .scrollDismissesKeyboard(.never)
-                    // Selected tiles grow and carry a ✓ dot past their edge; don't cut them off.
+                    // Selected tiles grow and carry a check dot past their edge.
                     .scrollClipDisabled()
                 } else {
                     content(geo.size)
@@ -47,15 +58,16 @@ struct StepScaffold<Content: View>: View {
             }
         }
         .padding(.horizontal, iPadScale.padding)
-        .frame(maxWidth: 560)
+        .frame(maxWidth: maxWidth)
         .frame(maxWidth: .infinity)
         .safeAreaInset(edge: .bottom, spacing: 12) {
             primary
                 .padding(.horizontal, iPadScale.padding)
                 .padding(.bottom, 12)
-                .frame(maxWidth: 560)
+                .frame(maxWidth: maxWidth)
                 .frame(maxWidth: .infinity)
         }
+        .environment(\.geniExpandedLayout, expanded)
     }
 
     private var topBar: some View {
@@ -98,6 +110,7 @@ struct StepDots: View {
 
 /// The step's green 72pt button. Disabled = pale green, never grey.
 struct StepPrimaryButton: View {
+    @Environment(\.geniExpandedLayout) private var expanded
     let title: String
     var showsPlay = false
     var color: Color = GeniColor.green
@@ -122,7 +135,8 @@ struct StepPrimaryButton: View {
             .frame(maxWidth: .infinity, minHeight: 36)
         }
         .buttonStyle(BrutalistButton(color: isEnabled ? color : color.soft(0.35),
-                                     textColor: isEnabled ? .white : GeniColor.border))
+                                     textColor: isEnabled ? .white : GeniColor.border,
+                                     fontSize: expanded ? 30 : nil, verticalPadding: expanded ? 26 : nil))
         .disabled(!isEnabled)
         .accessibilityIdentifier(identifier)
     }

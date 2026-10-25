@@ -5,12 +5,14 @@ struct AvatarTile: View {
     let avatar: AvatarOption
     let isSelected: Bool
     var emojiSize: CGFloat = 44
+    var tileSize: CGFloat? = nil
 
     var body: some View {
         Text(avatar.emoji)
             .font(.system(size: emojiSize))
             .frame(maxWidth: .infinity)
             .aspectRatio(1, contentMode: .fit)
+            .frame(width: tileSize, height: tileSize)
             .selectableTile(isSelected: isSelected, tint: avatar.color, restingShadow: GeniColor.border)
     }
 }
@@ -60,6 +62,7 @@ struct AvatarGrid: View {
     var columns: [GridItem] = AvatarLayout.adaptiveColumns
     var spacing: CGFloat = 12
     var emojiSize: CGFloat = 44
+    var tileSize: CGFloat? = nil
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: spacing) {
@@ -68,7 +71,7 @@ struct AvatarGrid: View {
                     HapticManager.selection()
                     selection = avatar.id
                 } label: {
-                    AvatarTile(avatar: avatar, isSelected: selection == avatar.id, emojiSize: emojiSize)
+                    AvatarTile(avatar: avatar, isSelected: selection == avatar.id, emojiSize: emojiSize, tileSize: tileSize)
                 }
                 .buttonStyle(KidPressStyle())
                 .accessibilityIdentifier("\(idPrefix).\(avatar.id)")

@@ -1,60 +1,72 @@
 import SwiftUI
 
+private extension View {
+    /// Popup card: 4pt outline, 6pt offset shadow, shape follows the profile's corner style.
+    func popupCard() -> some View {
+        self
+            .padding(24)
+            .frame(maxWidth: 320)
+            .background(GeniColor.card)
+            .clipShape(GeniShape())
+            .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 4))
+            .background(GeniShape().fill(GeniColor.border).offset(x: 6, y: 6))
+            .compositingGroup()
+    }
+
+    /// Slow-in entrance: scale + fade, or fade only under Reduce Motion.
+    func popupEntrance(appeared: Bool, reduceMotion: Bool) -> some View {
+        self
+            .scaleEffect(reduceMotion || appeared ? 1 : 0.3)
+            .opacity(appeared ? 1 : 0)
+            .animation(reduceMotion ? .easeOut(duration: 0.2) : .spring(response: 0.5, dampingFraction: 0.6), value: appeared)
+    }
+}
+
 struct LevelUpOverlay: View {
     let level: Int
     let onDismiss: () -> Void
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var appeared = false
-    @State private var particleBurst = false
+    @State private var medalScale: CGFloat = 1
 
     var body: some View {
         ZStack {
-            Color.black.opacity(appeared ? 0.6 : 0)
+            GeniColor.purple.soft(0.2)
+                .opacity(appeared ? 0.94 : 0)
+                .animation(.easeOut(duration: 0.2), value: appeared)
                 .ignoresSafeArea()
                 .onTapGesture { dismiss() }
 
             VStack(spacing: 24) {
-                Text("⬆️")
-                    .font(.system(size: 72))
-                    .foregroundStyle(GeniColor.purple)
-                    .symbolEffect(.bounce, value: particleBurst)
+                LevelMedallion(level: level, size: 120)
+                    .scaleEffect(medalScale)
 
                 Text(L.s(.levelUp))
                     .font(.system(size: 36, weight: .black, design: .rounded))
                     .foregroundStyle(GeniColor.border)
-
-                Text("\(L.s(.level)) \(level)")
-                    .font(.system(.title, design: .rounded, weight: .black))
-                    .foregroundStyle(GeniColor.purple)
-                    .padding(.horizontal, 32)
-                    .padding(.vertical, 12)
-                    .background(GeniColor.purple.opacity(0.15))
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                    .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+                    .multilineTextAlignment(.center)
 
                 Button {
                     dismiss()
                 } label: {
                     Text(L.s(.awesome))
-                        .frame(maxWidth: .infinity)
+                        .frame(maxWidth: .infinity, minHeight: 28)
                 }
                 .buttonStyle(BrutalistButton(color: GeniColor.purple))
-                .padding(.horizontal, 24)
+                .accessibilityIdentifier("levelUp.dismiss")
             }
-            .padding(32)
-            .frame(maxWidth: 320)
-            .background(GeniColor.card)
-            .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 4))
-            .background(Rectangle().fill(GeniColor.border).offset(x: 6, y: 6))
-            .scaleEffect(appeared ? 1 : 0.3)
-            .opacity(appeared ? 1 : 0)
+            .popupCard()
+            .popupEntrance(appeared: appeared, reduceMotion: reduceMotion)
         }
-        .animation(.spring(response: 0.5, dampingFraction: 0.6), value: appeared)
         .onAppear {
             appeared = true
             HapticManager.levelUp()
+            guard !reduceMotion else { return }
             Task {
                 try? await Task.sleep(for: .seconds(0.3))
-                particleBurst = true
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.4)) { medalScale = 1.15 }
+                try? await Task.sleep(for: .seconds(0.2))
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) { medalScale = 1 }
             }
         }
     }
@@ -71,90 +83,84 @@ struct LevelUpOverlay: View {
 struct BadgeUnlockOverlay: View {
     let badge: Badge
     let onDismiss: () -> Void
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var appeared = false
-    @State private var iconBounce = 0
+    @State private var medalScale: CGFloat = 1
     @State private var particles: [CelebrationParticle] = []
     @State private var useFireworks = Bool.random()
 
     var body: some View {
-        ZStack {
-            Color.black.opacity(appeared ? 0.6 : 0)
-                .ignoresSafeArea()
-                .onTapGesture { dismiss() }
+        GeometryReader { geo in
+            ZStack {
+                badge.color.soft(0.25)
+                    .opacity(appeared ? 0.94 : 0)
+                    .animation(.easeOut(duration: 0.2), value: appeared)
+                    .onTapGesture { dismiss() }
 
-            // Celebration particles
-            GeometryReader { geo in
                 ForEach(particles) { p in
                     Group {
                         if useFireworks {
                             Circle()
                                 .fill(p.color)
+                                .overlay(Circle().stroke(GeniColor.border, lineWidth: 1.5))
                                 .frame(width: p.size, height: p.size)
-                                .shadow(color: p.color.opacity(0.6), radius: 4)
                         } else {
-                            Rectangle()
+                            GeniShape(scale: 0.2)
                                 .fill(p.color)
+                                .overlay(GeniShape(scale: 0.2).stroke(GeniColor.border, lineWidth: 1.5))
                                 .frame(width: p.size * 0.6, height: p.size * 1.4)
                                 .rotationEffect(.degrees(p.rotation))
                         }
                     }
                     .position(x: p.x, y: p.y)
                     .opacity(p.opacity)
+                    .allowsHitTesting(false)
                 }
-            }
-            .ignoresSafeArea()
-            .allowsHitTesting(false)
 
-            VStack(spacing: 24) {
-                Text(L.s(.newBadge))
-                    .font(.system(.title2, design: .rounded, weight: .black))
-                    .foregroundStyle(GeniColor.border)
+                VStack(spacing: 16) {
+                    BadgeMedallion(badge: badge, size: 120, earned: true)
+                        .scaleEffect(medalScale)
+                        .padding(.bottom, 8)
 
-                Text(badge.icon)
-                    .font(.system(size: 64))
-                    .frame(width: 100, height: 100)
-                    .background(badge.color.opacity(0.15))
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                    .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
-
-                VStack(spacing: 4) {
                     Text(L.s(badge.titleKey))
-                        .font(.system(.title3, design: .rounded, weight: .black))
+                        .font(.system(.title, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
+                        .multilineTextAlignment(.center)
 
                     Text(L.s(badge.descriptionKey))
-                        .font(.system(.body, design: .rounded))
-                        .foregroundStyle(.black)
+                        .font(.system(.body, design: .rounded, weight: .semibold))
+                        .foregroundStyle(GeniColor.border)
                         .multilineTextAlignment(.center)
-                }
 
-                Button {
-                    dismiss()
-                } label: {
-                    Text(L.s(.awesome))
-                        .frame(maxWidth: .infinity)
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text(L.s(.awesome))
+                            .frame(maxWidth: .infinity, minHeight: 28)
+                    }
+                    .buttonStyle(BrutalistButton(color: badge.color))
+                    .accessibilityIdentifier("badge.dismiss")
+                    .padding(.top, 8)
                 }
-                .buttonStyle(BrutalistButton(color: badge.color))
-                .padding(.horizontal, 24)
+                .popupCard()
+                .popupEntrance(appeared: appeared, reduceMotion: reduceMotion)
             }
-            .padding(32)
-            .frame(maxWidth: 320)
-            .background(GeniColor.card)
-            .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 4))
-            .background(Rectangle().fill(GeniColor.border).offset(x: 6, y: 6))
-            .scaleEffect(appeared ? 1 : 0.3)
-            .opacity(appeared ? 1 : 0)
-        }
-        .animation(.spring(response: 0.5, dampingFraction: 0.6), value: appeared)
-        .onAppear {
-            appeared = true
-            HapticManager.badgeUnlock()
-            Task {
-                try? await Task.sleep(for: .seconds(0.3))
-                iconBounce += 1
-                launchCelebration()
+            .frame(width: geo.size.width, height: geo.size.height)
+            .onAppear {
+                appeared = true
+                HapticManager.badgeUnlock()
+                guard !reduceMotion else { return }
+                let size = geo.size
+                Task {
+                    try? await Task.sleep(for: .seconds(0.3))
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.4)) { medalScale = 1.15 }
+                    launchCelebration(in: size)
+                    try? await Task.sleep(for: .seconds(0.2))
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) { medalScale = 1 }
+                }
             }
         }
+        .ignoresSafeArea()
     }
 
     private func dismiss() {
@@ -165,10 +171,10 @@ struct BadgeUnlockOverlay: View {
         }
     }
 
-    private func launchCelebration() {
-        let screenW = UIScreen.main.bounds.width
-        let screenH = UIScreen.main.bounds.height
-        let colors: [Color] = [.red, .orange, .yellow, .green, .blue, .purple, .pink, GeniColor.yellow, GeniColor.green]
+    private func launchCelebration(in size: CGSize) {
+        let screenW = size.width
+        let screenH = size.height
+        let colors: [Color] = [GeniColor.pink, GeniColor.orange, GeniColor.yellow, GeniColor.green, GeniColor.blue, GeniColor.purple, GeniColor.cyan]
 
         if useFireworks {
             // Fireworks: burst from 2-3 center points
@@ -192,7 +198,7 @@ struct BadgeUnlockOverlay: View {
                     let delay = Double(i) * 0.02
                     Task {
                         try? await Task.sleep(for: .seconds(delay))
-                        await animateParticle(idx, dx: dx, dy: dy + 100)
+                        animateParticle(idx, dx: dx, dy: dy + 100)
                     }
                 }
             }
@@ -212,7 +218,7 @@ struct BadgeUnlockOverlay: View {
                 let delay = Double(i) * 0.05
                 Task {
                     try? await Task.sleep(for: .seconds(delay))
-                    await animateConfetti(idx, screenH: screenH)
+                    animateConfetti(idx, screenH: screenH)
                 }
             }
         }

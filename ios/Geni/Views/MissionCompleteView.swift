@@ -61,7 +61,8 @@ struct MissionCompleteView: View {
                                 .font(.title3)
                                 .frame(width: 36, height: 36)
                                 .background(GeniColor.blue)
-                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                                .clipShape(GeniShape(scale: 0.5))
+                                .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 2))
 
                             Text(L.s(.mathDone))
                                 .font(.system(.body, design: .rounded, weight: .semibold))
@@ -84,7 +85,8 @@ struct MissionCompleteView: View {
                                 .foregroundStyle(.white)
                                 .frame(width: 36, height: 36)
                                 .background(GeniColor.green)
-                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                                .clipShape(GeniShape(scale: 0.5))
+                                .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 2))
 
                             Text(L.s(.readingDone2))
                                 .font(.system(.body, design: .rounded, weight: .semibold))
@@ -107,7 +109,8 @@ struct MissionCompleteView: View {
                                     .font(.title3)
                                     .frame(width: 36, height: 36)
                                     .background(GeniColor.yellow)
-                                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                                    .clipShape(GeniShape(scale: 0.5))
+                                    .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 2))
 
                                 Text(L.s(.bonusEarned))
                                     .font(.system(.body, design: .rounded, weight: .semibold))
@@ -117,7 +120,7 @@ struct MissionCompleteView: View {
 
                                 Text("+\(bonusCoins) 🪙")
                                     .font(.system(.headline, design: .rounded, weight: .black))
-                                    .foregroundStyle(GeniColor.yellow)
+                                    .foregroundStyle(GeniColor.border)
                             }
                         }
 
@@ -201,6 +204,7 @@ struct MissionCompleteView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(BrutalistButton(color: GeniColor.blue))
+                    .accessibilityIdentifier("missionComplete.done")
                     .padding(.horizontal, 12)
                     .opacity(appeared ? 1 : 0)
                     .animation(.spring(response: 0.5).delay(0.9), value: appeared)

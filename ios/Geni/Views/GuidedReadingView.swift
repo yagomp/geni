@@ -88,8 +88,10 @@ struct GuidedReadingView: View {
                     Text("◀️").font(.system(size: 20))
                         .frame(width: 44, height: 44)
                         .background(GeniColor.card)
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
                 }
+                .accessibilityIdentifier("reading.back")
 
                 Spacer()
 
@@ -107,13 +109,14 @@ struct GuidedReadingView: View {
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(GeniColor.card)
-                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                .clipShape(GeniShape())
+                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
             }
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Rectangle()
+                    GeniShape()
                         .fill(Color.gray.opacity(0.2))
                         .frame(height: 14)
 
@@ -122,7 +125,8 @@ struct GuidedReadingView: View {
                         .frame(width: geo.size.width * readingVM.progress, height: 14)
                         .animation(.spring, value: readingVM.progress)
                 }
-                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                .clipShape(GeniShape())
+                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
             }
             .frame(height: 14)
         }
@@ -137,8 +141,9 @@ struct GuidedReadingView: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
-        .background(modeColor.opacity(0.15))
-        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+        .background(modeColor.soft(0.2))
+        .clipShape(GeniShape())
+        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 2))
     }
 
     private var modeIcon: String {
@@ -174,9 +179,11 @@ struct GuidedReadingView: View {
                 Text("🔄").font(.system(size: 20))
                     .frame(width: 52, height: 52)
                     .background(GeniColor.card)
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                    .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                    .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
             }
+            .accessibilityIdentifier("reading.restart")
 
             Button {
                 HapticManager.impact(.medium)
@@ -196,9 +203,11 @@ struct GuidedReadingView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 52)
                 .background(GeniColor.green)
-                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+                .clipShape(GeniShape())
+                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
             }
+            .accessibilityIdentifier("reading.playPause")
 
             if readingVM.mode == .listenToMeRead {
                 Button {
@@ -207,13 +216,16 @@ struct GuidedReadingView: View {
                 } label: {
                     Image(systemName: "forward.end.fill")
                         .font(.system(size: 18, weight: .black))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(readingVM.isPlaying ? GeniColor.border : Color(white: 0.55))
                         .frame(width: 52, height: 52)
-                        .background(GeniColor.orange)
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                        .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                        .background(readingVM.isPlaying ? GeniColor.orange : GeniColor.lightGray)
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                        .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
                 }
                 .accessibilityLabel(L.s(.next))
+                .accessibilityIdentifier("reading.skip")
+                .disabled(!readingVM.isPlaying)
             }
 
             if readingVM.mode != .listenToMeRead && readingVM.currentWordIndex >= readingVM.words.count / 2 {
@@ -226,9 +238,11 @@ struct GuidedReadingView: View {
                         .foregroundStyle(.white)
                         .frame(width: 52, height: 52)
                         .background(GeniColor.blue)
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                        .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                        .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
                 }
+                .accessibilityIdentifier("reading.finish")
             }
         }
     }
@@ -240,14 +254,17 @@ struct GuidedReadingView: View {
 
             Text(readingVM.feedbackMessage)
                 .font(.system(.headline, design: .rounded, weight: .bold))
-                .foregroundStyle(.white)
+                .foregroundStyle(feedbackColor.readableText)
+                .accessibilityIdentifier("reading.feedback")
 
             Spacer()
         }
         .padding(16)
         .background(feedbackColor)
-        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-        .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+        .clipShape(GeniShape())
+        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+        .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
+        .compositingGroup()
     }
 
     private var feedbackColor: Color {

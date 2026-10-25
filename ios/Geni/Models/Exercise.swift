@@ -602,7 +602,7 @@ nonisolated struct ExerciseResult: Codable, Identifiable, Sendable {
 
 
 extension ExerciseFormat {
-    var isClock: Bool { self == .clockRead || self == .clockSet || self == .clockMatch }
+    nonisolated var isClock: Bool { self == .clockRead || self == .clockSet || self == .clockMatch }
 }
 
 /// A 12-hour time with angles measured clockwise from twelve.

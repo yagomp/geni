@@ -6,12 +6,11 @@ struct WelcomeView: View {
     @State private var mascotBob = false
     @State private var mascotTilt = false
     @State private var mascotTapped = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private let heroBackground = Color(red: 1.0, green: 247 / 255, blue: 224 / 255)
 
     var body: some View {
-        ZStack {
-            heroBackground.ignoresSafeArea()
-
+        GeometryReader { geo in
             VStack(spacing: 0) {
                 Spacer()
 
@@ -19,10 +18,11 @@ struct WelcomeView: View {
                     Image("HeroMascot")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: iPadScale.value(290))
-                        .scaleEffect(appeared ? (mascotTapped ? 1.18 : 1.0) : 0.3)
-                        .rotationEffect(.degrees(mascotTilt ? 4 : -4))
-                        .offset(y: mascotBob ? -10 : 8)
+                        .frame(height: min(iPadScale.value(290), geo.size.height * 0.38))
+                        .scaleEffect(appeared ? (mascotTapped ? 1.18 : 1.0) : (reduceMotion ? 1 : 0.3))
+                        .rotationEffect(.degrees(reduceMotion ? 0 : (mascotTilt ? 4 : -4)))
+                        .offset(y: reduceMotion ? 0 : (mascotBob ? -10 : 8))
+                        .opacity(appeared ? 1 : 0)
                         .animation(.spring(response: 0.6, dampingFraction: 0.6), value: appeared)
                         .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: mascotBob)
                         .animation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: mascotTilt)
@@ -38,17 +38,9 @@ struct WelcomeView: View {
                         .font(.system(size: iPadScale.value(56), weight: .black, design: .rounded))
                         .foregroundStyle(.black)
                         .opacity(appeared ? 1 : 0)
-                        .offset(y: appeared ? 0 : 20)
+                        .offset(y: appeared || reduceMotion ? 0 : 20)
                         .animation(.spring(response: 0.5).delay(0.2), value: appeared)
-
-                    Text(L.s(.welcomeSubtitle))
-                        .font(.system(.title2, design: .rounded, weight: .bold))
-                        .foregroundStyle(.black)
-                        .opacity(appeared ? 1 : 0)
-                        .animation(.spring(response: 0.5).delay(0.4), value: appeared)
                 }
-
-                Spacer()
 
                 Spacer()
 
@@ -57,22 +49,26 @@ struct WelcomeView: View {
                     onGetStarted()
                 } label: {
                     HStack(spacing: 10) {
-                        Text(L.s(.createMyGeni))
-                        Text("▶️")
-                            .font(.system(size: 16))
+                        Text(L.s(.letsPlay))
+                        Image(systemName: "play.fill")
+                            .font(.system(size: 18, weight: .black))
                     }
+                    .frame(maxWidth: .infinity, minHeight: 36)
                 }
                 .buttonStyle(BrutalistButton(color: .white, textColor: .black))
-                .padding(.horizontal, iPadScale.largePadding)
+                .accessibilityIdentifier("welcome.start")
+                .frame(maxWidth: 560)
+                .padding(.horizontal, iPadScale.padding)
+                .padding(.bottom, 24)
                 .opacity(appeared ? 1 : 0)
                 .animation(.spring(response: 0.5).delay(0.8), value: appeared)
-
-                Spacer()
-                    .frame(height: 60)
             }
+            .frame(maxWidth: .infinity)
         }
+        .background(heroBackground.ignoresSafeArea())
         .onAppear {
             appeared = true
+            guard !reduceMotion else { return }
             mascotBob = true
             mascotTilt = true
         }

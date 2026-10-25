@@ -4,6 +4,8 @@ struct MissionTransitionView: View {
     let mathStars: Int
     let mathCoins: Int
     let onContinue: () -> Void
+    /// Set when reading is optional: offers ending the mission after math.
+    var onFinish: (() -> Void)? = nil
 
     @State private var appeared = false
     @State private var showButton = false
@@ -62,17 +64,32 @@ struct MissionTransitionView: View {
 
                 Spacer()
 
-                Button {
-                    HapticManager.impact(.medium)
-                    onContinue()
-                } label: {
-                    HStack(spacing: 10) {
-                        Text(L.s(.continueToReading))
-                        Text("▶️").font(.system(size: 16))
+                VStack(spacing: 16) {
+                    Button {
+                        HapticManager.impact(.medium)
+                        onContinue()
+                    } label: {
+                        HStack(spacing: 10) {
+                            Text(L.s(onFinish == nil ? .continueToReading : .startReading))
+                            Text("▶️").font(.system(size: 16))
+                        }
+                        .frame(maxWidth: .infinity)
                     }
-                    .frame(maxWidth: .infinity)
+                    .buttonStyle(BrutalistButton(color: GeniColor.green))
+                    .accessibilityIdentifier("missionTransition.continue")
+
+                    if let onFinish {
+                        Button {
+                            HapticManager.selection()
+                            onFinish()
+                        } label: {
+                            Text(L.s(.done))
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(BrutalistButton(color: GeniColor.card, textColor: GeniColor.border))
+                        .accessibilityIdentifier("missionTransition.finish")
+                    }
                 }
-                .buttonStyle(BrutalistButton(color: GeniColor.green))
                 .padding(.horizontal, 20)
                 .opacity(showButton ? 1 : 0)
                 .offset(y: showButton ? 0 : 20)

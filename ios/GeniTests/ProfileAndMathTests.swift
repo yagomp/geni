@@ -62,8 +62,8 @@ struct ProfileAndMathTests {
         let vm = makeMatchViewModel(persistence: persistence)
         defer { UserDefaults.standard.removeObject(forKey: "geni_chapters_" + vm.profile.id) }
 
-        vm.submitMatch(leftIndex: 0, rightIndex: 0, pathPoints: [], persistence: persistence)
-        vm.submitMatch(leftIndex: 1, rightIndex: 1, pathPoints: [], persistence: persistence)
+        vm.submitMatch(leftIndex: 0, rightIndex: 0, persistence: persistence)
+        vm.submitMatch(leftIndex: 1, rightIndex: 1, persistence: persistence)
 
         let result = vm.chapter.exerciseResults.first
         #expect(vm.chapter.exerciseResults.count == 1)
@@ -76,9 +76,9 @@ struct ProfileAndMathTests {
         let vm = makeMatchViewModel(persistence: persistence)
         defer { UserDefaults.standard.removeObject(forKey: "geni_chapters_" + vm.profile.id) }
 
-        vm.submitMatch(leftIndex: 0, rightIndex: 1, pathPoints: [], persistence: persistence)
-        vm.submitMatch(leftIndex: 0, rightIndex: 0, pathPoints: [], persistence: persistence)
-        vm.submitMatch(leftIndex: 1, rightIndex: 1, pathPoints: [], persistence: persistence)
+        vm.submitMatch(leftIndex: 0, rightIndex: 1, persistence: persistence)
+        vm.submitMatch(leftIndex: 0, rightIndex: 0, persistence: persistence)
+        vm.submitMatch(leftIndex: 1, rightIndex: 1, persistence: persistence)
 
         let result = vm.chapter.exerciseResults.first
         #expect(vm.wrongMatchCount == 1)
@@ -92,10 +92,10 @@ struct ProfileAndMathTests {
         let vm = makeMatchViewModel(persistence: persistence)
         defer { UserDefaults.standard.removeObject(forKey: "geni_chapters_" + vm.profile.id) }
 
-        vm.submitMatch(leftIndex: 0, rightIndex: 1, pathPoints: [], persistence: persistence)
-        vm.submitMatch(leftIndex: 1, rightIndex: 0, pathPoints: [], persistence: persistence)
-        vm.submitMatch(leftIndex: 0, rightIndex: 0, pathPoints: [], persistence: persistence)
-        vm.submitMatch(leftIndex: 1, rightIndex: 1, pathPoints: [], persistence: persistence)
+        vm.submitMatch(leftIndex: 0, rightIndex: 1, persistence: persistence)
+        vm.submitMatch(leftIndex: 1, rightIndex: 0, persistence: persistence)
+        vm.submitMatch(leftIndex: 0, rightIndex: 0, persistence: persistence)
+        vm.submitMatch(leftIndex: 1, rightIndex: 1, persistence: persistence)
 
         let result = vm.chapter.exerciseResults.first
         #expect(result?.attemptsUsed == 3)

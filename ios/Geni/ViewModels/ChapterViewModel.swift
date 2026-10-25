@@ -3,7 +3,7 @@ import SwiftUI
 struct MatchStroke: Equatable {
     let leftIndex: Int
     let rightIndex: Int
-    let points: [CGPoint]
+    let id = UUID()
 }
 
 @Observable
@@ -23,8 +23,6 @@ class ChapterViewModel {
     var xpEarned: Int = 0
     var dragAnswer: Int? = nil
     var completedMatches: [MatchStroke] = []
-    var activeDragSource: Int? = nil
-    var activeDragPoints: [CGPoint] = []
     var wrongMatchStroke: MatchStroke? = nil
     var evenOddStep: Int = 0
     var timeRemaining: Int = 60
@@ -169,44 +167,7 @@ class ChapterViewModel {
         submitAnswer(time.snapped(to: exercise.clockMinuteStep).totalMinutes, persistence: persistence)
     }
 
-    func beginMatchDrag(from leftIndex: Int, startPoint: CGPoint) {
-        guard !isAwaitingAdvance else { return }
-        activeDragSource = leftIndex
-        activeDragPoints = [startPoint]
-    }
-
-    func updateMatchDrag(to point: CGPoint) {
-        guard activeDragSource != nil else { return }
-
-        if let lastPoint = activeDragPoints.last {
-            let distance = hypot(point.x - lastPoint.x, point.y - lastPoint.y)
-            if distance < 4 {
-                activeDragPoints[activeDragPoints.count - 1] = point
-                return
-            }
-        }
-
-        activeDragPoints.append(point)
-    }
-
-    func endMatchDrag(
-        from leftIndex: Int,
-        finalPoint: CGPoint,
-        rightIndex: Int?,
-        snappedTargetPoint: CGPoint?,
-        persistence: PersistenceService
-    ) {
-        guard activeDragSource == leftIndex else { return }
-
-        updateMatchDrag(to: finalPoint)
-        let pathPoints = normalizedMatchPath(snappedTargetPoint: snappedTargetPoint)
-        resetActiveMatchDrag()
-
-        guard let rightIndex else { return }
-        submitMatch(leftIndex: leftIndex, rightIndex: rightIndex, pathPoints: pathPoints, persistence: persistence)
-    }
-
-    func submitMatch(leftIndex: Int, rightIndex: Int, pathPoints: [CGPoint], persistence: PersistenceService) {
+    func submitMatch(leftIndex: Int, rightIndex: Int, persistence: PersistenceService) {
         guard let exercise = currentExercise,
               let correctIndices = exercise.correctMatchIndices else { return }
         guard !isAwaitingAdvance,
@@ -214,7 +175,7 @@ class ChapterViewModel {
               !completedMatches.contains(where: { $0.leftIndex == leftIndex || $0.rightIndex == rightIndex })
         else { return }
 
-        let stroke = MatchStroke(leftIndex: leftIndex, rightIndex: rightIndex, points: pathPoints)
+        let stroke = MatchStroke(leftIndex: leftIndex, rightIndex: rightIndex)
 
         if correctIndices[leftIndex] == rightIndex {
             completedMatches.append(stroke)
@@ -267,28 +228,10 @@ class ChapterViewModel {
             evenOddStep = 0
             completedMatches = []
             wrongMatchCount = 0
-            resetActiveMatchDrag()
             wrongMatchStroke = nil
             currentIndex += 1
             isAwaitingAdvance = false
         }
-    }
-
-    private func normalizedMatchPath(snappedTargetPoint: CGPoint?) -> [CGPoint] {
-        var points = activeDragPoints
-        if let snappedTargetPoint {
-            if let lastPoint = points.last, hypot(lastPoint.x - snappedTargetPoint.x, lastPoint.y - snappedTargetPoint.y) < 2 {
-                points[points.count - 1] = snappedTargetPoint
-            } else {
-                points.append(snappedTargetPoint)
-            }
-        }
-        return points
-    }
-
-    private func resetActiveMatchDrag() {
-        activeDragSource = nil
-        activeDragPoints = []
     }
 
     private func startTimer() {

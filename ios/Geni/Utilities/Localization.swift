@@ -1,9 +1,12 @@
 import Foundation
 
 nonisolated enum LocaleKey: String, Sendable {
+    case clockRead, clockSet, clockMatch, clockCheck, clockHourHand, clockMinuteHand
     case appName
     case welcome
     case welcomeSubtitle
+    case letsPlay, cornersSharp, cornersRounded
+    case startMath, challengesTitle, bonusLabel, pickColor, pickShape
     case createMyGeni
     case createProfile
     case nickname
@@ -173,6 +176,7 @@ nonisolated enum LocaleKey: String, Sendable {
     case mathOnly
     case optionalLabel
     case theme
+    case colorsTitle
     case themeStandard
     case themeOcean
     case themeBlossom
@@ -353,6 +357,14 @@ nonisolated enum L {
         case .appName: return "Geni"
         case .welcome: return "Welcome to Geni!"
         case .welcomeSubtitle: return "Learning is an adventure"
+        case .letsPlay: return "Let\u{2019}s play"
+        case .startMath: return "Start math"
+        case .pickColor: return "Pick your color"
+        case .pickShape: return "Pick your shape"
+        case .challengesTitle: return "Challenges"
+        case .bonusLabel: return "Bonus"
+        case .cornersSharp: return "Sharp corners"
+        case .cornersRounded: return "Rounded corners"
         case .createMyGeni: return "Create my own Geni"
         case .createProfile: return "Create Profile"
         case .nickname: return "Nickname"
@@ -446,7 +458,7 @@ nonisolated enum L {
         case .badgeChapters10: return "Bookworm"
         case .badgeChapters10Desc: return "Complete 10 chapters"
         case .badgePerfect: return "Perfect"
-        case .badgePerfectDesc: return "Get 3 stars in a chapter"
+        case .badgePerfectDesc: return "Get 5 stars in a chapter"
         case .badgeFastSolver: return "Fast Solver"
         case .badgeFastSolverDesc: return "15+ first-try answers"
         case .badgeMulMaster: return "Multiply Master"
@@ -522,6 +534,7 @@ nonisolated enum L {
         case .mathOnly: return "Math"
         case .optionalLabel: return "(optional)"
         case .theme: return "Theme"
+        case .colorsTitle: return "Colors"
         case .themeStandard: return "Standard"
         case .themeOcean: return "Ocean"
         case .themeBlossom: return "Blossom"
@@ -603,6 +616,14 @@ nonisolated enum L {
         case .appName: return "Geni"
         case .welcome: return "Velkommen til Geni!"
         case .welcomeSubtitle: return "L\u{00E6}ring er et eventyr"
+        case .letsPlay: return "La oss spille"
+        case .startMath: return "Start matte"
+        case .pickColor: return "Velg farge"
+        case .pickShape: return "Velg form"
+        case .challengesTitle: return "Utfordringer"
+        case .bonusLabel: return "Bonus"
+        case .cornersSharp: return "Skarpe hj\u{00F8}rner"
+        case .cornersRounded: return "Runde hj\u{00F8}rner"
         case .createMyGeni: return "Lag min egen Geni"
         case .createProfile: return "Lag profil"
         case .nickname: return "Kallenavn"
@@ -696,7 +717,7 @@ nonisolated enum L {
         case .badgeChapters10: return "Bokorm"
         case .badgeChapters10Desc: return "Fullf\u{00F8}r 10 kapitler"
         case .badgePerfect: return "Perfekt"
-        case .badgePerfectDesc: return "F\u{00E5} 3 stjerner i et kapittel"
+        case .badgePerfectDesc: return "F\u{00E5} 5 stjerner i et kapittel"
         case .badgeFastSolver: return "Rask l\u{00F8}ser"
         case .badgeFastSolverDesc: return "15+ riktige p\u{00E5} f\u{00F8}rste fors\u{00F8}k"
         case .badgeMulMaster: return "Gangemester"
@@ -772,6 +793,7 @@ nonisolated enum L {
         case .mathOnly: return "Matte"
         case .optionalLabel: return "(valgfritt)"
         case .theme: return "Tema"
+        case .colorsTitle: return "Farger"
         case .themeStandard: return "Standard"
         case .themeOcean: return "Hav"
         case .themeBlossom: return "Blomst"
@@ -853,6 +875,14 @@ nonisolated enum L {
         case .appName: return "Geni"
         case .welcome: return "\u{00A1}Bienvenido a Geni!"
         case .welcomeSubtitle: return "Aprender es una aventura"
+        case .letsPlay: return "\u{00A1}A jugar!"
+        case .startMath: return "Empezar mates"
+        case .pickColor: return "Elige tu color"
+        case .pickShape: return "Elige tu forma"
+        case .challengesTitle: return "Desaf\u{00ED}os"
+        case .bonusLabel: return "Extra"
+        case .cornersSharp: return "Esquinas rectas"
+        case .cornersRounded: return "Esquinas redondeadas"
         case .createMyGeni: return "Crear mi propio Geni"
         case .createProfile: return "Crear perfil"
         case .nickname: return "Apodo"
@@ -946,7 +976,7 @@ nonisolated enum L {
         case .badgeChapters10: return "Rat\u{00F3}n de biblioteca"
         case .badgeChapters10Desc: return "Completa 10 cap\u{00ED}tulos"
         case .badgePerfect: return "Perfecto"
-        case .badgePerfectDesc: return "Consigue 3 estrellas en un cap\u{00ED}tulo"
+        case .badgePerfectDesc: return "Consigue 5 estrellas en un cap\u{00ED}tulo"
         case .badgeFastSolver: return "R\u{00E1}pido para resolver"
         case .badgeFastSolverDesc: return "15+ respuestas correctas al primer intento"
         case .badgeMulMaster: return "Maestro de la multiplicaci\u{00F3}n"
@@ -1022,6 +1052,7 @@ nonisolated enum L {
         case .mathOnly: return "Mates"
         case .optionalLabel: return "(opcional)"
         case .theme: return "Tema"
+        case .colorsTitle: return "Colores"
         case .themeStandard: return "Est\u{00E1}ndar"
         case .themeOcean: return "Oc\u{00E9}ano"
         case .themeBlossom: return "Floraci\u{00F3}n"
@@ -1103,6 +1134,14 @@ nonisolated enum L {
         case .appName: return "Geni"
         case .welcome: return "Bem-vindo ao Geni!"
         case .welcomeSubtitle: return "Aprender \u{00E9} uma aventura"
+        case .letsPlay: return "Vamos jogar!"
+        case .startMath: return "Come\u{00E7}ar matem\u{00E1}tica"
+        case .pickColor: return "Escolhe a tua cor"
+        case .pickShape: return "Escolhe a tua forma"
+        case .challengesTitle: return "Desafios"
+        case .bonusLabel: return "B\u{00F3}nus"
+        case .cornersSharp: return "Cantos retos"
+        case .cornersRounded: return "Cantos arredondados"
         case .createMyGeni: return "Criar o meu pr\u{00F3}prio Geni"
         case .createProfile: return "Criar perfil"
         case .nickname: return "Alcunha"
@@ -1196,7 +1235,7 @@ nonisolated enum L {
         case .badgeChapters10: return "Leitor dedicado"
         case .badgeChapters10Desc: return "Conclui 10 cap\u{00ED}tulos"
         case .badgePerfect: return "Perfeito"
-        case .badgePerfectDesc: return "Consegue 3 estrelas num cap\u{00ED}tulo"
+        case .badgePerfectDesc: return "Consegue 5 estrelas num cap\u{00ED}tulo"
         case .badgeFastSolver: return "Resolvedor r\u{00E1}pido"
         case .badgeFastSolverDesc: return "15+ respostas certas \u{00E0} primeira"
         case .badgeMulMaster: return "Mestre da multiplica\u{00E7}\u{00E3}o"
@@ -1272,6 +1311,7 @@ nonisolated enum L {
         case .mathOnly: return "Matem\u{00E1}tica"
         case .optionalLabel: return "(opcional)"
         case .theme: return "Tema"
+        case .colorsTitle: return "Cores"
         case .themeStandard: return "Padr\u{00E3}o"
         case .themeOcean: return "Oceano"
         case .themeBlossom: return "Florescer"

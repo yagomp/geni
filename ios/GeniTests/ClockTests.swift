@@ -191,8 +191,8 @@ struct ClockTests {
         let match = ExerciseGenerator.generateClockExercise(format: .clockMatch, age: 7, difficulty: .normal)
         let matchVM = viewModel(match)
         let indices = try #require(match.correctMatchIndices)
-        matchVM.submitMatch(leftIndex: 0, rightIndex: (indices[0] + 1) % indices.count, pathPoints: [], persistence: persistence)
-        for (left, right) in indices.enumerated() { matchVM.submitMatch(leftIndex: left, rightIndex: right, pathPoints: [], persistence: persistence) }
+        matchVM.submitMatch(leftIndex: 0, rightIndex: (indices[0] + 1) % indices.count, persistence: persistence)
+        for (left, right) in indices.enumerated() { matchVM.submitMatch(leftIndex: left, rightIndex: right, persistence: persistence) }
         #expect(matchVM.chapter.exerciseResults.first?.firstAttemptCorrect == false)
         #expect(matchVM.chapter.exerciseResults.first?.attemptsUsed == 2)
         #expect(matchVM.chapter.exerciseResults.first?.wasCorrect == true)

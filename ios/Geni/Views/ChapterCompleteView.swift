@@ -91,6 +91,7 @@ struct ChapterCompleteView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(BrutalistButton(color: GeniColor.blue))
+                    .accessibilityIdentifier("chapterComplete.done")
                     .padding(.horizontal, 12)
                     .opacity(appeared ? 1 : 0)
                     .animation(.spring(response: 0.5).delay(0.9), value: appeared)
@@ -133,7 +134,10 @@ struct RewardRow: View {
 
             Text(value)
                 .font(.system(.headline, design: .rounded, weight: .black))
-                .foregroundStyle(color)
+                .foregroundStyle(GeniColor.border)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 2)
+                .background(color.soft(0.35))
         }
     }
 }

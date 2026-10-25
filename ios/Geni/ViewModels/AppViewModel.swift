@@ -82,7 +82,7 @@ class AppViewModel {
         }
         loadRewards(for: profile.id)
         refreshTodayStatus()
-        ThemeManager.shared.current = profile.theme
+        ThemeManager.shared.apply(profile)
     }
 
     func determineInitialScreen() {
@@ -93,13 +93,13 @@ class AppViewModel {
         } else if let profile = persistence.activeProfile {
             loadRewards(for: profile.id)
             refreshTodayStatus()
-            ThemeManager.shared.current = profile.theme
+            ThemeManager.shared.apply(profile)
             currentScreen = .childHome
         } else if let first = persistence.profiles.first {
             persistence.setActiveProfile(first.id)
             loadRewards(for: first.id)
             refreshTodayStatus()
-            ThemeManager.shared.current = first.theme
+            ThemeManager.shared.apply(first)
             currentScreen = .childHome
         } else {
             currentScreen = .welcome
@@ -111,7 +111,7 @@ class AppViewModel {
         persistence.completeOnboarding()
         persistence.setActiveProfile(profile.id)
         loadRewards(for: profile.id)
-        ThemeManager.shared.current = profile.theme
+        ThemeManager.shared.apply(profile)
         currentScreen = .childHome
         cloudSync.pushToCloud(persistence: persistence)
     }
@@ -122,14 +122,14 @@ class AppViewModel {
         persistence.setActiveProfile(profile.id)
         loadRewards(for: profile.id)
         refreshTodayStatus()
-        ThemeManager.shared.current = profile.theme
+        ThemeManager.shared.apply(profile)
         currentScreen = .childHome
     }
 
     func saveProfile(_ profile: ChildProfile) {
         persistence.saveProfile(profile)
         if persistence.activeProfileId == profile.id {
-            ThemeManager.shared.current = profile.theme
+            ThemeManager.shared.apply(profile)
         }
         cloudSync.pushToCloud(persistence: persistence)
     }
@@ -268,7 +268,6 @@ class AppViewModel {
         if rewardState.level > previousLevel {
             levelUpLevel = rewardState.level
             showLevelUp = true
-            HapticManager.levelUp()
         }
 
         pendingBadges = newBadges
@@ -364,7 +363,6 @@ class AppViewModel {
         if rewardState.level > previousLevel {
             levelUpLevel = rewardState.level
             showLevelUp = true
-            HapticManager.levelUp()
         }
 
         pendingBadges.append(contentsOf: newBadges)
@@ -408,7 +406,6 @@ class AppViewModel {
         guard !pendingBadges.isEmpty else { return }
         unlockedBadge = pendingBadges.removeFirst()
         showBadgeUnlock = true
-        HapticManager.badgeUnlock()
     }
 
     func returnHome() {

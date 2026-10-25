@@ -21,8 +21,10 @@ struct ReadingModeSelectionView: View {
                         Text("◀️").font(.system(size: 20))
                             .frame(width: 44, height: 44)
                             .background(GeniColor.card)
-                            .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                            .clipShape(GeniShape())
+                            .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
                     }
+                    .accessibilityIdentifier("readingMode.back")
                     Spacer()
                 }
                 .padding(.horizontal, 20)
@@ -45,11 +47,12 @@ struct ReadingModeSelectionView: View {
                     let mins = ReadingText.targetReadingSeconds(for: profile.age) / 60
                     Text("\(mins) \(L.s(.minutes))")
                         .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                        .foregroundStyle(GeniColor.green)
+                        .foregroundStyle(GeniColor.border)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(GeniColor.green.opacity(0.15))
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                        .background(GeniColor.green.soft(0.2))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 2))
                 }
                 .opacity(appeared ? 1 : 0)
                 .scaleEffect(appeared ? 1 : 0.8)
@@ -62,7 +65,8 @@ struct ReadingModeSelectionView: View {
                         title: L.s(.readToMe),
                         subtitle: L.s(.readToMeDesc),
                         icon: "🔊",
-                        color: GeniColor.purple
+                        color: GeniColor.purple,
+                        identifier: "readingMode.readToMe"
                     ) {
                         HapticManager.impact(.medium)
                         onSelectMode(.readToMe)
@@ -72,7 +76,8 @@ struct ReadingModeSelectionView: View {
                         title: L.s(.listenToMeRead),
                         subtitle: L.s(.listenToMeDesc),
                         icon: "🎤",
-                        color: GeniColor.orange
+                        color: GeniColor.orange,
+                        identifier: "readingMode.listenToMe"
                     ) {
                         HapticManager.impact(.medium)
                         onSelectMode(.listenToMeRead)
@@ -97,6 +102,7 @@ struct ReadingModeButton: View {
     let subtitle: String
     let icon: String
     let color: Color
+    var identifier: String? = nil
     let action: () -> Void
 
     var body: some View {
@@ -108,7 +114,8 @@ struct ReadingModeButton: View {
                     .font(.title2)
                     .frame(width: 48, height: 48)
                     .background(color)
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 2))
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
@@ -127,5 +134,6 @@ struct ReadingModeButton: View {
             .padding(16)
             .brutalistCard(color: GeniColor.card)
         }
+        .accessibilityIdentifier(identifier ?? "")
     }
 }

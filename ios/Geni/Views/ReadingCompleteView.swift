@@ -126,6 +126,7 @@ struct ReadingCompleteView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(BrutalistButton(color: GeniColor.green))
+                    .accessibilityIdentifier("readingComplete.done")
                     .padding(.horizontal, 12)
                     .opacity(appeared ? 1 : 0)
                     .animation(.spring(response: 0.5).delay(0.9), value: appeared)

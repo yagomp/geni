@@ -118,6 +118,11 @@ nonisolated struct TopicProgress: Codable, Sendable {
     }
 }
 
+nonisolated enum CornerStyle: String, Codable, Sendable, CaseIterable, Hashable {
+    case sharp
+    case rounded
+}
+
 nonisolated enum AppTheme: String, Codable, Sendable, CaseIterable, Hashable {
     case standard
     case ocean
@@ -136,6 +141,8 @@ nonisolated struct ChildProfile: Codable, Identifiable, Sendable, Hashable {
     var theme: AppTheme
     /// Parent switch for the optional reading at age 6. Absent in older saved data, which means on.
     var readingEnabled: Bool?
+    /// Card and button corners. Absent in older saved data, which means sharp.
+    var cornerStyle: CornerStyle?
 
     init(nickname: String, age: Int, avatarId: String) {
         self.id = UUID().uuidString

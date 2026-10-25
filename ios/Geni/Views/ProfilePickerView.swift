@@ -28,12 +28,13 @@ struct ProfilePickerView: View {
                                     .font(.system(size: 36))
                                     .frame(width: 80, height: 80)
                                     .background(.white)
+                                    .clipShape(GeniShape())
                                     .overlay(
-                                        Rectangle()
+                                        GeniShape()
                                             .stroke(GeniColor.border, lineWidth: 3)
                                     )
                                     .background(
-                                        Rectangle()
+                                        GeniShape()
                                             .fill(GeniColor.border)
                                             .offset(x: 4, y: 4)
                                     )
@@ -50,6 +51,7 @@ struct ProfilePickerView: View {
                             .frame(maxWidth: .infinity)
                             .brutalistCard(color: GeniColor.card)
                         }
+                        .accessibilityIdentifier("picker.profile.\(profile.nickname)")
                         .opacity(appeared ? 1 : 0)
                         .offset(y: appeared ? 0 : 30)
                         .animation(.spring(response: 0.5).delay(Double(index) * 0.1), value: appeared)
@@ -63,9 +65,10 @@ struct ProfilePickerView: View {
                             Text("➕")
                                 .font(.system(size: 36))
                                 .frame(width: 80, height: 80)
-                                .background(GeniColor.blue.opacity(0.1))
+                                .background(GeniColor.blue.soft(0.12))
+                                .clipShape(GeniShape())
                                 .overlay(
-                                    Rectangle()
+                                    GeniShape()
                                         .stroke(GeniColor.border, lineWidth: 3)
                                 )
 
@@ -80,6 +83,7 @@ struct ProfilePickerView: View {
                         .frame(maxWidth: .infinity)
                         .brutalistCard(color: GeniColor.card, borderWidth: 2)
                     }
+                    .accessibilityIdentifier("picker.add")
                     .opacity(appeared ? 1 : 0)
                     .animation(.spring(response: 0.5).delay(Double(profiles.count) * 0.1), value: appeared)
                 }

@@ -7,11 +7,11 @@ struct DiceFaceView: View {
 
     var body: some View {
         ZStack {
-            Rectangle()
+            GeniShape()
                 .fill(GeniColor.card)
                 .frame(width: size, height: size)
-                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
 
             Canvas { context, canvasSize in
                 let inset: CGFloat = canvasSize.width * 0.22
@@ -65,6 +65,7 @@ struct ExerciseView: View {
                 } else if let exercise = chapterVM.currentExercise {
                     exerciseContent(exercise)
                         .padding(.horizontal, iPadScale.padding)
+                        .compositingGroup()
                 } else {
                     completingView
                 }
@@ -108,11 +109,13 @@ struct ExerciseView: View {
                     Text("◀️").font(.system(size: 20))
                         .frame(width: 44, height: 44)
                         .background(GeniColor.card)
+                        .clipShape(GeniShape())
                         .overlay(
-                            Rectangle()
+                            GeniShape()
                                 .stroke(GeniColor.border, lineWidth: 3)
                         )
                 }
+                .accessibilityIdentifier("exercise.back")
 
                 Spacer()
 
@@ -121,16 +124,18 @@ struct ExerciseView: View {
                         Text("⏱️")
                         Text("\(chapterVM.timeRemaining)s")
                             .font(.system(.headline, design: .rounded, weight: .black))
-                            .foregroundStyle(chapterVM.timeRemaining <= 10 ? GeniColor.pink : GeniColor.border)
+                            .foregroundStyle(chapterVM.timeRemaining <= 10 ? GeniColor.pinkDeep : GeniColor.border)
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(chapterVM.timeRemaining <= 10 ? GeniColor.pink.opacity(0.1) : GeniColor.card)
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                    .background(chapterVM.timeRemaining <= 10 ? GeniColor.pink.soft(0.15) : GeniColor.card)
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
                 } else {
                     Text("\(chapterVM.currentIndex + 1) \(L.s(.of20))")
                         .font(.system(.headline, design: .rounded, weight: .bold))
                         .foregroundStyle(GeniColor.border)
+                        .accessibilityIdentifier("exercise.counter")
                 }
 
                 Spacer()
@@ -144,12 +149,13 @@ struct ExerciseView: View {
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(GeniColor.card)
+                .clipShape(GeniShape())
                 .overlay(
-                    Rectangle()
+                    GeniShape()
                         .stroke(GeniColor.border, lineWidth: 3)
                 )
                 .background(
-                    Rectangle()
+                    GeniShape()
                         .fill(GeniColor.border)
                         .offset(x: 3, y: 3)
                 )
@@ -157,7 +163,7 @@ struct ExerciseView: View {
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Rectangle()
+                    GeniShape()
                         .fill(Color.gray.opacity(0.2))
                         .frame(height: 14)
 
@@ -166,8 +172,9 @@ struct ExerciseView: View {
                         .frame(width: geo.size.width * chapterVM.progress, height: 14)
                         .animation(.spring, value: chapterVM.progress)
                 }
+                .clipShape(GeniShape())
                 .overlay(
-                    Rectangle()
+                    GeniShape()
                         .stroke(GeniColor.border, lineWidth: 3)
                 )
             }
@@ -238,8 +245,9 @@ struct ExerciseView: View {
                     .foregroundStyle(GeniColor.border)
                     .frame(width: iPadScale.value(64), height: iPadScale.value(64))
                     .background(GeniColor.card)
+                    .clipShape(GeniShape())
                     .overlay(
-                        Rectangle()
+                        GeniShape()
                             .stroke(GeniColor.border, lineWidth: 3)
                     )
             }
@@ -296,9 +304,11 @@ struct ExerciseView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: iPadScale.value(100))
                     .background(trueFalseButtonColor(for: 1, exercise: exercise))
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                    .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                    .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
                 }
+                .accessibilityIdentifier("answer.1")
                 .disabled(chapterVM.showFeedback)
 
                 Button {
@@ -316,9 +326,11 @@ struct ExerciseView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: iPadScale.value(100))
                     .background(trueFalseButtonColor(for: 0, exercise: exercise))
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                    .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                    .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
                 }
+                .accessibilityIdentifier("answer.0")
                 .disabled(chapterVM.showFeedback)
             }
         }
@@ -343,9 +355,11 @@ struct ExerciseView: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: iPadScale.value(90))
                             .background(comparisonBgColor(for: 0, exercise: exercise))
-                            .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                            .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+                            .clipShape(GeniShape())
+                            .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                            .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
                     }
+                    .accessibilityIdentifier("answer.0")
                     .disabled(chapterVM.showFeedback)
                 }
 
@@ -365,9 +379,11 @@ struct ExerciseView: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: iPadScale.value(90))
                             .background(comparisonBgColor(for: 1, exercise: exercise))
-                            .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                            .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+                            .clipShape(GeniShape())
+                            .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                            .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
                     }
+                    .accessibilityIdentifier("answer.1")
                     .disabled(chapterVM.showFeedback)
                 }
             }
@@ -443,7 +459,8 @@ struct ExerciseView: View {
                     .foregroundStyle(GeniColor.border)
                     .frame(width: iPadScale.value(56), height: iPadScale.value(56))
                     .background(GeniColor.card)
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
             }
 
             dragDropAnswers(exercise, answers: exercise.options, correctValue: exercise.correctAnswer)
@@ -471,9 +488,11 @@ struct ExerciseView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: boxHeight)
                         .background(comparisonBgColor(for: 0, exercise: exercise))
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                        .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                        .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
                 }
+                .accessibilityIdentifier("answer.0")
                 .disabled(chapterVM.showFeedback)
 
                 Button {
@@ -486,9 +505,11 @@ struct ExerciseView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: boxHeight)
                         .background(comparisonBgColor(for: 1, exercise: exercise))
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                        .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                        .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
                 }
+                .accessibilityIdentifier("answer.1")
                 .disabled(chapterVM.showFeedback)
             }
         }
@@ -511,8 +532,8 @@ struct ExerciseView: View {
                         ForEach(0..<5, id: \.self) { col in
                             let index = row * 5 + col
                             ZStack {
-                                Rectangle()
-                                    .fill(index < filled ? GeniColor.card : Color.gray.opacity(0.1))
+                                GeniShape(scale: 0.5)
+                                    .fill(index < filled ? GeniColor.card : GeniColor.lightGray.soft(0.6))
                                     .frame(width: cellSize, height: cellSize)
 
                                 if index < filled {
@@ -520,12 +541,12 @@ struct ExerciseView: View {
                                         .font(.system(size: iPadScale.value(28)))
                                 }
                             }
-                            .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                            .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 2))
                         }
                     }
                 }
             }
-            .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+            .background(GeniShape(scale: 0.5).fill(GeniColor.border).offset(x: 3, y: 3))
             .padding(.vertical, 8)
 
             dragDropAnswers(exercise, answers: exercise.options, correctValue: exercise.correctAnswer)
@@ -537,8 +558,6 @@ struct ExerciseView: View {
     private func matchConnectContent(_ exercise: Exercise) -> some View {
         let leftLabels = exercise.matchLeftLabels ?? []
         let rightLabels = exercise.matchRightLabels ?? []
-        let pairCount = leftLabels.count
-
         return VStack(spacing: 16) {
             Text(L.s(.matchConnectInstruction))
                 .font(.system(size: iPadScale.value(18), weight: .semibold, design: .rounded))
@@ -551,191 +570,13 @@ struct ExerciseView: View {
                 .foregroundStyle(GeniColor.border)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            GeometryReader { geo in
-                let leftAnchorX = matchLeftAnchorX(width: geo.size.width)
-                let rightAnchorX = matchRightAnchorX(width: geo.size.width)
-                let hoveredTargetIndex = chapterVM.activeDragPoints.last.flatMap {
-                    matchDropTarget(
-                        near: $0,
-                        count: pairCount,
-                        size: geo.size
-                    )
-                }
-
-                ZStack {
-                    Canvas { context, size in
-                        for stroke in chapterVM.completedMatches {
-                            context.stroke(
-                                matchPath(from: stroke.points),
-                                with: .color(GeniColor.green),
-                                style: matchStrokeStyle
-                            )
-                        }
-
-                        if chapterVM.activeDragSource != nil, !chapterVM.activeDragPoints.isEmpty {
-                            context.stroke(
-                                matchPath(from: chapterVM.activeDragPoints),
-                                with: .color(GeniColor.blue),
-                                style: matchStrokeStyle
-                            )
-                        }
-
-                        if let wrongStroke = chapterVM.wrongMatchStroke {
-                            context.stroke(
-                                matchPath(from: wrongStroke.points),
-                                with: .color(GeniColor.pink),
-                                style: matchStrokeStyle
-                            )
-                        }
-                    }
-
-                    HStack(spacing: 0) {
-                        VStack(spacing: 12) {
-                            ForEach(0..<pairCount, id: \.self) { i in
-                                let isMatched = chapterVM.completedMatches.contains { $0.leftIndex == i }
-                                Text(leftLabels[i])
-                                    .font(.system(size: iPadScale.value(20), weight: .black, design: .rounded))
-                                    .foregroundStyle(isMatched ? GeniColor.green : GeniColor.border)
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: iPadScale.value(52))
-                                    .background(GeniColor.card)
-                                    .overlay(Rectangle().stroke(isMatched ? GeniColor.green : GeniColor.border, lineWidth: 3))
-                                    .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
-                                    .gesture(
-                                        DragGesture(minimumDistance: 0, coordinateSpace: .named("matchConnectArea"))
-                                            .onChanged { value in
-                                                guard !isMatched else { return }
-
-                                                if chapterVM.activeDragSource != i {
-                                                    chapterVM.beginMatchDrag(
-                                                        from: i,
-                                                        startPoint: CGPoint(
-                                                            x: leftAnchorX,
-                                                            y: matchItemY(index: i, count: pairCount, height: geo.size.height)
-                                                        )
-                                                    )
-                                                }
-                                                chapterVM.updateMatchDrag(to: value.location)
-                                            }
-                                            .onEnded { value in
-                                                guard chapterVM.activeDragSource == i else { return }
-
-                                                let matchedIndex = matchDropTarget(
-                                                    near: value.location,
-                                                    count: pairCount,
-                                                    size: geo.size
-                                                )
-                                                let targetPoint = matchedIndex.map {
-                                                    CGPoint(
-                                                        x: rightAnchorX,
-                                                        y: matchItemY(index: $0, count: pairCount, height: geo.size.height)
-                                                    )
-                                                }
-
-                                                chapterVM.endMatchDrag(
-                                                    from: i,
-                                                    finalPoint: value.location,
-                                                    rightIndex: matchedIndex,
-                                                    snappedTargetPoint: targetPoint,
-                                                    persistence: persistence
-                                                )
-                                            }
-                                    )
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-
-                        Spacer().frame(width: geo.size.width * 0.24)
-
-                        VStack(spacing: 12) {
-                            ForEach(0..<pairCount, id: \.self) { j in
-                                let isMatched = chapterVM.completedMatches.contains { $0.rightIndex == j }
-                                let isHovered = hoveredTargetIndex == j && !isMatched
-                                Text(rightLabels[j])
-                                    .font(.system(size: iPadScale.value(22), weight: .black, design: .rounded))
-                                    .foregroundStyle(
-                                        isMatched ? GeniColor.green : (isHovered ? GeniColor.blue : GeniColor.border)
-                                    )
-                                    .frame(maxWidth: .infinity)
-                                    .frame(height: iPadScale.value(52))
-                                    .background(isHovered ? GeniColor.blue.opacity(0.12) : GeniColor.card)
-                                    .overlay(
-                                        Rectangle().stroke(
-                                            isMatched ? GeniColor.green : (isHovered ? GeniColor.blue : GeniColor.border),
-                                            lineWidth: 3
-                                        )
-                                    )
-                                    .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
-                            }
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                }
-                .coordinateSpace(name: "matchConnectArea")
-            }
-            .frame(height: iPadScale.value(CGFloat(pairCount) * 64 + 20))
+            MatchConnectBoard(
+                chapterVM: chapterVM,
+                persistence: persistence,
+                leftLabels: leftLabels,
+                rightLabels: rightLabels
+            )
         }
-    }
-
-    private var matchStrokeStyle: StrokeStyle {
-        StrokeStyle(
-            lineWidth: iPadScale.value(6),
-            lineCap: .round,
-            lineJoin: .round
-        )
-    }
-
-    private func matchPath(from points: [CGPoint]) -> Path {
-        var path = Path()
-        guard let firstPoint = points.first else { return path }
-
-        path.move(to: firstPoint)
-        for point in points.dropFirst() {
-            path.addLine(to: point)
-        }
-        return path
-    }
-
-    private func matchLeftAnchorX(width: CGFloat) -> CGFloat {
-        width * 0.38
-    }
-
-    private func matchRightAnchorX(width: CGFloat) -> CGFloat {
-        width * 0.62
-    }
-
-    private func matchDropTarget(near point: CGPoint, count: Int, size: CGSize) -> Int? {
-        let rightX = matchRightAnchorX(width: size.width)
-        let horizontalTolerance = iPadScale.value(88)
-        let verticalTolerance = iPadScale.value(44)
-
-        var bestMatch: (index: Int, distance: CGFloat)?
-
-        for index in 0..<count {
-            guard !chapterVM.completedMatches.contains(where: { $0.rightIndex == index }) else { continue }
-
-            let targetY = matchItemY(index: index, count: count, height: size.height)
-            let dx = abs(point.x - rightX)
-            let dy = abs(point.y - targetY)
-
-            guard dx <= horizontalTolerance, dy <= verticalTolerance else { continue }
-
-            let distance = hypot(dx, dy)
-            if let bestMatch, bestMatch.distance <= distance {
-                continue
-            }
-            bestMatch = (index, distance)
-        }
-
-        return bestMatch?.index
-    }
-
-    private func matchItemY(index: Int, count: Int, height: CGFloat) -> CGFloat {
-        let itemHeight = iPadScale.value(52)
-        let spacing: CGFloat = 12
-        let totalHeight = CGFloat(count) * itemHeight + CGFloat(count - 1) * spacing
-        let startY = (height - totalHeight) / 2
-        return startY + CGFloat(index) * (itemHeight + spacing) + itemHeight / 2
     }
 
     // MARK: - Number Bonds
@@ -754,16 +595,18 @@ struct ExerciseView: View {
                     .foregroundStyle(GeniColor.border)
                     .frame(width: iPadScale.value(72), height: iPadScale.value(72))
                     .background(GeniColor.card)
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                    .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                    .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
             } else {
                 Text("?")
                     .font(.system(size: iPadScale.value(36), weight: .black, design: .rounded))
                     .foregroundStyle(GeniColor.border)
                     .frame(width: iPadScale.value(72), height: iPadScale.value(72))
-                    .background(GeniColor.yellow.opacity(0.3))
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                    .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                    .background(GeniColor.yellow.soft(0.35))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                    .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
             }
 
             // Branch lines (drawn with a simple V shape)
@@ -788,8 +631,9 @@ struct ExerciseView: View {
                     .foregroundStyle(GeniColor.border)
                     .frame(width: iPadScale.value(72), height: iPadScale.value(72))
                     .background(GeniColor.card)
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                    .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                    .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
 
                 if let rp = rightPart {
                     Text("\(rp)")
@@ -797,16 +641,18 @@ struct ExerciseView: View {
                         .foregroundStyle(GeniColor.border)
                         .frame(width: iPadScale.value(72), height: iPadScale.value(72))
                         .background(GeniColor.card)
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                        .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                        .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
                 } else {
                     Text("?")
                         .font(.system(size: iPadScale.value(36), weight: .black, design: .rounded))
                         .foregroundStyle(GeniColor.border)
                         .frame(width: iPadScale.value(72), height: iPadScale.value(72))
-                        .background(GeniColor.yellow.opacity(0.3))
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                        .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                        .background(GeniColor.yellow.soft(0.35))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                        .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
                 }
             }
 
@@ -840,7 +686,8 @@ struct ExerciseView: View {
                     .foregroundStyle(GeniColor.border)
                     .frame(width: iPadScale.value(56), height: iPadScale.value(56))
                     .background(GeniColor.card)
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
             }
 
             if chapterVM.profile.ageGroup.useDragAndDrop {
@@ -869,7 +716,8 @@ struct ExerciseView: View {
                         .foregroundStyle(GeniColor.border)
                         .frame(width: iPadScale.value(56), height: iPadScale.value(56))
                         .background(GeniColor.card)
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
                 }
                 .padding(.vertical, 16)
 
@@ -902,9 +750,11 @@ struct ExerciseView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: iPadScale.value(90))
                         .background(evenOddBtnBgColor(for: 0, exercise: exercise))
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                        .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                        .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
                     }
+                    .accessibilityIdentifier("answer.0")
                     .disabled(chapterVM.showFeedback)
 
                     Button {
@@ -923,9 +773,11 @@ struct ExerciseView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: iPadScale.value(90))
                         .background(evenOddBtnBgColor(for: 1, exercise: exercise))
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                        .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                        .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
                     }
+                    .accessibilityIdentifier("answer.1")
                     .disabled(chapterVM.showFeedback)
                 }
             }
@@ -936,7 +788,7 @@ struct ExerciseView: View {
         guard chapterVM.showFeedback, let selected = chapterVM.selectedAnswer else { return GeniColor.card }
         let correctValue = exercise.correctAnswer % 2 == 0 ? 0 : 1
         if value == correctValue && (chapterVM.feedbackCorrect || chapterVM.showAnswer) { return GeniColor.green }
-        if value == selected && !chapterVM.feedbackCorrect { return GeniColor.pink.opacity(0.3) }
+        if value == selected && !chapterVM.feedbackCorrect { return GeniColor.pink.soft(0.3) }
         return GeniColor.card
     }
 
@@ -944,7 +796,7 @@ struct ExerciseView: View {
         guard chapterVM.showFeedback, let selected = chapterVM.selectedAnswer else { return GeniColor.border }
         let correctValue = exercise.correctAnswer % 2 == 0 ? 0 : 1
         if value == correctValue && (chapterVM.feedbackCorrect || chapterVM.showAnswer) { return .white }
-        if value == selected && !chapterVM.feedbackCorrect { return GeniColor.pink }
+        if value == selected && !chapterVM.feedbackCorrect { return GeniColor.pinkDeep }
         return GeniColor.border
     }
 
@@ -1016,7 +868,8 @@ struct ExerciseView: View {
                     .foregroundStyle(GeniColor.border)
                     .frame(width: iPadScale.value(56), height: iPadScale.value(56))
                     .background(GeniColor.card)
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
             }
 
             tapAnswers(exercise, answers: exercise.options, correctValue: exercise.correctAnswer)
@@ -1039,17 +892,19 @@ struct ExerciseView: View {
                         .foregroundStyle(GeniColor.border)
                         .frame(width: iPadScale.value(56), height: iPadScale.value(56))
                         .background(GeniColor.card)
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                        .background(Rectangle().fill(GeniColor.border).offset(x: 2, y: 2))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                        .background(GeniShape().fill(GeniColor.border).offset(x: 2, y: 2))
                 }
 
                 Text("?")
                     .font(.system(size: iPadScale.value(28), weight: .black, design: .rounded))
                     .foregroundStyle(GeniColor.border)
                     .frame(width: iPadScale.value(56), height: iPadScale.value(56))
-                    .background(GeniColor.yellow.opacity(0.3))
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                    .background(Rectangle().fill(GeniColor.border).offset(x: 2, y: 2))
+                    .background(GeniColor.yellow.soft(0.35))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                    .background(GeniShape().fill(GeniColor.border).offset(x: 2, y: 2))
             }
             .padding(.vertical, 16)
 
@@ -1079,16 +934,16 @@ struct ExerciseView: View {
                     HStack(spacing: 0) {
                         ForEach(0..<w, id: \.self) { col in
                             let isEdge = row == 0 || row == h - 1 || col == 0 || col == w - 1
-                            Rectangle()
-                                .fill(isArea ? GeniColor.blue.opacity(0.2) : (isEdge ? GeniColor.orange.opacity(0.3) : GeniColor.card))
+                            GeniShape(scale: 0.5)
+                                .fill(isArea ? GeniColor.blue.soft(0.2) : (isEdge ? GeniColor.orange.soft(0.3) : GeniColor.card))
                                 .frame(width: cellSize, height: cellSize)
-                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 1))
+                                .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 1))
                         }
                     }
                 }
             }
-            .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-            .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+            .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 3))
+            .background(GeniShape(scale: 0.5).fill(GeniColor.border).offset(x: 3, y: 3))
 
             // Width/height labels
             HStack {
@@ -1113,13 +968,13 @@ struct ExerciseView: View {
             // Visual fraction: a bar divided into den parts, num filled
             HStack(spacing: 0) {
                 ForEach(0..<den, id: \.self) { i in
-                    Rectangle()
-                        .fill(i < num ? GeniColor.blue.opacity(0.5) : GeniColor.card)
+                    GeniShape()
+                        .fill(i < num ? GeniColor.blue.soft(0.5) : GeniColor.card)
                         .frame(width: iPadScale.value(min(60, 280 / CGFloat(den))), height: iPadScale.value(56))
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 2))
                 }
             }
-            .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+            .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
 
             // Show fraction notation
             VStack(spacing: 2) {
@@ -1167,17 +1022,19 @@ struct ExerciseView: View {
                     .foregroundStyle(GeniColor.border)
                     .frame(width: iPadScale.value(56), height: iPadScale.value(56))
                     .background(GeniColor.card)
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
             }
 
             if remainder > 0 {
                 Text("r = \(remainder)")
                     .font(.system(size: iPadScale.value(22), weight: .bold, design: .rounded))
-                    .foregroundStyle(GeniColor.orange)
+                    .foregroundStyle(GeniColor.border)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(GeniColor.orange.opacity(0.1))
-                    .overlay(Rectangle().stroke(GeniColor.orange, lineWidth: 2))
+                    .background(GeniColor.orange.soft(0.15))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.orange, lineWidth: 2))
             }
 
             tapAnswers(exercise, answers: exercise.options, correctValue: exercise.correctAnswer)
@@ -1198,16 +1055,18 @@ struct ExerciseView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: iPadScale.value(64))
                         .background(answerBgColor(for: option, correct: correctValue))
+                        .clipShape(GeniShape())
                         .overlay(
-                            Rectangle()
+                            GeniShape()
                                 .stroke(GeniColor.border, lineWidth: 3)
                         )
                         .background(
-                            Rectangle()
+                            GeniShape()
                                 .fill(GeniColor.border)
                                 .offset(x: 3, y: 3)
                         )
                 }
+                .accessibilityIdentifier("answer.\(option)")
                 .disabled(chapterVM.showFeedback)
             }
         }
@@ -1227,16 +1086,18 @@ struct ExerciseView: View {
                         .foregroundStyle(dragTextColor(for: option, correct: correctValue))
                         .frame(width: iPadScale.value(72), height: iPadScale.value(72))
                         .background(dragBubbleColor(for: option, correct: correctValue))
+                        .clipShape(GeniShape())
                         .overlay(
-                            Rectangle()
+                            GeniShape()
                                 .stroke(GeniColor.border, lineWidth: 3)
                         )
                         .background(
-                            Rectangle()
+                            GeniShape()
                                 .fill(GeniColor.border)
                                 .offset(x: 3, y: 3)
                         )
                 }
+                .accessibilityIdentifier("answer.\(option)")
                 .disabled(chapterVM.showFeedback)
             }
         }
@@ -1250,25 +1111,26 @@ struct ExerciseView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(chapterVM.feedbackCorrect ? chapterVM.feedbackMessage : (chapterVM.showAnswer ? L.s(.showAnswer) : chapterVM.feedbackMessage))
                     .font(.system(.headline, design: .rounded, weight: .bold))
-                    .foregroundStyle(.white)
 
                 if chapterVM.showAnswer {
                     Text("= \(chapterVM.feedbackMessage)")
                         .font(.system(.title2, design: .rounded, weight: .black))
-                        .foregroundStyle(.white)
                 }
             }
+            .foregroundStyle(chapterVM.showAnswer && !chapterVM.feedbackCorrect ? GeniColor.border : .white)
 
             Spacer()
         }
         .padding(20)
         .background(chapterVM.feedbackCorrect ? GeniColor.green : (chapterVM.showAnswer ? GeniColor.orange : GeniColor.pink))
-        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+        .clipShape(GeniShape())
+        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
         .background(
-            Rectangle()
+            GeniShape()
                 .fill(GeniColor.border)
                 .offset(x: 4, y: 4)
         )
+        .compositingGroup()
         .padding(.horizontal, 20)
         .padding(.bottom, 20)
     }
@@ -1300,7 +1162,7 @@ struct ExerciseView: View {
             return GeniColor.green
         }
         if option == selected && !chapterVM.feedbackCorrect {
-            return GeniColor.pink.opacity(0.3)
+            return GeniColor.pink.soft(0.3)
         }
         return .white
     }
@@ -1313,7 +1175,7 @@ struct ExerciseView: View {
             return .white
         }
         if option == selected && !chapterVM.feedbackCorrect {
-            return GeniColor.pink
+            return GeniColor.pinkDeep
         }
         return GeniColor.border
     }
@@ -1326,7 +1188,7 @@ struct ExerciseView: View {
             return GeniColor.green
         }
         if option == chapterVM.dragAnswer && !chapterVM.feedbackCorrect {
-            return GeniColor.pink.opacity(0.3)
+            return GeniColor.pink.soft(0.3)
         }
         return .white
     }
@@ -1350,7 +1212,7 @@ struct ExerciseView: View {
             return GeniColor.green
         }
         if value == selected && !chapterVM.feedbackCorrect {
-            return GeniColor.pink.opacity(0.3)
+            return GeniColor.pink.soft(0.3)
         }
         return GeniColor.card
     }
@@ -1364,7 +1226,7 @@ struct ExerciseView: View {
             return .white
         }
         if value == selected && !chapterVM.feedbackCorrect {
-            return GeniColor.pink
+            return GeniColor.pinkDeep
         }
         return value == 1 ? GeniColor.green : GeniColor.pink
     }
@@ -1378,13 +1240,13 @@ struct ExerciseView: View {
             return GeniColor.green
         }
         if value == selected && !chapterVM.feedbackCorrect {
-            return GeniColor.pink.opacity(0.3)
+            return GeniColor.pink.soft(0.3)
         }
         return .white
     }
 
     private func comparisonTextColor(for value: Int, exercise: Exercise) -> Color {
-        guard chapterVM.showFeedback, let selected = chapterVM.selectedAnswer else {
+        guard chapterVM.showFeedback, chapterVM.selectedAnswer != nil else {
             return GeniColor.border
         }
         let correctValue = exercise.options[0]

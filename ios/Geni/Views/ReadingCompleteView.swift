@@ -7,6 +7,21 @@ struct ReadingCompleteView: View {
     let bonusCoins: Int
     let onContinue: () -> Void
 
+    var body: some View {
+        GeniLearningLayout {
+            ReadingCompleteViewLayout(session: session, rewards: rewards, bonusAwarded: bonusAwarded, bonusCoins: bonusCoins, onContinue: onContinue)
+        }
+    }
+}
+
+private struct ReadingCompleteViewLayout: View {
+    @Environment(\.geniExpandedLayout) private var expanded
+    let session: ReadingSession
+    let rewards: RewardState
+    let bonusAwarded: Bool
+    let bonusCoins: Int
+    let onContinue: () -> Void
+
     @State private var appeared = false
     @State private var showConfetti = false
 
@@ -21,24 +36,24 @@ struct ReadingCompleteView: View {
             }
 
             ScrollView {
-                VStack(spacing: 28) {
+                VStack(spacing: expanded ? 40 : 28) {
                     Spacer().frame(height: 20)
 
                     Text("📖")
-                        .font(.system(size: 56))
+                        .font(.system(size: expanded ? 84 : 56))
                         .foregroundStyle(GeniColor.green)
                         .opacity(appeared ? 1 : 0)
                         .scaleEffect(appeared ? 1 : 0.5)
                         .animation(.spring(response: 0.5, dampingFraction: 0.6), value: appeared)
 
                     Text(L.s(.readingComplete))
-                        .font(.system(size: 32, weight: .black, design: .rounded))
+                        .font(.system(size: expanded ? 48 : 32, weight: .black, design: .rounded))
                         .foregroundStyle(GeniColor.border)
                         .multilineTextAlignment(.center)
                         .opacity(appeared ? 1 : 0)
                         .animation(.spring(response: 0.5).delay(0.2), value: appeared)
 
-                    VStack(spacing: 16) {
+                    VStack(spacing: expanded ? 28 : 16) {
                         RewardRow(
                             icon: "🕐",
                             color: GeniColor.green,
@@ -67,7 +82,7 @@ struct ReadingCompleteView: View {
                             value: "\(rewards.streakCount) \(rewards.streakCount == 1 ? L.s(.day) : L.s(.days))"
                         )
                     }
-                    .padding(20)
+                    .padding(expanded ? 32 : 20)
                     .brutalistCard(color: GeniColor.card)
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : 40)
@@ -79,12 +94,12 @@ struct ReadingCompleteView: View {
                                 Text("✨")
                                     .font(.title2)
                                 Text(L.s(.dailyBonusTitle))
-                                    .font(.system(.title3, design: .rounded, weight: .black))
+                                    .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
                                     .foregroundStyle(GeniColor.border)
                             }
 
                             Text(L.s(.dailyBonusDesc))
-                                .font(.system(.subheadline, design: .rounded, weight: .medium))
+                                .font(.system(expanded ? .title3 : .subheadline, design: .rounded, weight: .medium))
                                 .foregroundStyle(.black)
                                 .multilineTextAlignment(.center)
 
@@ -93,19 +108,19 @@ struct ReadingCompleteView: View {
                                     Text("🪙")
                                         .foregroundStyle(GeniColor.yellow)
                                     Text("+\(bonusCoins)")
-                                        .font(.system(.headline, design: .rounded, weight: .black))
+                                        .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
                                         .foregroundStyle(GeniColor.border)
                                 }
 
                                 HStack(spacing: 4) {
                                     Text("⚡")
                                     Text("+30 \(L.s(.xp))")
-                                        .font(.system(.headline, design: .rounded, weight: .black))
+                                        .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
                                         .foregroundStyle(GeniColor.border)
                                 }
                             }
                         }
-                        .padding(20)
+                        .padding(expanded ? 32 : 20)
                         .brutalistCard(color: GeniColor.card)
                         .opacity(appeared ? 1 : 0)
                         .offset(y: appeared ? 0 : 40)
@@ -113,7 +128,7 @@ struct ReadingCompleteView: View {
                     }
 
                     Text(L.s(.greatJob))
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .font(.system(expanded ? .title : .title3, design: .rounded, weight: .bold))
                         .foregroundStyle(.black)
                         .opacity(appeared ? 1 : 0)
                         .animation(.spring(response: 0.5).delay(0.7), value: appeared)
@@ -125,7 +140,7 @@ struct ReadingCompleteView: View {
                         Text(L.s(.done))
                             .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(BrutalistButton(color: GeniColor.green))
+                    .buttonStyle(BrutalistButton(color: GeniColor.green, fontSize: expanded ? 30 : nil, verticalPadding: expanded ? 26 : nil))
                     .accessibilityIdentifier("readingComplete.done")
                     .padding(.horizontal, 12)
                     .opacity(appeared ? 1 : 0)
@@ -133,7 +148,9 @@ struct ReadingCompleteView: View {
 
                     Spacer().frame(height: 40)
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, expanded ? 40 : 20)
+                .frame(maxWidth: expanded ? 800 : .infinity)
+                .frame(maxWidth: .infinity)
                 .foregroundStyle(.black)
             }
         }

@@ -9,6 +9,7 @@ struct MatchConnectBoard: View {
     let rightLabels: [String]
     var leftClocks: [ClockTime]? = nil
 
+    @Environment(\.geniExpandedLayout) private var expanded
     @State private var drag: Drag?
     @State private var selection: Endpoint?
 
@@ -26,8 +27,8 @@ struct MatchConnectBoard: View {
     }
 
     private var pairCount: Int { min(leftLabels.count, rightLabels.count) }
-    private var itemHeight: CGFloat { iPadScale.value(leftClocks == nil ? 52 : 104) }
-    private let itemSpacing: CGFloat = 12
+    private var itemHeight: CGFloat { expanded ? (leftClocks == nil ? 112 : 156) : iPadScale.value(leftClocks == nil ? 52 : 104) }
+    private var itemSpacing: CGFloat { expanded ? 24 : 12 }
 
     var body: some View {
         GeometryReader { geo in
@@ -77,7 +78,7 @@ struct MatchConnectBoard: View {
                         Text(labels[i])
                     }
                 }
-                    .font(.system(size: iPadScale.value(side == .left ? 20 : 22), weight: .black, design: .rounded))
+                    .font(.system(size: expanded ? 40 : iPadScale.value(side == .left ? 20 : 22), weight: .black, design: .rounded))
                     .foregroundStyle(textColor)
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)
@@ -215,7 +216,7 @@ struct MatchConnectBoard: View {
     // MARK: - Drawing
 
     private var lineStyle: StrokeStyle {
-        StrokeStyle(lineWidth: iPadScale.value(6), lineCap: .round, lineJoin: .round)
+        StrokeStyle(lineWidth: expanded ? 10 : iPadScale.value(6), lineCap: .round, lineJoin: .round)
     }
 
     /// A soft cable between two points: leaves each card horizontally and sags a
@@ -265,7 +266,7 @@ struct MatchConnectBoard: View {
         }
 
         // Attachment dots show where lines start and end.
-        let dotSize = iPadScale.value(14)
+        let dotSize = expanded ? 22 : iPadScale.value(14)
         for side in [Side.left, .right] {
             for i in 0..<pairCount {
                 let endpoint = Endpoint(side: side, index: i)

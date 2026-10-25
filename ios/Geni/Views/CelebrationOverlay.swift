@@ -2,10 +2,10 @@ import SwiftUI
 
 private extension View {
     /// Popup card: 4pt outline, 6pt offset shadow, shape follows the profile's corner style.
-    func popupCard() -> some View {
+    func popupCard(expanded: Bool) -> some View {
         self
-            .padding(24)
-            .frame(maxWidth: 320)
+            .padding(expanded ? 40 : 24)
+            .frame(maxWidth: expanded ? 560 : 320)
             .background(GeniColor.card)
             .clipShape(GeniShape())
             .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 4))
@@ -25,6 +25,15 @@ private extension View {
 struct LevelUpOverlay: View {
     let level: Int
     let onDismiss: () -> Void
+    var body: some View {
+        GeniLearningLayout { LevelUpOverlayLayout(level: level, onDismiss: onDismiss) }
+    }
+}
+
+private struct LevelUpOverlayLayout: View {
+    @Environment(\.geniExpandedLayout) private var expanded
+    let level: Int
+    let onDismiss: () -> Void
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var appeared = false
     @State private var medalScale: CGFloat = 1
@@ -38,11 +47,11 @@ struct LevelUpOverlay: View {
                 .onTapGesture { dismiss() }
 
             VStack(spacing: 24) {
-                LevelMedallion(level: level, size: 120)
+                LevelMedallion(level: level, size: expanded ? 200 : 120)
                     .scaleEffect(medalScale)
 
                 Text(L.s(.levelUp))
-                    .font(.system(size: 36, weight: .black, design: .rounded))
+                    .font(.system(size: expanded ? 52 : 36, weight: .black, design: .rounded))
                     .foregroundStyle(GeniColor.border)
                     .multilineTextAlignment(.center)
 
@@ -52,10 +61,10 @@ struct LevelUpOverlay: View {
                     Text(L.s(.awesome))
                         .frame(maxWidth: .infinity, minHeight: 28)
                 }
-                .buttonStyle(BrutalistButton(color: GeniColor.purple))
+                .buttonStyle(BrutalistButton(color: GeniColor.purple, fontSize: expanded ? 30 : nil))
                 .accessibilityIdentifier("levelUp.dismiss")
             }
-            .popupCard()
+            .popupCard(expanded: expanded)
             .popupEntrance(appeared: appeared, reduceMotion: reduceMotion)
         }
         .onAppear {
@@ -91,6 +100,7 @@ struct BadgeUnlockOverlay: View {
 
     var body: some View {
         GeometryReader { geo in
+            let expanded = iPadScale.isExpanded(in: geo.size)
             ZStack {
                 badge.color.soft(0.25)
                     .opacity(appeared ? 0.94 : 0)
@@ -118,17 +128,17 @@ struct BadgeUnlockOverlay: View {
                 }
 
                 VStack(spacing: 16) {
-                    BadgeMedallion(badge: badge, size: 120, earned: true)
+                    BadgeMedallion(badge: badge, size: expanded ? 200 : 120, earned: true)
                         .scaleEffect(medalScale)
                         .padding(.bottom, 8)
 
                     Text(L.s(badge.titleKey))
-                        .font(.system(.title, design: .rounded, weight: .black))
+                        .font(.system(expanded ? .largeTitle : .title, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
                         .multilineTextAlignment(.center)
 
                     Text(L.s(badge.descriptionKey))
-                        .font(.system(.body, design: .rounded, weight: .semibold))
+                        .font(.system(expanded ? .title2 : .body, design: .rounded, weight: .semibold))
                         .foregroundStyle(GeniColor.border)
                         .multilineTextAlignment(.center)
 
@@ -138,11 +148,11 @@ struct BadgeUnlockOverlay: View {
                         Text(L.s(.awesome))
                             .frame(maxWidth: .infinity, minHeight: 28)
                     }
-                    .buttonStyle(BrutalistButton(color: badge.color))
+                    .buttonStyle(BrutalistButton(color: badge.color, fontSize: expanded ? 30 : nil))
                     .accessibilityIdentifier("badge.dismiss")
                     .padding(.top, 8)
                 }
-                .popupCard()
+                .popupCard(expanded: expanded)
                 .popupEntrance(appeared: appeared, reduceMotion: reduceMotion)
             }
             .frame(width: geo.size.width, height: geo.size.height)

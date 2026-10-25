@@ -6,20 +6,34 @@ struct ReadingModeSelectionView: View {
     let onSelectMode: (ReadingMode) -> Void
     let onBack: () -> Void
 
+    var body: some View {
+        GeniLearningLayout {
+            ReadingModeSelectionViewLayout(profile: profile, readingText: readingText, onSelectMode: onSelectMode, onBack: onBack)
+        }
+    }
+}
+
+private struct ReadingModeSelectionViewLayout: View {
+    @Environment(\.geniExpandedLayout) private var expanded
+    let profile: ChildProfile
+    let readingText: ReadingText
+    let onSelectMode: (ReadingMode) -> Void
+    let onBack: () -> Void
+
     @State private var appeared = false
 
     var body: some View {
         ZStack {
             GeniColor.lightYellow.ignoresSafeArea()
 
-            VStack(spacing: 24) {
+            VStack(spacing: expanded ? 32 : 24) {
                 HStack {
                     Button {
                         HapticManager.selection()
                         onBack()
                     } label: {
-                        Text("◀️").font(.system(size: 20))
-                            .frame(width: 44, height: 44)
+                        Text("◀️").font(.system(size: expanded ? 30 : 20))
+                            .frame(width: expanded ? 64 : 44, height: expanded ? 64 : 44)
                             .background(GeniColor.card)
                             .clipShape(GeniShape())
                             .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
@@ -33,20 +47,20 @@ struct ReadingModeSelectionView: View {
 
                 VStack(spacing: 8) {
                     Text("📖")
-                        .font(.system(size: 48))
+                        .font(.system(size: expanded ? 72 : 48))
                         .foregroundStyle(GeniColor.green)
 
                     Text(L.s(.readingTime))
-                        .font(.system(size: 32, weight: .black, design: .rounded))
+                        .font(.system(size: expanded ? 48 : 32, weight: .black, design: .rounded))
                         .foregroundStyle(GeniColor.border)
 
                     Text(readingText.title)
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .font(.system(expanded ? .title : .title3, design: .rounded, weight: .bold))
                         .foregroundStyle(.black)
 
                     let mins = ReadingText.targetReadingSeconds(for: profile.age) / 60
                     Text("\(mins) \(L.s(.minutes))")
-                        .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                        .font(.system(expanded ? .title3 : .subheadline, design: .rounded, weight: .semibold))
                         .foregroundStyle(GeniColor.border)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
@@ -91,6 +105,8 @@ struct ReadingModeSelectionView: View {
                 Spacer()
             }
             .padding(.top, 20)
+            .frame(maxWidth: expanded ? 840 : .infinity)
+            .frame(maxWidth: .infinity)
             .foregroundStyle(.black)
         }
         .onAppear { appeared = true }
@@ -98,6 +114,7 @@ struct ReadingModeSelectionView: View {
 }
 
 struct ReadingModeButton: View {
+    @Environment(\.geniExpandedLayout) private var expanded
     let title: String
     let subtitle: String
     let icon: String
@@ -111,27 +128,29 @@ struct ReadingModeButton: View {
         } label: {
             HStack(spacing: 16) {
                 Text(icon)
-                    .font(.title2)
-                    .frame(width: 48, height: 48)
+                    .font(expanded ? .largeTitle : .title2)
+                    .frame(width: expanded ? 80 : 48, height: expanded ? 80 : 48)
                     .background(color)
                     .clipShape(GeniShape())
                     .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 2))
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
-                        .font(.system(.headline, design: .rounded, weight: .black))
+                        .font(.system(expanded ? .title : .headline, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
 
-                    Text(subtitle)
-                        .font(.system(.caption, design: .rounded, weight: .medium))
-                        .foregroundStyle(.black)
+                    if !expanded {
+                        Text(subtitle)
+                            .font(.system(.caption, design: .rounded, weight: .medium))
+                            .foregroundStyle(.black)
+                    }
                 }
 
                 Spacer()
 
                 Text("▶️").font(.system(size: 16))
             }
-            .padding(16)
+            .padding(expanded ? 28 : 16)
             .brutalistCard(color: GeniColor.card)
         }
         .accessibilityIdentifier(identifier ?? "")

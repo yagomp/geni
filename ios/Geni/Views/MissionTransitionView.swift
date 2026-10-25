@@ -7,6 +7,21 @@ struct MissionTransitionView: View {
     /// Set when reading is optional: offers ending the mission after math.
     var onFinish: (() -> Void)? = nil
 
+    var body: some View {
+        GeniLearningLayout {
+            MissionTransitionViewLayout(mathStars: mathStars, mathCoins: mathCoins, onContinue: onContinue, onFinish: onFinish)
+        }
+    }
+}
+
+private struct MissionTransitionViewLayout: View {
+    @Environment(\.geniExpandedLayout) private var expanded
+    let mathStars: Int
+    let mathCoins: Int
+    let onContinue: () -> Void
+    /// Set when reading is optional: offers ending the mission after math.
+    var onFinish: (() -> Void)? = nil
+
     @State private var appeared = false
     @State private var showButton = false
     @State private var checkBounce = 0
@@ -18,19 +33,19 @@ struct MissionTransitionView: View {
             VStack(spacing: 32) {
                 Spacer()
 
-                Text("✅").font(.system(size: 72))
+                Text("✅").font(.system(size: expanded ? 108 : 72))
                     .opacity(appeared ? 1 : 0)
                     .scaleEffect(appeared ? 1 : 0.3)
 
                 VStack(spacing: 8) {
                     Text(L.s(.greatJobMath))
-                        .font(.system(size: 32, weight: .black, design: .rounded))
+                        .font(.system(size: expanded ? 48 : 32, weight: .black, design: .rounded))
                         .foregroundStyle(GeniColor.border)
 
                     HStack(spacing: 6) {
                         ForEach(1...5, id: \.self) { star in
                             Text(star <= mathStars ? "⭐" : "☆")
-                                .font(.system(size: 24))
+                                .font(.system(size: expanded ? 36 : 24))
                                 .foregroundStyle(star <= mathStars ? GeniColor.yellow : .gray.opacity(0.3))
                         }
                     }
@@ -39,7 +54,7 @@ struct MissionTransitionView: View {
                         Text("🪙")
                             .foregroundStyle(GeniColor.yellow)
                         Text("+\(mathCoins)")
-                            .font(.system(.headline, design: .rounded, weight: .black))
+                            .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
                             .foregroundStyle(GeniColor.border)
                     }
                     .padding(.top, 4)
@@ -49,11 +64,11 @@ struct MissionTransitionView: View {
 
                 VStack(spacing: 8) {
                     Text("📖")
-                        .font(.system(size: 36))
+                        .font(.system(size: expanded ? 54 : 36))
                         .foregroundStyle(GeniColor.green)
 
                     Text(L.s(.nowLetsRead))
-                        .font(.system(.title2, design: .rounded, weight: .black))
+                        .font(.system(expanded ? .largeTitle : .title2, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
                 }
                 .padding(24)
@@ -64,18 +79,18 @@ struct MissionTransitionView: View {
 
                 Spacer()
 
-                VStack(spacing: 16) {
+                VStack(spacing: expanded ? 28 : 16) {
                     Button {
                         HapticManager.impact(.medium)
                         onContinue()
                     } label: {
                         HStack(spacing: 10) {
                             Text(L.s(onFinish == nil ? .continueToReading : .startReading))
-                            Text("▶️").font(.system(size: 16))
+                            Text("▶️").font(.system(size: expanded ? 24 : 16))
                         }
                         .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(BrutalistButton(color: GeniColor.green))
+                    .buttonStyle(BrutalistButton(color: GeniColor.green, fontSize: expanded ? 30 : nil, verticalPadding: expanded ? 26 : nil))
                     .accessibilityIdentifier("missionTransition.continue")
 
                     if let onFinish {
@@ -97,6 +112,8 @@ struct MissionTransitionView: View {
                 Spacer().frame(height: 40)
             }
             .padding(.horizontal, 20)
+            .frame(maxWidth: expanded ? 800 : .infinity)
+            .frame(maxWidth: .infinity)
         }
         .animation(.spring(response: 0.5, dampingFraction: 0.7), value: appeared)
         .animation(.spring(response: 0.5).delay(0.5), value: showButton)

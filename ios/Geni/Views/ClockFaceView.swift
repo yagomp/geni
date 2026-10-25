@@ -6,6 +6,7 @@ struct ClockFaceView: View {
     let time: ClockTime
     var minuteStep: Int = 1
     var onChange: ((ClockTime) -> Void)? = nil
+    @Environment(\.geniExpandedLayout) private var expanded
     @State private var draggingHour: Bool?
 
     private let navy = Color(red: 0.12, green: 0.22, blue: 0.40)
@@ -29,7 +30,7 @@ struct ClockFaceView: View {
                         path.move(to: point(angle: Double(tick) * 6, radius: radius * (tick % 5 == 0 ? 0.86 : 0.91), center: center))
                         path.addLine(to: point(angle: Double(tick) * 6, radius: radius * 0.96, center: center))
                     }
-                    .stroke(navy.opacity(tick % 5 == 0 ? 1 : 0.5), lineWidth: tick % 5 == 0 ? 2 : 1)
+                    .stroke(navy.opacity(tick % 5 == 0 ? 1 : 0.5), lineWidth: expanded ? (tick % 5 == 0 ? 3 : 1.5) : (tick % 5 == 0 ? 2 : 1))
                 }
                 ForEach(1...12, id: \.self) { number in
                     Text("\(number)")
@@ -82,7 +83,7 @@ struct ClockFaceView: View {
     private func handle(at point: CGPoint, color: Color, isHour: Bool, side: CGFloat) -> some View {
         Circle().fill(color).overlay(Circle().stroke(.white, lineWidth: 2))
             .frame(width: max(12, side * 0.06), height: max(12, side * 0.06))
-            .frame(width: 44, height: 44)
+            .frame(width: expanded ? 64 : 44, height: expanded ? 64 : 44)
             .contentShape(Circle())
             .position(point)
             .accessibilityElement()

@@ -231,6 +231,10 @@ enum iPadScale {
     static var isIPad: Bool {
         UIDevice.current.userInterfaceIdiom == .pad
     }
+    /// Match the first iPad pass: phone-sized and short windows retain compact controls.
+    static func isExpanded(in size: CGSize) -> Bool {
+        isIPad && size.width >= 700 && size.height >= 800
+    }
     static var factor: CGFloat { isIPad ? 1.35 : 1.0 }
     static func value(_ base: CGFloat) -> CGFloat { base * factor }
     static var padding: CGFloat { isIPad ? 40 : 20 }
@@ -247,6 +251,29 @@ extension EnvironmentValues {
         get { self[GeniExpandedLayoutKey.self] }
         set { self[GeniExpandedLayoutKey.self] = newValue }
     }
+}
+
+/// Supplies available space to learning screens without using device-wide screen bounds.
+/// The content owns its widths; backgrounds and celebration effects still fill the window.
+struct GeniLearningLayout<Content: View>: View {
+    private let content: Content
+
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+
+    var body: some View {
+        GeometryReader { geometry in
+            content
+                .environment(\.geniExpandedLayout, iPadScale.isExpanded(in: geometry.size))
+                .environment(\.geniLearningSize, geometry.size)
+                .frame(width: geometry.size.width, height: geometry.size.height)
+        }
+    }
+}
+
+extension EnvironmentValues {
+    @Entry var geniLearningSize: CGSize = .zero
 }
 
 /// Square back button used on kid screens instead of the "◀️" emoji.

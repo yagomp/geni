@@ -6,6 +6,20 @@ struct ChapterCompleteView: View {
     let xpEarned: Int
     let onContinue: () -> Void
 
+    var body: some View {
+        GeniLearningLayout {
+            ChapterCompleteViewLayout(chapter: chapter, rewards: rewards, xpEarned: xpEarned, onContinue: onContinue)
+        }
+    }
+}
+
+private struct ChapterCompleteViewLayout: View {
+    @Environment(\.geniExpandedLayout) private var expanded
+    let chapter: ChapterProgress
+    let rewards: RewardState
+    let xpEarned: Int
+    let onContinue: () -> Void
+
     @State private var appeared = false
     @State private var starsBounce = 0
     @State private var showConfetti = false
@@ -21,11 +35,11 @@ struct ChapterCompleteView: View {
             }
 
             ScrollView {
-                VStack(spacing: 28) {
+                VStack(spacing: expanded ? 40 : 28) {
                     Spacer().frame(height: 20)
 
                     Text(chapter.stars == 5 ? L.s(.perfectScore) : L.s(.chapterComplete))
-                        .font(.system(size: 36, weight: .black, design: .rounded))
+                        .font(.system(size: expanded ? 54 : 36, weight: .black, design: .rounded))
                         .foregroundStyle(GeniColor.border)
                         .multilineTextAlignment(.center)
                         .opacity(appeared ? 1 : 0)
@@ -35,14 +49,14 @@ struct ChapterCompleteView: View {
                     HStack(spacing: 10) {
                         ForEach(1...5, id: \.self) { star in
                             Text(star <= chapter.stars ? "⭐" : "☆")
-                                .font(.system(size: 36))
+                                .font(.system(size: expanded ? 54 : 36))
                                 .foregroundStyle(star <= chapter.stars ? GeniColor.yellow : .gray.opacity(0.3))
                         }
                     }
                     .opacity(appeared ? 1 : 0)
                     .animation(.spring(response: 0.5).delay(0.3), value: appeared)
 
-                    VStack(spacing: 16) {
+                    VStack(spacing: expanded ? 28 : 16) {
                         RewardRow(
                             icon: "✅",
                             color: GeniColor.green,
@@ -71,14 +85,14 @@ struct ChapterCompleteView: View {
                             value: "\(rewards.streakCount) \(rewards.streakCount == 1 ? L.s(.day) : L.s(.days))"
                         )
                     }
-                    .padding(20)
+                    .padding(expanded ? 32 : 20)
                     .brutalistCard(color: GeniColor.card)
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : 40)
                     .animation(.spring(response: 0.5).delay(0.5), value: appeared)
 
                     Text(L.s(.greatJob))
-                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .font(.system(expanded ? .title : .title3, design: .rounded, weight: .bold))
                         .foregroundStyle(.black)
                         .opacity(appeared ? 1 : 0)
                         .animation(.spring(response: 0.5).delay(0.7), value: appeared)
@@ -90,7 +104,7 @@ struct ChapterCompleteView: View {
                         Text(L.s(.done))
                             .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(BrutalistButton(color: GeniColor.blue))
+                    .buttonStyle(BrutalistButton(color: GeniColor.blue, fontSize: expanded ? 30 : nil, verticalPadding: expanded ? 26 : nil))
                     .accessibilityIdentifier("chapterComplete.done")
                     .padding(.horizontal, 12)
                     .opacity(appeared ? 1 : 0)
@@ -98,7 +112,9 @@ struct ChapterCompleteView: View {
 
                     Spacer().frame(height: 40)
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, expanded ? 40 : 20)
+                .frame(maxWidth: expanded ? 800 : .infinity)
+                .frame(maxWidth: .infinity)
                 .foregroundStyle(.black)
             }
         }
@@ -115,6 +131,7 @@ struct ChapterCompleteView: View {
 }
 
 struct RewardRow: View {
+    @Environment(\.geniExpandedLayout) private var expanded
     let icon: String
     let color: Color
     let label: String
@@ -123,17 +140,17 @@ struct RewardRow: View {
     var body: some View {
         HStack(spacing: 12) {
             Text(icon)
-                .font(.title2)
-                .frame(width: 32)
+                .font(expanded ? .largeTitle : .title2)
+                .frame(width: expanded ? 48 : 32)
 
             Text(label)
-                .font(.system(.body, design: .rounded, weight: .semibold))
+                .font(.system(expanded ? .title2 : .body, design: .rounded, weight: .semibold))
                 .foregroundStyle(GeniColor.border)
 
             Spacer()
 
             Text(value)
-                .font(.system(.headline, design: .rounded, weight: .black))
+                .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
                 .foregroundStyle(GeniColor.border)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 2)

@@ -5,6 +5,9 @@ import SwiftUI
 /// Store screens: onboarding1/2/3, storeHome, storeExercise, clockRead, clockSet,
 /// storeMatch, guidedReading, storeRewards, storeBadge, parentDashboard.
 /// Language: `-geni_app_language english|norwegian` plus `-AppleLanguages (en)|(nb)`.
+/// QA: chapterComplete, missionTransition, missionComplete, readingMode, readingComplete,
+/// countingObjects, visualAddition, compareGroups, numberBonds, diceAddition, visualSubtraction,
+/// multiStep, numberSequence, areaPerimeter, fractionPick, longDivision, comparison, missingNumber.
 /// Combine with `-uiTestReset` for a clean profile on every launch.
 enum DesignPreview {
     /// A dedicated local store and inert cloud store keep screenshot seeds off iCloud.
@@ -77,6 +80,14 @@ enum DesignPreview {
         switch screen {
         case "tenFrame":
             exercise = { ExerciseGenerator.generateEmojiExercise(format: .tenFrame, difficulty: .normal) }
+        case "countingObjects", "visualAddition", "compareGroups":
+            exercise = { ExerciseGenerator.generateEmojiExercise(format: ExerciseFormat(rawValue: screen)!, difficulty: .normal) }
+        case "numberBonds", "diceAddition", "visualSubtraction":
+            exercise = { ExerciseGenerator.generateMiddleExercise(format: ExerciseFormat(rawValue: screen)!, difficulty: .normal, ageGroup: .middle, ops: [.addition]) }
+        case "multiStep", "numberSequence", "areaPerimeter", "fractionPick", "longDivision":
+            exercise = { ExerciseGenerator.generateOlderExercise(format: ExerciseFormat(rawValue: screen)!, difficulty: .normal) }
+        case "comparison", "missingNumber":
+            exercise = { ExerciseGenerator.generateExercise(operation: .addition, difficulty: .normal, ageGroup: group, format: ExerciseFormat(rawValue: screen)!) }
         case "solve", "solveTap":
             exercise = { ExerciseGenerator.generateExercise(operation: .addition, difficulty: .normal, ageGroup: group) }
         case "trueFalse":
@@ -96,6 +107,35 @@ enum DesignPreview {
         }
 
         switch screen {
+        case "chapterComplete":
+            let exercise = Exercise(operand1: 8, operand2: 5, operation: .addition, difficulty: .normal)
+            var chapter = ChapterProgress(childId: profile.id, date: vm.persistence.todayString())
+            chapter.completedExerciseCount = 20
+            chapter.exerciseResults = (0..<20).map { _ in
+                ExerciseResult(chapterId: chapter.id, exercise: exercise, firstCorrect: true, secondCorrect: nil, attempts: 1)
+            }
+            chapter.calculateRewards()
+            chapter.status = .completed
+            let chapterVM = ChapterViewModel(profile: profile, chapter: chapter, exercises: [])
+            chapterVM.completedChapter = chapter
+            chapterVM.xpEarned = 100
+            vm.chapterViewModel = chapterVM
+            vm.currentScreen = .chapterComplete
+        case "missionTransition", "missionComplete":
+            vm.missionMathStars = 5
+            vm.missionMathCoins = 50
+            vm.missionMathXP = 100
+            vm.missionReadingCoins = 15
+            vm.missionBonusCoins = 25
+            vm.currentScreen = screen == "missionTransition" ? .missionTransition : .missionComplete
+        case "readingMode":
+            vm.currentScreen = .readingMode
+        case "readingComplete":
+            var session = ReadingSession(childId: profile.id, date: vm.persistence.todayString(), readingTextId: "preview", mode: .readToMe, targetTimeSeconds: 180)
+            session.readingTimeSeconds = 180
+            session.complete()
+            vm.completedReadingSession = session
+            vm.currentScreen = .readingComplete
         case "badge":
             vm.unlockedBadge = Badge.all.first
             vm.showBadgeUnlock = true

@@ -8,7 +8,15 @@
   var base     = isBlog ? '../' : '';
 
   // ── CSS ────────────────────────────────────────────────────────────────────
-  var css = `footer{padding:var(--s-8) 0 var(--s-7);background:var(--bg);color:var(--ink)}footer .container{display:flex;flex-direction:column;align-items:center;gap:var(--s-4);text-align:center}.footer-brand{display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px;border-radius:var(--r-sm);font-size:1.125rem;font-weight:800}.footer-brand img{width:32px;height:32px;border-radius:var(--r-sm)}.footer-links{display:flex;justify-content:center;align-items:center;gap:0 var(--s-5);flex-wrap:wrap}.footer-links a{display:inline-flex;align-items:center;min-height:44px;border-radius:var(--r-sm);font-size:1rem;font-weight:700}.footer-links a:hover{color:var(--accent-ink)}.footer-copyright{font-size:var(--fs-meta);color:var(--ink-2)}`;
+  var css = `main>section:last-child,main>.section:last-child{padding-bottom:var(--s-7)}main .cta:last-child{padding-bottom:0;margin-bottom:0}
+footer{padding:var(--s-7) 0 var(--s-6);background:var(--card);color:var(--ink);border-radius:var(--r-xl) var(--r-xl) 0 0;box-shadow:0 -1px 0 var(--hairline)}
+footer .container{display:flex;flex-direction:column;gap:var(--s-5)}
+.footer-top{display:flex;justify-content:space-between;align-items:center;gap:var(--s-4) var(--s-6);flex-wrap:wrap}
+.footer-brand{display:inline-flex;align-items:center;gap:var(--s-2);min-height:44px;border-radius:var(--r-sm);font-size:1.25rem;font-weight:900;color:var(--ink)}.footer-brand img{width:36px;height:36px;border-radius:var(--r-sm)}
+.footer-links{display:flex;flex-wrap:wrap;gap:0 var(--s-5)}.footer-links a{display:inline-flex;align-items:center;min-height:44px;border-radius:var(--r-sm);font-size:1rem;font-weight:700;color:var(--ink-2)}.footer-links a:hover{color:var(--ink)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;gap:var(--s-4);flex-wrap:wrap;padding-top:var(--s-5);border-top:1px solid var(--hairline)}
+.footer-copyright{margin:0;font-size:var(--fs-meta);color:var(--ink-2)}
+@media(max-width:600px){.footer-links{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:0 var(--s-4)}}`;
 
   var styleEl = document.createElement('style');
   styleEl.id = 'geni-footer-styles';
@@ -17,10 +25,10 @@
 
   // ── Translations ───────────────────────────────────────────────────────────
   var i18n = {
-    en: { copy: 'Geni is a kids learning app for ages 4-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.', home: 'Home', parents: 'For parents', privacy: 'Privacy', contact: 'Contact' },
-    nb: { copy: 'Geni er en l\u00E6ringsapp for barn 4-10 \u00E5r med matte\u00F8ving, valgfri lesing, offline bruk, foreldrekontroll og ingen reklame eller sporing.', home: 'Hjem', parents: 'For foreldre', privacy: 'Personvern', contact: 'Kontakt' },
-    es: { copy: 'Geni es una app educativa para ni\u00F1os de 4 a 10 a\u00F1os con matem\u00E1ticas, lectura opcional, juego sin conexi\u00F3n, controles parentales y sin anuncios ni rastreo.', home: 'Inicio', parents: 'Para padres', privacy: 'Privacidad', contact: 'Contacto' },
-    pt: { copy: 'Geni \u00E9 um app educativo para crian\u00E7as de 4 a 10 anos com matem\u00E1tica, leitura opcional, uso offline, controles parentais e sem an\u00FAncios nem rastreamento.', home: 'In\u00EDcio', parents: 'Para pais', privacy: 'Privacidade', contact: 'Contato' }
+    en: { copy: 'Geni is a kids learning app for ages 4-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.', home: 'Home', parents: 'For parents', privacy: 'Privacy', math: 'Math', reading: 'Reading', contact: 'Contact' },
+    nb: { copy: 'Geni er en l\u00E6ringsapp for barn 4-10 \u00E5r med matte\u00F8ving, valgfri lesing, offline bruk, foreldrekontroll og ingen reklame eller sporing.', home: 'Hjem', parents: 'For foreldre', privacy: 'Personvern', math: 'Matte', reading: 'Lesing', contact: 'Kontakt' },
+    es: { copy: 'Geni es una app educativa para ni\u00F1os de 4 a 10 a\u00F1os con matem\u00E1ticas, lectura opcional, juego sin conexi\u00F3n, controles parentales y sin anuncios ni rastreo.', home: 'Inicio', parents: 'Para padres', privacy: 'Privacidad', math: 'Matem\u00E1ticas', reading: 'Lectura', contact: 'Contacto' },
+    pt: { copy: 'Geni \u00E9 um app educativo para crian\u00E7as de 4 a 10 anos com matem\u00E1tica, leitura opcional, uso offline, controles parentais e sem an\u00FAncios nem rastreamento.', home: 'In\u00EDcio', parents: 'Para pais', privacy: 'Privacidade', math: 'Matem\u00E1tica', reading: 'Leitura', contact: 'Contato' }
   };
 
   // ── Language helpers ───────────────────────────────────────────────────────
@@ -45,17 +53,22 @@
     return (
       '<footer>' +
         '<div class="container">' +
-          '<a href="' + (base || './') + '" class="footer-brand" aria-label="Geni home">' +
-            '<img src="' + base + 'icon-mark.png" alt="" width="32" height="32"><span>Geni</span>' +
-          '</a>' +
-          '<div class="footer-links">' +
-            '<a href="' + (base || './') + '" id="footer-home">' + t.home + '</a>' +
-            '<a href="' + base + 'parents.html" id="footer-parents">' + t.parents + '</a>' +
-            '<a href="' + base + 'privacy.html" id="footer-privacy">' + t.privacy + '</a>' +
-            '<a href="' + base + 'blog/">Blog</a>' +
-            '<a href="' + base + 'contact.html" id="footer-contact">' + t.contact + '</a>' +
+          '<div class="footer-top">' +
+            '<a href="' + (base || './') + '" class="footer-brand" aria-label="Geni home">' +
+              '<img src="' + base + 'icon-mark.png" alt="" width="36" height="36"><span>Geni</span>' +
+            '</a>' +
+            '<nav class="footer-links" aria-label="Footer">' +
+              '<a href="' + base + 'math.html" id="footer-math">' + t.math + '</a>' +
+              '<a href="' + base + 'reading.html" id="footer-reading">' + t.reading + '</a>' +
+              '<a href="' + base + 'parents.html" id="footer-parents">' + t.parents + '</a>' +
+              '<a href="' + base + 'blog/">Blog</a>' +
+              '<a href="' + base + 'privacy.html" id="footer-privacy">' + t.privacy + '</a>' +
+              '<a href="' + base + 'contact.html" id="footer-contact">' + t.contact + '</a>' +
+            '</nav>' +
           '</div>' +
-          '<p class="footer-copyright">\u00A9 ' + yr + ' Geni</p>' +
+          '<div class="footer-bottom">' +
+            '<p class="footer-copyright">\u00A9 ' + yr + ' Geni</p>' +
+          '</div>' +
         '</div>' +
       '</footer>'
     );
@@ -69,7 +82,8 @@
     var l = normalizeLang(lang);
     var t = i18n[l] || i18n.en;
     var el;
-    el = document.getElementById('footer-home');    if (el) el.textContent = t.home;
+    el = document.getElementById('footer-math');    if (el) el.textContent = t.math;
+    el = document.getElementById('footer-reading'); if (el) el.textContent = t.reading;
     el = document.getElementById('footer-parents'); if (el) el.textContent = t.parents;
     el = document.getElementById('footer-privacy'); if (el) el.textContent = t.privacy;
     el = document.getElementById('footer-contact'); if (el) el.textContent = t.contact;

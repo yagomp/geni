@@ -9,6 +9,10 @@ struct MatchStroke: Equatable {
 @Observable
 @MainActor
 class ChapterViewModel {
+    /// Immediate feedback supports simulations without sleeping or playing device effects.
+    enum Feedback { case animated, immediate }
+    private let feedback: Feedback
+
     let profile: ChildProfile
     var chapter: ChapterProgress
     let exercises: [Exercise]
@@ -21,6 +25,8 @@ class ChapterViewModel {
     var selectedAnswer: Int? = nil
     var completedChapter: ChapterProgress? = nil
     var xpEarned: Int = 0
+    /// Both-done bonus paid with this chapter (reading came first today); 0 otherwise.
+    var bonusCoins: Int = 0
     var dragAnswer: Int? = nil
     var completedMatches: [MatchStroke] = []
     var wrongMatchStroke: MatchStroke? = nil
@@ -32,7 +38,11 @@ class ChapterViewModel {
     private(set) var wrongMatchCount: Int = 0
     private(set) var hasCompleted: Bool = false
 
-    init(profile: ChildProfile, chapter: ChapterProgress, exercises: [Exercise], startIndex: Int = 0) {
+    init(profile: ChildProfile, chapter: ChapterProgress, exercises: [Exercise], startIndex: Int = 0, feedback: Feedback = .animated) {
+        // The chapter is as long as what was generated for it (10 for ages 4–5, else 20)
+        var chapter = chapter
+        if !exercises.isEmpty { chapter.exerciseCount = exercises.count }
+        self.feedback = feedback
         self.profile = profile
         self.chapter = chapter
         self.exercises = exercises
@@ -70,7 +80,7 @@ class ChapterViewModel {
         switch exercise.format {
         case .solveResult, .countingObjects, .visualAddition, .tenFrame,
              .numberBonds, .diceAddition, .visualSubtraction,
-             .multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision, .clockRead, .clockSet:
+             .multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision, .clockRead, .clockSet, .game:
             actualCorrectAnswer = exercise.correctAnswer
         case .missingNumber:
             actualCorrectAnswer = exercise.missingNumberCorrectAnswer
@@ -102,9 +112,8 @@ class ChapterViewModel {
                 feedbackCorrect = true
                 feedbackMessage = L.s(.correct)
                 showFeedback = true
-                HapticManager.correctAnswer()
-                Task {
-                    try? await Task.sleep(for: .seconds(1.0))
+                playCorrectAnswerFeedback()
+                afterFeedbackDelay(.seconds(1.0)) { [self] in
                     showFeedback = false
                     selectedAnswer = nil
                     dragAnswer = nil
@@ -119,7 +128,7 @@ class ChapterViewModel {
                 [L.s(.youGotIt), L.s(.niceJob), L.s(.correct)].randomElement()! :
                 L.s(.youGotIt)
             showFeedback = true
-            HapticManager.correctAnswer()
+            playCorrectAnswerFeedback()
 
             let result = ExerciseResult(
                 chapterId: chapter.id,
@@ -133,7 +142,8 @@ class ChapterViewModel {
             advanceAfterDelay()
         } else if attempts >= 2 {
             feedbackCorrect = false
-            feedbackMessage = exercise.format.isClock ? ClockTime(totalMinutes: actualCorrectAnswer).digital : "\(actualCorrectAnswer)"
+            feedbackMessage = exercise.game?.answerText
+                ?? (exercise.format.isClock ? ClockTime(totalMinutes: actualCorrectAnswer).digital : "\(actualCorrectAnswer)")
             showAnswer = true
             showFeedback = true
             HapticManager.wrongAnswer()
@@ -179,7 +189,7 @@ class ChapterViewModel {
 
         if correctIndices[leftIndex] == rightIndex {
             completedMatches.append(stroke)
-            HapticManager.correctAnswer()
+            playCorrectAnswerFeedback()
 
             if completedMatches.count == correctIndices.count {
                 feedbackCorrect = true
@@ -217,8 +227,7 @@ class ChapterViewModel {
 
     private func advanceAfterDelay() {
         isAwaitingAdvance = true
-        Task {
-            try? await Task.sleep(for: .seconds(1.5))
+        afterFeedbackDelay(.seconds(1.5)) { [self] in
             guard !hasCompleted else { return }
             showFeedback = false
             showAnswer = false
@@ -231,6 +240,26 @@ class ChapterViewModel {
             wrongMatchStroke = nil
             currentIndex += 1
             isAwaitingAdvance = false
+        }
+    }
+
+    private func playCorrectAnswerFeedback() {
+        guard feedback == .animated else { return }
+        if let kind = currentExercise?.game?.kind, kind == .codingPath || kind == .codingLoop {
+            HapticManager.robotArrive()
+        } else {
+            HapticManager.correctAnswer()
+        }
+    }
+
+    private func afterFeedbackDelay(_ delay: Duration, action: @escaping @MainActor () -> Void) {
+        if feedback == .immediate {
+            action()
+        } else {
+            Task {
+                try? await Task.sleep(for: delay)
+                action()
+            }
         }
     }
 

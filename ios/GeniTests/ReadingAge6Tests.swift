@@ -113,6 +113,30 @@ struct ReadingAge6Tests {
         #expect(vm.rewardState.dailyCompletedAt == completedAt)
     }
 
+    @Test func age8ReadingBeforeMathCompletesDayWithBonus() {
+        let device = TestDevice()
+        let (vm, profile) = viewModel(device, age: 8)
+
+        vm.startReading()
+        vm.completeReading(todaysSession(device, profile))
+        #expect(vm.currentScreen == .readingComplete)
+        #expect(!vm.readingBonusAwarded)
+        #expect(vm.rewardState.dailyCompletedAt == nil)
+        let coinsAfterReading = vm.rewardState.coins
+
+        vm.startChapter()
+        #expect(vm.chapterViewModel != nil)
+        vm.completeChapter(ChapterProgress(childId: profile.id, date: device.persistence.todayString()))
+
+        #expect(vm.currentScreen == .chapterComplete)
+        #expect(vm.chapterViewModel?.bonusCoins == 15)
+        #expect(vm.todayFullChapterCompleted)
+        #expect(vm.rewardState.dailyCompletedAt != nil)
+        let mathCoins = vm.chapterViewModel?.completedChapter?.coinsEarned
+            ?? device.persistence.todayChapter(for: profile.id)?.coinsEarned ?? 0
+        #expect(vm.rewardState.coins == coinsAfterReading + mathCoins + 15)
+    }
+
     @Test func youngReadingUsesYoungTextsAndShortTarget() {
         let profile = ChildProfile(nickname: "Kid", age: 6, avatarId: "lion")
         let text = ReadingContentService.textForToday(profile: profile, date: "2099-01-01")

@@ -1,19 +1,19 @@
 # Geni
 
-> Geni is a fun math and reading learning app for kids aged 5–10, available on iOS. Daily missions, speech recognition for reading aloud, rewards, and PIN-protected parent controls — all 100% offline with zero data collection.
+> Geni is a fun math and reading learning app for kids aged 4–10, available on iOS. Daily missions, speech recognition for reading aloud, rewards, and PIN-protected parent controls — all 100% offline with zero data collection.
 
 ## App
 
 - Platform: iOS (iPhone, iPad)
-- Age range: 5–10 years old
+- Age range: 4–10 years old
 - Languages: English, Norwegian, Spanish, Portuguese
 - Price: Free to download, no in-app purchases
 - App Store: https://apps.apple.com/app/geni-kids/id6761134405
 
 ## Features
 
-- **Math missions**: Daily 20-exercise sessions covering addition, subtraction, multiplication, and division, plus telling time on an analog clock from age 6 (read the clock, set the clock, match clocks to times). Difficulty adapts automatically to the child's performance.
-- **Reading adventures**: Three modes — read-to-me, independent reading, and reading aloud with on-device speech recognition feedback.
+- **Math missions**: Daily 20-exercise sessions starting with picture counting, more-or-fewer comparisons, and tiny sums within 5 at age 4, then covering addition, subtraction, multiplication, and division, plus telling time on an analog clock from age 6 (read the clock, set the clock, match clocks to times). Difficulty adapts automatically to the child's performance.
+- **Reading adventures**: Hidden for ages 4 and 5; optional from age 6. Three modes — read-to-me, independent reading, and reading aloud with on-device speech recognition feedback.
 - **Rewards system**: Coins, XP, levels, badges, streaks, boss challenges, and time attacks to keep kids motivated.
 - **Parent controls**: PIN-protected parent dashboard for managing profiles, tracking progress, selecting math operations, and adjusting settings.
 - **Offline-first**: The app works completely offline. No servers, no cloud, no network requests during normal use.

@@ -13,7 +13,7 @@ struct ProfileAndMathTests {
         for op in MathOperation.allCases {
             for _ in 0..<25 {
                 let chapter = ExerciseGenerator.generateSpotlightChapter(profile: profile, operation: op)
-                #expect(chapter.count == 20)
+                #expect(chapter.count == 10)
                 for exercise in chapter {
                     #expect(exercise.operation == op)
                     #expect(exercise.correctAnswer >= 0)

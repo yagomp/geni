@@ -99,7 +99,7 @@ struct StepDots: View {
                 Capsule()
                     .fill(i == step ? accent : (i < step ? GeniColor.green : .white))
                     .frame(width: i == step ? 36 : 12, height: 12)
-                    .overlay(Capsule().stroke(GeniColor.border, lineWidth: 2))
+                    .overlay(Capsule().stroke(GeniColor.hairline, lineWidth: 1))
             }
         }
         .animation(.spring(response: 0.35, dampingFraction: 0.75), value: step)

@@ -246,10 +246,10 @@ var els=document.querySelectorAll('[data-i18n]');
 for(var i=0;i<els.length;i++){
 var k=els[i].getAttribute('data-i18n');
 var t={
-en:{footer_copy:'Geni is a kids learning app for ages 5-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.',footer_home:'Home',footer_parents:'For Parents',footer_privacy:'Privacy'},
-nb:{footer_copy:'Geni er en læringsapp for barn 5-10 år med matteøving, valgfri lesing, offline bruk, foreldrekontroll og ingen reklame eller sporing.',footer_home:'Hjem',footer_parents:'For foreldre',footer_privacy:'Personvern'},
-es:{footer_copy:'Geni es una app educativa para niños de 5 a 10 años con matemáticas, lectura opcional, juego sin conexión, controles parentales y sin anuncios ni rastreo.',footer_home:'Inicio',footer_parents:'Para padres',footer_privacy:'Privacidad'},
-pt:{footer_copy:'Geni é um app educativo para crianças de 5 a 10 anos com matemática, leitura opcional, uso offline, controles parentais e sem anúncios nem rastreamento.',footer_home:'Início',footer_parents:'Para pais',footer_privacy:'Privacidade'}
+en:{footer_copy:'Geni is a kids learning app for ages 4-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.',footer_home:'Home',footer_parents:'For Parents',footer_privacy:'Privacy'},
+nb:{footer_copy:'Geni er en læringsapp for barn 4-10 år med matteøving, valgfri lesing, offline bruk, foreldrekontroll og ingen reklame eller sporing.',footer_home:'Hjem',footer_parents:'For foreldre',footer_privacy:'Personvern'},
+es:{footer_copy:'Geni es una app educativa para niños de 4 a 10 años con matemáticas, lectura opcional, juego sin conexión, controles parentales y sin anuncios ni rastreo.',footer_home:'Inicio',footer_parents:'Para padres',footer_privacy:'Privacidad'},
+pt:{footer_copy:'Geni é um app educativo para crianças de 4 a 10 anos com matemática, leitura opcional, uso offline, controles parentais e sem anúncios nem rastreamento.',footer_home:'Início',footer_parents:'Para pais',footer_privacy:'Privacidade'}
 }[lang];
 if(t&&t[k])els[i].textContent=t[k];
 }

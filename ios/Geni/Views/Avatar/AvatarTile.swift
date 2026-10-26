@@ -23,18 +23,17 @@ struct AvatarPreview: View {
     var size: CGFloat = 120
     /// Bounce when the avatar changes.
     var bounces = true
-    @Environment(\.geniCornerRadius) private var radiusOverride
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        let shape = GeniShape(override: radiusOverride)
+        let shape = GeniShape()
         Text(avatar.emoji)
             .font(.system(size: size * 0.6))
             .frame(width: size, height: size)
             .background(GeniColor.background)
             .clipShape(shape)
-            .overlay(shape.stroke(GeniColor.border, lineWidth: 3))
-            .background(shape.fill(GeniColor.border).offset(x: size >= 120 ? 6 : 4, y: size >= 120 ? 6 : 4))
+            .overlay(shape.stroke(GeniColor.hairline, lineWidth: 1))
+            .shadow(color: GeniColor.border.opacity(0.08), radius: 10, x: 0, y: 4)
             .contentTransition(.opacity)
             .keyframeAnimator(initialValue: 1.0, trigger: avatar.id) { content, scale in
                 content.scaleEffect(scale)

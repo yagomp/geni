@@ -67,9 +67,8 @@ struct MatchConnectBoard: View {
                 let matched = isMatched(endpoint)
                 let active = drag?.origin == endpoint || drag?.target == endpoint || selection == endpoint
                 let wrong = isWrong(endpoint)
-                let color = matched ? GeniColor.green : (wrong ? GeniColor.pinkDeep : (active ? GeniColor.blue : GeniColor.border))
-                let textColor = matched ? GeniColor.border : color
-                let fill = matched ? GeniColor.green.soft(0.15) : (wrong ? GeniColor.pink.soft(0.25) : (active ? GeniColor.blue.soft(0.15) : GeniColor.card))
+                let color = matched ? GeniColor.green : (wrong ? GeniColor.pink : (active ? GeniColor.yellow : GeniColor.hairline))
+                let fill = matched ? GeniColor.green.soft(0.15) : (wrong ? GeniColor.pink.soft(0.25) : (active ? GeniColor.yellow.soft(0.35) : GeniColor.card))
 
                 Group {
                     if side == .left, let clocks = leftClocks, clocks.indices.contains(i) {
@@ -79,19 +78,16 @@ struct MatchConnectBoard: View {
                     }
                 }
                     .font(.system(size: expanded ? 40 : iPadScale.value(side == .left ? 20 : 22), weight: .black, design: .rounded))
-                    .foregroundStyle(textColor)
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)
                     .padding(.horizontal, 6)
                     .frame(maxWidth: .infinity)
                     .frame(height: itemHeight)
-                    .background(fill)
-                    .clipShape(GeniShape())
-                    .overlay(GeniShape().stroke(color, lineWidth: 3))
-                    .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
+                    .feedbackSurface(fill)
+                    .overlay(GeniShape().stroke(color, lineWidth: matched || wrong || active ? 2 : 1).allowsHitTesting(false))
                     .scaleEffect(active && !matched ? 1.04 : 1)
                     .animation(.spring(response: 0.25, dampingFraction: 0.7), value: active)
-                    .animation(.easeOut(duration: 0.2), value: wrong)
+                    .animation(.spring(response: 0.25, dampingFraction: 0.8), value: wrong)
                     .accessibilityIdentifier("match.\(side == .left ? "left" : "right").\(i)")
                     .accessibilityAddTraits(.isButton)
             }
@@ -277,7 +273,7 @@ struct MatchConnectBoard: View {
                         : (drag?.origin == endpoint || drag?.target == endpoint || selection == endpoint ? GeniColor.blue : GeniColor.yellow))
                 let rect = CGRect(x: point.x - dotSize / 2, y: point.y - dotSize / 2, width: dotSize, height: dotSize)
                 context.fill(Path(ellipseIn: rect), with: .color(color))
-                context.stroke(Path(ellipseIn: rect), with: .color(GeniColor.border), lineWidth: 2)
+                context.stroke(Path(ellipseIn: rect), with: .color(GeniColor.hairline), lineWidth: 1)
             }
         }
     }

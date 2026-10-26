@@ -7,7 +7,6 @@ struct AvatarChooserSheet: View {
     private let idPrefix: String
     private let background: Color?
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.geniCornerRadius) private var radiusOverride
 
     /// Edits the active profile's avatar, saving each tap (home, rewards).
     init(viewModel: AppViewModel) {
@@ -54,7 +53,7 @@ struct AvatarChooserSheet: View {
     }
 
     private var doneButton: some View {
-        let shape = GeniShape(scale: 0.6, override: radiusOverride)
+        let shape = GeniShape(scale: 0.6)
         return Button {
             HapticManager.selection()
             dismiss()
@@ -65,8 +64,8 @@ struct AvatarChooserSheet: View {
                 .frame(width: 64, height: 64)
                 .background(GeniColor.green)
                 .clipShape(shape)
-                .overlay(shape.stroke(GeniColor.border, lineWidth: 3))
-                .background(shape.fill(GeniColor.border).offset(x: 4, y: 4))
+                .overlay(shape.stroke(GeniColor.hairline, lineWidth: 1))
+                .shadow(color: GeniColor.border.opacity(0.08), radius: 10, x: 0, y: 4)
         }
         .buttonStyle(KidPressStyle())
         .accessibilityLabel(L.s(.done))

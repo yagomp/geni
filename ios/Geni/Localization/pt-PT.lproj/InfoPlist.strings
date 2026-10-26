@@ -1,0 +1,3 @@
+/* App Store and system language list; permission prompts */
+"NSMicrophoneUsageDescription" = "O Geni precisa do microfone para poderes ler em voz alta e receber feedback.";
+"NSSpeechRecognitionUsageDescription" = "O Geni usa o reconhecimento de voz para te ouvir ler e dar-te incentivo.";

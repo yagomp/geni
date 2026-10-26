@@ -34,10 +34,7 @@ struct ProfileEditForm: View {
                     }
 
                     section(L.s(.theme)) {
-                        VStack(spacing: 16) {
-                            ThemeTiles(draft: draft)
-                            CornerStyleTiles(draft: draft)
-                        }
+                        ThemeTiles(draft: draft)
                     }
 
                     section(L.s(.mathPractice)) {
@@ -68,14 +65,12 @@ struct ProfileEditForm: View {
         }
         .background(draft.screenBackground.ignoresSafeArea())
         .animation(.easeInOut(duration: 0.25), value: draft.theme)
-        .environment(\.geniCornerRadius, draft.cornerRadius)
         .sheet(isPresented: $showChooser) {
             AvatarChooserSheet(
                 selection: Binding(get: { draft.avatarId }, set: { draft.selectAvatar($0) }),
                 idPrefix: "profile.avatar",
                 background: draft.screenBackground
             )
-            .environment(\.geniCornerRadius, draft.cornerRadius)
         }
     }
 
@@ -121,7 +116,7 @@ struct ProfileEditForm: View {
                         .foregroundStyle(GeniColor.border)
                         .frame(width: 30, height: 30)
                         .background(Circle().fill(GeniColor.yellow))
-                        .overlay(Circle().stroke(GeniColor.border, lineWidth: 2))
+                        .overlay(Circle().stroke(GeniColor.hairline, lineWidth: 1))
                         .offset(x: 10, y: 10)
                 }
         }

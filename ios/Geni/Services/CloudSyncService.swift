@@ -98,7 +98,7 @@ class CloudSyncService {
 
             let profilesData = try encoder.encode(profiles)
             store.set(profilesData, forKey: profilesKey)
-            store.set(persistence.hasOnboarded, forKey: onboardedKey)
+            store.set(persistence.hasOnboarded && !profiles.isEmpty, forKey: onboardedKey)
             store.set(try encoder.encode(Array(deleted).sorted()), forKey: deletedProfilesKey)
             for id in deleted {
                 for prefix in [chaptersPrefix, rewardsPrefix, readingsPrefix, topicsPrefix] {
@@ -148,6 +148,22 @@ class CloudSyncService {
         }
     }
 
+    /// Profile ids currently in iCloud, including ones this device hasn't pulled.
+    func remoteProfileIds() -> Set<String> {
+        guard syncEnabled, isICloudAvailable else { return [] }
+        store.synchronize()
+        return Set((remote([ChildProfile].self, forKey: profilesKey) ?? []).map(\.id))
+    }
+
+    /// True when iCloud lacks a deletion this device made: a tombstone is missing or a deleted child is listed.
+    func isMissingLocalDeletions(persistence: PersistenceService) -> Bool {
+        guard syncEnabled, isICloudAvailable else { return false }
+        let local = persistence.deletedProfileIds
+        guard !local.isEmpty else { return false }
+        if !local.isSubset(of: remoteDeletedProfileIds()) { return true }
+        return remoteProfileIds().contains { local.contains($0) }
+    }
+
     // MARK: - Pull
 
     /// `force` skips the timestamp check; used when iCloud reports an incoming change.
@@ -156,8 +172,11 @@ class CloudSyncService {
         store.synchronize()
 
         guard let profilesData = store.data(forKey: profilesKey),
-              let profiles = try? decoder.decode([ChildProfile].self, from: profilesData),
-              !profiles.isEmpty else { return }
+              let profiles = try? decoder.decode([ChildProfile].self, from: profilesData) else { return }
+        // An empty cloud only matters when it deletes children this device still has (a reset elsewhere)
+        if profiles.isEmpty && remoteDeletedProfileIds().isDisjoint(with: persistence.profiles.map(\.id)) {
+            return
+        }
 
         // Only apply if local is empty (new device) or remote is newer
         let remoteTimestamp = store.double(forKey: lastModifiedKey)

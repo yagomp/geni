@@ -1,0 +1,372 @@
+{
+  "version": "1.3.0",
+  "checkedAt": "2026-10-26T17:53:08.844473+00:00",
+  "count": 40,
+  "build": "scripts/geni-build.sh app: BUILD SUCCEEDED",
+  "captureReceiptsVerified": 4,
+  "compositionReceiptsVerified": 4,
+  "allImagesOpenedAndReviewed": true,
+  "uploaded": false,
+  "files": [
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/en/01.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "3ca35f0ad2069ef5a49245182889d928482c89fb2833024f9d42df9e500b15ab",
+      "caption": "Made for your child",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/en/02.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "a41be042af5eb7f0ee04023ecc3fbb89caf0bcc58ed4b299a1f37ca907986443",
+      "caption": "Math and reading every day",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/en/03.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "e4f1b3f39d132eaedaaf858eeb7fbc28881f14f4ea1cd6df0f843399641ed0f5",
+      "caption": "Learning starts at 4",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/en/04.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "fd2f3a1d4f5ac51e7795f32fccc998b4c28da15cc7431c86f324eb34061ffc47",
+      "caption": "Learn about money",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/en/05.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "9fae82a0f78208d0b76c5b850a51a561288373a162d3bf042eff04fa87c1ee92",
+      "caption": "Code with the robot",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/en/06.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "a165115db212e071f7c3186b63b51f39fbf2bc3ae858f8070b39d07e59ac0982",
+      "caption": "Learn to tell time",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/en/07.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "4f8a674be9887a8e5b0903c2b9bcc799c32ac74f83bfe07ef94b5bc95baadf22",
+      "caption": "Read with guidance",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/en/08.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "bfd054ce85fea2c8dffccd58f9ebd5376ce55321dfdd2279b6b9c3c2d3aadba2",
+      "caption": "Earn rewards",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/en/09.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "eff3176ef230b784a5ecedc405676cb9bf05146be3edf569c4f58a0a9755eb57",
+      "caption": "Think like a mathematician",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/en/10.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "1f737da9c79d39a62f4129d185208dd8fabe842a2c645e9f1eb7e9ef60e7e4dc",
+      "caption": "Built for parents",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/no/01.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "906a2bc201893d1d3bdde8a8fbc4c2553c0c39ec8b00d0a7dd72b833c8fdc010",
+      "caption": "Laget for ditt barn",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/no/02.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "780ecb10c9657b9cbd710e0ad1c59f1079951ad0e8b2158896e5535bc48a975b",
+      "caption": "Matte og lesing hver dag",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/no/03.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "2e1c3a096961a3ef3d8c46a7813f12cc442707a14dd2c359e92d26bb5691303b",
+      "caption": "Læring fra 4 år",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/no/04.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "9219795fb3716891f14ee7cf84f16f89ac74776f97d4a16a8d274832913a28b2",
+      "caption": "Lær om penger",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/no/05.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "ae0c55b09e4c87346512a87f9c5b3390d1258cb6fcd94914d8f38e905d0ff510",
+      "caption": "Kod med roboten",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/no/06.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "459979a94e0e723cd88428f60a67546c02f7eae4b44a7aeba1559f659c0e3a8e",
+      "caption": "Lær klokka",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/no/07.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "db46d30e694cb34c773ac57cfa190da5a6d43f558361e82a9c07fd909500dc68",
+      "caption": "Les med veiledning",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/no/08.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "1500520eda69d5e4f2dbf220c316083901e374444dabc231260f82d801c2ce2a",
+      "caption": "Tjen belønninger",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/no/09.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "2e224c6c9b1a88603d0354669b7b1d809040ede5f6ae3951066f81036908b68a",
+      "caption": "Tenk som en matematiker",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/iphone-6.7/no/10.png",
+      "width": 1290,
+      "height": 2796,
+      "colorMode": "RGB",
+      "sha256": "3662247755c8c7f378ceeecebedab3450e9d82e7d166d894abc17323f8fae049",
+      "caption": "Laget for foreldre",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/en/01.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "f71249eda5f738f440fb3b8c24a16fb03aa05911f8c3c2f61e04fb46ae73ff5a",
+      "caption": "Made for your child",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/en/02.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "63cfa8e469667b7e259efe1de867fcad4b49253868bc838bf2709fc15598605f",
+      "caption": "Math and reading every day",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/en/03.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "91030fd35a157b15e6401fa4f207960529d44f3d592132188f343983161057b7",
+      "caption": "Learning starts at 4",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/en/04.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "a2a3eaa02bea020dc46fc8ff232db76fe01a9a8fa710dbdf897136118372dec1",
+      "caption": "Learn about money",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/en/05.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "09c720b9174c7e697dee03c67cd405c0fbe3e0cdf699f6ba1a3b972aa8a63284",
+      "caption": "Code with the robot",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/en/06.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "41140a4522216a17567895d95952d4baf76614ece2770159a129a9f8b6be28fe",
+      "caption": "Learn to tell time",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/en/07.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "a763cfa3ea4eb8e13813f5ebe84bedea31e4af2fef54704ea662bb6897222a8f",
+      "caption": "Read with guidance",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/en/08.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "d2978824048e4636c705dd9762c36fb3f5de968ec5c03b6d35a8f3b316e925a4",
+      "caption": "Earn rewards",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/en/09.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "6f62afa54a0138bf168e22d18d12bb0650ce3eb35deca63882cafc4c586d7f1e",
+      "caption": "Think like a mathematician",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/en/10.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "b129a92c26be90be6130edd125d9c30dae810a27d5466f0416b422ed530f614d",
+      "caption": "Built for parents",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/no/01.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "c95f2d78edbd9080c17e7ea09601cbea60b3dbf82844eada5efc724552a429b3",
+      "caption": "Laget for ditt barn",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/no/02.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "12777d5c07f34226b7138f1a42a277caf2073eb5a9d8aad3dff4787c52cbc9aa",
+      "caption": "Matte og lesing hver dag",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/no/03.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "a777b2fc77bada9a6b88dc11988fa9fa3afe9bddd4148dfe2aa1d0e88dee0442",
+      "caption": "Læring fra 4 år",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/no/04.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "286be1b0304338ffa6324f9238bbe9798c8acf68fe67e16e5f6b91d4e0af83d1",
+      "caption": "Lær om penger",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/no/05.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "806d00c43bcfb5d6ed8334da0251ef8224f09f652855e6870ce6194173c2d86e",
+      "caption": "Kod med roboten",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/no/06.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "a4e94bcefa15dae7642f7af1017ec84552a21e937ecab0b525bc7c9f7d1fc5ea",
+      "caption": "Lær klokka",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/no/07.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "d6f74e489d431e8fafacb999e23f0de11ce91bba84cee02e886ad3ea340c0547",
+      "caption": "Les med veiledning",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/no/08.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "fccb9ea4c8abc1c0cf16b66cd96b21eb9643e966817b8c170f0273cfc1c962f7",
+      "caption": "Tjen belønninger",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/no/09.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "154261a6fcf00dd4134710f25d1db4648d0d0cf5b0e8342c913c2e81c4e5c237",
+      "caption": "Tenk som en matematiker",
+      "visuallyReviewed": true
+    },
+    {
+      "path": "screenshots/v1.3.0/ipad-12.9/no/10.png",
+      "width": 2048,
+      "height": 2732,
+      "colorMode": "RGB",
+      "sha256": "0133bdbb18a751f7d5dada2d1c5f753b7926fcf3b70ef944d44268b03c241636",
+      "caption": "Laget for foreldre",
+      "visuallyReviewed": true
+    }
+  ]
+}

@@ -47,6 +47,70 @@ enum DesignPreview {
         return CGSize(width: parts[0], height: parts[1])
     }
 
+    /// `game.<kind>`: a chapter of that game only. `-designPreviewAge 7` picks the child's age
+    /// (default: the youngest age that gets the game); `-geniStoreRegion BR` the money/units/season region.
+    @MainActor
+    static func applyGame(_ kind: GameKind, to vm: AppViewModel) {
+        let args = ProcessInfo.processInfo.arguments
+        let age = args.firstIndex(of: "-designPreviewAge").flatMap { $0 + 1 < args.count ? Int(args[$0 + 1]) : nil }
+            ?? kind.ages.lowerBound
+        let store = args.contains("-designPreviewStore")
+        if store { applyStore("storeExercise", to: vm, age: age) }
+        let profile = store ? vm.persistence.activeProfile! : ChildProfile(nickname: "Mia", age: age, avatarId: "lion")
+        if !store { vm.completeOnboarding(profile: profile) }
+        var chapter = ChapterProgress(childId: profile.id, date: vm.persistence.todayString())
+        let count = profile.dailyExerciseCount
+        let fixture = store ? storeGame(kind) : nil
+        let exercises = (0..<count).map { fixture ?? GameFactory.make(kind, age: age, difficulty: ExerciseGenerator.rampDifficulty(at: $0, of: count)) }
+        let start = store ? (age <= 5 ? 3 : 7) : 0
+        chapter.completedExerciseCount = start
+        chapter.exerciseResults = exercises.prefix(start).map {
+            ExerciseResult(chapterId: chapter.id, exercise: $0, firstCorrect: true, secondCorrect: nil, attempts: 1)
+        }
+        vm.chapterViewModel = ChapterViewModel(profile: profile, chapter: chapter, exercises: exercises, startIndex: start)
+        vm.currentScreen = .exercise
+    }
+
+    /// Fixed store examples render the actual game views and keep both languages comparable.
+    private static func storeGame(_ kind: GameKind) -> Exercise? {
+        switch kind {
+        case .ordinal:
+            return Exercise(game: GameSpec(kind: kind,
+                prompt: L.t("Who is first?", no: "Hvem er først?", es: "¿Quién va primero?", pt: "Quem vai em primeiro?"),
+                answerText: "🐕", payload: OrdinalPayload(animals: ["🐕", "🐈", "🐘"])),
+                correctAnswer: 1, options: [2, 1, 3], difficulty: .normal)
+        case .moneyShopping:
+            let currency = MoneyCurrency.storefront
+            let choices = [10, 12, 8, 14].map { GameChoice(label: currency.format($0), value: $0) }
+            let payload = MoneyShoppingPayload(currency: currency,
+                items: [MoneyItem(emoji: "🧸", price: 7), MoneyItem(emoji: "🪁", price: 5)], choices: choices)
+            return Exercise(game: GameSpec(kind: kind,
+                prompt: L.t("How much for both?", no: "Hva koster begge?", es: "¿Cuánto cuestan los dos?", pt: "Quanto custam os dois?"),
+                answerText: currency.format(12), payload: payload), correctAnswer: 12, options: choices.map(\.value), difficulty: .normal)
+        case .codingPath:
+            let programs: [CodingProgram] = [
+                [.init(.right), .init(.right), .init(.up)],
+                [.init(.up), .init(.right), .init(.right)],
+                [.init(.right), .init(.up), .init(.up)]
+            ]
+            let choices = (1...3).map { GameChoice(label: "🤖", value: $0) }
+            let payload = CodingGridPayload(board: CodingBoard(size: 4, robot: .init(0, 3), star: .init(2, 2), rocks: [.init(0, 2), .init(3, 1)]),
+                                            programs: programs, choices: choices)
+            return Exercise(game: GameSpec(kind: kind,
+                prompt: L.t("Which arrows take the robot to the star?", no: "Hvilke piler tar roboten til stjernen?", es: "¿Qué flechas llevan al robot a la estrella?", pt: "Que setas levam o robô até à estrela?"),
+                answerText: "→ → ↑", payload: payload), correctAnswer: 1, options: choices.map(\.value), difficulty: .normal)
+        case .symmetry:
+            let left = [[0, 1, 0], [1, 2, 0], [1, 2, 2], [0, 1, 0]]
+            let correct = CodingGames.mirrored(left)
+            let choices = (1...3).map { GameChoice(label: "🪞", value: $0) }
+            let payload = SymmetryPayload(left: left, halves: [left, correct, Array(correct.reversed())], choices: choices)
+            return Exercise(game: GameSpec(kind: kind,
+                prompt: L.t("Which picture finishes the mirror?", no: "Hvilket bilde fullfører speilet?", es: "¿Qué dibujo completa el espejo?", pt: "Que desenho completa o espelho?"),
+                answerText: "🪞", payload: payload), correctAnswer: 2, options: choices.map(\.value), difficulty: .harder)
+        default: return nil
+        }
+    }
+
     @MainActor
     static func apply(to vm: AppViewModel) {
         guard let screen else { return }
@@ -60,6 +124,10 @@ enum DesignPreview {
         }
         if screen.hasPrefix("home-") {
             applyHome(screen, to: vm)
+            return
+        }
+        if screen.hasPrefix("game."), let kind = GameKind(rawValue: String(screen.dropFirst("game.".count))) {
+            applyGame(kind, to: vm)
             return
         }
         if screen == "rewards" || screen == "rewardsEmpty" {
@@ -81,19 +149,19 @@ enum DesignPreview {
         case "tenFrame":
             exercise = { ExerciseGenerator.generateEmojiExercise(format: .tenFrame, difficulty: .normal) }
         case "countingObjects", "visualAddition", "compareGroups":
-            exercise = { ExerciseGenerator.generateEmojiExercise(format: ExerciseFormat(rawValue: screen)!, difficulty: .normal) }
+            exercise = { ExerciseGenerator.generateEmojiExercise(format: EmojiFormat(rawValue: screen)!, difficulty: .normal) }
         case "numberBonds", "diceAddition", "visualSubtraction":
-            exercise = { ExerciseGenerator.generateMiddleExercise(format: ExerciseFormat(rawValue: screen)!, difficulty: .normal, ageGroup: .middle, ops: [.addition]) }
+            exercise = { ExerciseGenerator.build(ExerciseFormat(rawValue: screen)!, profile: profile, operation: .addition, difficulty: .normal) }
         case "multiStep", "numberSequence", "areaPerimeter", "fractionPick", "longDivision":
-            exercise = { ExerciseGenerator.generateOlderExercise(format: ExerciseFormat(rawValue: screen)!, difficulty: .normal) }
+            exercise = { ExerciseGenerator.build(ExerciseFormat(rawValue: screen)!, profile: profile, operation: .addition, difficulty: .normal) }
         case "comparison", "missingNumber":
-            exercise = { ExerciseGenerator.generateExercise(operation: .addition, difficulty: .normal, ageGroup: group, format: ExerciseFormat(rawValue: screen)!) }
+            exercise = { ExerciseGenerator.generateExercise(operation: .addition, difficulty: .normal, ageGroup: group, format: ArithmeticFormat(rawValue: screen)!) }
         case "solve", "solveTap":
             exercise = { ExerciseGenerator.generateExercise(operation: .addition, difficulty: .normal, ageGroup: group) }
         case "trueFalse":
             exercise = { ExerciseGenerator.generateExercise(operation: .addition, difficulty: .normal, ageGroup: group, format: .trueFalse) }
         case "evenOdd":
-            exercise = { ExerciseGenerator.generateMiddleExercise(format: .evenOddSort, difficulty: .normal, ageGroup: group, ops: [.addition]) }
+            exercise = { ExerciseGenerator.build(.evenOddSort, profile: profile, operation: .addition, difficulty: .normal) }
         case "match":
             exercise = { ExerciseGenerator.generateMatchConnectExercise(difficulty: .normal, ageGroup: group, ops: [.addition]) }
         default:
@@ -102,16 +170,16 @@ enum DesignPreview {
 
         if let exercise {
             let chapter = ChapterProgress(childId: profile.id, date: vm.persistence.todayString())
-            vm.chapterViewModel = ChapterViewModel(profile: profile, chapter: chapter, exercises: (0..<20).map { _ in exercise() })
+            vm.chapterViewModel = ChapterViewModel(profile: profile, chapter: chapter, exercises: (0..<profile.dailyExerciseCount).map { _ in exercise() })
             vm.currentScreen = .exercise
         }
 
         switch screen {
         case "chapterComplete":
             let exercise = Exercise(operand1: 8, operand2: 5, operation: .addition, difficulty: .normal)
-            var chapter = ChapterProgress(childId: profile.id, date: vm.persistence.todayString())
-            chapter.completedExerciseCount = 20
-            chapter.exerciseResults = (0..<20).map { _ in
+            var chapter = ChapterProgress(childId: profile.id, date: vm.persistence.todayString(), exerciseCount: profile.dailyExerciseCount)
+            chapter.completedExerciseCount = chapter.exerciseCount
+            chapter.exerciseResults = (0..<chapter.exerciseCount).map { _ in
                 ExerciseResult(chapterId: chapter.id, exercise: exercise, firstCorrect: true, secondCorrect: nil, attempts: 1)
             }
             chapter.calculateRewards()
@@ -148,8 +216,8 @@ enum DesignPreview {
     }
 
     @MainActor
-    private static func applyStore(_ screen: String, to vm: AppViewModel) {
-        let profile = ChildProfile(nickname: "Daniel", age: screen == "storeHome" ? 6 : 7, avatarId: "lion")
+    private static func applyStore(_ screen: String, to vm: AppViewModel, age: Int? = nil) {
+        let profile = ChildProfile(nickname: "Daniel", age: age ?? (screen == "storeHome" ? 6 : 7), avatarId: "lion")
         vm.completeOnboarding(profile: profile)
         let today = vm.persistence.todayString()
         var rewards = RewardState()
@@ -169,17 +237,25 @@ enum DesignPreview {
         formatter.dateFormat = "yyyy-MM-dd"
         formatter.locale = Locale(identifier: "en_US_POSIX")
         let sum = Exercise(olderFormat: .solveResult, answer: 13, options: [11, 13, 14, 15], difficulty: .normal, op1: 8, op2: 5)
-        for daysAgo in 1...12 {
+        let subtraction = Exercise(operand1: 12, operand2: 4, operation: .subtraction, difficulty: .normal)
+        for daysAgo in 0..<12 {
             let date = Calendar.current.date(byAdding: .day, value: -daysAgo, to: Date())!
             var chapter = ChapterProgress(childId: profile.id, date: formatter.string(from: date))
             chapter.exerciseResults = (0..<20).map { i in
-                ExerciseResult(chapterId: chapter.id, exercise: sum, firstCorrect: i < 19, secondCorrect: nil, attempts: i < 19 ? 1 : 3)
+                ExerciseResult(chapterId: chapter.id, exercise: i < 10 ? sum : subtraction, firstCorrect: i < 19, secondCorrect: nil, attempts: i < 19 ? 1 : 3)
             }
             chapter.completedExerciseCount = 20
             chapter.calculateRewards()
             chapter.status = .completed
             chapter.completedAt = date
             vm.persistence.saveChapterProgress(chapter)
+            if daysAgo < 8 {
+                var session = ReadingSession(childId: profile.id, date: formatter.string(from: date), readingTextId: "store-cat", mode: .readToMe, targetTimeSeconds: 180)
+                session.readingTimeSeconds = 180
+                session.complete()
+                session.completedAt = date
+                vm.persistence.saveReadingSession(session)
+            }
         }
 
         if screen == "storeHome" {
@@ -192,7 +268,7 @@ enum DesignPreview {
             vm.persistence.saveChapterProgress(chapter)
             rewards.todayMathCompleted = true
             rewards.lastMathDate = today
-            // Age six: optional reading remains the Today action while Challenges are open.
+            // Age six: optional reading stays its own start tile while Challenges are open.
         }
         vm.rewardState = rewards
         vm.persistence.saveRewardState(rewards, for: profile.id)
@@ -268,13 +344,9 @@ enum DesignPreview {
     }
 
     /// A–F from the Today matrix; extra variants exercise resume, expiry and early reading.
-    /// Append `-rounded` to any home fixture to verify the per-profile corner preference.
     @MainActor
-    private static func applyHome(_ requestedScreen: String, to vm: AppViewModel) {
-        let rounded = requestedScreen.hasSuffix("-rounded")
-        let screen = rounded ? String(requestedScreen.dropLast("-rounded".count)) : requestedScreen
+    private static func applyHome(_ screen: String, to vm: AppViewModel) {
         var profile = ChildProfile(nickname: "Ada", age: screen == "home-c" ? 8 : 6, avatarId: "lion")
-        profile.cornerStyle = rounded ? .rounded : .sharp
         if screen.hasPrefix("home-f") { profile.readingEnabled = false }
         vm.completeOnboarding(profile: profile)
 
@@ -284,8 +356,8 @@ enum DesignPreview {
         let completedAt = Date().addingTimeInterval(closed ? -660 : -120)
 
         if mathDone || inProgress {
-            var chapter = ChapterProgress(childId: profile.id, date: vm.persistence.todayString())
-            chapter.completedExerciseCount = mathDone || screen == "home-b-final" ? 20 : 7
+            var chapter = ChapterProgress(childId: profile.id, date: vm.persistence.todayString(), exerciseCount: profile.dailyExerciseCount)
+            chapter.completedExerciseCount = mathDone || screen == "home-b-final" ? profile.dailyExerciseCount : 7
             chapter.status = mathDone ? .completed : .inProgress
             chapter.completedAt = mathDone ? completedAt : nil
             vm.persistence.saveChapterProgress(chapter)
@@ -362,7 +434,7 @@ extension View {
     /// Show the actual dashboard scrolled to progress; no layout changes or PIN bypass in Release.
     func designPreviewParentScroll() -> some View {
         ScrollViewReader { proxy in
-            self.task {
+            self.clipped().task {
                 guard DesignPreview.screen == "parentDashboard" else { return }
                 try? await Task.sleep(for: .milliseconds(500))
                 proxy.scrollTo("designPreview.parentProgress", anchor: .top)

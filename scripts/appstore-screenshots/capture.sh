@@ -5,7 +5,8 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 PLAN="$ROOT/scripts/appstore-screenshots/plan.json"
 DEVICE=iphone
 LANGUAGES=en,no
-RAW_ROOT="$ROOT/screenshots/v1.2.0/raw"
+VERSION="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["version"])' "$PLAN")"
+RAW_ROOT="$ROOT/screenshots/v$VERSION/raw"
 WAIT_SECONDS=2
 DRY_RUN=false
 while [[ $# -gt 0 ]]; do
@@ -30,8 +31,9 @@ import json,sys
 p=json.load(open(sys.argv[1]))
 for lang in sys.argv[2].split(','):
     l=p['languages'][lang]
-    for screen in dict.fromkeys(s for shot in p['shots'] for s in shot['screens']):
-        print('\t'.join([lang,screen,l['appLanguage'],l['appleLanguage'],l['appleLocale']]))
+    screens={screen:shot.get('previewAge',7) for shot in p['shots'] for screen in shot['screens']}
+    for screen,age in screens.items():
+        print('\t'.join([lang,screen,l['appLanguage'],l['appleLanguage'],l['appleLocale'],str(age),l['storeRegion']]))
 PY
 )"
 if $DRY_RUN; then
@@ -53,9 +55,9 @@ for lang in "${LANG_ARRAY[@]}"; do
   mkdir -p "$RAW_ROOT/$DEVICE/$lang"
   rm -f "$RAW_ROOT/$DEVICE/$lang/.capture.json"
 done
-while IFS=$'\t' read -r lang screen app_language apple_language apple_locale; do
+while IFS=$'\t' read -r lang screen app_language apple_language apple_locale age store_region; do
   xcrun simctl launch --terminate-running-process "$UDID" com.yagomp.geni \
-    -uiTestReset -designPreview "$screen" \
+    -uiTestReset -designPreview "$screen" -designPreviewAge "$age" -designPreviewStore -geniStoreRegion "$store_region" \
     -geni_app_language "$app_language" -AppleLanguages "($apple_language)" -AppleLocale "$apple_locale" -AppleInterfaceStyle Light
   sleep "$WAIT_SECONDS"
   xcrun simctl io "$UDID" screenshot "$RAW_ROOT/$DEVICE/$lang/$screen.png"

@@ -7,18 +7,21 @@ nonisolated struct ChapterProgress: Codable, Identifiable, Sendable {
     var chapterType: ChapterType
     var status: ChapterStatus
     var completedExerciseCount: Int
+    /// Exercises in the chapter as generated: `ChildProfile.dailyExerciseCount` (10 for ages 4–5, else 20).
+    var exerciseCount: Int
     var exerciseResults: [ExerciseResult]
     var stars: Int
     var coinsEarned: Int
     var completedAt: Date?
 
-    init(childId: String, date: String, chapterType: ChapterType = .daily) {
+    init(childId: String, date: String, chapterType: ChapterType = .daily, exerciseCount: Int = 20) {
         self.id = UUID().uuidString
         self.childId = childId
         self.date = date
         self.chapterType = chapterType
         self.status = .inProgress
         self.completedExerciseCount = 0
+        self.exerciseCount = exerciseCount
         self.exerciseResults = []
         self.stars = 0
         self.coinsEarned = 0
@@ -31,6 +34,7 @@ nonisolated struct ChapterProgress: Codable, Identifiable, Sendable {
         case chapterType
         case status
         case completedExerciseCount
+        case exerciseCount
         case exerciseResults
         case stars
         case coinsEarned
@@ -46,6 +50,8 @@ nonisolated struct ChapterProgress: Codable, Identifiable, Sendable {
         status = try container.decode(ChapterStatus.self, forKey: .status)
         exerciseResults = try container.decodeIfPresent([ExerciseResult].self, forKey: .exerciseResults) ?? []
         completedExerciseCount = try container.decodeIfPresent(Int.self, forKey: .completedExerciseCount) ?? exerciseResults.count
+        // Chapters saved before short chapters existed were all 20 long
+        exerciseCount = try container.decodeIfPresent(Int.self, forKey: .exerciseCount) ?? 20
         stars = try container.decodeIfPresent(Int.self, forKey: .stars) ?? 0
         coinsEarned = try container.decodeIfPresent(Int.self, forKey: .coinsEarned) ?? 0
         completedAt = try container.decodeIfPresent(Date.self, forKey: .completedAt)
@@ -64,7 +70,12 @@ nonisolated struct ChapterProgress: Codable, Identifiable, Sendable {
     }
 
     var isComplete: Bool {
-        completedExerciseCount >= 20
+        completedExerciseCount >= exerciseCount
+    }
+
+    /// Three in four answered right on the first try (15 of 20, 8 of 10).
+    var isFastSolve: Bool {
+        firstTryCount * 4 >= exerciseCount * 3
     }
 
     /// Conflict rule for sync: completed beats in-progress, then more answers wins.
@@ -96,7 +107,7 @@ nonisolated struct ChapterProgress: Codable, Identifiable, Sendable {
         var coins = 20
         if stars >= 4 { coins += 10 }
         if stars == 5 { coins += 10 }
-        if firstTryCount >= 15 { coins += 10 }
+        if isFastSolve { coins += 10 }
         if chapterType != .daily { coins += 10 }
         coinsEarned = coins
     }

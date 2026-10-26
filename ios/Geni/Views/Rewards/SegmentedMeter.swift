@@ -19,7 +19,7 @@ struct SegmentedMeter: View {
                         }
                     }
                     .clipShape(GeniShape(scale: 0.6))
-                    .overlay(GeniShape(scale: 0.6).stroke(GeniColor.border, lineWidth: 2))
+                    .overlay(GeniShape(scale: 0.6).stroke(GeniColor.hairline, lineWidth: 1))
             }
         }
         .frame(height: height)

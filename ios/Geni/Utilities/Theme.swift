@@ -4,14 +4,9 @@ import SwiftUI
 class ThemeManager {
     static let shared = ThemeManager()
     var current: AppTheme = .standard
-    var cornerStyle: CornerStyle = .sharp
-
-    /// Corner radius for cards, tiles and buttons in the active profile's style.
-    var cornerRadius: CGFloat { cornerStyle.radius }
 
     func apply(_ profile: ChildProfile) {
         current = profile.theme
-        cornerStyle = profile.cornerStyle ?? .sharp
     }
 
     var accent: Color {
@@ -70,6 +65,8 @@ enum GeniColor {
     static let darkBG = Color(red: 0.12, green: 0.12, blue: 0.14)
     static var card: Color { theme.cardBackground }
     static let border = Color.black
+    /// Quiet separation for surfaces and progress tracks; black stays reserved for text.
+    static let hairline = Color.black.opacity(0.10)
     static let peach = Color(red: 0.96, green: 0.82, blue: 0.72)
     static let lightGray = Color(red: 0.9, green: 0.9, blue: 0.9)
     /// Readable text on pink tints (pink itself is too light on `pink.soft`).
@@ -79,8 +76,7 @@ enum GeniColor {
 }
 
 extension Color {
-    /// An opaque tint: this colour mixed into white. Use instead of `.opacity()` for fills
-    /// that sit on a black offset shadow, which would otherwise show through as dark grey.
+    /// An opaque tint: this colour mixed into white, keeping fills clear over any background.
     func soft(_ amount: Double) -> Color {
         let c = resolve(in: EnvironmentValues())
         return Color(
@@ -90,8 +86,7 @@ extension Color {
         )
     }
 
-    /// Black or white, whichever reads better on this colour (e.g. black on yellow/cyan).
-    /// A darker tone of this colour, for coloured offset shadows on selected states instead of black.
+    /// A darker tone for state outlines and tactile edges.
     func deep(_ amount: Double = 0.35) -> Color {
         let c = resolve(in: EnvironmentValues())
         return Color(
@@ -101,6 +96,7 @@ extension Color {
         )
     }
 
+    /// White on saturated feedback fills; dark text on light cards and selection tints.
     var readableText: Color {
         let c = resolve(in: EnvironmentValues())
         let luminance = 0.2126 * c.linearRed + 0.7152 * c.linearGreen + 0.0722 * c.linearBlue
@@ -108,14 +104,14 @@ extension Color {
     }
 }
 
-/// The app's card/tile/button shape: square or rounded depending on the active profile.
-/// Use instead of `Rectangle()` for anything with a border or offset shadow.
+/// The app's rounded card/tile/button shape.
+/// Use instead of `Rectangle()` for surfaces and controls.
 struct GeniShape: Shape {
     var radius: CGFloat
 
     /// `scale` shrinks the radius for small tiles so they don't turn into circles.
     init(scale: CGFloat = 1) {
-        radius = ThemeManager.shared.cornerRadius * scale
+        radius = 16 * scale
     }
 
     init(radius: CGFloat) {
@@ -127,53 +123,24 @@ struct GeniShape: Shape {
     }
 }
 
-extension CornerStyle {
-    var radius: CGFloat { self == .rounded ? 16 : 0 }
-}
-
-extension EnvironmentValues {
-    /// Local corner-radius override for previewing a style that isn't the active profile's
-    /// (profile creation/editing). Nil = the active profile's style.
-    @Entry var geniCornerRadius: CGFloat? = nil
-}
-
-extension GeniShape {
-    /// Honours a `\.geniCornerRadius` override, read by the calling view.
-    init(scale: CGFloat = 1, override radius: CGFloat?) {
-        self.init(radius: (radius ?? ThemeManager.shared.cornerRadius) * scale)
-    }
-}
-
+/// Legacy name and arguments retained for call sites; cards now use the shared soft surface.
 struct BrutalistCard: ViewModifier {
     var color: Color
     var borderWidth: CGFloat
-    @Environment(\.geniCornerRadius) private var radiusOverride
-
     func body(content: Content) -> some View {
         content
-            .background(color)
-            .background(GeniColor.background)
-            .clipShape(GeniShape(override: radiusOverride))
-            .overlay(
-                GeniShape(override: radiusOverride)
-                    .stroke(GeniColor.border, lineWidth: borderWidth)
-                    .allowsHitTesting(false)
-            )
-            .background(
-                GeniShape(override: radiusOverride)
-                    .fill(GeniColor.border)
-                    .offset(x: 4, y: 4)
-            )
-            .compositingGroup()
+            .softSurface(color)
     }
 }
 
+/// Legacy name retained for call sites; filled buttons use soft depth and a gentle press.
 struct BrutalistButton: ButtonStyle {
     let color: Color
     let textColor: Color
     var fontSize: CGFloat?
     var verticalPadding: CGFloat?
-    @Environment(\.geniCornerRadius) private var radiusOverride
+    @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     init(color: Color = ThemeManager.shared.buttonColor, textColor: Color? = nil, fontSize: CGFloat? = nil, verticalPadding: CGFloat? = nil) {
         self.color = color
@@ -185,39 +152,55 @@ struct BrutalistButton: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: fontSize ?? (iPadScale.isIPad ? 24 : 20), weight: .black, design: .rounded))
-            .foregroundStyle(textColor)
+            .foregroundStyle(isEnabled ? textColor : GeniColor.border.opacity(0.35))
             .padding(.horizontal, iPadScale.largePadding)
             .padding(.vertical, verticalPadding ?? (iPadScale.isIPad ? 24 : 18))
             .frame(maxWidth: .infinity)
-            .background(color)
-            .background(GeniColor.background)
-            .clipShape(GeniShape(override: radiusOverride))
-            .overlay(
-                GeniShape(override: radiusOverride)
-                    .stroke(GeniColor.border, lineWidth: 4)
-            )
-            .background(
-                GeniShape(override: radiusOverride)
-                    .fill(GeniColor.border)
-                    .offset(x: configuration.isPressed ? 1 : 4, y: configuration.isPressed ? 1 : 4)
-            )
-            .compositingGroup()
-            .offset(x: configuration.isPressed ? 3 : 0, y: configuration.isPressed ? 3 : 0)
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
-            .animation(.snappy(duration: 0.1), value: configuration.isPressed)
+            .softSurface(isEnabled ? color : GeniColor.lightGray.soft(0.6))
+            .scaleEffect(configuration.isPressed && !reduceMotion ? 0.97 : 1)
+            .offset(y: configuration.isPressed && !reduceMotion ? 2 : 0)
+            .animation(reduceMotion ? nil : .spring(response: 0.22, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }
 
-/// Press feedback for custom-drawn tiles: a small push and bounce. Replaces the system
-/// style, whose press/disabled fade lets the black offset shadow show through the tile.
+/// The same gentle press for custom-drawn tiles and small controls.
 struct KidPressStyle: ButtonStyle {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .contentShape(Rectangle())
             .compositingGroup()
-            .scaleEffect(configuration.isPressed ? 0.95 : 1)
-            .offset(x: configuration.isPressed ? 2 : 0, y: configuration.isPressed ? 2 : 0)
-            .animation(.spring(response: 0.2, dampingFraction: 0.6), value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed && !reduceMotion ? 0.97 : 1)
+            .offset(y: configuration.isPressed && !reduceMotion ? 2 : 0)
+            .animation(reduceMotion ? nil : .spring(response: 0.22, dampingFraction: 0.8), value: configuration.isPressed)
+    }
+}
+
+/// The calm surface for kid-facing screens: a fill and a soft shadow, no outline.
+/// Uses the shared rounded shape, with bigger radii for big bubbles.
+struct SoftSurface: ViewModifier {
+    var color: Color
+    var radiusScale: CGFloat
+
+    func body(content: Content) -> some View {
+        content
+            .background(color, in: GeniShape(scale: radiusScale))
+            .clipShape(GeniShape(scale: radiusScale))
+            .shadow(color: GeniColor.border.opacity(0.08), radius: 10, x: 0, y: 4)
+    }
+}
+
+extension View {
+    func softSurface(_ color: Color = GeniColor.card, radiusScale: CGFloat = 1) -> some View {
+        modifier(SoftSurface(color: color, radiusScale: radiusScale))
+    }
+
+    /// Keep a stateful tile's inherited text and symbols tied to its current fill.
+    /// Labels should inherit this style; secondary labels can reduce their opacity.
+    func feedbackSurface(_ color: Color, radiusScale: CGFloat = 1) -> some View {
+        foregroundStyle(color.readableText)
+            .softSurface(color, radiusScale: radiusScale)
     }
 }
 
@@ -279,19 +262,13 @@ extension EnvironmentValues {
 /// Square back button used on kid screens instead of the "◀️" emoji.
 struct KidBackButton: View {
     let action: () -> Void
-    @Environment(\.geniCornerRadius) private var radiusOverride
-
     var body: some View {
         Button(action: action) {
             Image(systemName: "chevron.left")
                 .font(.system(size: 22, weight: .black))
                 .foregroundStyle(GeniColor.border)
                 .frame(width: 56, height: 56)
-                // A ShapeStyle background touching the top safe area can extend behind
-                // the status bar. Bound the back button's white fill to its own shape.
-                .background(GeniColor.card, in: GeniShape(override: radiusOverride))
-                .overlay(GeniShape(override: radiusOverride).stroke(GeniColor.border, lineWidth: 3))
-                .background(GeniShape(override: radiusOverride).fill(GeniColor.border).offset(x: 3, y: 3))
+                .softSurface()
         }
         .buttonStyle(KidPressStyle())
         .accessibilityLabel(L.s(.back))

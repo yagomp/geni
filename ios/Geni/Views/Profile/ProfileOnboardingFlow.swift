@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Profile creation in three fixed steps: avatar → name + age → colours + corners.
+/// Profile creation in three fixed steps: avatar → name + age → colours.
 /// Back keeps the draft; nothing is saved until `profile.save`.
 struct ProfileOnboardingFlow: View {
     let onComplete: (ChildProfile) -> Void
@@ -37,7 +37,6 @@ struct ProfileOnboardingFlow: View {
         }
         .background(draft.screenBackground.ignoresSafeArea())
         .animation(.easeInOut(duration: 0.25), value: draft.theme)
-        .environment(\.geniCornerRadius, draft.cornerRadius)
         .task(id: step) {
             #if DEBUG
             // Keep the name/age screen visible without a keyboard in marketing captures.
@@ -117,7 +116,7 @@ struct ProfileOnboardingFlow: View {
         let rows = (AvatarOption.catalog.count + count - 1) / count
         // Room between cards so each avatar reads as its own card.
         let gap: CGFloat = expanded ? 28 : 18
-        // Leave room for the selection scale, check dot and offset shadow.
+        // Leave room for the selection scale, check dot and soft shadow.
         let tileSize = min(expanded ? 120 : .infinity, min((availableSize.width - (expanded ? 40 : 24) - CGFloat(count - 1) * gap) / CGFloat(count),
                            (availableSize.height - (expanded ? 40 : 24) - CGFloat(rows - 1) * gap) / CGFloat(rows)))
         let columns = Array(repeating: GridItem(.fixed(tileSize), spacing: gap), count: count)
@@ -157,22 +156,8 @@ struct ProfileOnboardingFlow: View {
 
     private func lookStep(availableSize: CGSize) -> some View {
         let expanded = iPadScale.isIPad && availableSize.width >= 620
-        let tileHeight: CGFloat = expanded ? min(200, max(72, (availableSize.height - 180) / 2)) : 96
-        return VStack(alignment: .leading, spacing: expanded ? 48 : 36) {
-            VStack(alignment: .leading, spacing: 12) {
-                sectionLabel(.pickColor, expanded: expanded)
-                ThemeTiles(draft: draft, height: tileHeight)
-            }
-            VStack(alignment: .leading, spacing: 12) {
-                sectionLabel(.pickShape, expanded: expanded)
-                CornerStyleTiles(draft: draft, height: expanded ? tileHeight * 0.85 : 96)
-            }
-        }
-    }
-
-    private func sectionLabel(_ key: LocaleKey, expanded: Bool) -> some View {
-        Text(L.s(key))
-            .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
-            .foregroundStyle(GeniColor.border)
+        let tileHeight = min(expanded ? 240.0 : 176.0, max(128.0, (availableSize.height - 32) * 0.6))
+        return ThemeTiles(draft: draft, height: tileHeight)
+            .frame(maxHeight: .infinity)
     }
 }

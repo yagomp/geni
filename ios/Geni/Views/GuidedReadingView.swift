@@ -37,7 +37,7 @@ private struct GuidedReadingViewLayout: View {
                             passage
                                 .padding(36)
                                 .frame(maxWidth: .infinity, minHeight: max(0, remaining.size.height - 12), alignment: .topLeading)
-                                .brutalistCard(color: GeniColor.card)
+                                .softSurface(GeniColor.card)
                                 .padding(.bottom, 8)
                         }
                         .scrollBounceBehavior(.basedOnSize)
@@ -128,9 +128,7 @@ private struct GuidedReadingViewLayout: View {
                 } label: {
                     Text("◀️").font(.system(size: expanded ? 28 : 20))
                         .frame(width: expanded ? 64 : 44, height: expanded ? 64 : 44)
-                        .background(GeniColor.card)
-                        .clipShape(GeniShape())
-                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                        .softSurface(GeniColor.card)
                 }
                 .accessibilityIdentifier("reading.back")
 
@@ -149,16 +147,13 @@ private struct GuidedReadingViewLayout: View {
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
-                .background(GeniColor.card)
-                .clipShape(GeniShape())
-                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
-                .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
+                .softSurface(GeniColor.card)
             }
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
                     GeniShape()
-                        .fill(Color.gray.opacity(0.2))
+                        .fill(GeniColor.lightGray.soft(0.6))
                         .frame(height: expanded ? 20 : 14)
 
                     Rectangle()
@@ -167,7 +162,6 @@ private struct GuidedReadingViewLayout: View {
                         .animation(.spring, value: readingVM.progress)
                 }
                 .clipShape(GeniShape())
-                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
             }
             .frame(height: expanded ? 20 : 14)
         }
@@ -182,9 +176,7 @@ private struct GuidedReadingViewLayout: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
-        .background(modeColor.soft(0.2))
-        .clipShape(GeniShape())
-        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 2))
+        .softSurface(modeColor.soft(0.2))
     }
 
     private var modeIcon: String {
@@ -219,10 +211,7 @@ private struct GuidedReadingViewLayout: View {
             } label: {
                 Text("🔄").font(.system(size: expanded ? 28 : 20))
                     .frame(width: expanded ? 80 : 52, height: expanded ? 80 : 52)
-                    .background(GeniColor.card)
-                    .clipShape(GeniShape())
-                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
-                    .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
+                    .softSurface(GeniColor.card)
             }
             .accessibilityIdentifier("reading.restart")
 
@@ -243,10 +232,7 @@ private struct GuidedReadingViewLayout: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: expanded ? 80 : 52)
-                .background(GeniColor.green)
-                .clipShape(GeniShape())
-                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
-                .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
+                .softSurface(GeniColor.green)
             }
             .accessibilityIdentifier("reading.playPause")
 
@@ -259,10 +245,7 @@ private struct GuidedReadingViewLayout: View {
                         .font(.system(size: 18, weight: .black))
                         .foregroundStyle(readingVM.isPlaying ? GeniColor.border : Color(white: 0.55))
                         .frame(width: expanded ? 80 : 52, height: expanded ? 80 : 52)
-                        .background(readingVM.isPlaying ? GeniColor.orange : GeniColor.lightGray)
-                        .clipShape(GeniShape())
-                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
-                        .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
+                        .softSurface(readingVM.isPlaying ? GeniColor.orange : GeniColor.lightGray)
                 }
                 .accessibilityLabel(L.s(.next))
                 .accessibilityIdentifier("reading.skip")
@@ -278,10 +261,7 @@ private struct GuidedReadingViewLayout: View {
                         .font(.title3.bold())
                         .foregroundStyle(.white)
                         .frame(width: expanded ? 80 : 52, height: expanded ? 80 : 52)
-                        .background(GeniColor.blue)
-                        .clipShape(GeniShape())
-                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
-                        .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
+                        .softSurface(GeniColor.blue)
                 }
                 .accessibilityIdentifier("reading.finish")
             }
@@ -301,10 +281,7 @@ private struct GuidedReadingViewLayout: View {
             Spacer()
         }
         .padding(16)
-        .background(feedbackColor)
-        .clipShape(GeniShape())
-        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
-        .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
+        .softSurface(feedbackColor)
         .compositingGroup()
     }
 
@@ -315,7 +292,7 @@ private struct GuidedReadingViewLayout: View {
         case .guidance:
             GeniColor.orange
         case .error:
-            GeniColor.pink
+            GeniColor.pink.soft(0.3)
         }
     }
 }

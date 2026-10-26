@@ -25,25 +25,23 @@ struct ChildHomeView: View {
                     headerSection(profile: profile, avatar: avatar, expanded: expanded)
                         .frame(height: expanded ? 88 : (hasMultipleProfiles ? 72 : 64))
 
-                    RewardsStrip(rewards: viewModel.rewardState) {
-                        viewModel.showRewards = true
-                    }
-                    .zoomSource(id: "rewards", in: rewardsNamespace)
-
                     // Date-based challenge availability must also update while home stays open.
                     TimelineView(.periodic(from: .now, by: 1)) { _ in
                         let summary = viewModel.todaySummary
                         GeometryReader { remaining in
-                            // State never changes these heights. Reserve 206pt for two
-                            // challenge rows; Today needs 236pt on the smallest iPhone.
-                            let cardSpace = remaining.size.height - spacing
-                            let challengeRows = (3 + (profile?.operationsEnabled.count ?? 0)) > 5 ? 2 : 1
-                            let challengeHeight: CGFloat = expanded ? (challengeRows == 1 ? 216 : 352) : 206
-                            let todayHeight = expanded ? cardSpace - challengeHeight : min(cardSpace - 206, max(236, cardSpace * 0.56))
+                            // Share the space reclaimed from the rewards strip. Keep room
+                            // for both challenge rows and Today's labels on a small phone.
+                            let cardSpace = max(0, remaining.size.height - spacing)
+                            let spotlightCount = profile?.showsOperationSpotlights == true ? profile?.operationsEnabled.count ?? 0 : 0
+                            let challengeRows = (3 + spotlightCount) > 5 ? 2 : 1
+                            let minimumChallengeHeight: CGFloat = expanded ? (challengeRows == 1 ? 232 : 368) : 218
+                            let minimumTodayHeight: CGFloat = expanded ? 380 : 236
+                            let todayShare: CGFloat = expanded && challengeRows == 1 ? 0.66 : 0.56
+                            let todayHeight = max(0, min(cardSpace - minimumChallengeHeight, max(minimumTodayHeight, cardSpace * todayShare)))
                             let compact = todayHeight < (expanded ? 420 : 264)
                             VStack(spacing: spacing) {
                                 TodayCard(summary: summary, compact: compact) { action in
-                                    if action.isReading {
+                                    if action == .reading {
                                         viewModel.startReading()
                                     } else {
                                         viewModel.startChapter()
@@ -61,7 +59,7 @@ struct ChildHomeView: View {
                 .frame(maxWidth: expanded ? 820 : 720)
                 .environment(\.geniExpandedLayout, expanded)
                 .padding(.horizontal, iPadScale.padding)
-                // Includes the cards' 4pt offset shadows, including on a home-button iPhone.
+                // Includes the cards' soft shadows, including on a home-button iPhone.
                 .padding(.vertical, expanded ? 24 : 12)
                 .frame(maxHeight: expanded ? 1120 : .infinity)
                 .frame(width: geo.size.width, height: geo.size.height, alignment: expanded ? .center : .top)
@@ -83,7 +81,7 @@ struct ChildHomeView: View {
     }
 
     private func headerSection(profile: ChildProfile?, avatar: AvatarOption, expanded: Bool) -> some View {
-        HStack(spacing: 8) {
+        HStack(spacing: expanded ? 8 : 6) {
             Button {
                 HapticManager.selection()
                 if hasMultipleProfiles {
@@ -94,8 +92,8 @@ struct ChildHomeView: View {
             } label: {
                 Text(avatar.emoji)
                     .font(.system(size: expanded ? 52 : 38))
-                    .frame(width: expanded ? 88 : 64, height: expanded ? 88 : 64)
-                    .brutalistCard(color: GeniColor.background, borderWidth: 3)
+                    .frame(width: expanded ? 88 : 56, height: expanded ? 88 : 56)
+                    .softSurface(GeniColor.card, radiusScale: 1.5)
             }
             .buttonStyle(KidPressStyle())
             .accessibilityLabel(L.s(hasMultipleProfiles ? .selectProfile : .chooseAvatar))
@@ -104,11 +102,11 @@ struct ChildHomeView: View {
             Text(profile?.nickname ?? "")
                 .font(.system(expanded ? .largeTitle : .title2, design: .rounded, weight: .black))
                 .lineLimit(1)
-                .minimumScaleFactor(0.7)
-                .layoutPriority(1)
+                .minimumScaleFactor(0.5)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                // The name yields before the coin pill or profile controls do.
+                .layoutPriority(-1)
                 .accessibilityIdentifier("home.name")
-
-            Spacer(minLength: 0)
 
             if hasMultipleProfiles {
                 ScrollView(.horizontal) {
@@ -119,9 +117,9 @@ struct ChildHomeView: View {
                                 viewModel.selectProfile(sibling)
                             } label: {
                                 Text(AvatarOption.find(sibling.avatarId).emoji)
-                                    .font(.system(size: expanded ? 44 : 32))
-                                    .frame(width: expanded ? 88 : 64, height: expanded ? 88 : 64)
-                                    .brutalistCard(color: GeniColor.background, borderWidth: 3)
+                                    .font(.system(size: expanded ? 44 : 30))
+                                    .frame(width: expanded ? 88 : 48, height: expanded ? 88 : 48)
+                                    .softSurface(GeniColor.card, radiusScale: 1.5)
                             }
                             .buttonStyle(KidPressStyle())
                             .accessibilityLabel(sibling.nickname)
@@ -131,9 +129,33 @@ struct ChildHomeView: View {
                     .padding(4)
                 }
                 .scrollIndicators(.hidden)
-                .frame(minWidth: 72, idealWidth: expanded ? 96 : 72, maxWidth: expanded ? 192 : 144)
+                .frame(width: expanded ? 192 : 56)
                 .frame(height: expanded ? 96 : 72)
             }
+
+            Button {
+                HapticManager.selection()
+                viewModel.showRewards = true
+            } label: {
+                HStack(spacing: 4) {
+                    CoinIcon(size: expanded ? 36 : 24)
+                        .accessibilityHidden(true)
+                    Text("\(viewModel.rewardState.coins)")
+                        .font(.system(size: expanded ? 30 : 22, weight: .black, design: .rounded))
+                        .monospacedDigit()
+                        .contentTransition(.numericText())
+                        .accessibilityIdentifier("home.coins")
+                }
+                .padding(.horizontal, expanded ? 16 : 10)
+                .frame(height: expanded ? 72 : 48)
+                .softSurface(GeniColor.card)
+                .fixedSize(horizontal: true, vertical: false)
+            }
+            .buttonStyle(KidPressStyle())
+            .accessibilityLabel(L.s(.rewards))
+            .accessibilityValue("\(L.s(.coins)), \(viewModel.rewardState.coins)")
+            .accessibilityIdentifier("home.rewards")
+            .zoomSource(id: "rewards", in: rewardsNamespace)
 
             Button {
                 HapticManager.selection()

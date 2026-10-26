@@ -1,0 +1,17 @@
+{
+  "device" : "iphone-6.7",
+  "language" : "en",
+  "sha256" : {
+    "01.png" : "3ca35f0ad2069ef5a49245182889d928482c89fb2833024f9d42df9e500b15ab",
+    "02.png" : "a41be042af5eb7f0ee04023ecc3fbb89caf0bcc58ed4b299a1f37ca907986443",
+    "03.png" : "e4f1b3f39d132eaedaaf858eeb7fbc28881f14f4ea1cd6df0f843399641ed0f5",
+    "04.png" : "fd2f3a1d4f5ac51e7795f32fccc998b4c28da15cc7431c86f324eb34061ffc47",
+    "05.png" : "9fae82a0f78208d0b76c5b850a51a561288373a162d3bf042eff04fa87c1ee92",
+    "06.png" : "a165115db212e071f7c3186b63b51f39fbf2bc3ae858f8070b39d07e59ac0982",
+    "07.png" : "4f8a674be9887a8e5b0903c2b9bcc799c32ac74f83bfe07ef94b5bc95baadf22",
+    "08.png" : "bfd054ce85fea2c8dffccd58f9ebd5376ce55321dfdd2279b6b9c3c2d3aadba2",
+    "09.png" : "eff3176ef230b784a5ecedc405676cb9bf05146be3edf569c4f58a0a9755eb57",
+    "10.png" : "1f737da9c79d39a62f4129d185208dd8fabe842a2c645e9f1eb7e9ef60e7e4dc"
+  },
+  "version" : "1.3.0"
+}

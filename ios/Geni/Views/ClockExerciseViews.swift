@@ -57,8 +57,7 @@ struct ClockExerciseView: View {
                             Text(ClockTime(totalMinutes: answer).digital)
                                 .font(.system(size: expanded ? 40 : iPadScale.value(28), weight: .black, design: .monospaced))
                                 .frame(maxWidth: .infinity, minHeight: expanded ? 104 : 64)
-                                .foregroundStyle(GeniColor.border)
-                                .brutalistCard(color: answerColor(answer))
+                                .feedbackSurface(answerColor(answer))
                         }
                         .buttonStyle(KidPressStyle())
                         .disabled(chapterVM.showFeedback || chapterVM.isAwaitingAdvance)

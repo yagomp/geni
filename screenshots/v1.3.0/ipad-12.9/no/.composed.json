@@ -1,0 +1,17 @@
+{
+  "device" : "ipad-12.9",
+  "language" : "no",
+  "sha256" : {
+    "01.png" : "c95f2d78edbd9080c17e7ea09601cbea60b3dbf82844eada5efc724552a429b3",
+    "02.png" : "12777d5c07f34226b7138f1a42a277caf2073eb5a9d8aad3dff4787c52cbc9aa",
+    "03.png" : "a777b2fc77bada9a6b88dc11988fa9fa3afe9bddd4148dfe2aa1d0e88dee0442",
+    "04.png" : "286be1b0304338ffa6324f9238bbe9798c8acf68fe67e16e5f6b91d4e0af83d1",
+    "05.png" : "806d00c43bcfb5d6ed8334da0251ef8224f09f652855e6870ce6194173c2d86e",
+    "06.png" : "a4e94bcefa15dae7642f7af1017ec84552a21e937ecab0b525bc7c9f7d1fc5ea",
+    "07.png" : "d6f74e489d431e8fafacb999e23f0de11ce91bba84cee02e886ad3ea340c0547",
+    "08.png" : "fccb9ea4c8abc1c0cf16b66cd96b21eb9643e966817b8c170f0273cfc1c962f7",
+    "09.png" : "154261a6fcf00dd4134710f25d1db4648d0d0cf5b0e8342c913c2e81c4e5c237",
+    "10.png" : "0133bdbb18a751f7d5dada2d1c5f753b7926fcf3b70ef944d44268b03c241636"
+  },
+  "version" : "1.3.0"
+}

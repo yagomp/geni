@@ -1,0 +1,3 @@
+/* App Store and system language list; permission prompts */
+"NSMicrophoneUsageDescription" = "Geni trenger mikrofonen slik at du kan lese høyt og få tilbakemelding.";
+"NSSpeechRecognitionUsageDescription" = "Geni bruker talegjenkjenning for å lytte når du leser og gi oppmuntrende tilbakemelding.";

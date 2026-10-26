@@ -5,8 +5,8 @@ nonisolated enum LocaleKey: String, Sendable {
     case appName
     case welcome
     case welcomeSubtitle
-    case letsPlay, cornersSharp, cornersRounded
-    case startMath, challengesTitle, bonusLabel, pickColor, pickShape
+    case letsPlay
+    case startMath, challengesTitle, bonusLabel
     case createMyGeni
     case createProfile
     case nickname
@@ -56,6 +56,7 @@ nonisolated enum LocaleKey: String, Sendable {
     case addProfile
     case editProfile
     case deleteProfile
+    case startOver, startOverMessage, startOverMessageLocal
     case progressMap
     case rewards
     case badges
@@ -73,7 +74,6 @@ nonisolated enum LocaleKey: String, Sendable {
     case bossChapter
     case streakBonus
     case spotlightChapter
-    case noChapterToday
     case comeBackTomorrow
     case chaptersCompleted
     case totalCorrect
@@ -123,6 +123,8 @@ nonisolated enum LocaleKey: String, Sendable {
     case falseLabel
     case whichIsBigger
     case howMany
+    case readQuestionAloud, spokenWhatIs, spokenBlank, spokenIs, spokenTrueOrFalse, spokenHowManyLeft
+    case spokenPlus, spokenMinus, spokenTimes, spokenDividedBy
     case howManyTotal
     case whichHasMore
     case matchConnectInstruction
@@ -240,7 +242,6 @@ nonisolated enum LocaleKey: String, Sendable {
     case topicLogicPatterns
     case topicProgress
     case topicLocked
-    case topicCurrent
     case speechRecognitionUnavailable
     case audioSessionError
     case audioEngineStartError
@@ -278,21 +279,26 @@ class LanguageManager {
            let lang = AppLanguage(rawValue: raw) {
             self.current = lang
         } else {
-            self.current = Self.language(for: Locale.preferredLanguages.first ?? "en")
+            self.current = Self.language(forPreferred: Locale.preferredLanguages)
         }
     }
 
     static func language(for preferred: String) -> AppLanguage {
-        if preferred.hasPrefix("nb") || preferred.hasPrefix("nn") || preferred.hasPrefix("no") {
-            return .norwegian
-        }
-        if preferred.hasPrefix("es") {
-            return .spanish
-        }
-        if preferred.hasPrefix("pt") {
-            return .portuguese
-        }
-        return .english
+        supported(preferred) ?? .english
+    }
+
+    /// The first of the iPhone's preferred languages that Geni speaks; English otherwise.
+    /// (A German phone with Norwegian second gets Norwegian, not English.)
+    static func language(forPreferred languages: [String]) -> AppLanguage {
+        languages.lazy.compactMap(supported).first ?? .english
+    }
+
+    private static func supported(_ preferred: String) -> AppLanguage? {
+        if preferred.hasPrefix("nb") || preferred.hasPrefix("nn") || preferred.hasPrefix("no") { return .norwegian }
+        if preferred.hasPrefix("es") { return .spanish }
+        if preferred.hasPrefix("pt") { return .portuguese }
+        if preferred.hasPrefix("en") { return .english }
+        return nil
     }
 }
 
@@ -313,7 +319,7 @@ nonisolated enum L {
     }
 
     private static var systemLanguage: AppLanguage {
-        LanguageManager.language(for: Locale.preferredLanguages.first ?? "en")
+        LanguageManager.language(forPreferred: Locale.preferredLanguages)
     }
 
     static var isNorwegian: Bool {
@@ -326,6 +332,16 @@ nonisolated enum L {
         case .norwegian: return "nb-NO"
         case .spanish: return "es-ES"
         case .portuguese: return "pt-PT"
+        }
+    }
+
+    /// Inline strings for self-contained features (the games in `Geni/Games`), one per app language.
+    static func t(_ en: String, no: String, es: String, pt: String) -> String {
+        switch selectedLanguage {
+        case .english: return en
+        case .norwegian: return no
+        case .spanish: return es
+        case .portuguese: return pt
         }
     }
 
@@ -359,12 +375,8 @@ nonisolated enum L {
         case .welcomeSubtitle: return "Learning is an adventure"
         case .letsPlay: return "Let\u{2019}s play"
         case .startMath: return "Start math"
-        case .pickColor: return "Pick your color"
-        case .pickShape: return "Pick your shape"
         case .challengesTitle: return "Challenges"
         case .bonusLabel: return "Bonus"
-        case .cornersSharp: return "Sharp corners"
-        case .cornersRounded: return "Rounded corners"
         case .createMyGeni: return "Create my own Geni"
         case .createProfile: return "Create Profile"
         case .nickname: return "Nickname"
@@ -391,7 +403,7 @@ nonisolated enum L {
         case .correct: return "Correct!"
         case .showAnswer: return "Show Answer"
         case .exercise: return "Exercise"
-        case .of20: return "of 20"
+        case .of20: return "of %ld"
         case .stars: return "Stars"
         case .coins: return "Coins"
         case .streak: return "Streak"
@@ -414,6 +426,9 @@ nonisolated enum L {
         case .addProfile: return "Add Profile"
         case .editProfile: return "Edit Profile"
         case .deleteProfile: return "Delete Profile"
+        case .startOver: return "Start over"
+        case .startOverMessage: return "Deletes every child and all progress, here and in iCloud."
+        case .startOverMessageLocal: return "Deletes every child and all progress."
         case .progressMap: return "Progress"
         case .rewards: return "Rewards"
         case .badges: return "Badges"
@@ -431,7 +446,6 @@ nonisolated enum L {
         case .bossChapter: return "Boss Chapter"
         case .streakBonus: return "Streak Bonus"
         case .spotlightChapter: return "Spotlight"
-        case .noChapterToday: return "All done for today!"
         case .comeBackTomorrow: return "Come back tomorrow"
         case .chaptersCompleted: return "Chapters"
         case .totalCorrect: return "Correct"
@@ -481,6 +495,16 @@ nonisolated enum L {
         case .falseLabel: return "False"
         case .whichIsBigger: return "Which is bigger?"
         case .howMany: return "How many?"
+        case .readQuestionAloud: return "Read aloud"
+        case .spokenWhatIs: return "What is %@?"
+        case .spokenBlank: return "what"
+        case .spokenIs: return "is"
+        case .spokenTrueOrFalse: return "%@. True or false?"
+        case .spokenHowManyLeft: return "How many are left?"
+        case .spokenPlus: return "plus"
+        case .spokenMinus: return "minus"
+        case .spokenTimes: return "times"
+        case .spokenDividedBy: return "divided by"
         case .howManyTotal: return "How many in total?"
         case .whichHasMore: return "Which has more?"
         case .matchConnectInstruction: return "Draw lines to match the boxes."
@@ -598,7 +622,6 @@ nonisolated enum L {
         case .topicLogicPatterns: return "Logic & Patterns"
         case .topicProgress: return "Topic Progress"
         case .topicLocked: return "Locked"
-        case .topicCurrent: return "Current"
         case .speechRecognitionUnavailable: return "Speech recognition not available"
         case .audioSessionError: return "Audio session error"
         case .audioEngineStartError: return "Could not start audio engine"
@@ -618,12 +641,8 @@ nonisolated enum L {
         case .welcomeSubtitle: return "L\u{00E6}ring er et eventyr"
         case .letsPlay: return "La oss spille"
         case .startMath: return "Start matte"
-        case .pickColor: return "Velg farge"
-        case .pickShape: return "Velg form"
         case .challengesTitle: return "Utfordringer"
         case .bonusLabel: return "Bonus"
-        case .cornersSharp: return "Skarpe hj\u{00F8}rner"
-        case .cornersRounded: return "Runde hj\u{00F8}rner"
         case .createMyGeni: return "Lag min egen Geni"
         case .createProfile: return "Lag profil"
         case .nickname: return "Kallenavn"
@@ -650,7 +669,7 @@ nonisolated enum L {
         case .correct: return "Riktig!"
         case .showAnswer: return "Vis svaret"
         case .exercise: return "Oppgave"
-        case .of20: return "av 20"
+        case .of20: return "av %ld"
         case .stars: return "Stjerner"
         case .coins: return "Mynter"
         case .streak: return "Rekke"
@@ -673,6 +692,9 @@ nonisolated enum L {
         case .addProfile: return "Legg til profil"
         case .editProfile: return "Rediger profil"
         case .deleteProfile: return "Slett profil"
+        case .startOver: return "Start p\u{00E5} nytt"
+        case .startOverMessage: return "Sletter alle barn og all fremgang, her og i iCloud."
+        case .startOverMessageLocal: return "Sletter alle barn og all fremgang."
         case .progressMap: return "Fremgang"
         case .rewards: return "Bel\u{00F8}nninger"
         case .badges: return "Merker"
@@ -690,7 +712,6 @@ nonisolated enum L {
         case .bossChapter: return "Bosskapittel"
         case .streakBonus: return "Rekkebonus"
         case .spotlightChapter: return "Fokus"
-        case .noChapterToday: return "Ferdig for i dag!"
         case .comeBackTomorrow: return "Kom tilbake i morgen"
         case .chaptersCompleted: return "Kapitler"
         case .totalCorrect: return "Riktige"
@@ -740,6 +761,16 @@ nonisolated enum L {
         case .falseLabel: return "Feil"
         case .whichIsBigger: return "Hvilken er st\u{00F8}rst?"
         case .howMany: return "Hvor mange?"
+        case .readQuestionAloud: return "Les h\u{00F8}yt"
+        case .spokenWhatIs: return "Hva er %@?"
+        case .spokenBlank: return "hva"
+        case .spokenIs: return "er"
+        case .spokenTrueOrFalse: return "%@. Riktig eller feil?"
+        case .spokenHowManyLeft: return "Hvor mange er igjen?"
+        case .spokenPlus: return "pluss"
+        case .spokenMinus: return "minus"
+        case .spokenTimes: return "ganger"
+        case .spokenDividedBy: return "delt p\u{00E5}"
         case .howManyTotal: return "Hvor mange til sammen?"
         case .whichHasMore: return "Hvilken har flest?"
         case .matchConnectInstruction: return "Tegn linjer for \u{00E5} matche boksene."
@@ -857,7 +888,6 @@ nonisolated enum L {
         case .topicLogicPatterns: return "Logikk og m\u{00F8}nstre"
         case .topicProgress: return "Temafremgang"
         case .topicLocked: return "L\u{00E5}st"
-        case .topicCurrent: return "N\u{00E5}v\u{00E6}rende"
         case .speechRecognitionUnavailable: return "Talegjenkjenning er ikke tilgjengelig"
         case .audioSessionError: return "Feil i lydsesjonen"
         case .audioEngineStartError: return "Kunne ikke starte lydmotoren"
@@ -877,12 +907,8 @@ nonisolated enum L {
         case .welcomeSubtitle: return "Aprender es una aventura"
         case .letsPlay: return "\u{00A1}A jugar!"
         case .startMath: return "Empezar mates"
-        case .pickColor: return "Elige tu color"
-        case .pickShape: return "Elige tu forma"
         case .challengesTitle: return "Desaf\u{00ED}os"
         case .bonusLabel: return "Extra"
-        case .cornersSharp: return "Esquinas rectas"
-        case .cornersRounded: return "Esquinas redondeadas"
         case .createMyGeni: return "Crear mi propio Geni"
         case .createProfile: return "Crear perfil"
         case .nickname: return "Apodo"
@@ -909,7 +935,7 @@ nonisolated enum L {
         case .correct: return "\u{00A1}Correcto!"
         case .showAnswer: return "Mostrar respuesta"
         case .exercise: return "Ejercicio"
-        case .of20: return "de 20"
+        case .of20: return "de %ld"
         case .stars: return "Estrellas"
         case .coins: return "Monedas"
         case .streak: return "Racha"
@@ -932,6 +958,9 @@ nonisolated enum L {
         case .addProfile: return "Agregar perfil"
         case .editProfile: return "Editar perfil"
         case .deleteProfile: return "Eliminar perfil"
+        case .startOver: return "Empezar de nuevo"
+        case .startOverMessage: return "Borra todos los ni\u{00F1}os y todo el progreso, aqu\u{00ED} y en iCloud."
+        case .startOverMessageLocal: return "Borra todos los ni\u{00F1}os y todo el progreso."
         case .progressMap: return "Progreso"
         case .rewards: return "Recompensas"
         case .badges: return "Insignias"
@@ -949,7 +978,6 @@ nonisolated enum L {
         case .bossChapter: return "Cap\u{00ED}tulo jefe"
         case .streakBonus: return "Bono de racha"
         case .spotlightChapter: return "Destacado"
-        case .noChapterToday: return "\u{00A1}Todo listo por hoy!"
         case .comeBackTomorrow: return "Vuelve ma\u{00F1}ana"
         case .chaptersCompleted: return "Cap\u{00ED}tulos"
         case .totalCorrect: return "Aciertos"
@@ -999,6 +1027,16 @@ nonisolated enum L {
         case .falseLabel: return "Falso"
         case .whichIsBigger: return "¿Cuál es mayor?"
         case .howMany: return "¿Cuántos hay?"
+        case .readQuestionAloud: return "Leer en voz alta"
+        case .spokenWhatIs: return "\u{00BF}Cu\u{00E1}nto es %@?"
+        case .spokenBlank: return "cu\u{00E1}nto"
+        case .spokenIs: return "es"
+        case .spokenTrueOrFalse: return "%@. \u{00BF}Verdadero o falso?"
+        case .spokenHowManyLeft: return "\u{00BF}Cu\u{00E1}ntos quedan?"
+        case .spokenPlus: return "m\u{00E1}s"
+        case .spokenMinus: return "menos"
+        case .spokenTimes: return "por"
+        case .spokenDividedBy: return "entre"
         case .howManyTotal: return "¿Cuántos hay en total?"
         case .whichHasMore: return "¿Cuál tiene más?"
         case .matchConnectInstruction: return "Dibuja líneas para unir las cajas."
@@ -1116,7 +1154,6 @@ nonisolated enum L {
         case .topicLogicPatterns: return "L\u{00F3}gica y patrones"
         case .topicProgress: return "Progreso por temas"
         case .topicLocked: return "Bloqueado"
-        case .topicCurrent: return "Actual"
         case .speechRecognitionUnavailable: return "El reconocimiento de voz no est\u{00E1} disponible"
         case .audioSessionError: return "Error de sesi\u{00F3}n de audio"
         case .audioEngineStartError: return "No se pudo iniciar el motor de audio"
@@ -1136,12 +1173,8 @@ nonisolated enum L {
         case .welcomeSubtitle: return "Aprender \u{00E9} uma aventura"
         case .letsPlay: return "Vamos jogar!"
         case .startMath: return "Come\u{00E7}ar matem\u{00E1}tica"
-        case .pickColor: return "Escolhe a tua cor"
-        case .pickShape: return "Escolhe a tua forma"
         case .challengesTitle: return "Desafios"
         case .bonusLabel: return "B\u{00F3}nus"
-        case .cornersSharp: return "Cantos retos"
-        case .cornersRounded: return "Cantos arredondados"
         case .createMyGeni: return "Criar o meu pr\u{00F3}prio Geni"
         case .createProfile: return "Criar perfil"
         case .nickname: return "Alcunha"
@@ -1168,7 +1201,7 @@ nonisolated enum L {
         case .correct: return "Correto!"
         case .showAnswer: return "Mostrar resposta"
         case .exercise: return "Exerc\u{00ED}cio"
-        case .of20: return "de 20"
+        case .of20: return "de %ld"
         case .stars: return "Estrelas"
         case .coins: return "Moedas"
         case .streak: return "Sequ\u{00EA}ncia"
@@ -1191,6 +1224,9 @@ nonisolated enum L {
         case .addProfile: return "Adicionar perfil"
         case .editProfile: return "Editar perfil"
         case .deleteProfile: return "Eliminar perfil"
+        case .startOver: return "Come\u{00E7}ar de novo"
+        case .startOverMessage: return "Apaga todas as crian\u{00E7}as e todo o progresso, aqui e no iCloud."
+        case .startOverMessageLocal: return "Apaga todas as crian\u{00E7}as e todo o progresso."
         case .progressMap: return "Progresso"
         case .rewards: return "Recompensas"
         case .badges: return "Ins\u{00ED}gnias"
@@ -1208,7 +1244,6 @@ nonisolated enum L {
         case .bossChapter: return "Cap\u{00ED}tulo chefe"
         case .streakBonus: return "B\u{00F3}nus de sequ\u{00EA}ncia"
         case .spotlightChapter: return "Destaque"
-        case .noChapterToday: return "Tudo feito por hoje!"
         case .comeBackTomorrow: return "Volta amanh\u{00E3}"
         case .chaptersCompleted: return "Cap\u{00ED}tulos"
         case .totalCorrect: return "Corretas"
@@ -1258,6 +1293,16 @@ nonisolated enum L {
         case .falseLabel: return "Falso"
         case .whichIsBigger: return "Qual \u{00E9} maior?"
         case .howMany: return "Quantos h\u{00E1}?"
+        case .readQuestionAloud: return "Ler em voz alta"
+        case .spokenWhatIs: return "Quanto \u{00E9} %@?"
+        case .spokenBlank: return "quanto"
+        case .spokenIs: return "\u{00E9}"
+        case .spokenTrueOrFalse: return "%@. Verdadeiro ou falso?"
+        case .spokenHowManyLeft: return "Quantos sobram?"
+        case .spokenPlus: return "mais"
+        case .spokenMinus: return "menos"
+        case .spokenTimes: return "vezes"
+        case .spokenDividedBy: return "a dividir por"
         case .howManyTotal: return "Quantos h\u{00E1} ao todo?"
         case .whichHasMore: return "Qual tem mais?"
         case .matchConnectInstruction: return "Desenha linhas para ligar as caixas."
@@ -1375,7 +1420,6 @@ nonisolated enum L {
         case .topicLogicPatterns: return "L\u{00F3}gica e padr\u{00F5}es"
         case .topicProgress: return "Progresso por temas"
         case .topicLocked: return "Bloqueado"
-        case .topicCurrent: return "Atual"
         case .speechRecognitionUnavailable: return "O reconhecimento de fala n\u{00E3}o est\u{00E1} dispon\u{00ED}vel"
         case .audioSessionError: return "Erro na sess\u{00E3}o de \u{00E1}udio"
         case .audioEngineStartError: return "N\u{00E3}o foi poss\u{00ED}vel iniciar o motor de \u{00E1}udio"

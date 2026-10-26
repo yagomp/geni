@@ -10,15 +10,12 @@ struct ProfileDraftTests {
 
     @Test func newDraftUsesDefaultsNotTheActiveChildsLook() {
         ThemeManager.shared.current = .blossom
-        ThemeManager.shared.cornerStyle = .rounded
         defer {
             ThemeManager.shared.current = .standard
-            ThemeManager.shared.cornerStyle = .sharp
         }
 
         let draft = ProfileDraft(existingNames: ["Ada"])
         #expect(draft.theme == .standard)
-        #expect(draft.cornerStyle == .sharp)
         #expect(draft.age == 6)
         #expect(draft.avatarId == "lion")
         #expect(draft.operations == Set(MathOperation.recommended(for: 6)))
@@ -26,13 +23,12 @@ struct ProfileDraftTests {
         #expect(!draft.isEditing)
     }
 
-    @Test func applyBuildsANewProfileFromTheDraft() {
+    @Test func applyBuildsANewProfileFromTheDraft() throws {
         let draft = ProfileDraft()
         draft.nickname = "  Bo  "
         draft.setAge(8)
         draft.selectAvatar("robot")
         draft.theme = .ocean
-        draft.cornerStyle = .rounded
         draft.toggle(.division)
 
         let profile = draft.apply()
@@ -40,20 +36,18 @@ struct ProfileDraftTests {
         #expect(profile.age == 8)
         #expect(profile.avatarId == "robot")
         #expect(profile.theme == .ocean)
-        #expect(profile.cornerStyle == .rounded)
         #expect(Set(profile.operationsEnabled) == [.addition, .subtraction, .multiplication, .division])
         #expect(profile.readingEnabled == true)
+        let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(profile)) as? [String: Any])
+        #expect(encoded["cornerStyle"] == nil)
     }
 
     @Test func savingAndCreatingDoesNotTouchTheGlobalTheme() {
         ThemeManager.shared.current = .standard
-        ThemeManager.shared.cornerStyle = .sharp
         let draft = ProfileDraft()
         draft.theme = .blossom
-        draft.cornerStyle = .rounded
         _ = draft.profile
         #expect(ThemeManager.shared.current == .standard)
-        #expect(ThemeManager.shared.cornerStyle == .sharp)
     }
 
     // MARK: - Edit
@@ -62,13 +56,11 @@ struct ProfileDraftTests {
         var bo = ChildProfile(nickname: "Bo", age: 8, avatarId: "astronaut")
         bo.operationsEnabled = [.addition, .division]
         bo.theme = .ocean
-        bo.cornerStyle = .rounded
         bo.remindersEnabled = true
 
         let draft = ProfileDraft(editing: bo, existingNames: ["Ada"])
         #expect(draft.isEditing)
         #expect(draft.operations == [.addition, .division])
-        #expect(draft.cornerStyle == .rounded)
         #expect(draft.theme == .ocean)
 
         draft.theme = .blossom
@@ -78,16 +70,6 @@ struct ProfileDraftTests {
         #expect(saved.remindersEnabled)
         #expect(Set(saved.operationsEnabled) == [.addition, .division])
         #expect(saved.theme == .blossom)
-        #expect(saved.cornerStyle == .rounded)
-    }
-
-    @Test func legacyProfileWithoutCornerStyleEditsAsSharp() {
-        let old = ChildProfile(nickname: "Cy", age: 7, avatarId: "lion")
-        #expect(old.cornerStyle == nil)
-        let draft = ProfileDraft(editing: old)
-        #expect(draft.cornerStyle == .sharp)
-        draft.cornerStyle = .rounded
-        #expect(draft.profile.cornerStyle == .rounded)
     }
 
     @Test func ageSixReadingSwitchIsSaved() {
@@ -188,11 +170,40 @@ struct ProfileDraftTests {
         #expect(draft.quickAvatars.map(\.id)[6] == "astronaut")
     }
 
-    @Test func cornerStyleRadius() {
-        #expect(CornerStyle.sharp.radius == 0)
-        #expect(CornerStyle.rounded.radius > 0)
-        let draft = ProfileDraft()
-        draft.cornerStyle = .rounded
-        #expect(draft.cornerRadius == CornerStyle.rounded.radius)
+    @Test(arguments: ["sharp", "rounded"])
+    func legacyCornerPreferenceDecodesAndIsDroppedWhenSaving(style: String) throws {
+        let json = """
+        {
+            "id": "legacy-child", "nickname": "Cy", "age": 7, "avatarId": "lion",
+            "operationsEnabled": ["addition", "subtraction"], "remindersEnabled": true,
+            "adaptiveDifficultyEnabled": false, "createdAt": 0, "theme": "ocean",
+            "cornerStyle": "\(style)"
+        }
+        """
+        let old = try JSONDecoder().decode(ChildProfile.self, from: Data(json.utf8))
+        #expect(old.id == "legacy-child")
+        #expect(old.theme == .ocean)
+        #expect(old.readingMode == .required)
+        let draft = ProfileDraft(editing: old)
+        draft.nickname = "Cya"
+        let saved = draft.profile
+        #expect(saved.id == old.id)
+        #expect(saved.createdAt == old.createdAt)
+        #expect(saved.remindersEnabled)
+        #expect(saved.nickname == "Cya")
+        #expect(saved.operationsEnabled == [.addition, .subtraction])
+        let encoded = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(saved)) as? [String: Any])
+        #expect(encoded["cornerStyle"] == nil)
     }
+
+    @Test func sharedShapesAlwaysUseRoundedRadii() {
+        #expect(GeniShape().radius == 16)
+        #expect(GeniShape(scale: 0.5).radius == 8)
+        #expect(GeniShape(radius: 24).radius == 24)
+        #expect(GameStyle.radius(expanded: false) == 24)
+        #expect(GameStyle.radius(expanded: true) == 24 * 1.3)
+        #expect(GameStyle.cellRadius(40) == 10)
+        #expect(GameStyle.cellRadius(40, 0.2) == 8)
+    }
+
 }

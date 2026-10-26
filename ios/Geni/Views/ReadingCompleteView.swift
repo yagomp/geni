@@ -83,48 +83,16 @@ private struct ReadingCompleteViewLayout: View {
                         )
                     }
                     .padding(expanded ? 32 : 20)
-                    .brutalistCard(color: GeniColor.card)
+                    .softSurface(GeniColor.card)
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : 40)
                     .animation(.spring(response: 0.5).delay(0.4), value: appeared)
 
                     if bonusAwarded {
-                        VStack(spacing: 12) {
-                            HStack(spacing: 8) {
-                                Text("✨")
-                                    .font(.title2)
-                                Text(L.s(.dailyBonusTitle))
-                                    .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
-                                    .foregroundStyle(GeniColor.border)
-                            }
-
-                            Text(L.s(.dailyBonusDesc))
-                                .font(.system(expanded ? .title3 : .subheadline, design: .rounded, weight: .medium))
-                                .foregroundStyle(.black)
-                                .multilineTextAlignment(.center)
-
-                            HStack(spacing: 16) {
-                                HStack(spacing: 4) {
-                                    Text("🪙")
-                                        .foregroundStyle(GeniColor.yellow)
-                                    Text("+\(bonusCoins)")
-                                        .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
-                                        .foregroundStyle(GeniColor.border)
-                                }
-
-                                HStack(spacing: 4) {
-                                    Text("⚡")
-                                    Text("+30 \(L.s(.xp))")
-                                        .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
-                                        .foregroundStyle(GeniColor.border)
-                                }
-                            }
-                        }
-                        .padding(expanded ? 32 : 20)
-                        .brutalistCard(color: GeniColor.card)
-                        .opacity(appeared ? 1 : 0)
-                        .offset(y: appeared ? 0 : 40)
-                        .animation(.spring(response: 0.5).delay(0.6), value: appeared)
+                        DailyBonusCard(coins: bonusCoins, playsHaptics: false)
+                            .opacity(appeared ? 1 : 0)
+                            .offset(y: appeared ? 0 : 40)
+                            .animation(.spring(response: 0.5).delay(0.6), value: appeared)
                     }
 
                     Text(L.s(.greatJob))
@@ -154,9 +122,13 @@ private struct ReadingCompleteViewLayout: View {
                 .foregroundStyle(.black)
             }
         }
+        .task {
+            do { try await Task.sleep(for: .seconds(0.5)) } catch { return }
+            HapticManager.coinRipple(count: session.coinsEarned + bonusCoins)
+        }
         .onAppear {
             appeared = true
-            HapticManager.notification(.success)
+            HapticManager.correctAnswer()
             Task {
                 try? await Task.sleep(for: .seconds(0.5))
                 showConfetti = true

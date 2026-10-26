@@ -27,17 +27,7 @@ struct ProfilePickerView: View {
                                 Text(avatar.emoji)
                                     .font(.system(size: 36))
                                     .frame(width: 80, height: 80)
-                                    .background(.white)
-                                    .clipShape(GeniShape())
-                                    .overlay(
-                                        GeniShape()
-                                            .stroke(GeniColor.border, lineWidth: 3)
-                                    )
-                                    .background(
-                                        GeniShape()
-                                            .fill(GeniColor.border)
-                                            .offset(x: 4, y: 4)
-                                    )
+                                    .softSurface(.white)
 
                                 Text(profile.nickname)
                                     .font(.system(.headline, design: .rounded, weight: .bold))
@@ -49,7 +39,7 @@ struct ProfilePickerView: View {
                             }
                             .padding(16)
                             .frame(maxWidth: .infinity)
-                            .brutalistCard(color: GeniColor.card)
+                            .softSurface(GeniColor.card)
                         }
                         .accessibilityIdentifier("picker.profile.\(profile.nickname)")
                         .opacity(appeared ? 1 : 0)
@@ -65,12 +55,7 @@ struct ProfilePickerView: View {
                             Text("➕")
                                 .font(.system(size: 36))
                                 .frame(width: 80, height: 80)
-                                .background(GeniColor.blue.soft(0.12))
-                                .clipShape(GeniShape())
-                                .overlay(
-                                    GeniShape()
-                                        .stroke(GeniColor.border, lineWidth: 3)
-                                )
+                                .softSurface(GeniColor.blue.soft(0.12))
 
                             Text(L.s(.addProfile))
                                 .font(.system(.headline, design: .rounded, weight: .bold))
@@ -81,7 +66,7 @@ struct ProfilePickerView: View {
                         }
                         .padding(16)
                         .frame(maxWidth: .infinity)
-                        .brutalistCard(color: GeniColor.card, borderWidth: 2)
+                        .softSurface(GeniColor.card)
                     }
                     .accessibilityIdentifier("picker.add")
                     .opacity(appeared ? 1 : 0)

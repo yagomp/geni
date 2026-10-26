@@ -1,25 +1,22 @@
 import SwiftUI
 
-/// Spec §0 selected state for kid tiles: tinted fill, coloured offset shadow, green ✓ dot,
-/// a small spring scale. Resting: card fill and black outline, with an optional black shadow.
+/// Calm profile tiles: soft depth at rest, then a tint, coloured outline and green ✓ dot.
 struct SelectableTile: ViewModifier {
     let isSelected: Bool
     let tint: Color
     var restingFill: Color = GeniColor.card
-    /// Defaults to `tint.soft(0.55)`; tiles whose fill is the picture (theme scenes) keep it.
+    /// Defaults to `tint.soft(0.35)`; tiles whose fill is the picture (theme scenes) keep it.
     var selectedFill: Color? = nil
     var shapeScale: CGFloat = 0.6
+    /// Retained for existing callers; every tile now uses the same subtle soft shadow.
     var restingShadow: Color = .clear
-    @Environment(\.geniCornerRadius) private var radiusOverride
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     func body(content: Content) -> some View {
-        let shape = GeniShape(scale: shapeScale, override: radiusOverride)
+        let shape = GeniShape(scale: shapeScale)
         content
-            .background(isSelected ? (selectedFill ?? tint.soft(0.55)) : restingFill)
-            .clipShape(shape)
-            .overlay(shape.stroke(GeniColor.border, lineWidth: 3))
-            .background(shape.fill(isSelected ? tint.deep() : restingShadow).offset(x: 4, y: 4))
+            .softSurface(isSelected ? (selectedFill ?? tint.soft(0.35)) : restingFill, radiusScale: shapeScale)
+            .overlay(shape.stroke(isSelected ? tint : GeniColor.hairline, lineWidth: isSelected ? 2 : 1).allowsHitTesting(false))
             .overlay(alignment: .topTrailing) {
                 if isSelected {
                     SelectionCheckDot()
@@ -27,8 +24,8 @@ struct SelectableTile: ViewModifier {
                         .transition(.scale.combined(with: .opacity))
                 }
             }
-            .scaleEffect(isSelected && !reduceMotion ? 1.06 : 1)
-            .animation(reduceMotion ? .easeInOut(duration: 0.15) : .spring(response: 0.3, dampingFraction: 0.55), value: isSelected)
+            .scaleEffect(isSelected && !reduceMotion ? 1.04 : 1)
+            .animation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8), value: isSelected)
             .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
@@ -41,7 +38,7 @@ struct SelectionCheckDot: View {
             .foregroundStyle(.white)
             .frame(width: 24, height: 24)
             .background(Circle().fill(GeniColor.green))
-            .overlay(Circle().stroke(GeniColor.border, lineWidth: 2))
+            .overlay(Circle().stroke(GeniColor.hairline, lineWidth: 1))
             .accessibilityHidden(true)
     }
 }

@@ -52,6 +52,9 @@ class PersistenceService {
     }
 
     func saveProfile(_ profile: ChildProfile) {
+        var profile = profile
+        // An explicit empty focus can sync a clear; a missing key belongs to older clients.
+        profile.focusGames = profile.focusGames ?? []
         if let index = profiles.firstIndex(where: { $0.id == profile.id }) {
             profiles[index] = profile
         } else {
@@ -75,6 +78,24 @@ class PersistenceService {
             activeProfileId = profiles.first?.id
             defaults.set(activeProfileId, forKey: activeProfileKey)
         }
+    }
+
+    /// Back to a fresh install: every child is deleted (and tombstoned, so iCloud drops them too),
+    /// onboarding starts over and the PIN is removed.
+    func resetAll(alsoDeleting otherIds: Set<String> = []) {
+        var deleted = deletedProfileIds.union(otherIds)
+        for profile in profiles {
+            removeChildData(for: profile.id)
+            deleted.insert(profile.id)
+        }
+        defaults.set(Array(deleted).sorted(), forKey: deletedProfilesKey)
+        profiles = []
+        persistProfiles()
+        activeProfileId = nil
+        defaults.removeObject(forKey: activeProfileKey)
+        hasOnboarded = false
+        defaults.set(false, forKey: hasOnboardedKey)
+        clearPin()
     }
 
     /// IDs of deleted profiles, synced so other devices drop them too.
@@ -247,7 +268,10 @@ class PersistenceService {
         // Upsert profiles, honoring deletions from either side
         for cloudProfile in cloudProfiles where !deleted.contains(cloudProfile.id) {
             if let index = profiles.firstIndex(where: { $0.id == cloudProfile.id }) {
-                profiles[index] = cloudProfile
+                var merged = cloudProfile
+                // 1.2.0 drops unknown fields when re-saving a profile.
+                merged.focusGames = cloudProfile.focusGames ?? profiles[index].focusGames
+                profiles[index] = merged
             } else {
                 profiles.append(cloudProfile)
             }
@@ -276,7 +300,11 @@ class PersistenceService {
             saveTopicProgress(loadTopicProgress(for: childId).merged(with: childTopics), for: childId)
         }
 
-        if cloudOnboarded && !hasOnboarded {
+        if profiles.isEmpty {
+            // Every child was deleted elsewhere (e.g. Start over): this device starts fresh too
+            hasOnboarded = false
+            defaults.set(false, forKey: hasOnboardedKey)
+        } else if cloudOnboarded && !hasOnboarded {
             completeOnboarding()
         }
 

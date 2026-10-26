@@ -12,7 +12,7 @@ struct BadgeProgressView: View {
                     ForEach(0..<progress.target, id: \.self) { index in
                         Circle()
                             .fill(index < progress.filled ? color : color.soft(0.18))
-                            .overlay(Circle().stroke(GeniColor.border, lineWidth: 2))
+                            .overlay(Circle().stroke(GeniColor.hairline, lineWidth: 1))
                             .frame(width: 20, height: 20)
                     }
                 }
@@ -44,6 +44,6 @@ private struct SegmentedBar: View {
             }
             .frame(height: 16)
             .clipShape(GeniShape(scale: 0.6))
-            .overlay(GeniShape(scale: 0.6).stroke(GeniColor.border, lineWidth: 2))
+            .overlay(GeniShape(scale: 0.6).stroke(GeniColor.hairline, lineWidth: 1))
     }
 }

@@ -1,0 +1,19 @@
+{
+  "version": "1.3.0",
+  "language": "en",
+  "udid": "B0B5D7B2-D70D-4621-8B4A-23A0F1E03067",
+  "capturedAt": "2026-10-26T17:48:17.899379+00:00",
+  "sha256": {
+    "onboarding1": "a73663d64f95d286b3d47060a7363cc2d45883ffa56a9b7626a64d63214fa65e",
+    "onboarding2": "88adbe08ded7fb689eb06ae6ac54b754335bb9a9c862322333d6420c7b37ff56",
+    "storeHome": "5c239443a45c207b07d5286df1f28e282cc063f006b5136e0558b067460003de",
+    "game.ordinal": "053c7b7703c283c16d181802eaf16bb1b918ac5427ccd93d9d0d7d092580932f",
+    "game.moneyShopping": "d277ab3afc7d31baa1ece4130933995bed85a568cc76b5610c653261fdf3af6d",
+    "game.codingPath": "735f508e4c98660a4a4789fd0e70991821385f6eaefca71c30100e9afc22152b",
+    "clockRead": "2a2308fc8d348c38617168157c257e3ea67d782be97ed959430ee01490d2b541",
+    "guidedReading": "1baa0abdb22ad9744cfeb7028e662fcf889ca775a7641c7f3d692fc2520b4aa3",
+    "storeRewards": "f37c9a12b4081d313683212586779ca56beb8f502ff8428a8d39d045283fc54c",
+    "game.symmetry": "fbdba70dc981935372e3a7fba6a343a3eecfec850a82ff14a01cd8de2655e02b",
+    "parentDashboard": "aab24cdd5071a5e8b6cfa41caab80589a78d2dd9cae97fce0941444f11d3fb97"
+  }
+}

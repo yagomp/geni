@@ -1,6 +1,6 @@
 import Foundation
 
-nonisolated enum ExerciseFormat: String, Codable, Sendable {
+nonisolated enum ExerciseFormat: String, Codable, CaseIterable, Sendable {
     case solveResult
     case missingNumber
     case trueFalse
@@ -22,6 +22,35 @@ nonisolated enum ExerciseFormat: String, Codable, Sendable {
     case clockRead
     case clockSet
     case clockMatch
+    /// Every picture game in `Geni/Games`; `Exercise.game` says which one.
+    case game
+}
+
+/// Constructor-specific formats prevent visual exercises from entering arithmetic initialization.
+nonisolated enum ArithmeticFormat: String, Sendable {
+    case solveResult, missingNumber, trueFalse, comparison
+
+    var exerciseFormat: ExerciseFormat {
+        switch self {
+        case .solveResult: .solveResult
+        case .missingNumber: .missingNumber
+        case .trueFalse: .trueFalse
+        case .comparison: .comparison
+        }
+    }
+}
+
+nonisolated enum EmojiFormat: String, Sendable {
+    case countingObjects, visualAddition, compareGroups, tenFrame
+
+    var exerciseFormat: ExerciseFormat {
+        switch self {
+        case .countingObjects: .countingObjects
+        case .visualAddition: .visualAddition
+        case .compareGroups: .compareGroups
+        case .tenFrame: .tenFrame
+        }
+    }
 }
 
 nonisolated struct Exercise: Identifiable, Sendable {
@@ -54,14 +83,15 @@ nonisolated struct Exercise: Identifiable, Sendable {
     let divisionRemainder: Int?
     private(set) var clockTimes: [ClockTime]? = nil
     private(set) var clockMinuteStep: Int = 1
+    private(set) var game: GameSpec? = nil
 
-    init(operand1: Int, operand2: Int, operation: MathOperation, difficulty: ExerciseDifficulty, format: ExerciseFormat = .solveResult) {
+    init(operand1: Int, operand2: Int, operation: MathOperation, difficulty: ExerciseDifficulty, format: ArithmeticFormat = .solveResult) {
         self.id = UUID().uuidString
         self.operand1 = operand1
         self.operand2 = operand2
         self.operation = operation
         self.difficulty = difficulty
-        self.format = format
+        self.format = format.exerciseFormat
 
         let answer: Int
         switch operation {
@@ -165,18 +195,13 @@ nonisolated struct Exercise: Identifiable, Sendable {
             } else {
                 self.options = [1, 0]
             }
-
-        case .countingObjects, .visualAddition, .compareGroups, .tenFrame,
-             .matchConnect, .numberBonds, .diceAddition, .evenOddSort, .visualSubtraction,
-             .multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision,
-             .clockRead, .clockSet, .clockMatch:
-            fatalError("Use the appropriate init for visual exercise types")
         }
     }
 
-    init(emojiFormat: ExerciseFormat, emojiSymbol: String, count: Int, count2: Int = 0, emojiRight: String? = nil, difficulty: ExerciseDifficulty) {
+    /// `maxOption` keeps every answer choice at or below it (age 4 never sees numbers above 6).
+    init(emojiFormat: EmojiFormat, emojiSymbol: String, count: Int, count2: Int = 0, emojiRight: String? = nil, difficulty: ExerciseDifficulty, maxOption: Int? = nil) {
         self.id = UUID().uuidString
-        self.format = emojiFormat
+        self.format = emojiFormat.exerciseFormat
         self.difficulty = difficulty
         self.operation = .addition
         self.operand1 = count
@@ -202,46 +227,35 @@ nonisolated struct Exercise: Identifiable, Sendable {
         switch emojiFormat {
         case .countingObjects, .tenFrame:
             self.correctAnswer = count
-            var opts = Set<Int>()
-            opts.insert(count)
-            var attempts = 0
-            while opts.count < 4 && attempts < 50 {
-                attempts += 1
-                let offset = Int.random(in: 1...3) * (Bool.random() ? 1 : -1)
-                let wrong = count + offset
-                if wrong >= 1 && wrong != count {
-                    opts.insert(wrong)
-                }
-            }
-            var fallback = count + 3
-            while opts.count < 4 { opts.insert(fallback); fallback += 1 }
-            self.options = Array(opts).shuffled()
+            self.options = Self.nearbyOptions(around: count, max: maxOption)
 
         case .visualAddition:
             let total = count + count2
             self.correctAnswer = total
-            var opts = Set<Int>()
-            opts.insert(total)
-            var attempts = 0
-            while opts.count < 4 && attempts < 50 {
-                attempts += 1
-                let offset = Int.random(in: 1...3) * (Bool.random() ? 1 : -1)
-                let wrong = total + offset
-                if wrong >= 1 && wrong != total {
-                    opts.insert(wrong)
-                }
-            }
-            var fallback = total + 3
-            while opts.count < 4 { opts.insert(fallback); fallback += 1 }
-            self.options = Array(opts).shuffled()
+            self.options = Self.nearbyOptions(around: total, max: maxOption)
 
         case .compareGroups:
             self.correctAnswer = count > count2 ? 0 : 1
             self.options = count > count2 ? [0, 1] : [1, 0]
 
-        default:
-            fatalError("Use init(operand1:) for non-emoji exercise types")
         }
+    }
+
+    /// The answer plus three wrong choices within 3 of it, all at least 1 (and at most `max`).
+    private static func nearbyOptions(around answer: Int, max upper: Int?) -> [Int] {
+        let upper = upper ?? Int.max
+        var opts: Set<Int> = [answer]
+        var attempts = 0
+        while opts.count < 4 && attempts < 50 {
+            attempts += 1
+            let wrong = answer + Int.random(in: 1...3) * (Bool.random() ? 1 : -1)
+            if wrong >= 1 && wrong <= upper {
+                opts.insert(wrong)
+            }
+        }
+        var fallback = upper == Int.max ? answer + 3 : 1
+        while opts.count < 4 && fallback <= upper { opts.insert(fallback); fallback += 1 }
+        return Array(opts).shuffled()
     }
 
     // MARK: - Match Connect init
@@ -410,17 +424,28 @@ nonisolated struct Exercise: Identifiable, Sendable {
         self.divisionRemainder = remainder
     }
 
+    /// A picture game. `correctAnswer` is the value the right tap submits (`answer.<value>`);
+    /// `options` lists the tappable values when the game has fixed choices.
+    init(game: GameSpec, correctAnswer: Int, options: [Int] = [], difficulty: ExerciseDifficulty,
+         operation: MathOperation = .addition) {
+        self.init(olderFormat: .game, answer: correctAnswer, options: options, difficulty: difficulty, operation: operation)
+        self.game = game
+    }
+
     // Clock answers use minutes since 12:00 (0..<720), never locale-dependent strings.
     init(clockFormat: ExerciseFormat, times: [ClockTime], minuteStep: Int, difficulty: ExerciseDifficulty) {
-        precondition(!times.isEmpty && clockFormat.isClock)
+        guard let firstTime = times.first, clockFormat.isClock else {
+            self.init(operand1: 1, operand2: 1, operation: .addition, difficulty: difficulty)
+            return
+        }
         if clockFormat == .clockMatch {
             let right = times.shuffled()
             self.init(matchLeft: times.map(\.digital), matchRight: right.map(\.digital),
                       correctIndices: times.map { right.firstIndex(of: $0)! }, difficulty: difficulty,
                       format: .clockMatch, options: right.map(\.totalMinutes))
         } else {
-            self.init(olderFormat: clockFormat, answer: times[0].totalMinutes,
-                      options: ClockRules.options(for: times[0], step: minuteStep), difficulty: difficulty)
+            self.init(olderFormat: clockFormat, answer: firstTime.totalMinutes,
+                      options: ClockRules.options(for: firstTime, step: minuteStep), difficulty: difficulty)
         }
         self.clockTimes = times
         self.clockMinuteStep = minuteStep
@@ -428,6 +453,8 @@ nonisolated struct Exercise: Identifiable, Sendable {
 
     var prompt: String {
         switch format {
+        case .game:
+            return game?.prompt ?? ""
         case .clockRead:
             return "\(L.s(.clockRead)) \(clockTimes?.first?.digital ?? "")"
         case .clockSet:
@@ -577,6 +604,8 @@ nonisolated struct ExerciseResult: Codable, Identifiable, Sendable {
     let chapterId: String
     let prompt: String
     let operationType: MathOperation
+    /// Nil for arithmetic and results saved before picture games recorded their origin.
+    let gameKind: String?
     let difficulty: ExerciseDifficulty
     var firstAttemptCorrect: Bool
     var secondAttemptCorrect: Bool?
@@ -588,6 +617,7 @@ nonisolated struct ExerciseResult: Codable, Identifiable, Sendable {
         self.chapterId = chapterId
         self.prompt = exercise.prompt
         self.operationType = exercise.operation
+        self.gameKind = exercise.game?.kind.rawValue
         self.difficulty = exercise.difficulty
         self.firstAttemptCorrect = firstCorrect
         self.secondAttemptCorrect = secondCorrect

@@ -1,15 +1,12 @@
 import SwiftUI
 
 private extension View {
-    /// Popup card: 4pt outline, 6pt offset shadow, shape follows the profile's corner style.
+    /// Soft popup surface with the shared rounded shape.
     func popupCard(expanded: Bool) -> some View {
         self
             .padding(expanded ? 40 : 24)
             .frame(maxWidth: expanded ? 560 : 320)
-            .background(GeniColor.card)
-            .clipShape(GeniShape())
-            .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 4))
-            .background(GeniShape().fill(GeniColor.border).offset(x: 6, y: 6))
+            .softSurface(GeniColor.card)
             .compositingGroup()
     }
 
@@ -112,12 +109,12 @@ struct BadgeUnlockOverlay: View {
                         if useFireworks {
                             Circle()
                                 .fill(p.color)
-                                .overlay(Circle().stroke(GeniColor.border, lineWidth: 1.5))
+                                .overlay(Circle().stroke(GeniColor.hairline, lineWidth: 1))
                                 .frame(width: p.size, height: p.size)
                         } else {
                             GeniShape(scale: 0.2)
                                 .fill(p.color)
-                                .overlay(GeniShape(scale: 0.2).stroke(GeniColor.border, lineWidth: 1.5))
+                                .overlay(GeniShape(scale: 0.2).stroke(GeniColor.hairline, lineWidth: 1))
                                 .frame(width: p.size * 0.6, height: p.size * 1.4)
                                 .rotationEffect(.degrees(p.rotation))
                         }

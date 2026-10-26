@@ -4,11 +4,12 @@ struct ChapterCompleteView: View {
     let chapter: ChapterProgress
     let rewards: RewardState
     let xpEarned: Int
+    var bonusCoins = 0
     let onContinue: () -> Void
 
     var body: some View {
         GeniLearningLayout {
-            ChapterCompleteViewLayout(chapter: chapter, rewards: rewards, xpEarned: xpEarned, onContinue: onContinue)
+            ChapterCompleteViewLayout(chapter: chapter, rewards: rewards, xpEarned: xpEarned, bonusCoins: bonusCoins, onContinue: onContinue)
         }
     }
 }
@@ -18,6 +19,7 @@ private struct ChapterCompleteViewLayout: View {
     let chapter: ChapterProgress
     let rewards: RewardState
     let xpEarned: Int
+    let bonusCoins: Int
     let onContinue: () -> Void
 
     @State private var appeared = false
@@ -86,10 +88,17 @@ private struct ChapterCompleteViewLayout: View {
                         )
                     }
                     .padding(expanded ? 32 : 20)
-                    .brutalistCard(color: GeniColor.card)
+                    .softSurface(GeniColor.card)
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : 40)
                     .animation(.spring(response: 0.5).delay(0.5), value: appeared)
+
+                    if bonusCoins > 0 {
+                        DailyBonusCard(coins: bonusCoins, playsHaptics: false)
+                            .opacity(appeared ? 1 : 0)
+                            .offset(y: appeared ? 0 : 40)
+                            .animation(.spring(response: 0.5).delay(0.6), value: appeared)
+                    }
 
                     Text(L.s(.greatJob))
                         .font(.system(expanded ? .title : .title3, design: .rounded, weight: .bold))
@@ -118,9 +127,13 @@ private struct ChapterCompleteViewLayout: View {
                 .foregroundStyle(.black)
             }
         }
+        .task {
+            do { try await Task.sleep(for: .seconds(0.5)) } catch { return }
+            HapticManager.coinRipple(count: chapter.coinsEarned + bonusCoins)
+        }
         .onAppear {
             appeared = true
-            HapticManager.notification(.success)
+            HapticManager.correctAnswer()
             Task {
                 try? await Task.sleep(for: .seconds(0.5))
                 starsBounce += 1

@@ -34,9 +34,7 @@ private struct ReadingModeSelectionViewLayout: View {
                     } label: {
                         Text("◀️").font(.system(size: expanded ? 30 : 20))
                             .frame(width: expanded ? 64 : 44, height: expanded ? 64 : 44)
-                            .background(GeniColor.card)
-                            .clipShape(GeniShape())
-                            .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                            .softSurface(GeniColor.card)
                     }
                     .accessibilityIdentifier("readingMode.back")
                     Spacer()
@@ -64,9 +62,7 @@ private struct ReadingModeSelectionViewLayout: View {
                         .foregroundStyle(GeniColor.border)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(GeniColor.green.soft(0.2))
-                        .clipShape(GeniShape())
-                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 2))
+                        .softSurface(GeniColor.green.soft(0.2))
                 }
                 .opacity(appeared ? 1 : 0)
                 .scaleEffect(appeared ? 1 : 0.8)
@@ -130,9 +126,7 @@ struct ReadingModeButton: View {
                 Text(icon)
                     .font(expanded ? .largeTitle : .title2)
                     .frame(width: expanded ? 80 : 48, height: expanded ? 80 : 48)
-                    .background(color)
-                    .clipShape(GeniShape())
-                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 2))
+                    .softSurface(color)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title)
@@ -151,7 +145,7 @@ struct ReadingModeButton: View {
                 Text("▶️").font(.system(size: 16))
             }
             .padding(expanded ? 28 : 16)
-            .brutalistCard(color: GeniColor.card)
+            .softSurface(GeniColor.card)
         }
         .accessibilityIdentifier(identifier ?? "")
     }

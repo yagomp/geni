@@ -12,8 +12,8 @@ struct BadgeMedallion: View {
             if earned {
                 Circle()
                     .fill(badge.color.soft(0.5))
-                    .overlay(Circle().stroke(GeniColor.border, lineWidth: 3))
-                    .background(Circle().fill(badge.color.deep()).offset(x: 4, y: 4))
+                    .overlay(Circle().stroke(GeniColor.hairline, lineWidth: 1))
+                    .shadow(color: GeniColor.border.opacity(0.08), radius: 10, x: 0, y: 4)
             } else {
                 Circle()
                     .fill(badge.color.soft(0.18))

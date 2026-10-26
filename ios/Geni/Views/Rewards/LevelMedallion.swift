@@ -17,8 +17,8 @@ struct LevelMedallion: View {
         }
         .frame(width: size, height: size)
         .background(GeniColor.yellow, in: Circle())
-        .overlay(Circle().stroke(GeniColor.border, lineWidth: 3))
-        .background(Circle().fill(GeniColor.yellow.deep()).offset(x: 4, y: 4))
+        .overlay(Circle().stroke(GeniColor.hairline, lineWidth: 1))
+        .shadow(color: GeniColor.border.opacity(0.08), radius: 10, x: 0, y: 4)
         .compositingGroup()
         .accessibilityHidden(true)
     }

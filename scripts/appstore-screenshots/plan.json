@@ -1,20 +1,22 @@
 {
   "appId": "6761134405",
-  "version": "1.2.0",
-  "versionId": "1aedb79e-6564-4516-94c9-672925e46d1a",
+  "version": "1.3.0",
+  "versionId": null,
   "bundleId": "com.yagomp.geni",
   "languages": {
     "en": {
       "ascLocale": "en-US",
       "appLanguage": "english",
       "appleLanguage": "en",
-      "appleLocale": "en_US"
+      "appleLocale": "en_US",
+      "storeRegion": "US"
     },
     "no": {
       "ascLocale": "no",
       "appLanguage": "norwegian",
       "appleLanguage": "nb",
-      "appleLocale": "nb_NO"
+      "appleLocale": "nb_NO",
+      "storeRegion": "NO"
     }
   },
   "shots": [
@@ -27,58 +29,63 @@
       "captions": {
         "en": "Made for your child",
         "no": "Laget for ditt barn"
-      }
+      },
+      "previewAge": 7
     },
     {
       "id": "02",
       "screens": [
-        "onboarding3"
+        "storeHome"
       ],
       "captions": {
-        "en": "Their colors, their style",
-        "no": "Dine farger, din stil"
-      }
+        "en": "Math and reading every day",
+        "no": "Matte og lesing hver dag"
+      },
+      "previewAge": 6
     },
     {
       "id": "03",
       "screens": [
-        "storeHome"
+        "game.ordinal"
       ],
       "captions": {
-        "en": "Daily missions motivate",
-        "no": "Daglige oppdrag motiverer"
-      }
+        "en": "Learning starts at 4",
+        "no": "Læring fra 4 år"
+      },
+      "previewAge": 4
     },
     {
       "id": "04",
       "screens": [
-        "storeExercise"
+        "game.moneyShopping"
       ],
       "captions": {
-        "en": "Learn by playing",
-        "no": "Lær gjennom lek"
-      }
+        "en": "Learn about money",
+        "no": "Lær om penger"
+      },
+      "previewAge": 7
     },
     {
       "id": "05",
       "screens": [
-        "clockRead",
-        "clockSet"
+        "game.codingPath"
       ],
       "captions": {
-        "en": "Learn to tell time",
-        "no": "Lær klokka"
-      }
+        "en": "Code with the robot",
+        "no": "Kod med roboten"
+      },
+      "previewAge": 7
     },
     {
       "id": "06",
       "screens": [
-        "storeMatch"
+        "clockRead"
       ],
       "captions": {
-        "en": "Make the connection",
-        "no": "Finn parene"
-      }
+        "en": "Learn to tell time",
+        "no": "Lær klokka"
+      },
+      "previewAge": 7
     },
     {
       "id": "07",
@@ -88,7 +95,8 @@
       "captions": {
         "en": "Read with guidance",
         "no": "Les med veiledning"
-      }
+      },
+      "previewAge": 7
     },
     {
       "id": "08",
@@ -98,17 +106,19 @@
       "captions": {
         "en": "Earn rewards",
         "no": "Tjen belønninger"
-      }
+      },
+      "previewAge": 7
     },
     {
       "id": "09",
       "screens": [
-        "storeBadge"
+        "game.symmetry"
       ],
       "captions": {
-        "en": "Celebrate progress",
-        "no": "Feire fremgang"
-      }
+        "en": "Think like a mathematician",
+        "no": "Tenk som en matematiker"
+      },
+      "previewAge": 8
     },
     {
       "id": "10",
@@ -118,7 +128,8 @@
       "captions": {
         "en": "Built for parents",
         "no": "Laget for foreldre"
-      }
+      },
+      "previewAge": 7
     }
   ],
   "simulators": {

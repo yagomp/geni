@@ -118,11 +118,6 @@ nonisolated struct TopicProgress: Codable, Sendable {
     }
 }
 
-nonisolated enum CornerStyle: String, Codable, Sendable, CaseIterable, Hashable {
-    case sharp
-    case rounded
-}
-
 nonisolated enum AppTheme: String, Codable, Sendable, CaseIterable, Hashable {
     case standard
     case ocean
@@ -141,8 +136,8 @@ nonisolated struct ChildProfile: Codable, Identifiable, Sendable, Hashable {
     var theme: AppTheme
     /// Parent switch for the optional reading at age 6. Absent in older saved data, which means on.
     var readingEnabled: Bool?
-    /// Card and button corners. Absent in older saved data, which means sharp.
-    var cornerStyle: CornerStyle?
+    /// Parent-picked "what school is working on now": `GameKind` raw values favoured in daily chapters.
+    var focusGames: [String]?
 
     init(nickname: String, age: Int, avatarId: String) {
         self.id = UUID().uuidString
@@ -159,6 +154,12 @@ nonisolated struct ChildProfile: Codable, Identifiable, Sendable, Hashable {
     var ageGroup: AgeGroup {
         AgeGroup.from(age: age)
     }
+
+    /// Exercises in a daily chapter: ages 4–5 get a short set, everyone else 20.
+    var dailyExerciseCount: Int { age <= 5 ? 10 : 20 }
+
+    /// Age 4 plays the same picture chapter whatever the operation, so spotlights would only repeat it.
+    var showsOperationSpotlights: Bool { age > 4 }
 
     var readingMode: ReadingRequirement {
         switch age {

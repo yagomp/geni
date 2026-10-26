@@ -9,10 +9,9 @@ struct ProfileNameField: View {
     @Bindable var draft: ProfileDraft
     var height: CGFloat = 64
     var onSubmit: () -> Void = {}
-    @Environment(\.geniCornerRadius) private var radiusOverride
 
     var body: some View {
-        let shape = GeniShape(scale: 0.6, override: radiusOverride)
+        let shape = GeniShape(scale: 0.6)
         TextField(L.s(.nicknamePlaceholder), text: $draft.nickname)
             .font(.system(expanded ? .largeTitle : .title3, design: .rounded, weight: .bold))
             .foregroundStyle(.black)
@@ -20,8 +19,8 @@ struct ProfileNameField: View {
             .frame(maxWidth: .infinity, minHeight: height)
             .background(GeniColor.card)
             .clipShape(shape)
-            .overlay(shape.stroke(draft.isDuplicate ? GeniColor.pinkDeep : GeniColor.border, lineWidth: 3))
-            .background(shape.fill(draft.isDuplicate ? GeniColor.pinkDeep : GeniColor.border).offset(x: 4, y: 4))
+            .overlay(shape.stroke(draft.isDuplicate ? GeniColor.pink : GeniColor.hairline, lineWidth: draft.isDuplicate ? 2 : 1))
+            .shadow(color: GeniColor.border.opacity(0.08), radius: 10, x: 0, y: 4)
             .autocorrectionDisabled()
             .textInputAutocapitalization(.words)
             .submitLabel(.next)
@@ -46,14 +45,14 @@ struct ProfileNameMessage: View {
     }
 }
 
-/// Ages 5–10 in one row of 64pt chips.
+/// Ages 4–10 in one row of 64pt-tall chips; 6pt gaps keep "10" whole on a 375pt phone.
 struct AgeChips: View {
     @Environment(\.geniExpandedLayout) private var expanded
     let draft: ProfileDraft
     var height: CGFloat = 64
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             ForEach(Array(ProfileDraft.ages), id: \.self) { age in
                 Button {
                     HapticManager.selection()
@@ -61,6 +60,8 @@ struct AgeChips: View {
                 } label: {
                     Text("\(age)")
                         .font(.system(size: expanded ? 40 : 28, weight: .black, design: .rounded))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                         .foregroundStyle(GeniColor.border)
                         .frame(maxWidth: .infinity)
                         .frame(height: height)
@@ -100,56 +101,10 @@ struct ThemeTiles: View {
                 .accessibilityIdentifier("profile.theme.\(theme.rawValue)")
             }
         }
-        // Reserve the selected tile's 1.06 scale, check dot and offset shadow on both sides.
+        // Reserve the selected tile's scale, check dot and soft shadow on both sides.
         .frame(maxWidth: expanded ? 760 : 420)
         .padding(16)
         .frame(maxWidth: .infinity)
-    }
-}
-
-/// Each tile is the corner sample, with the same selection treatment as the colour row.
-struct CornerStyleTiles: View {
-    @Environment(\.geniExpandedLayout) private var expanded
-    let draft: ProfileDraft
-    var height: CGFloat = 96
-
-    var body: some View {
-        HStack(spacing: 12) {
-            ForEach(CornerStyle.allCases, id: \.rawValue) { style in
-                Button {
-                    HapticManager.selection()
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { draft.cornerStyle = style }
-                } label: {
-                    CornerSample(height: height, radius: style == .rounded ? (expanded ? 28 : 16) : 0,
-                                 isSelected: draft.cornerStyle == style,
-                                 tint: draft.theme.previewSwatch)
-                }
-                .buttonStyle(KidPressStyle())
-                .accessibilityLabel(L.s(style == .rounded ? .cornersRounded : .cornersSharp))
-                .accessibilityAddTraits(draft.cornerStyle == style ? .isSelected : [])
-                .accessibilityIdentifier("profile.corners.\(style.rawValue)")
-            }
-        }
-        .frame(maxWidth: expanded ? 760 : 420)
-        .padding(16)
-        .frame(maxWidth: .infinity)
-    }
-}
-
-private struct CornerSample: View {
-    var height: CGFloat = 96
-    let radius: CGFloat
-    let isSelected: Bool
-    let tint: Color
-
-    var body: some View {
-        Color.clear
-            .frame(maxWidth: .infinity)
-            .frame(height: height)
-            .selectableTile(isSelected: isSelected, tint: tint,
-                            restingFill: GeniColor.card, selectedFill: GeniColor.card, shapeScale: 1,
-                            restingShadow: GeniColor.border)
-            .environment(\.geniCornerRadius, radius)
     }
 }
 
@@ -201,10 +156,9 @@ private extension MathOperation {
 /// The age-6 optional reading switch.
 struct ReadingRow: View {
     @Bindable var draft: ProfileDraft
-    @Environment(\.geniCornerRadius) private var radiusOverride
 
     var body: some View {
-        let shape = GeniShape(scale: 0.6, override: radiusOverride)
+        let shape = GeniShape(scale: 0.6)
         Toggle(isOn: $draft.readingEnabled) {
             Text("📖 \(L.s(.readingProgress))")
                 .font(.system(.headline, design: .rounded, weight: .bold))
@@ -215,7 +169,7 @@ struct ReadingRow: View {
         .frame(minHeight: 64)
         .background(GeniColor.card)
         .clipShape(shape)
-        .overlay(shape.stroke(GeniColor.border, lineWidth: 3))
+        .overlay(shape.stroke(GeniColor.hairline, lineWidth: 1))
         .accessibilityIdentifier("profile.readingEnabled")
     }
 }

@@ -4,7 +4,6 @@ struct RewardsView: View {
     let viewModel: AppViewModel
     @Environment(\.dismiss) private var dismiss
     @State private var detailBadge: Badge?
-    @State private var showAvatarChooser = false
 
     private var rewards: RewardState { viewModel.rewardState }
     private var profile: ChildProfile? { viewModel.persistence.activeProfile }
@@ -23,9 +22,6 @@ struct RewardsView: View {
         .buttonStyle(KidPressStyle())
         .sheet(item: $detailBadge) { badge in
             BadgeDetailSheet(badge: badge, rewards: rewards)
-        }
-        .sheet(isPresented: $showAvatarChooser) {
-            AvatarChooserSheet(viewModel: viewModel)
         }
     }
 
@@ -77,7 +73,7 @@ struct RewardsView: View {
     private func heroCard(expanded: Bool) -> some View {
         VStack(spacing: expanded ? 24 : 16) {
             HStack(spacing: 24) {
-                avatarButton(expanded: expanded)
+                avatar(expanded: expanded)
                 LevelMedallion(level: rewards.level, size: expanded ? 124 : 88)
             }
 
@@ -86,49 +82,37 @@ struct RewardsView: View {
                 .accessibilityLabel("\(L.s(.level)) \(rewards.level)")
                 .accessibilityValue("\(rewards.xp) / \(rewards.xpForNextLevel) \(L.s(.xp))")
 
-            HStack(spacing: 32) {
+            HStack(spacing: expanded ? 32 : 16) {
                 stat(value: rewards.coins, label: L.s(.coins)) { CoinIcon(size: expanded ? 44 : 34) }
                 stat(value: rewards.streakCount, label: L.s(.streak)) {
                     Text("🔥").font(.system(size: expanded ? 44 : 34))
+                }
+                if rewards.isStreakFreezeAvailable() {
+                    stat(value: 1, label: L.t(
+                        "Streak freeze: one missed day this week won't break your streak",
+                        no: "Rekkefrys: én dag uten øving denne uken bryter ikke rekken din",
+                        es: "Protección de racha: faltar un día esta semana no romperá tu racha",
+                        pt: "Proteção de sequência: faltar um dia nesta semana não quebra a tua sequência"
+                    )) {
+                        Text("🧊").font(.system(size: expanded ? 44 : 34))
+                    }
                 }
             }
         }
         .padding(expanded ? 24 : 16)
         .frame(maxWidth: .infinity)
-        .background(GeniColor.card)
-        .clipShape(GeniShape())
-        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 4))
-        .background(GeniShape().fill(GeniColor.border).offset(x: 6, y: 6))
+        .softSurface(GeniColor.card)
         .compositingGroup()
     }
 
-    private func avatarButton(expanded: Bool) -> some View {
+    private func avatar(expanded: Bool) -> some View {
         let avatar = AvatarOption.find(profile?.avatarId ?? "lion")
-        return Button {
-            HapticManager.selection()
-            showAvatarChooser = true
-        } label: {
-            Text(avatar.emoji)
-                .font(.system(size: expanded ? 76 : 52))
-                .frame(width: expanded ? 124 : 88, height: expanded ? 124 : 88)
-                .background(GeniColor.background)
-                .clipShape(GeniShape())
-                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
-                .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
-                .overlay(alignment: .bottomTrailing) {
-                    Image(systemName: "pencil")
-                        .font(.system(size: 14, weight: .black))
-                        .foregroundStyle(GeniColor.border)
-                        .frame(width: 32, height: 32)
-                        .background(GeniColor.card, in: Circle())
-                        .overlay(Circle().stroke(GeniColor.border, lineWidth: 2))
-                        .offset(x: 8, y: 8)
-                }
-                .compositingGroup()
-        }
-        .buttonStyle(KidPressStyle())
-        .accessibilityLabel(L.s(.chooseAvatar))
-        .accessibilityIdentifier("rewards.avatar")
+        return Text(avatar.emoji)
+            // Straight on the card like the home pictures: no tile behind the avatar
+            .font(.system(size: expanded ? 104 : 72))
+            .shadow(color: GeniColor.border.opacity(0.15), radius: 6, x: 0, y: 4)
+            .frame(width: expanded ? 124 : 88, height: expanded ? 124 : 88)
+            .accessibilityHidden(true)
     }
 
     private func stat<Icon: View>(value: Int, label: String, @ViewBuilder icon: () -> Icon) -> some View {
@@ -137,9 +121,12 @@ struct RewardsView: View {
             Text("\(value)")
                 .font(.system(size: 34, weight: .black, design: .rounded))
                 .foregroundStyle(GeniColor.border)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
                 .contentTransition(.numericText())
                 .animation(.spring(response: 0.4), value: value)
         }
+        .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(label)
         .accessibilityValue("\(value)")

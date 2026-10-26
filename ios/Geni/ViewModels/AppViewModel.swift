@@ -70,14 +70,19 @@ class AppViewModel {
 
     func applyExternalCloudChange() {
         cloudSync.pullFromCloud(persistence: persistence, force: true)
+        // A device that hadn't seen our deletions yet may have written the children back; re-assert them
+        if cloudSync.isMissingLocalDeletions(persistence: persistence) {
+            cloudSync.pushToCloud(persistence: persistence)
+        }
         reloadActiveProfile()
     }
 
     /// Re-reads the active child's cached state after storage changed underneath it.
     private func reloadActiveProfile() {
         guard let profile = persistence.activeProfile else {
-            // The active child was removed, e.g. deleted on another device
-            if persistence.hasOnboarded { determineInitialScreen() }
+            // The active child was removed, e.g. deleted on another device. A parent already
+            // on Welcome or in the first profile form stays there.
+            if currentScreen != .welcome && currentScreen != .onboarding { determineInitialScreen() }
             return
         }
         loadRewards(for: profile.id)
@@ -143,6 +148,18 @@ class AppViewModel {
         cloudSync.pushToCloud(persistence: persistence)
     }
 
+    /// "Start over" from the parent area: wipes every child here and in iCloud and returns to welcome.
+    func resetApp() {
+        // Children another device added that this one hasn't pulled yet go too
+        persistence.resetAll(alsoDeleting: cloudSync.remoteProfileIds())
+        notificationService.disableReminders()
+        cloudSync.pushToCloud(persistence: persistence)
+        rewardState = RewardState()
+        ThemeManager.shared.current = .standard
+        showParentSettings = false
+        currentScreen = .welcome
+    }
+
     func startChapter(type: ChapterType = .daily, spotlightOp: MathOperation? = nil) {
         guard let profile = persistence.activeProfile else { return }
         let today = persistence.todayString()
@@ -168,7 +185,7 @@ class AppViewModel {
                 )
                 // Every answer was saved before the app left; finish instead of resuming
                 if startIndex >= exercises.count {
-                    completeChapter(existing)
+                    completeChapter(chapterViewModel?.chapter ?? existing)
                     return
                 }
             } else if persistence.todayChapter(for: profile.id) == nil {
@@ -245,10 +262,17 @@ class AppViewModel {
                 rewardState.dailyCompletedAt = Date()
             }
         }
+        // Reading came first today: the both-done bonus lands with math and Chapter Complete shows it
+        let readingCameFirst = final.chapterType == .daily && rewardState.todayReadingCompleted
+            && rewardState.lastReadingDate == persistence.todayString()
+        if readingCameFirst {
+            rewardState.coins += 15
+            rewardState.addXP(30)
+        }
 
         var xpGain = 100
         if final.stars >= 4 { xpGain += 50 }
-        if final.firstTryCount >= 15 { xpGain += 20 }
+        if final.isFastSolve { xpGain += 20 }
         if final.chapterType != .daily { xpGain += 50 }
         rewardState.addXP(xpGain)
         rewardState.updateStreak(for: persistence.todayString())
@@ -264,6 +288,7 @@ class AppViewModel {
 
         chapterViewModel?.completedChapter = final
         chapterViewModel?.xpEarned = xpGain
+        chapterViewModel?.bonusCoins = readingCameFirst ? 15 : 0
 
         if rewardState.level > previousLevel {
             levelUpLevel = rewardState.level
@@ -599,8 +624,8 @@ class AppViewModel {
         if rewardState.totalChaptersCompleted >= 10 { tryAdd("chapters_10") }
         if rewardState.totalCorrectAnswers >= 100 { tryAdd("correct_100") }
         if chapter.stars == 5 { tryAdd("perfect_chapter") }
-        if chapter.firstTryCount >= 15 { tryAdd("fast_solver") }
-        if chapter.exerciseResults.contains(where: { $0.operationType == .multiplication && $0.wasCorrect }) {
+        if chapter.isFastSolve { tryAdd("fast_solver") }
+        if chapter.exerciseResults.contains(where: { $0.gameKind == nil && $0.operationType == .multiplication && $0.wasCorrect }) {
             tryAdd("mul_master")
         }
 

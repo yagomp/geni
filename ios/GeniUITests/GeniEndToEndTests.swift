@@ -104,7 +104,7 @@ final class GeniEndToEndTests: XCTestCase {
 
     // MARK: Profile form
 
-    /// Creation is three steps (avatar → name + age → colours + corners); editing is one scrolling form.
+    /// Creation is three steps (avatar → name + age → colours); editing is one scrolling form.
     /// `ops` only applies to the edit form; creation keeps the age's recommended operations.
     private func fillProfileForm(name: String? = nil, age: Int? = nil, avatar: String? = nil,
                                  theme: String? = nil, ops: Set<String>? = nil) {
@@ -379,7 +379,7 @@ final class GeniEndToEndTests: XCTestCase {
 
     /// Starts today's chapter from home and plays it through to the first completion screen.
     private func finishTodaysChapter(file: StaticString = #filePath, line: UInt = #line) {
-        tap("home.mission")
+        tap("home.math")
         waitScreen("exercise")
         playChapter()
         XCTAssertTrue(waitFor(20) {
@@ -599,9 +599,9 @@ final class GeniEndToEndTests: XCTestCase {
         screenshot("22-home-after-chapter")
 
         // Optional reading button still reachable after math
-        let optional = element("home.optionalReading")
-        XCTAssertTrue(optional.waitForExistence(timeout: 5) && optional.isHittable, "optional reading button missing for age 6")
-        tap("home.optionalReading")
+        let optional = element("home.reading")
+        XCTAssertTrue(optional.waitForExistence(timeout: 5) && optional.isHittable, "reading button missing for age 6")
+        tap("home.reading")
         waitScreen("readingMode")
         screenshot("23-reading-mode-selection")
         playReadToMe(screenshotPrefix: "24", expectedNext: "readingComplete")
@@ -678,16 +678,16 @@ final class GeniEndToEndTests: XCTestCase {
 
     func testD_ResumeMidChapterAndAfterFinalAnswer() {
         createFirstProfile(name: "Ada", age: 6)
-        tap("home.mission")
+        tap("home.math")
         waitScreen("exercise")
         playChapter(stopAfter: 3)
         waitScreen("childHome")
         XCTAssertEqual(coins(), 0)
-        XCTAssertTrue(element("home.mission").waitForExistence(timeout: 5))
+        XCTAssertTrue(element("home.math").waitForExistence(timeout: 5))
         screenshot("30-home-mid-chapter")
 
         // Resume continues at exercise 4
-        tap("home.mission")
+        tap("home.math")
         waitScreen("exercise")
         XCTAssertTrue(waitFor { element("exercise.counter").exists })
         XCTAssertTrue(element("exercise.counter").label.hasPrefix("4 "), "resume did not continue at exercise 4: \(element("exercise.counter").label)")
@@ -698,7 +698,7 @@ final class GeniEndToEndTests: XCTestCase {
         waitScreen("childHome")
         XCTAssertEqual(coins(), 0, "coins awarded before completion was shown")
         // Back out immediately: everything is saved but the completion screen was never reached
-        tap("home.mission")
+        tap("home.math")
         XCTAssertTrue(waitFor(15) { ["chapterComplete", "missionTransition"].contains(state()["screen"] ?? "") }, "resume after final answer did not reach the completion screen: \(state())")
         XCTAssertTrue(element("chapterComplete.done").waitForExistence(timeout: 10) || element("missionTransition.finish").waitForExistence(timeout: 10), "completion screen is blank")
         screenshot("32-resume-after-final-answer-complete")
@@ -710,7 +710,7 @@ final class GeniEndToEndTests: XCTestCase {
         relaunch()
         waitScreen("childHome")
         XCTAssertEqual(coins(), coinsAfter, "coins awarded more than once")
-        XCTAssertFalse(element("home.mission").exists, "chapter restartable after completion")
+        XCTAssertFalse(element("home.math").exists, "chapter restartable after completion")
     }
 
     // MARK: - E0. Age 8: required reading mission flow
@@ -734,7 +734,7 @@ final class GeniEndToEndTests: XCTestCase {
         waitScreen("childHome")
         XCTAssertEqual(coins(), mathCoins + 30)
         screenshot("44-home-mission-done")
-        XCTAssertFalse(element("home.mission").exists, "mission button still offered after full mission")
+        XCTAssertFalse(element("home.math").exists || element("home.reading").exists, "start button still offered after full mission")
         XCTAssertGreaterThan(matchExercisesSeen + 1, 0)
     }
 

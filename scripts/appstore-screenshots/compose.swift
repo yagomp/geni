@@ -23,8 +23,8 @@ func option(_ name: String, _ fallback: String) throws -> String {
 let requestedDevice = try option("--device", "iphone")
 let device = ["iphone":"iphone-6.7", "ipad":"ipad-12.9"][requestedDevice] ?? requestedDevice
 guard ["iphone-6.7", "ipad-12.9"].contains(device) else { throw Failure.message("Unsupported device \(device)") }
-let rawRoot = URL(fileURLWithPath: try option("--raw-root", repo.appendingPathComponent("screenshots/v1.2.0/raw").path))
-let outputRoot = URL(fileURLWithPath: try option("--output-root", repo.appendingPathComponent("screenshots/v1.2.0").path))
+let rawRoot = URL(fileURLWithPath: try option("--raw-root", repo.appendingPathComponent("screenshots/v\(plan.version)/raw").path))
+let outputRoot = URL(fileURLWithPath: try option("--output-root", repo.appendingPathComponent("screenshots/v\(plan.version)").path))
 let languages = try option("--languages", "en,no").split(separator: ",").map(String.init)
 let sample = try option("--sample", "")
 let secondary = try option("--secondary", "")
@@ -112,7 +112,13 @@ func compose(_ images: [CGImage], caption: String, output: URL) throws {
         if !ipad {
             // Raw simctl captures omit hardware; place the island in the status-bar safe area.
             let scale = screenW/CGFloat(image.width)
-            rounded(rect(x+bezel+screenW/2-180*scale,top+bezel+33*scale,360*scale,105*scale),52.5*scale,CGColor(gray:0,alpha:1),ctx)
+            // Some Simulator captures already include the hardware island. Keep that native
+            // outline instead of drawing a second, slightly offset island over it.
+            let islandPixel = NSBitmapImageRep(cgImage:image).colorAt(x:image.width/2,y:70)?.usingColorSpace(.sRGB)
+            let hasIsland = islandPixel.map { $0.redComponent < 0.1 && $0.greenComponent < 0.1 && $0.blueComponent < 0.1 } ?? false
+            if !hasIsland {
+                rounded(rect(x+bezel+screenW/2-180*scale,top+bezel+33*scale,360*scale,105*scale),52.5*scale,CGColor(gray:0,alpha:1),ctx)
+            }
             // Quiet side-button details stay outside the visible display.
             rounded(rect(x-4,top+frameH*0.19,5,frameH*0.055),2,rgb(0.4,0.41,0.42),ctx)
             rounded(rect(x+frameW-1,top+frameH*0.28,5,frameH*0.075),2,rgb(0.4,0.41,0.42),ctx)

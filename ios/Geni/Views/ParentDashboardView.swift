@@ -1,9 +1,12 @@
 import SwiftUI
 import SafariServices
+import StoreKit
 
 struct ParentDashboardView: View {
     @Bindable var viewModel: AppViewModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.requestReview) private var requestReview
+    @Environment(\.openURL) private var openURL
     @State private var pinVerified = false
     @State private var showPinEntry = true
     @State private var pinInput = ""
@@ -16,6 +19,8 @@ struct ParentDashboardView: View {
     @State private var selectedLanguage: AppLanguage = L.selectedLanguage
     @State private var languageManager = LanguageManager.shared
     @State private var showContactSheet = false
+    @State private var confirmStartOver = false
+    @AppStorage(HapticManager.enabledKey) private var hapticsEnabled = true
 
     var body: some View {
         NavigationStack {
@@ -39,12 +44,7 @@ struct ParentDashboardView: View {
                     } label: {
                         Text("◀️").font(.system(size: 20))
                             .frame(width: 44, height: 44)
-                            .background(GeniColor.card)
-                            .clipShape(GeniShape())
-                            .overlay(
-                                GeniShape()
-                                    .stroke(GeniColor.border, lineWidth: 3)
-                            )
+                            .softSurface(GeniColor.card)
                     }
                     Spacer()
                 }
@@ -68,7 +68,7 @@ struct ParentDashboardView: View {
                             .frame(width: 20, height: 20)
                             .overlay(
                                 GeniShape(scale: 0.5)
-                                    .stroke(GeniColor.border, lineWidth: 2)
+                                    .stroke(GeniColor.hairline, lineWidth: 1)
                             )
                     }
                 }
@@ -109,12 +109,7 @@ struct ParentDashboardView: View {
                         } label: {
                             Text("◀️").font(.system(size: 20))
                                 .frame(width: 44, height: 44)
-                                .background(GeniColor.card)
-                                .clipShape(GeniShape())
-                                .overlay(
-                                    GeniShape()
-                                        .stroke(GeniColor.border, lineWidth: 3)
-                                )
+                                .softSurface(GeniColor.card)
                         }
                         .accessibilityIdentifier("parent.back")
 
@@ -137,9 +132,12 @@ struct ParentDashboardView: View {
                         .id("designPreview.parentProgress")
                         #endif
                     reminderSection
+                    vibrationSection
                     iCloudSyncSection
                     contactSection
+                    rateGeniRow
                     pinSection
+                    startOverButton
                 }
                 .padding(iPadScale.padding)
                 .foregroundStyle(.black)
@@ -154,6 +152,8 @@ struct ParentDashboardView: View {
             SafariView(url: URL(string: "https://geni.kids/contact.html")!)
                 .ignoresSafeArea()
         }
+        // This content only appears after the optional parent PIN is verified.
+        .onAppear(perform: requestReviewIfEligible)
         .fullScreenCover(isPresented: $showProfileCreation) {
             ProfileCreationView(onComplete: { profile in
                 viewModel.saveProfile(profile)
@@ -170,6 +170,30 @@ struct ParentDashboardView: View {
                 editingProfile = nil
             })
         }
+    }
+
+    private func requestReviewIfEligible() {
+        let process = ProcessInfo.processInfo
+        let defaults = UserDefaults.standard
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+        let now = Date()
+        let totalChapters = viewModel.persistence.profiles.reduce(0) { total, profile in
+            total + viewModel.persistence.loadRewardState(for: profile.id).totalChaptersCompleted
+        }
+        guard ReviewPrompt.shouldRequest(
+            totalChaptersCompleted: totalChapters,
+            lastRequest: defaults.object(forKey: ReviewPrompt.lastRequestKey) as? Date,
+            lastRequestedVersion: defaults.string(forKey: ReviewPrompt.requestedVersionKey),
+            currentVersion: version,
+            now: now,
+            arguments: process.arguments,
+            environment: process.environment
+        ) else { return }
+
+        // Store attempts even when StoreKit chooses not to display its prompt.
+        defaults.set(now, forKey: ReviewPrompt.lastRequestKey)
+        defaults.set(version, forKey: ReviewPrompt.requestedVersionKey)
+        requestReview()
     }
 
     private var themeSection: some View {
@@ -191,14 +215,14 @@ struct ParentDashboardView: View {
                                 GeniShape()
                                     .fill(themePreviewBg(theme))
                                     .frame(height: 56)
-                                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 2))
+                                    .overlay(GeniShape().stroke(GeniColor.hairline, lineWidth: 1))
 
                                 HStack(spacing: 6) {
                                     Circle().fill(themePreviewAccent(theme)).frame(width: 14, height: 14)
                                     GeniShape(scale: 0.5)
                                         .fill(themePreviewCard(theme))
                                         .frame(width: 28, height: 14)
-                                        .overlay(GeniShape(scale: 0.5).stroke(Color.black, lineWidth: 1))
+                                        .overlay(GeniShape(scale: 0.5).stroke(GeniColor.hairline, lineWidth: 1))
                                     Circle().fill(themePreviewSecondary(theme)).frame(width: 14, height: 14)
                                 }
                             }
@@ -217,7 +241,7 @@ struct ParentDashboardView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(10)
-                        .brutalistCard(color: isSelected ? themePreviewBg(theme).opacity(0.3) : GeniColor.card, borderWidth: isSelected ? 3 : 2)
+                        .softSurface(isSelected ? themePreviewBg(theme).soft(0.3) : GeniColor.card)
                     }
                 }
             }
@@ -294,7 +318,7 @@ struct ParentDashboardView: View {
                         }
                     }
                     .padding(12)
-                    .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                    .softSurface(GeniColor.card)
                 }
             }
         }
@@ -318,14 +342,8 @@ struct ParentDashboardView: View {
                 let avatar = AvatarOption.find(profile.avatarId)
                 HStack(spacing: 12) {
                     Text(avatar.emoji)
-                        .font(.system(size: 20))
+                        .font(.system(size: 32))
                         .frame(width: 44, height: 44)
-                        .background(.white)
-                        .clipShape(GeniShape())
-                        .overlay(
-                            GeniShape()
-                                .stroke(GeniColor.border, lineWidth: 2)
-                        )
 
                     VStack(alignment: .leading, spacing: 2) {
                         Text(profile.nickname)
@@ -358,7 +376,7 @@ struct ParentDashboardView: View {
                     }
                 }
                 .padding(12)
-                .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                .softSurface(GeniColor.card)
             }
 
             Button {
@@ -386,22 +404,12 @@ struct ParentDashboardView: View {
                 let rewards = viewModel.persistence.loadRewardState(for: profile.id)
                 let chapters = viewModel.persistence.loadAllChapters(for: profile.id)
                 let completedChapters = chapters.filter { $0.status == .completed }
-                let totalCorrect = completedChapters.reduce(0) { $0 + $1.correctCount }
-                let totalExercises = completedChapters.reduce(0) { $0 + $1.completedExerciseCount }
-                let accuracy = totalExercises > 0 ? Int(Double(totalCorrect) / Double(totalExercises) * 100) : 0
 
                 VStack(spacing: 12) {
                     HStack(spacing: 10) {
                         Text(avatar.emoji)
-                            .font(.system(size: 18))
+                            .font(.system(size: 28))
                             .frame(width: 36, height: 36)
-                            .background(.white)
-                            .clipShape(GeniShape(scale: 0.5))
-                            .overlay(
-                                GeniShape(scale: 0.5)
-                                    .stroke(GeniColor.border, lineWidth: 2)
-                                    .allowsHitTesting(false)
-                            )
 
                         Text(profile.nickname)
                             .font(.system(.body, design: .rounded, weight: .bold))
@@ -423,12 +431,10 @@ struct ParentDashboardView: View {
                             )
                     }
 
-                    HStack(spacing: 8) {
-                        progressStat(emoji: "⭐", value: "\(completedChapters.count)", label: L.s(.chaptersCompleted), color: GeniColor.yellow)
-                        progressStat(emoji: "🔥", value: "\(rewards.streakCount)", label: L.s(.streak), color: GeniColor.orange)
-                        progressStat(emoji: "🎯", value: "\(accuracy)%", label: L.s(.accuracy), color: GeniColor.green)
-                        progressStat(emoji: "⚡", value: "\(rewards.xp)", label: L.s(.totalXP), color: GeniColor.cyan)
-                    }
+                    ParentChildInsights(
+                        viewModel: viewModel, profile: profile,
+                        chapters: chapters, rewards: rewards
+                    )
 
                     if !completedChapters.isEmpty {
                         VStack(alignment: .leading, spacing: 6) {
@@ -488,33 +494,9 @@ struct ParentDashboardView: View {
                     }
                 }
                 .padding(12)
-                .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                .softSurface(GeniColor.card)
             }
         }
-    }
-
-    private func progressStat(emoji: String, value: String, label: String, color: Color) -> some View {
-        VStack(spacing: 4) {
-            Text(emoji)
-                .font(.system(size: 14))
-            Text(value)
-                .font(.system(.caption, design: .rounded, weight: .black))
-                .foregroundStyle(GeniColor.border)
-            Text(label)
-                .font(.system(.caption2, design: .rounded))
-                .foregroundStyle(.black)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
-        .background(color.opacity(0.06))
-        .clipShape(GeniShape())
-        .overlay(
-            GeniShape()
-                .stroke(color.opacity(0.2), lineWidth: 2)
-                .allowsHitTesting(false)
-        )
     }
 
     private func chapterTypeEmoji(_ type: ChapterType) -> String {
@@ -568,6 +550,21 @@ struct ParentDashboardView: View {
         return dateStr
     }
 
+    private var vibrationSection: some View {
+        Toggle(isOn: $hapticsEnabled) {
+            Text(L.t("Vibration", no: "Vibrasjon", es: "Vibración", pt: "Vibração"))
+                .font(.system(.body, design: .rounded, weight: .semibold))
+        }
+        .tint(GeniColor.blue)
+        .padding(12)
+        .softSurface(GeniColor.card)
+        .accessibilityIdentifier("parent.vibration")
+        .onChange(of: hapticsEnabled) { _, enabled in
+            HapticManager.isEnabled = enabled
+            if enabled { HapticManager.selection() }
+        }
+    }
+
     private var reminderSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(L.s(.reminders))
@@ -596,7 +593,7 @@ struct ParentDashboardView: View {
                 }
             }
             .padding(12)
-            .brutalistCard(color: GeniColor.card, borderWidth: 3)
+            .softSurface(GeniColor.card)
 
             if viewModel.notificationService.isEnabled {
                 HStack {
@@ -627,7 +624,7 @@ struct ParentDashboardView: View {
                     .labelsHidden()
                 }
                 .padding(12)
-                .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                .softSurface(GeniColor.card)
             }
         }
     }
@@ -706,7 +703,7 @@ struct ParentDashboardView: View {
                 }
             }
             .padding(12)
-            .brutalistCard(color: GeniColor.card, borderWidth: 3)
+            .softSurface(GeniColor.card)
         }
     }
 
@@ -748,7 +745,7 @@ struct ParentDashboardView: View {
                         .foregroundStyle(.black)
                 }
                 .padding(12)
-                .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                .softSurface(GeniColor.card)
             }
 
             if pinSet {
@@ -772,7 +769,7 @@ struct ParentDashboardView: View {
                             .foregroundStyle(.red)
                     }
                     .padding(12)
-                    .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                    .softSurface(GeniColor.card)
                 }
             }
         }
@@ -817,8 +814,68 @@ struct ParentDashboardView: View {
                         .foregroundStyle(.black)
                 }
                 .padding(12)
-                .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                .softSurface(GeniColor.card)
             }
+        }
+    }
+
+    private var rateGeniRow: some View {
+        Button {
+            guard let url = URL(string: "https://apps.apple.com/app/id6761134405?action=write-review") else { return }
+            HapticManager.selection()
+            openURL(url)
+        } label: {
+            HStack(spacing: 12) {
+                Text("⭐")
+                    .font(.system(size: 22))
+                    .frame(width: 40)
+
+                Text(L.t("Rate Geni", no: "Gi Geni en vurdering", es: "Valora Geni", pt: "Avalie o Geni"))
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.black)
+
+                Spacer()
+
+                Text("›")
+                    .font(.system(.title3, design: .rounded, weight: .bold))
+                    .foregroundStyle(.black)
+            }
+            .padding(12)
+            .softSurface(GeniColor.card)
+        }
+        .accessibilityIdentifier("parent.rateGeni")
+    }
+
+    private var startOverButton: some View {
+        Button {
+            HapticManager.selection()
+            confirmStartOver = true
+        } label: {
+            HStack(spacing: 0) {
+                Text("🔄")
+                    .font(.system(size: 22))
+                    .frame(width: 40)
+
+                Text(L.s(.startOver))
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.red)
+
+                Spacer()
+            }
+            .padding(12)
+            .softSurface(GeniColor.card)
+        }
+        .accessibilityIdentifier("parent.startOver")
+        .confirmationDialog(L.s(.startOver), isPresented: $confirmStartOver, titleVisibility: .visible) {
+            Button(L.s(.startOver), role: .destructive) {
+                HapticManager.impact(.heavy)
+                // Let the action sheet finish dismissing before the dashboard itself closes
+                Task { @MainActor in viewModel.resetApp() }
+            }
+            .accessibilityIdentifier("parent.startOver.confirm")
+            Button(L.s(.cancel), role: .cancel) {}
+        } message: {
+            Text(L.s(viewModel.cloudSync.syncEnabled ? .startOverMessage : .startOverMessageLocal))
         }
     }
 
@@ -862,14 +919,7 @@ struct ParentDashboardView: View {
                                 }
                                 .foregroundStyle(GeniColor.border)
                                 .frame(width: 72, height: 52)
-                                .background(GeniColor.card)
-                                .clipShape(GeniShape())
-                                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
-                                .background(
-                                    GeniShape()
-                                        .fill(GeniColor.border)
-                                        .offset(x: 3, y: 3)
-                                )
+                                .softSurface(GeniColor.card)
                             }
                         }
                     }
@@ -918,7 +968,7 @@ struct SetPinView: View {
                                 .frame(width: 20, height: 20)
                                 .overlay(
                                     GeniShape(scale: 0.5)
-                                        .stroke(GeniColor.border, lineWidth: 2)
+                                        .stroke(GeniColor.hairline, lineWidth: 1)
                                 )
                         }
                     }
@@ -987,14 +1037,7 @@ struct SetPinView: View {
                                 }
                                 .foregroundStyle(GeniColor.border)
                                 .frame(width: 72, height: 52)
-                                .background(GeniColor.card)
-                                .clipShape(GeniShape())
-                                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
-                                .background(
-                                    GeniShape()
-                                        .fill(GeniColor.border)
-                                        .offset(x: 3, y: 3)
-                                )
+                                .softSurface(GeniColor.card)
                             }
                         }
                     }
@@ -1032,7 +1075,7 @@ struct DisablePinView: View {
                             GeniShape(scale: 0.5)
                                 .fill(i < pin.count ? GeniColor.blue : Color.gray.opacity(0.2))
                                 .frame(width: 20, height: 20)
-                                .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 2))
+                                .overlay(GeniShape(scale: 0.5).stroke(GeniColor.hairline, lineWidth: 1))
                         }
                     }
 
@@ -1091,10 +1134,7 @@ struct DisablePinView: View {
                                 }
                                 .foregroundStyle(GeniColor.border)
                                 .frame(width: 72, height: 52)
-                                .background(GeniColor.card)
-                                .clipShape(GeniShape())
-                                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
-                                .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
+                                .softSurface(GeniColor.card)
                             }
                         }
                     }

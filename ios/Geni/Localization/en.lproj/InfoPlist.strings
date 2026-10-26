@@ -1,0 +1,3 @@
+/* App Store and system language list; permission prompts */
+"NSMicrophoneUsageDescription" = "Geni needs microphone access so you can read aloud and get feedback.";
+"NSSpeechRecognitionUsageDescription" = "Geni uses speech recognition to listen to you read and give encouraging feedback.";

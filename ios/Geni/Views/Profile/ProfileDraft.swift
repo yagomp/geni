@@ -11,14 +11,13 @@ final class ProfileDraft {
     private(set) var pinnedAvatarId: String?
     var operations: Set<MathOperation>
     var theme: AppTheme
-    var cornerStyle: CornerStyle
     var readingEnabled: Bool
     let existingNames: [String]
     let original: ChildProfile?
 
-    static let ages = 5...10
+    static let ages = 4...10
 
-    /// A new profile starts from defaults — never from the active child's theme or style.
+    /// A new profile starts from defaults — never from the active child's theme.
     init(editing profile: ChildProfile? = nil, existingNames: [String] = []) {
         original = profile
         self.existingNames = existingNames
@@ -27,7 +26,6 @@ final class ProfileDraft {
         avatarId = profile?.avatarId ?? AvatarOption.all[0].id
         operations = Set(profile?.operationsEnabled ?? MathOperation.recommended(for: profile?.age ?? 6))
         theme = profile?.theme ?? .standard
-        cornerStyle = profile?.cornerStyle ?? .sharp
         readingEnabled = profile?.readingEnabled ?? true
         pinnedAvatarId = nil
         if let profile { pin(profile.avatarId) }
@@ -88,7 +86,6 @@ final class ProfileDraft {
         profile.avatarId = avatarId
         profile.operationsEnabled = MathOperation.allCases.filter(operations.contains)
         profile.theme = theme
-        profile.cornerStyle = cornerStyle
         profile.readingEnabled = readingEnabled
         return profile
     }
@@ -99,7 +96,6 @@ final class ProfileDraft {
     // MARK: Local preview (never the global ThemeManager)
 
     var screenBackground: Color { theme.previewBackground }
-    var cornerRadius: CGFloat { cornerStyle.radius }
 }
 
 extension AppTheme {

@@ -38,7 +38,9 @@ struct ChallengesCard: View {
                                    identifier: "home.challenge.perfectRun") {
             viewModel.startChapter(type: .perfectRun)
         })
-        for operation in viewModel.persistence.activeProfile?.operationsEnabled ?? [] {
+        let profile = viewModel.persistence.activeProfile
+        let spotlights = profile?.showsOperationSpotlights == true ? profile?.operationsEnabled ?? [] : []
+        for operation in spotlights {
             items.append(ChallengeItem(emoji: operation.emoji, title: operation.displayName,
                                        identifier: "home.challenge.operationSpotlight.\(operation.rawValue)") {
                 viewModel.startChapter(type: .operationSpotlight, spotlightOp: operation)
@@ -50,19 +52,23 @@ struct ChallengesCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("🎮 \(L.s(.challengesTitle))")
-                    .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.75)
+                HStack(spacing: 8) {
+                    Text("🎮").font(.system(size: expanded ? 44 : 30))
+                    Text(L.s(.challengesTitle))
+                        .font(.system(expanded ? .largeTitle : .title2, design: .rounded, weight: .black))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
+                }
                 Spacer(minLength: 8)
                 if summary.showsExtras {
                     ChallengeCountdown(viewModel: viewModel)
                 } else {
                     Text("🔒")
+                        .font(.system(size: expanded ? 40 : 28))
                         .accessibilityHidden(true)
                 }
             }
-            .frame(height: expanded ? 36 : 28)
+            .frame(height: expanded ? 52 : 40)
 
             let games = items
             VStack(spacing: 8) {
@@ -77,9 +83,8 @@ struct ChallengesCard: View {
             }
             .frame(maxHeight: .infinity)
         }
-        .padding(expanded ? 24 : 12)
+        .padding(.horizontal, 4)
         .frame(maxWidth: .infinity)
-        .brutalistCard(color: GeniColor.card, borderWidth: 3)
     }
 
     private func challengeButton(_ item: ChallengeItem) -> some View {
@@ -87,10 +92,13 @@ struct ChallengesCard: View {
             let enabled = summary.showsExtras && item.isAvailable
             VStack(spacing: 4) {
                 Text(item.emoji)
-                    .font(.system(size: expanded ? 72 : (compact ? 32 : 36)))
-                    .frame(width: expanded ? 88 : (compact ? 48 : 52), height: expanded ? 88 : (compact ? 48 : 52))
+                    .font(.system(size: expanded ? 56 : (compact ? 28 : 32)))
                     .grayscale(enabled ? 0 : 1)
                     .opacity(enabled ? 1 : 0.35)
+                    // Like Today's pictures: the emoji is the button, no tile behind it
+                    .scaleEffect(1.3)
+                    .shadow(color: GeniColor.border.opacity(enabled ? 0.15 : 0), radius: 5, x: 0, y: 4)
+                    .frame(width: expanded ? 96 : (compact ? 52 : 58), height: expanded ? 96 : (compact ? 52 : 58))
                     .overlay(alignment: .topTrailing) {
                         if item.isSpecial && enabled {
                             Text("✨").font(.system(size: 16)).offset(x: 4, y: -4)
@@ -137,10 +145,10 @@ struct ChallengeCountdown: View {
                 Text("⏳").accessibilityHidden(true)
                 Text(time).monospacedDigit()
             }
-            .font(.system(expanded ? .title3 : .subheadline, design: .rounded, weight: .black))
+            .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
             .foregroundStyle((seconds <= 60 ? GeniColor.pink : GeniColor.green).deep())
             .padding(.horizontal, 10)
-            .frame(height: 28)
+            .frame(height: expanded ? 52 : 40)
             .fixedSize()
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(L.s(.challengeTimeLeft))

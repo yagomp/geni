@@ -21,8 +21,9 @@ struct ClockFaceView: View {
             let hourTip = point(angle: time.hourAngle, radius: radius * 0.44, center: center)
             let minuteTip = point(angle: time.minuteAngle, radius: radius * 0.72, center: center)
             ZStack {
-                Circle().fill(.white)
-                    .overlay(Circle().stroke(GeniColor.border, lineWidth: max(2, side * 0.015)))
+                Circle().fill(GeniColor.card)
+                    .overlay(Circle().stroke(GeniColor.hairline, lineWidth: 1))
+                    .shadow(color: GeniColor.border.opacity(0.08), radius: 10, x: 0, y: 4)
                     .frame(width: radius * 2, height: radius * 2)
                     .position(center)
                 ForEach(0..<60, id: \.self) { tick in

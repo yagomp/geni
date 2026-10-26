@@ -63,7 +63,7 @@ struct ProgressMapView: View {
         }
         .padding(16)
         .foregroundStyle(.black)
-        .brutalistCard(color: GeniColor.card, borderWidth: 3)
+        .softSurface(GeniColor.card)
     }
 
     private func pathSegment(completed: Bool, color: Color) -> some View {
@@ -83,13 +83,9 @@ struct ProgressMapView: View {
                 .frame(width: size, height: size)
                 .overlay(
                     shape
-                        .stroke(GeniColor.border, lineWidth: 3)
+                        .stroke(GeniColor.hairline, lineWidth: 1)
                 )
-                .background(
-                    shape
-                        .fill(GeniColor.border)
-                        .offset(x: 3, y: 3)
-                )
+                .shadow(color: GeniColor.border.opacity(0.08), radius: 10, x: 0, y: 4)
 
             if isCompleted {
                 Text("✓")

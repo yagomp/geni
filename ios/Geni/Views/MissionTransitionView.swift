@@ -73,7 +73,7 @@ private struct MissionTransitionViewLayout: View {
                 }
                 .padding(24)
                 .frame(maxWidth: .infinity)
-                .brutalistCard(color: GeniColor.card)
+                .softSurface(GeniColor.card)
                 .opacity(showButton ? 1 : 0)
                 .offset(y: showButton ? 0 : 30)
 

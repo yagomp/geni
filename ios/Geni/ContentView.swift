@@ -68,6 +68,7 @@ struct ContentView: View {
                         chapter: completed,
                         rewards: viewModel.rewardState,
                         xpEarned: chapterVM.xpEarned,
+                        bonusCoins: chapterVM.bonusCoins,
                         onContinue: {
                             viewModel.returnHome()
                         }

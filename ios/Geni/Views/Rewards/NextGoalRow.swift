@@ -28,7 +28,7 @@ struct NextGoalRow: View {
             }
             .padding(12)
             .frame(maxWidth: .infinity, minHeight: 64)
-            .brutalistCard(color: GeniColor.card)
+            .softSurface(GeniColor.card)
         }
         .buttonStyle(KidPressStyle())
         .accessibilityElement(children: .ignore)

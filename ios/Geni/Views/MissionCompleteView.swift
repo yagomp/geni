@@ -77,9 +77,7 @@ private struct MissionCompleteViewLayout: View {
                             Text("➕")
                                 .font(.title3)
                                 .frame(width: 36, height: 36)
-                                .background(GeniColor.blue)
-                                .clipShape(GeniShape(scale: 0.5))
-                                .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 2))
+                                .softSurface(GeniColor.blue, radiusScale: 0.5)
 
                             Text(L.s(.mathDone))
                                 .font(.system(expanded ? .title2 : .body, design: .rounded, weight: .semibold))
@@ -101,9 +99,7 @@ private struct MissionCompleteViewLayout: View {
                                 .font(.title3)
                                 .foregroundStyle(.white)
                                 .frame(width: 36, height: 36)
-                                .background(GeniColor.green)
-                                .clipShape(GeniShape(scale: 0.5))
-                                .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 2))
+                                .softSurface(GeniColor.green, radiusScale: 0.5)
 
                             Text(L.s(.readingDone2))
                                 .font(.system(expanded ? .title2 : .body, design: .rounded, weight: .semibold))
@@ -125,9 +121,7 @@ private struct MissionCompleteViewLayout: View {
                                 Text("✨")
                                     .font(.title3)
                                     .frame(width: 36, height: 36)
-                                    .background(GeniColor.yellow)
-                                    .clipShape(GeniShape(scale: 0.5))
-                                    .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 2))
+                                    .softSurface(GeniColor.yellow, radiusScale: 0.5)
 
                                 Text(L.s(.bonusEarned))
                                     .font(.system(expanded ? .title2 : .body, design: .rounded, weight: .semibold))
@@ -142,7 +136,7 @@ private struct MissionCompleteViewLayout: View {
                         }
 
                         Rectangle()
-                            .fill(GeniColor.border)
+                            .fill(GeniColor.hairline)
                             .frame(height: 3)
 
                         HStack {
@@ -158,7 +152,7 @@ private struct MissionCompleteViewLayout: View {
                         }
                     }
                     .padding(expanded ? 32 : 20)
-                    .brutalistCard(color: GeniColor.card)
+                    .softSurface(GeniColor.card)
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : 40)
                     .animation(.spring(response: 0.5).delay(0.5), value: appeared)
@@ -177,7 +171,7 @@ private struct MissionCompleteViewLayout: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                        .softSurface(GeniColor.card)
 
                         VStack(spacing: 4) {
                             Text("⭐")
@@ -192,7 +186,7 @@ private struct MissionCompleteViewLayout: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                        .softSurface(GeniColor.card)
 
                         VStack(spacing: 4) {
                             Text("🪙")
@@ -207,7 +201,7 @@ private struct MissionCompleteViewLayout: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
-                        .brutalistCard(color: GeniColor.card, borderWidth: 3)
+                        .softSurface(GeniColor.card)
                     }
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : 40)
@@ -234,9 +228,13 @@ private struct MissionCompleteViewLayout: View {
                 .foregroundStyle(.black)
             }
         }
+        .task {
+            do { try await Task.sleep(for: .seconds(0.5)) } catch { return }
+            HapticManager.coinRipple(count: totalCoins)
+        }
         .onAppear {
             appeared = true
-            HapticManager.notification(.success)
+            HapticManager.correctAnswer()
             Task {
                 try? await Task.sleep(for: .seconds(0.5))
                 starsBounce += 1

@@ -21,8 +21,8 @@
     returnFocus = document.activeElement;
     var lang = document.documentElement.lang === 'nb' ? 'no' : 'en';
     // AV1 first for browsers that decode it; H.264 plays everywhere else.
-    sources[0].src = 'media/geni-demo-' + lang + '-av1.mp4';
-    sources[1].src = 'media/geni-demo-' + lang + '.mp4';
+    sources[0].src = 'media/geni-demo-' + lang + '-av1.mp4?v=2';
+    sources[1].src = 'media/geni-demo-' + lang + '.mp4?v=2';
     video.poster = 'media/geni-demo-' + lang + '.webp';
     video.muted = true;
     video.autoplay = !reducedMotion.matches;

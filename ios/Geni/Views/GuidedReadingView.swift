@@ -5,6 +5,19 @@ struct GuidedReadingView: View {
     let onComplete: (ReadingSession) -> Void
     let onExit: () -> Void
 
+    var body: some View {
+        GeniLearningLayout {
+            GuidedReadingViewLayout(readingVM: readingVM, onComplete: onComplete, onExit: onExit)
+        }
+    }
+}
+
+private struct GuidedReadingViewLayout: View {
+    @Environment(\.geniExpandedLayout) private var expanded
+    let readingVM: ReadingViewModel
+    let onComplete: (ReadingSession) -> Void
+    let onExit: () -> Void
+
     @State private var appeared = false
 
     var body: some View {
@@ -13,39 +26,37 @@ struct GuidedReadingView: View {
 
             VStack(spacing: 0) {
                 readingHeader
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
+                    .padding(.horizontal, expanded ? 40 : 20)
+                    .padding(.top, expanded ? 28 : 20)
 
-                Spacer().frame(height: 24)
+                Spacer().frame(height: expanded ? 32 : 24)
 
-                ScrollView {
-                    VStack(spacing: 24) {
-                        Text(readingVM.readingText.title)
-                            .font(.system(.title3, design: .rounded, weight: .black))
-                            .foregroundStyle(GeniColor.border)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        Text(readingVM.attributedContent)
-                            .font(.system(size: readingFontSize, weight: .bold, design: .rounded))
-                            .lineSpacing(readingLineSpacing)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .animation(.easeInOut(duration: 0.15), value: readingVM.currentWordIndex)
-                            .animation(.easeInOut(duration: 0.15), value: readingVM.matchedWordCount)
-
-                        if readingVM.showFeedback {
-                            feedbackBanner
-                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                if expanded {
+                    GeometryReader { remaining in
+                        ScrollView {
+                            passage
+                                .padding(36)
+                                .frame(maxWidth: .infinity, minHeight: max(0, remaining.size.height - 12), alignment: .topLeading)
+                                .brutalistCard(color: GeniColor.card)
+                                .padding(.bottom, 8)
                         }
-
-                        Spacer().frame(height: 80)
+                        .scrollBounceBehavior(.basedOnSize)
                     }
-                    .padding(.horizontal, 24)
+                    .padding(.horizontal, 40)
+                } else {
+                    ScrollView {
+                        passage
+                            .padding(.horizontal, 24)
+                    }
                 }
 
                 readingControls
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 20)
+                    .padding(.horizontal, expanded ? 40 : 20)
+                    .padding(.top, expanded ? 28 : 0)
+                    .padding(.bottom, expanded ? 28 : 20)
             }
+            .frame(maxWidth: expanded ? 1040 : .infinity)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .onAppear {
             appeared = true
@@ -61,7 +72,36 @@ struct GuidedReadingView: View {
         }
     }
 
+    private var passage: some View {
+        VStack(alignment: .leading, spacing: expanded ? 32 : 24) {
+            Text(readingVM.readingText.title)
+                .font(.system(expanded ? .largeTitle : .title3, design: .rounded, weight: .black))
+                .foregroundStyle(GeniColor.border)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text(readingVM.attributedContent)
+                .font(.system(size: readingFontSize, weight: .bold, design: .rounded))
+                .lineSpacing(readingLineSpacing)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .animation(.easeInOut(duration: 0.15), value: readingVM.currentWordIndex)
+                .animation(.easeInOut(duration: 0.15), value: readingVM.matchedWordCount)
+
+            if readingVM.showFeedback {
+                feedbackBanner
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+            if !expanded { Spacer().frame(height: 80) }
+        }
+    }
+
     private var readingFontSize: CGFloat {
+        if expanded {
+            switch readingVM.profile.ageGroup {
+            case .young: return 40
+            case .middle: return 38
+            case .older: return 34
+            }
+        }
         switch readingVM.profile.ageGroup {
         case .young: return 28
         case .middle: return 24
@@ -70,6 +110,7 @@ struct GuidedReadingView: View {
     }
 
     private var readingLineSpacing: CGFloat {
+        if expanded { return 18 }
         switch readingVM.profile.ageGroup {
         case .young: return 16
         case .middle: return 12
@@ -85,11 +126,13 @@ struct GuidedReadingView: View {
                     readingVM.stop()
                     onExit()
                 } label: {
-                    Text("◀️").font(.system(size: 20))
-                        .frame(width: 44, height: 44)
+                    Text("◀️").font(.system(size: expanded ? 28 : 20))
+                        .frame(width: expanded ? 64 : 44, height: expanded ? 64 : 44)
                         .background(GeniColor.card)
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
                 }
+                .accessibilityIdentifier("reading.back")
 
                 Spacer()
 
@@ -101,30 +144,32 @@ struct GuidedReadingView: View {
                     Text("🕐")
                         .foregroundStyle(GeniColor.green)
                     Text("\(readingVM.formattedElapsed)/\(readingVM.formattedTarget)")
-                        .font(.system(.headline, design: .rounded, weight: .black))
+                        .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
                 }
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(GeniColor.card)
-                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                .clipShape(GeniShape())
+                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
             }
 
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Rectangle()
+                    GeniShape()
                         .fill(Color.gray.opacity(0.2))
-                        .frame(height: 14)
+                        .frame(height: expanded ? 20 : 14)
 
                     Rectangle()
                         .fill(GeniColor.green)
-                        .frame(width: geo.size.width * readingVM.progress, height: 14)
+                        .frame(width: geo.size.width * readingVM.progress, height: expanded ? 20 : 14)
                         .animation(.spring, value: readingVM.progress)
                 }
-                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                .clipShape(GeniShape())
+                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
             }
-            .frame(height: 14)
+            .frame(height: expanded ? 20 : 14)
         }
     }
 
@@ -132,13 +177,14 @@ struct GuidedReadingView: View {
         HStack(spacing: 4) {
             Text(modeIcon)
             Text(modeLabel)
-                .font(.system(.caption, design: .rounded, weight: .bold))
+                .font(.system(expanded ? .title3 : .caption, design: .rounded, weight: .bold))
                 .foregroundStyle(GeniColor.border)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
-        .background(modeColor.opacity(0.15))
-        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+        .background(modeColor.soft(0.2))
+        .clipShape(GeniShape())
+        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 2))
     }
 
     private var modeIcon: String {
@@ -171,12 +217,14 @@ struct GuidedReadingView: View {
                 HapticManager.selection()
                 readingVM.restart()
             } label: {
-                Text("🔄").font(.system(size: 20))
-                    .frame(width: 52, height: 52)
+                Text("🔄").font(.system(size: expanded ? 28 : 20))
+                    .frame(width: expanded ? 80 : 52, height: expanded ? 80 : 52)
                     .background(GeniColor.card)
-                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                    .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                    .clipShape(GeniShape())
+                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                    .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
             }
+            .accessibilityIdentifier("reading.restart")
 
             Button {
                 HapticManager.impact(.medium)
@@ -188,16 +236,37 @@ struct GuidedReadingView: View {
             } label: {
                 HStack(spacing: 8) {
                     Text(readingVM.isPlaying ? "⏸️" : "▶️")
-                        .font(.title3)
+                        .font(expanded ? .largeTitle : .title3)
                     Text(readingVM.isPlaying ? L.s(.pause) : L.s(.play))
-                        .font(.system(.headline, design: .rounded, weight: .black))
+                        .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
                 }
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
-                .frame(height: 52)
+                .frame(height: expanded ? 80 : 52)
                 .background(GeniColor.green)
-                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+                .clipShape(GeniShape())
+                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
+            }
+            .accessibilityIdentifier("reading.playPause")
+
+            if readingVM.mode == .listenToMeRead {
+                Button {
+                    HapticManager.selection()
+                    readingVM.skipCurrentListenWord()
+                } label: {
+                    Image(systemName: "forward.end.fill")
+                        .font(.system(size: 18, weight: .black))
+                        .foregroundStyle(readingVM.isPlaying ? GeniColor.border : Color(white: 0.55))
+                        .frame(width: expanded ? 80 : 52, height: expanded ? 80 : 52)
+                        .background(readingVM.isPlaying ? GeniColor.orange : GeniColor.lightGray)
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                        .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
+                }
+                .accessibilityLabel(L.s(.next))
+                .accessibilityIdentifier("reading.skip")
+                .disabled(!readingVM.isPlaying)
             }
 
             if readingVM.mode != .listenToMeRead && readingVM.currentWordIndex >= readingVM.words.count / 2 {
@@ -208,11 +277,13 @@ struct GuidedReadingView: View {
                     Text("✓")
                         .font(.title3.bold())
                         .foregroundStyle(.white)
-                        .frame(width: 52, height: 52)
+                        .frame(width: expanded ? 80 : 52, height: expanded ? 80 : 52)
                         .background(GeniColor.blue)
-                        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                        .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                        .clipShape(GeniShape())
+                        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                        .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
                 }
+                .accessibilityIdentifier("reading.finish")
             }
         }
     }
@@ -223,14 +294,28 @@ struct GuidedReadingView: View {
                 .font(.title2)
 
             Text(readingVM.feedbackMessage)
-                .font(.system(.headline, design: .rounded, weight: .bold))
-                .foregroundStyle(.white)
+                .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .bold))
+                .foregroundStyle(feedbackColor.readableText)
+                .accessibilityIdentifier("reading.feedback")
 
             Spacer()
         }
         .padding(16)
-        .background(GeniColor.green)
-        .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-        .background(Rectangle().fill(GeniColor.border).offset(x: 4, y: 4))
+        .background(feedbackColor)
+        .clipShape(GeniShape())
+        .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+        .background(GeniShape().fill(GeniColor.border).offset(x: 4, y: 4))
+        .compositingGroup()
+    }
+
+    private var feedbackColor: Color {
+        switch readingVM.feedbackTone {
+        case .success:
+            GeniColor.green
+        case .guidance:
+            GeniColor.orange
+        case .error:
+            GeniColor.pink
+        }
     }
 }

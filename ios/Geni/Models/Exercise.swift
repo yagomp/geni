@@ -19,6 +19,9 @@ nonisolated enum ExerciseFormat: String, Codable, Sendable {
     case areaPerimeter
     case fractionPick
     case longDivision
+    case clockRead
+    case clockSet
+    case clockMatch
 }
 
 nonisolated struct Exercise: Identifiable, Sendable {
@@ -49,6 +52,8 @@ nonisolated struct Exercise: Identifiable, Sendable {
     let fractionNumerator: Int?
     let fractionDenominator: Int?
     let divisionRemainder: Int?
+    private(set) var clockTimes: [ClockTime]? = nil
+    private(set) var clockMinuteStep: Int = 1
 
     init(operand1: Int, operand2: Int, operation: MathOperation, difficulty: ExerciseDifficulty, format: ExerciseFormat = .solveResult) {
         self.id = UUID().uuidString
@@ -146,27 +151,14 @@ nonisolated struct Exercise: Identifiable, Sendable {
             self.proposedAnswer = nil
             self.comparisonLeft = (operand1, operation, operand2)
 
-            let rightAnswer = answer + Int.random(in: -3...3)
-            let safeRight = max(rightAnswer, 0)
-            let rOp2 = max(Int.random(in: 1...max(operand2, 2)), 1)
-            let rOp1: Int
-            switch operation {
-            case .addition: rOp1 = safeRight - rOp2
-            case .subtraction: rOp1 = safeRight + rOp2
-            case .multiplication: rOp1 = rOp2 > 0 ? safeRight / max(rOp2, 1) : safeRight
-            case .division: rOp1 = safeRight * max(rOp2, 1)
-            }
-            let safeROp1 = max(rOp1, 0)
-            self.comparisonRight = (safeROp1, operation, rOp2)
-
             let leftVal = answer
-            let rightVal: Int
-            switch operation {
-            case .addition: rightVal = safeROp1 + rOp2
-            case .subtraction: rightVal = safeROp1 - rOp2
-            case .multiplication: rightVal = safeROp1 * rOp2
-            case .division: rightVal = rOp2 > 0 ? safeROp1 / rOp2 : 0
-            }
+            let rightVal = Self.distinctComparisonTarget(from: leftVal)
+            let rightOperands = Self.comparisonOperands(
+                for: rightVal,
+                operation: operation,
+                referenceOperand2: operand2
+            )
+            self.comparisonRight = (rightOperands.0, operation, rightOperands.1)
 
             if leftVal >= rightVal {
                 self.options = [0, 1]
@@ -176,7 +168,8 @@ nonisolated struct Exercise: Identifiable, Sendable {
 
         case .countingObjects, .visualAddition, .compareGroups, .tenFrame,
              .matchConnect, .numberBonds, .diceAddition, .evenOddSort, .visualSubtraction,
-             .multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision:
+             .multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision,
+             .clockRead, .clockSet, .clockMatch:
             fatalError("Use the appropriate init for visual exercise types")
         }
     }
@@ -253,15 +246,15 @@ nonisolated struct Exercise: Identifiable, Sendable {
 
     // MARK: - Match Connect init
 
-    init(matchLeft: [String], matchRight: [String], correctIndices: [Int], difficulty: ExerciseDifficulty) {
+    init(matchLeft: [String], matchRight: [String], correctIndices: [Int], difficulty: ExerciseDifficulty, format: ExerciseFormat = .matchConnect, options: [Int] = []) {
         self.id = UUID().uuidString
-        self.format = .matchConnect
+        self.format = format
         self.difficulty = difficulty
         self.operation = .addition
         self.operand1 = matchLeft.count
         self.operand2 = 0
         self.correctAnswer = matchLeft.count
-        self.options = []
+        self.options = options
         self.emojiSymbol = nil
         self.emojiSymbolRight = nil
         self.missingOperandIndex = nil
@@ -417,8 +410,30 @@ nonisolated struct Exercise: Identifiable, Sendable {
         self.divisionRemainder = remainder
     }
 
+    // Clock answers use minutes since 12:00 (0..<720), never locale-dependent strings.
+    init(clockFormat: ExerciseFormat, times: [ClockTime], minuteStep: Int, difficulty: ExerciseDifficulty) {
+        precondition(!times.isEmpty && clockFormat.isClock)
+        if clockFormat == .clockMatch {
+            let right = times.shuffled()
+            self.init(matchLeft: times.map(\.digital), matchRight: right.map(\.digital),
+                      correctIndices: times.map { right.firstIndex(of: $0)! }, difficulty: difficulty,
+                      format: .clockMatch, options: right.map(\.totalMinutes))
+        } else {
+            self.init(olderFormat: clockFormat, answer: times[0].totalMinutes,
+                      options: ClockRules.options(for: times[0], step: minuteStep), difficulty: difficulty)
+        }
+        self.clockTimes = times
+        self.clockMinuteStep = minuteStep
+    }
+
     var prompt: String {
         switch format {
+        case .clockRead:
+            return "\(L.s(.clockRead)) \(clockTimes?.first?.digital ?? "")"
+        case .clockSet:
+            return "\(L.s(.clockSet)) \(clockTimes?.first?.digital ?? "")"
+        case .clockMatch:
+            return L.s(.clockMatch)
         case .countingObjects:
             return "\(emojiSymbol ?? "?") x\(operand1)"
         case .visualAddition:
@@ -502,6 +517,43 @@ nonisolated struct Exercise: Identifiable, Sendable {
     var trueFalseIsCorrect: Bool {
         proposedAnswer == correctAnswer
     }
+
+    private static func distinctComparisonTarget(from answer: Int) -> Int {
+        let lowerBound = max(0, answer - 3)
+        let upperBound = answer + 3
+        let candidates = Array(lowerBound...upperBound).filter { $0 != answer }
+        return candidates.randomElement() ?? (answer + 1)
+    }
+
+    private static func comparisonOperands(
+        for target: Int,
+        operation: MathOperation,
+        referenceOperand2: Int
+    ) -> (Int, Int) {
+        switch operation {
+        case .addition:
+            let right = target > 0 ? Int.random(in: 0...target) : 0
+            return (target - right, right)
+
+        case .subtraction:
+            let right = Int.random(in: 0...max(referenceOperand2 + 3, 3))
+            return (target + right, right)
+
+        case .multiplication:
+            if target == 0 {
+                let factor = Int.random(in: 1...max(referenceOperand2, 2))
+                return (0, factor)
+            }
+
+            let divisors = (1...target).filter { target.isMultiple(of: $0) }
+            let right = divisors.randomElement() ?? 1
+            return (target / right, right)
+
+        case .division:
+            let divisor = Int.random(in: 1...max(referenceOperand2, 2))
+            return (target * divisor, divisor)
+        }
+    }
 }
 
 nonisolated enum ExerciseDifficulty: Int, Codable, Sendable {
@@ -545,5 +597,84 @@ nonisolated struct ExerciseResult: Codable, Identifiable, Sendable {
 
     var wasCorrect: Bool {
         firstAttemptCorrect || (secondAttemptCorrect ?? false)
+    }
+}
+
+
+extension ExerciseFormat {
+    nonisolated var isClock: Bool { self == .clockRead || self == .clockSet || self == .clockMatch }
+}
+
+/// A 12-hour time with angles measured clockwise from twelve.
+nonisolated struct ClockTime: Equatable, Hashable, Codable, Sendable {
+    let totalMinutes: Int
+
+    init(totalMinutes: Int) {
+        self.totalMinutes = ((totalMinutes % 720) + 720) % 720
+    }
+
+    init(hour: Int, minute: Int) {
+        self.init(totalMinutes: hour * 60 + minute)
+    }
+
+    var hour: Int { totalMinutes / 60 == 0 ? 12 : totalMinutes / 60 }
+    var minute: Int { totalMinutes % 60 }
+    var digital: String { "\(hour):" + (minute < 10 ? "0" : "") + "\(minute)" }
+    var minuteAngle: Double { Double(minute) * 6 }
+    var hourAngle: Double { Double(totalMinutes) * 0.5 }
+
+    func snapped(to step: Int) -> ClockTime {
+        let step = max(1, step)
+        return ClockTime(totalMinutes: Int((Double(totalMinutes) / Double(step)).rounded()) * step)
+    }
+
+    func settingHour(angle: Double) -> ClockTime {
+        let hour = Int((Self.normalizedAngle(angle - Double(minute) * 0.5) / 30).rounded()) % 12
+        return ClockTime(hour: hour, minute: minute)
+    }
+
+    func settingMinute(angle: Double, step: Int) -> ClockTime {
+        let step = max(1, step)
+        let minute = Int((Self.normalizedAngle(angle) / 6 / Double(step)).rounded()) * step % 60
+        // Keep the selected hour stable when crossing twelve; easier than counting revolutions.
+        return ClockTime(hour: hour, minute: minute)
+    }
+
+    private static func normalizedAngle(_ angle: Double) -> Double {
+        (angle.truncatingRemainder(dividingBy: 360) + 360).truncatingRemainder(dividingBy: 360)
+    }
+}
+
+nonisolated enum ClockRules {
+    static func minuteStep(age: Int, difficulty: ExerciseDifficulty, format: ExerciseFormat = .clockRead) -> Int? {
+        guard age >= 6 else { return nil }
+        if age == 6 {
+            return format == .clockSet || difficulty == .warmup ? 60 : 30
+        }
+        if age <= 8 {
+            switch difficulty {
+            case .warmup: return 30
+            case .normal: return 15
+            case .harder, .challenge: return 5
+            }
+        }
+        return difficulty == .challenge ? 1 : 5
+    }
+
+    static func options(for time: ClockTime, step: Int) -> [Int] {
+        let step = max(1, step)
+        let swapped = ClockTime(hour: time.minute / 5, minute: (time.hour % 12) * 5).snapped(to: step)
+        let candidates = [swapped.totalMinutes,
+                          time.totalMinutes + (Bool.random() ? 60 : -60),
+                          time.totalMinutes + (Bool.random() ? step : -step),
+                          time.totalMinutes + 60, time.totalMinutes - 60,
+                          time.totalMinutes + step, time.totalMinutes - step]
+            + (1...11).map { time.totalMinutes + $0 * 60 }
+        var distractors: [Int] = []
+        for candidate in candidates {
+            let value = ClockTime(totalMinutes: candidate).totalMinutes
+            if value != time.totalMinutes && !distractors.contains(value) { distractors.append(value) }
+        }
+        return ([time.totalMinutes] + distractors.prefix(3)).shuffled()
     }
 }

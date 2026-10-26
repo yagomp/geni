@@ -9,6 +9,23 @@ struct MissionCompleteView: View {
     let rewards: RewardState
     let onContinue: () -> Void
 
+    var body: some View {
+        GeniLearningLayout {
+            MissionCompleteViewLayout(mathStars: mathStars, mathCoins: mathCoins, mathXP: mathXP, readingCoins: readingCoins, bonusCoins: bonusCoins, rewards: rewards, onContinue: onContinue)
+        }
+    }
+}
+
+private struct MissionCompleteViewLayout: View {
+    @Environment(\.geniExpandedLayout) private var expanded
+    let mathStars: Int
+    let mathCoins: Int
+    let mathXP: Int
+    let readingCoins: Int
+    let bonusCoins: Int
+    let rewards: RewardState
+    let onContinue: () -> Void
+
     @State private var appeared = false
     @State private var showConfetti = false
     @State private var starsBounce = 0
@@ -29,17 +46,17 @@ struct MissionCompleteView: View {
             }
 
             ScrollView {
-                VStack(spacing: 24) {
+                VStack(spacing: expanded ? 32 : 24) {
                     Spacer().frame(height: 20)
 
                     Text("🎉")
-                        .font(.system(size: iPadScale.value(64)))
+                        .font(.system(size: expanded ? 96 : iPadScale.value(64)))
                         .opacity(appeared ? 1 : 0)
                         .scaleEffect(appeared ? 1 : 0.3)
                         .animation(.spring(response: 0.5, dampingFraction: 0.6), value: appeared)
 
                     Text(L.s(.missionComplete))
-                        .font(.system(size: iPadScale.value(32), weight: .black, design: .rounded))
+                        .font(.system(size: expanded ? 48 : iPadScale.value(32), weight: .black, design: .rounded))
                         .foregroundStyle(GeniColor.border)
                         .multilineTextAlignment(.center)
                         .opacity(appeared ? 1 : 0)
@@ -48,29 +65,30 @@ struct MissionCompleteView: View {
                     HStack(spacing: 10) {
                         ForEach(1...5, id: \.self) { star in
                             Text(star <= mathStars ? "⭐" : "☆")
-                                .font(.system(size: 28))
+                                .font(.system(size: expanded ? 42 : 28))
                                 .foregroundStyle(star <= mathStars ? GeniColor.yellow : .gray.opacity(0.3))
                         }
                     }
                     .opacity(appeared ? 1 : 0)
                     .animation(.spring(response: 0.5).delay(0.3), value: appeared)
 
-                    VStack(spacing: 16) {
+                    VStack(spacing: expanded ? 28 : 16) {
                         HStack(spacing: 12) {
                             Text("➕")
                                 .font(.title3)
                                 .frame(width: 36, height: 36)
                                 .background(GeniColor.blue)
-                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                                .clipShape(GeniShape(scale: 0.5))
+                                .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 2))
 
                             Text(L.s(.mathDone))
-                                .font(.system(.body, design: .rounded, weight: .semibold))
+                                .font(.system(expanded ? .title2 : .body, design: .rounded, weight: .semibold))
                                 .foregroundStyle(GeniColor.border)
 
                             Spacer()
 
                             Text("+\(mathCoins) 🪙")
-                                .font(.system(.headline, design: .rounded, weight: .black))
+                                .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
                                 .foregroundStyle(GeniColor.border)
                         }
 
@@ -84,16 +102,17 @@ struct MissionCompleteView: View {
                                 .foregroundStyle(.white)
                                 .frame(width: 36, height: 36)
                                 .background(GeniColor.green)
-                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                                .clipShape(GeniShape(scale: 0.5))
+                                .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 2))
 
                             Text(L.s(.readingDone2))
-                                .font(.system(.body, design: .rounded, weight: .semibold))
+                                .font(.system(expanded ? .title2 : .body, design: .rounded, weight: .semibold))
                                 .foregroundStyle(GeniColor.border)
 
                             Spacer()
 
                             Text("+\(readingCoins) 🪙")
-                                .font(.system(.headline, design: .rounded, weight: .black))
+                                .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
                                 .foregroundStyle(GeniColor.border)
                         }
 
@@ -107,17 +126,18 @@ struct MissionCompleteView: View {
                                     .font(.title3)
                                     .frame(width: 36, height: 36)
                                     .background(GeniColor.yellow)
-                                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                                    .clipShape(GeniShape(scale: 0.5))
+                                    .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 2))
 
                                 Text(L.s(.bonusEarned))
-                                    .font(.system(.body, design: .rounded, weight: .semibold))
+                                    .font(.system(expanded ? .title2 : .body, design: .rounded, weight: .semibold))
                                     .foregroundStyle(GeniColor.border)
 
                                 Spacer()
 
                                 Text("+\(bonusCoins) 🪙")
-                                    .font(.system(.headline, design: .rounded, weight: .black))
-                                    .foregroundStyle(GeniColor.yellow)
+                                    .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
+                                    .foregroundStyle(GeniColor.border)
                             }
                         }
 
@@ -127,17 +147,17 @@ struct MissionCompleteView: View {
 
                         HStack {
                             Text(L.s(.total))
-                                .font(.system(.title3, design: .rounded, weight: .black))
+                                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
                                 .foregroundStyle(GeniColor.border)
 
                             Spacer()
 
                             Text("+\(totalCoins) 🪙")
-                                .font(.system(.title3, design: .rounded, weight: .black))
+                                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
                                 .foregroundStyle(GeniColor.border)
                         }
                     }
-                    .padding(20)
+                    .padding(expanded ? 32 : 20)
                     .brutalistCard(color: GeniColor.card)
                     .opacity(appeared ? 1 : 0)
                     .offset(y: appeared ? 0 : 40)
@@ -149,10 +169,10 @@ struct MissionCompleteView: View {
                                 .font(.title2)
                                 .foregroundStyle(GeniColor.orange)
                             Text("\(rewards.streakCount)")
-                                .font(.system(.title3, design: .rounded, weight: .black))
+                                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
                                 .foregroundStyle(GeniColor.border)
                             Text(rewards.streakCount == 1 ? L.s(.day) : L.s(.days))
-                                .font(.system(.caption2, design: .rounded, weight: .medium))
+                                .font(.system(expanded ? .subheadline : .caption2, design: .rounded, weight: .medium))
                                 .foregroundStyle(.black)
                         }
                         .frame(maxWidth: .infinity)
@@ -164,10 +184,10 @@ struct MissionCompleteView: View {
                                 .font(.title2)
                                 .foregroundStyle(GeniColor.yellow)
                             Text("\(mathStars)/5")
-                                .font(.system(.title3, design: .rounded, weight: .black))
+                                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
                                 .foregroundStyle(GeniColor.border)
                             Text(L.s(.stars))
-                                .font(.system(.caption2, design: .rounded, weight: .medium))
+                                .font(.system(expanded ? .subheadline : .caption2, design: .rounded, weight: .medium))
                                 .foregroundStyle(.black)
                         }
                         .frame(maxWidth: .infinity)
@@ -179,10 +199,10 @@ struct MissionCompleteView: View {
                                 .font(.title2)
                                 .foregroundStyle(GeniColor.yellow)
                             Text("\(rewards.coins)")
-                                .font(.system(.title3, design: .rounded, weight: .black))
+                                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
                                 .foregroundStyle(GeniColor.border)
                             Text(L.s(.coins))
-                                .font(.system(.caption2, design: .rounded, weight: .medium))
+                                .font(.system(expanded ? .subheadline : .caption2, design: .rounded, weight: .medium))
                                 .foregroundStyle(.black)
                         }
                         .frame(maxWidth: .infinity)
@@ -200,7 +220,8 @@ struct MissionCompleteView: View {
                         Text(L.s(.done))
                             .frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(BrutalistButton(color: GeniColor.blue))
+                    .buttonStyle(BrutalistButton(color: GeniColor.blue, fontSize: expanded ? 30 : nil, verticalPadding: expanded ? 26 : nil))
+                    .accessibilityIdentifier("missionComplete.done")
                     .padding(.horizontal, 12)
                     .opacity(appeared ? 1 : 0)
                     .animation(.spring(response: 0.5).delay(0.9), value: appeared)
@@ -208,6 +229,8 @@ struct MissionCompleteView: View {
                     Spacer().frame(height: iPadScale.value(40))
                 }
                 .padding(.horizontal, iPadScale.padding)
+                .frame(maxWidth: expanded ? 840 : .infinity)
+                .frame(maxWidth: .infinity)
                 .foregroundStyle(.black)
             }
         }

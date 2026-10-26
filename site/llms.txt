@@ -12,7 +12,7 @@
 
 ## Features
 
-- **Math missions**: Daily 20-exercise sessions covering addition, subtraction, multiplication, and division. Difficulty adapts automatically to the child's performance.
+- **Math missions**: Daily 20-exercise sessions covering addition, subtraction, multiplication, and division, plus telling time on an analog clock from age 6 (read the clock, set the clock, match clocks to times). Difficulty adapts automatically to the child's performance.
 - **Reading adventures**: Three modes — read-to-me, independent reading, and reading aloud with on-device speech recognition feedback.
 - **Rewards system**: Coins, XP, levels, badges, streaks, boss challenges, and time attacks to keep kids motivated.
 - **Parent controls**: PIN-protected parent dashboard for managing profiles, tracking progress, selecting math operations, and adjusting settings.

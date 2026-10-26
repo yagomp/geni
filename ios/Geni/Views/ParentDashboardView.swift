@@ -40,8 +40,9 @@ struct ParentDashboardView: View {
                         Text("◀️").font(.system(size: 20))
                             .frame(width: 44, height: 44)
                             .background(GeniColor.card)
+                            .clipShape(GeniShape())
                             .overlay(
-                                Rectangle()
+                                GeniShape()
                                     .stroke(GeniColor.border, lineWidth: 3)
                             )
                     }
@@ -62,11 +63,11 @@ struct ParentDashboardView: View {
 
                 HStack(spacing: 16) {
                     ForEach(0..<4, id: \.self) { i in
-                        Rectangle()
+                        GeniShape(scale: 0.5)
                             .fill(i < pinInput.count ? GeniColor.blue : Color.gray.opacity(0.2))
                             .frame(width: 20, height: 20)
                             .overlay(
-                                Rectangle()
+                                GeniShape(scale: 0.5)
                                     .stroke(GeniColor.border, lineWidth: 2)
                             )
                     }
@@ -91,6 +92,7 @@ struct ParentDashboardView: View {
             }
             .padding(iPadScale.padding)
         }
+        .buttonStyle(KidPressStyle())
         .navigationBarHidden(true)
     }
 
@@ -108,17 +110,20 @@ struct ParentDashboardView: View {
                             Text("◀️").font(.system(size: 20))
                                 .frame(width: 44, height: 44)
                                 .background(GeniColor.card)
+                                .clipShape(GeniShape())
                                 .overlay(
-                                    Rectangle()
+                                    GeniShape()
                                         .stroke(GeniColor.border, lineWidth: 3)
                                 )
                         }
+                        .accessibilityIdentifier("parent.back")
 
                         Spacer()
 
                         Text(L.s(.parentSettings))
                             .font(.system(.title2, design: .rounded, weight: .black))
                             .foregroundStyle(GeniColor.border)
+                            .accessibilityIdentifier("parent.title")
 
                         Spacer()
 
@@ -128,6 +133,9 @@ struct ParentDashboardView: View {
                     profilesSection
                     languageSection
                     progressOverviewSection
+                        #if DEBUG
+                        .id("designPreview.parentProgress")
+                        #endif
                     reminderSection
                     iCloudSyncSection
                     contactSection
@@ -136,7 +144,11 @@ struct ParentDashboardView: View {
                 .padding(iPadScale.padding)
                 .foregroundStyle(.black)
             }
+            #if DEBUG
+            .designPreviewParentScroll()
+            #endif
         }
+        .buttonStyle(KidPressStyle())
         .navigationBarHidden(true)
         .sheet(isPresented: $showContactSheet) {
             SafariView(url: URL(string: "https://geni.kids/contact.html")!)
@@ -144,10 +156,7 @@ struct ParentDashboardView: View {
         }
         .fullScreenCover(isPresented: $showProfileCreation) {
             ProfileCreationView(onComplete: { profile in
-                viewModel.persistence.saveProfile(profile)
-                if viewModel.persistence.activeProfileId == profile.id {
-                    ThemeManager.shared.current = profile.theme
-                }
+                viewModel.saveProfile(profile)
                 showProfileCreation = false
             }, existingNames: viewModel.persistence.profiles.map(\.nickname), onBack: {
                 showProfileCreation = false
@@ -155,10 +164,7 @@ struct ParentDashboardView: View {
         }
         .fullScreenCover(item: $editingProfile) { profile in
             ProfileCreationView(onComplete: { updated in
-                viewModel.persistence.saveProfile(updated)
-                if viewModel.persistence.activeProfileId == updated.id {
-                    ThemeManager.shared.current = updated.theme
-                }
+                viewModel.saveProfile(updated)
                 editingProfile = nil
             }, existingNames: viewModel.persistence.profiles.filter { $0.id != profile.id }.map(\.nickname), editingProfile: profile, onBack: {
                 editingProfile = nil
@@ -178,22 +184,21 @@ struct ParentDashboardView: View {
                         HapticManager.selection()
                         guard var profile = viewModel.persistence.activeProfile else { return }
                         profile.theme = theme
-                        viewModel.persistence.saveProfile(profile)
-                        ThemeManager.shared.current = theme
+                        viewModel.saveProfile(profile)
                     } label: {
                         VStack(spacing: 8) {
                             ZStack {
-                                Rectangle()
+                                GeniShape()
                                     .fill(themePreviewBg(theme))
                                     .frame(height: 56)
-                                    .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                                    .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 2))
 
                                 HStack(spacing: 6) {
                                     Circle().fill(themePreviewAccent(theme)).frame(width: 14, height: 14)
-                                    RoundedRectangle(cornerRadius: 0)
+                                    GeniShape(scale: 0.5)
                                         .fill(themePreviewCard(theme))
                                         .frame(width: 28, height: 14)
-                                        .overlay(Rectangle().stroke(Color.black, lineWidth: 1))
+                                        .overlay(GeniShape(scale: 0.5).stroke(Color.black, lineWidth: 1))
                                     Circle().fill(themePreviewSecondary(theme)).frame(width: 14, height: 14)
                                 }
                             }
@@ -316,8 +321,9 @@ struct ParentDashboardView: View {
                         .font(.system(size: 20))
                         .frame(width: 44, height: 44)
                         .background(.white)
+                        .clipShape(GeniShape())
                         .overlay(
-                            Rectangle()
+                            GeniShape()
                                 .stroke(GeniColor.border, lineWidth: 2)
                         )
 
@@ -338,15 +344,17 @@ struct ParentDashboardView: View {
                         Text("✏️")
                             .font(.system(size: 18))
                     }
+                    .accessibilityIdentifier("parent.edit.\(profile.nickname)")
 
                     if viewModel.persistence.profiles.count > 1 {
                         Button {
                             HapticManager.selection()
-                            viewModel.persistence.deleteProfile(profile.id)
+                            viewModel.deleteProfile(profile.id)
                         } label: {
                             Text("🗑️")
                                 .font(.system(size: 18))
                         }
+                        .accessibilityIdentifier("parent.delete.\(profile.nickname)")
                     }
                 }
                 .padding(12)
@@ -364,6 +372,7 @@ struct ParentDashboardView: View {
                 .font(.system(.body, design: .rounded, weight: .bold))
                 .foregroundStyle(GeniColor.blue)
             }
+            .accessibilityIdentifier("parent.add")
         }
     }
 
@@ -378,7 +387,7 @@ struct ParentDashboardView: View {
                 let chapters = viewModel.persistence.loadAllChapters(for: profile.id)
                 let completedChapters = chapters.filter { $0.status == .completed }
                 let totalCorrect = completedChapters.reduce(0) { $0 + $1.correctCount }
-                let totalExercises = completedChapters.reduce(0) { $0 + $1.exerciseResults.count }
+                let totalExercises = completedChapters.reduce(0) { $0 + $1.completedExerciseCount }
                 let accuracy = totalExercises > 0 ? Int(Double(totalCorrect) / Double(totalExercises) * 100) : 0
 
                 VStack(spacing: 12) {
@@ -387,8 +396,9 @@ struct ParentDashboardView: View {
                             .font(.system(size: 18))
                             .frame(width: 36, height: 36)
                             .background(.white)
+                            .clipShape(GeniShape(scale: 0.5))
                             .overlay(
-                                Rectangle()
+                                GeniShape(scale: 0.5)
                                     .stroke(GeniColor.border, lineWidth: 2)
                                     .allowsHitTesting(false)
                             )
@@ -405,8 +415,9 @@ struct ParentDashboardView: View {
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(GeniColor.purple.opacity(0.1))
+                            .clipShape(GeniShape(scale: 0.5))
                             .overlay(
-                                Rectangle()
+                                GeniShape(scale: 0.5)
                                     .stroke(GeniColor.purple.opacity(0.3), lineWidth: 2)
                                     .allowsHitTesting(false)
                             )
@@ -444,8 +455,9 @@ struct ParentDashboardView: View {
                                             .padding(.horizontal, 6)
                                             .padding(.vertical, 2)
                                             .background(chapterTypeColor(ch.chapterType).opacity(0.1))
+                                            .clipShape(GeniShape(scale: 0.5))
                                             .overlay(
-                                                Rectangle()
+                                                GeniShape(scale: 0.5)
                                                     .stroke(chapterTypeColor(ch.chapterType).opacity(0.3), lineWidth: 1)
                                                     .allowsHitTesting(false)
                                             )
@@ -461,7 +473,7 @@ struct ParentDashboardView: View {
                                         }
                                     }
 
-                                    Text("\(ch.correctCount)/\(ch.exerciseResults.count)")
+                                    Text("\(ch.correctCount)/\(ch.completedExerciseCount)")
                                         .font(.system(.caption2, design: .monospaced, weight: .bold))
                                         .foregroundStyle(.black)
                                 }
@@ -497,8 +509,9 @@ struct ParentDashboardView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 8)
         .background(color.opacity(0.06))
+        .clipShape(GeniShape())
         .overlay(
-            Rectangle()
+            GeniShape()
                 .stroke(color.opacity(0.2), lineWidth: 2)
                 .allowsHitTesting(false)
         )
@@ -850,9 +863,10 @@ struct ParentDashboardView: View {
                                 .foregroundStyle(GeniColor.border)
                                 .frame(width: 72, height: 52)
                                 .background(GeniColor.card)
-                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                                .clipShape(GeniShape())
+                                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
                                 .background(
-                                    Rectangle()
+                                    GeniShape()
                                         .fill(GeniColor.border)
                                         .offset(x: 3, y: 3)
                                 )
@@ -899,17 +913,18 @@ struct SetPinView: View {
 
                     HStack(spacing: 16) {
                         ForEach(0..<4, id: \.self) { i in
-                            Rectangle()
+                            GeniShape(scale: 0.5)
                                 .fill(i < pin.count ? GeniColor.blue : Color.gray.opacity(0.2))
                                 .frame(width: 20, height: 20)
                                 .overlay(
-                                    Rectangle()
+                                    GeniShape(scale: 0.5)
                                         .stroke(GeniColor.border, lineWidth: 2)
                                 )
                         }
                     }
 
                     pinPadView
+                        .buttonStyle(KidPressStyle())
                 }
                 .padding(24)
             }
@@ -973,9 +988,10 @@ struct SetPinView: View {
                                 .foregroundStyle(GeniColor.border)
                                 .frame(width: 72, height: 52)
                                 .background(GeniColor.card)
-                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
+                                .clipShape(GeniShape())
+                                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
                                 .background(
-                                    Rectangle()
+                                    GeniShape()
                                         .fill(GeniColor.border)
                                         .offset(x: 3, y: 3)
                                 )
@@ -1013,14 +1029,15 @@ struct DisablePinView: View {
 
                     HStack(spacing: 16) {
                         ForEach(0..<4, id: \.self) { i in
-                            Rectangle()
+                            GeniShape(scale: 0.5)
                                 .fill(i < pin.count ? GeniColor.blue : Color.gray.opacity(0.2))
                                 .frame(width: 20, height: 20)
-                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 2))
+                                .overlay(GeniShape(scale: 0.5).stroke(GeniColor.border, lineWidth: 2))
                         }
                     }
 
                     pinPadView
+                        .buttonStyle(KidPressStyle())
                 }
                 .padding(24)
             }
@@ -1075,8 +1092,9 @@ struct DisablePinView: View {
                                 .foregroundStyle(GeniColor.border)
                                 .frame(width: 72, height: 52)
                                 .background(GeniColor.card)
-                                .overlay(Rectangle().stroke(GeniColor.border, lineWidth: 3))
-                                .background(Rectangle().fill(GeniColor.border).offset(x: 3, y: 3))
+                                .clipShape(GeniShape())
+                                .overlay(GeniShape().stroke(GeniColor.border, lineWidth: 3))
+                                .background(GeniShape().fill(GeniColor.border).offset(x: 3, y: 3))
                             }
                         }
                     }

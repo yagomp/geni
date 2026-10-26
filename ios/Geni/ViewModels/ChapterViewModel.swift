@@ -1,5 +1,11 @@
 import SwiftUI
 
+struct MatchStroke: Equatable {
+    let leftIndex: Int
+    let rightIndex: Int
+    let id = UUID()
+}
+
 @Observable
 @MainActor
 class ChapterViewModel {
@@ -16,20 +22,21 @@ class ChapterViewModel {
     var completedChapter: ChapterProgress? = nil
     var xpEarned: Int = 0
     var dragAnswer: Int? = nil
-    var completedMatches: [(Int, Int)] = []
-    var activeDragSource: Int? = nil
-    var activeDragPosition: CGPoint? = nil
-    var wrongMatchPair: (Int, Int)? = nil
+    var completedMatches: [MatchStroke] = []
+    var wrongMatchStroke: MatchStroke? = nil
     var evenOddStep: Int = 0
     var timeRemaining: Int = 60
     var isTimedMode: Bool = false
     var timerTask: Task<Void, Never>? = nil
+    var isAwaitingAdvance: Bool = false
+    private(set) var wrongMatchCount: Int = 0
+    private(set) var hasCompleted: Bool = false
 
     init(profile: ChildProfile, chapter: ChapterProgress, exercises: [Exercise], startIndex: Int = 0) {
         self.profile = profile
         self.chapter = chapter
         self.exercises = exercises
-        self.currentIndex = startIndex
+        self.currentIndex = min(startIndex, exercises.count)
         self.isTimedMode = chapter.chapterType == .timeAttack
 
         if isTimedMode {
@@ -42,23 +49,28 @@ class ChapterViewModel {
         return exercises[currentIndex]
     }
 
+    var totalExercises: Int {
+        max(exercises.count, 1)
+    }
+
     var progress: Double {
-        Double(currentIndex) / 20.0
+        Double(min(currentIndex, totalExercises)) / Double(totalExercises)
     }
 
     var isLastExercise: Bool {
-        currentIndex >= 19
+        currentIndex >= totalExercises - 1
     }
 
     func submitAnswer(_ answer: Int, persistence: PersistenceService) {
         guard let exercise = currentExercise else { return }
+        guard !isAwaitingAdvance else { return }
         attempts += 1
 
         let actualCorrectAnswer: Int
         switch exercise.format {
         case .solveResult, .countingObjects, .visualAddition, .tenFrame,
              .numberBonds, .diceAddition, .visualSubtraction,
-             .multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision:
+             .multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision, .clockRead, .clockSet:
             actualCorrectAnswer = exercise.correctAnswer
         case .missingNumber:
             actualCorrectAnswer = exercise.missingNumberCorrectAnswer
@@ -72,7 +84,7 @@ class ChapterViewModel {
             } else {
                 actualCorrectAnswer = exercise.correctAnswer % 2 == 0 ? 0 : 1
             }
-        case .matchConnect:
+        case .matchConnect, .clockMatch:
             actualCorrectAnswer = answer
         }
 
@@ -116,13 +128,12 @@ class ChapterViewModel {
                 secondCorrect: attempts == 2 ? true : nil,
                 attempts: attempts
             )
-            chapter.exerciseResults.append(result)
-            persistence.saveChapterProgress(chapter)
+            recordCompletedExercise(result, persistence: persistence)
 
             advanceAfterDelay()
         } else if attempts >= 2 {
             feedbackCorrect = false
-            feedbackMessage = "\(actualCorrectAnswer)"
+            feedbackMessage = exercise.format.isClock ? ClockTime(totalMinutes: actualCorrectAnswer).digital : "\(actualCorrectAnswer)"
             showAnswer = true
             showFeedback = true
             HapticManager.wrongAnswer()
@@ -134,8 +145,7 @@ class ChapterViewModel {
                 secondCorrect: false,
                 attempts: attempts
             )
-            chapter.exerciseResults.append(result)
-            persistence.saveChapterProgress(chapter)
+            recordCompletedExercise(result, persistence: persistence)
 
             advanceAfterDelay()
         } else {
@@ -152,12 +162,23 @@ class ChapterViewModel {
         }
     }
 
+    func submitClockTime(_ time: ClockTime, persistence: PersistenceService) {
+        guard let exercise = currentExercise, exercise.format == .clockSet, !showFeedback else { return }
+        submitAnswer(time.snapped(to: exercise.clockMinuteStep).totalMinutes, persistence: persistence)
+    }
+
     func submitMatch(leftIndex: Int, rightIndex: Int, persistence: PersistenceService) {
         guard let exercise = currentExercise,
               let correctIndices = exercise.correctMatchIndices else { return }
+        guard !isAwaitingAdvance,
+              correctIndices.indices.contains(leftIndex),
+              !completedMatches.contains(where: { $0.leftIndex == leftIndex || $0.rightIndex == rightIndex })
+        else { return }
+
+        let stroke = MatchStroke(leftIndex: leftIndex, rightIndex: rightIndex)
 
         if correctIndices[leftIndex] == rightIndex {
-            completedMatches.append((leftIndex, rightIndex))
+            completedMatches.append(stroke)
             HapticManager.correctAnswer()
 
             if completedMatches.count == correctIndices.count {
@@ -168,27 +189,37 @@ class ChapterViewModel {
                 let result = ExerciseResult(
                     chapterId: chapter.id,
                     exercise: exercise,
-                    firstCorrect: true,
-                    secondCorrect: nil,
-                    attempts: 1
+                    firstCorrect: wrongMatchCount == 0,
+                    secondCorrect: wrongMatchCount == 1 ? true : nil,
+                    attempts: wrongMatchCount + 1
                 )
-                chapter.exerciseResults.append(result)
-                persistence.saveChapterProgress(chapter)
+                recordCompletedExercise(result, persistence: persistence)
                 advanceAfterDelay()
             }
         } else {
-            wrongMatchPair = (leftIndex, rightIndex)
+            wrongMatchCount += 1
+            wrongMatchStroke = stroke
             HapticManager.wrongAnswer()
             Task {
                 try? await Task.sleep(for: .seconds(0.6))
-                wrongMatchPair = nil
+                if wrongMatchStroke == stroke {
+                    wrongMatchStroke = nil
+                }
             }
         }
     }
 
+    private func recordCompletedExercise(_ result: ExerciseResult, persistence: PersistenceService) {
+        chapter.exerciseResults.append(result)
+        chapter.completedExerciseCount = max(chapter.completedExerciseCount, currentIndex + 1)
+        persistence.saveChapterProgress(chapter)
+    }
+
     private func advanceAfterDelay() {
+        isAwaitingAdvance = true
         Task {
             try? await Task.sleep(for: .seconds(1.5))
+            guard !hasCompleted else { return }
             showFeedback = false
             showAnswer = false
             selectedAnswer = nil
@@ -196,7 +227,10 @@ class ChapterViewModel {
             attempts = 0
             evenOddStep = 0
             completedMatches = []
+            wrongMatchCount = 0
+            wrongMatchStroke = nil
             currentIndex += 1
+            isAwaitingAdvance = false
         }
     }
 
@@ -209,6 +243,14 @@ class ChapterViewModel {
                 }
             }
         }
+    }
+
+    /// Returns true exactly once; the timer and the final answer can both end a chapter.
+    func claimCompletion() -> Bool {
+        guard !hasCompleted else { return false }
+        hasCompleted = true
+        stopTimer()
+        return true
     }
 
     func stopTimer() {

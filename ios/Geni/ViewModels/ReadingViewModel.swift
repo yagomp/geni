@@ -3,6 +3,12 @@ import SwiftUI
 @Observable
 @MainActor
 class ReadingViewModel {
+    enum FeedbackTone {
+        case success
+        case guidance
+        case error
+    }
+
     let profile: ChildProfile
     let readingText: ReadingText
     var mode: ReadingMode
@@ -21,9 +27,12 @@ class ReadingViewModel {
     var matchedWordCount: Int = 0
     var feedbackMessage: String = ""
     var showFeedback: Bool = false
+    var feedbackTone: FeedbackTone = .success
 
     private var timerTask: Task<Void, Never>?
     private var highlightTask: Task<Void, Never>?
+    private var permissionTask: Task<Void, Never>?
+    private var sessionGeneration = 0
 
     init(profile: ChildProfile, readingText: ReadingText, mode: ReadingMode, date: String) {
         self.profile = profile
@@ -49,7 +58,8 @@ class ReadingViewModel {
 
     var progress: Double {
         guard !words.isEmpty else { return 0 }
-        return Double(currentWordIndex) / Double(words.count)
+        let completedWords = mode == .listenToMeRead ? matchedWordCount : currentWordIndex
+        return Double(min(completedWords, words.count)) / Double(words.count)
     }
 
     var timeProgress: Double {
@@ -78,7 +88,7 @@ class ReadingViewModel {
             if mode == .listenToMeRead {
                 let isMisread = recognitionService?.misreadIndices.contains(i) == true
                 if i < matchedWordCount && isMisread {
-                    wordStr.foregroundColor = Color(GeniColor.pink)
+                    wordStr.foregroundColor = Color(GeniColor.orange)
                     wordStr.underlineStyle = .single
                 } else if i < matchedWordCount {
                     wordStr.foregroundColor = Color(GeniColor.green)
@@ -103,6 +113,8 @@ class ReadingViewModel {
     }
 
     func start() {
+        guard !isPlaying, !isCompleted else { return }
+        sessionGeneration += 1
         isPlaying = true
         isPaused = false
         startTimer()
@@ -118,6 +130,8 @@ class ReadingViewModel {
     }
 
     func pause() {
+        sessionGeneration += 1
+        permissionTask?.cancel()
         isPaused = true
         isPlaying = false
         timerTask?.cancel()
@@ -126,11 +140,13 @@ class ReadingViewModel {
         if mode == .readToMe {
             speechService?.pause()
         } else if mode == .listenToMeRead {
-            recognitionService?.stopListening()
+            recognitionService?.stopListening(clearTranscript: false)
         }
     }
 
     func resume() {
+        guard isPaused, !isCompleted else { return }
+        sessionGeneration += 1
         isPaused = false
         isPlaying = true
         startTimer()
@@ -140,8 +156,9 @@ class ReadingViewModel {
             startSelfPacedHighlighting()
         case .readToMe:
             speechService?.resume()
+            trackReadToMeProgress()
         case .listenToMeRead:
-            recognitionService?.startListening()
+            startListenMode()
         }
     }
 
@@ -151,16 +168,22 @@ class ReadingViewModel {
         elapsedSeconds = 0
         matchedWordCount = 0
         isCompleted = false
+        feedbackMessage = ""
+        showFeedback = false
+        feedbackTone = .success
+        recognitionService?.resetTranscript(clearMisreads: true)
         start()
     }
 
     func stop() {
+        sessionGeneration += 1
+        permissionTask?.cancel()
         isPlaying = false
         isPaused = false
         timerTask?.cancel()
         highlightTask?.cancel()
         speechService?.stop()
-        recognitionService?.stopListening()
+        recognitionService?.stopListening(clearTranscript: true)
     }
 
     func completeReading() {
@@ -212,7 +235,12 @@ class ReadingViewModel {
         guard let speechService else { return }
         let rate = speechService.speechRate(for: profile.ageGroup)
         speechService.speak(readingText.content, rate: rate)
+        trackReadToMeProgress()
+    }
 
+    private func trackReadToMeProgress() {
+        guard let speechService else { return }
+        highlightTask?.cancel()
         highlightTask = Task {
             while !Task.isCancelled && !speechService.didFinishSpeaking {
                 if let range = speechService.currentWordRange {
@@ -239,11 +267,22 @@ class ReadingViewModel {
 
     private func startListenMode() {
         guard let recognitionService else { return }
+        permissionTask?.cancel()
+        highlightTask?.cancel()
+        recognitionService.resetTranscript(clearMisreads: false)
+        currentWordIndex = matchedWordCount
+        feedbackMessage = ""
+        showFeedback = false
+        feedbackTone = .success
 
-        Task {
+        let generation = sessionGeneration
+        permissionTask = Task {
             let granted = await recognitionService.requestPermissions()
+            guard !Task.isCancelled, generation == sessionGeneration, isPlaying else { return }
             guard granted else {
+                pause()
                 feedbackMessage = L.s(.micPermissionNeeded)
+                feedbackTone = .error
                 showFeedback = true
                 return
             }
@@ -251,39 +290,70 @@ class ReadingViewModel {
 
             highlightTask = Task {
                 let expectedWords = words.map { $0.text }
-                var attemptsWhileStuck = 0
-                var wasRecognizingWords = false
-                while !Task.isCancelled && matchedWordCount < words.count {
-                    let wordsNonEmpty = !recognitionService.recognizedWords.isEmpty
-                    // Detect session end: went non-empty → empty means child spoke and session closed
-                    if wasRecognizingWords && !wordsNonEmpty {
-                        attemptsWhileStuck += 1
-                    }
-                    wasRecognizingWords = wordsNonEmpty
+                var lastProgressAt = Date()
+                var lastFeedbackAt = Date.distantPast
+                var lastTranscriptVersion = recognitionService.transcriptVersion
+                var lastTranscriptUpdateAt = recognitionService.lastTranscriptUpdateAt ?? Date()
 
+                while !Task.isCancelled && matchedWordCount < words.count {
+                    guard recognitionService.isAvailable,
+                          recognitionService.isListening,
+                          recognitionService.error?.isEmpty != false else {
+                        let message = recognitionService.error.flatMap { $0.isEmpty ? nil : $0 }
+                            ?? L.s(.speechRecognitionUnavailable)
+                        pause()
+                        feedbackMessage = message
+                        feedbackTone = .error
+                        showFeedback = true
+                        return
+                    }
                     let count = recognitionService.matchedWordCount(expected: expectedWords, startFrom: matchedWordCount)
                     if count > matchedWordCount {
                         matchedWordCount = count
-                        attemptsWhileStuck = 0
-                        wasRecognizingWords = false
+                        currentWordIndex = count
+                        lastProgressAt = Date()
+                        lastTranscriptVersion = recognitionService.transcriptVersion
+                        lastTranscriptUpdateAt = recognitionService.lastTranscriptUpdateAt ?? lastProgressAt
+                        if feedbackTone != .error {
+                            showFeedback = false
+                            feedbackMessage = ""
+                        }
                         HapticManager.impact(.light)
                     }
 
-                    // After 2 failed attempts on the same word, mark it red and advance
-                    if attemptsWhileStuck >= 2 {
-                        recognitionService.misreadIndices.insert(matchedWordCount)
-                        matchedWordCount += 1
-                        attemptsWhileStuck = 0
-                        wasRecognizingWords = false
-                        HapticManager.impact(.light)
+                    if recognitionService.transcriptVersion != lastTranscriptVersion {
+                        lastTranscriptVersion = recognitionService.transcriptVersion
+                        lastTranscriptUpdateAt = recognitionService.lastTranscriptUpdateAt ?? Date()
                     }
 
-                    try? await Task.sleep(for: .milliseconds(200))
+                    let now = Date()
+                    let stalledFor = now.timeIntervalSince(lastProgressAt)
+                    let transcriptQuietFor = now.timeIntervalSince(lastTranscriptUpdateAt)
+
+                    if stalledFor >= listenWarningSeconds,
+                       transcriptQuietFor >= 1.0,
+                       now.timeIntervalSince(lastFeedbackAt) >= 2.0 {
+                        feedbackMessage = L.s(.letsKeepGoing)
+                        feedbackTone = .guidance
+                        showFeedback = true
+                        lastFeedbackAt = now
+                    }
+
+                    if stalledFor >= listenAutoAdvanceSeconds && transcriptQuietFor >= 1.5 {
+                        skipCurrentListenWord()
+                        lastProgressAt = now
+                        lastFeedbackAt = now
+                        lastTranscriptUpdateAt = now
+                        recognitionService.resetTranscript(clearMisreads: false)
+                    }
+
+                    try? await Task.sleep(for: .milliseconds(150))
                 }
 
                 guard !Task.isCancelled else { return }
                 if matchedWordCount >= words.count {
                     feedbackMessage = L.s(.amazingReading)
+                    feedbackTone = .success
                     showFeedback = true
                     HapticManager.notification(.success)
                     try? await Task.sleep(for: .seconds(1.5))
@@ -292,5 +362,29 @@ class ReadingViewModel {
                 }
             }
         }
+    }
+
+    func skipCurrentListenWord() {
+        guard mode == .listenToMeRead, isPlaying, matchedWordCount < words.count else { return }
+
+        recognitionService?.misreadIndices.insert(matchedWordCount)
+        matchedWordCount += 1
+        currentWordIndex = matchedWordCount
+        feedbackMessage = L.s(.letsKeepGoing)
+        feedbackTone = .guidance
+        showFeedback = true
+        HapticManager.impact(.light)
+    }
+
+    private var listenWarningSeconds: TimeInterval {
+        switch profile.ageGroup {
+        case .young: return 2.5
+        case .middle: return 3.0
+        case .older: return 3.5
+        }
+    }
+
+    private var listenAutoAdvanceSeconds: TimeInterval {
+        listenWarningSeconds + 2.0
     }
 }

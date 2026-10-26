@@ -74,17 +74,19 @@ struct ProgressMapView: View {
 
     private func nodeView(index: Int, isCompleted: Bool, isCurrent: Bool, isMilestone: Bool, color: Color) -> some View {
         let size: CGFloat = isMilestone ? 48 : 36
+        // 36pt nodes are under the 44pt threshold, so they get the small radius.
+        let shape = GeniShape(scale: isMilestone ? 1 : 0.5)
 
         return ZStack {
-            Rectangle()
+            shape
                 .fill(isCompleted ? GeniColor.green : (isCurrent ? GeniColor.cyan : .white))
                 .frame(width: size, height: size)
                 .overlay(
-                    Rectangle()
+                    shape
                         .stroke(GeniColor.border, lineWidth: 3)
                 )
                 .background(
-                    Rectangle()
+                    shape
                         .fill(GeniColor.border)
                         .offset(x: 3, y: 3)
                 )
@@ -99,7 +101,7 @@ struct ProgressMapView: View {
             } else {
                 Text("\(index + 1)")
                     .font(.system(size: size * 0.35, weight: .bold, design: .rounded))
-                    .foregroundStyle(isCurrent ? .white : .gray.opacity(0.4))
+                    .foregroundStyle(isCurrent ? GeniColor.border : Color(white: 0.45))
             }
         }
     }

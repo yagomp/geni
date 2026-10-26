@@ -1,7 +1,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    #if DEBUG
+    @State private var viewModel = DesignPreview.makeViewModel()
+    #else
     @State private var viewModel = AppViewModel()
+    #endif
     @State private var showProfileCreation = false
     @State private var languageManager = LanguageManager.shared
     @Namespace private var rewardsZoom
@@ -77,7 +81,10 @@ struct ContentView: View {
                     mathCoins: viewModel.missionMathCoins,
                     onContinue: {
                         viewModel.continueToMissionReading()
-                    }
+                    },
+                    onFinish: viewModel.canFinishMissionWithoutReading ? {
+                        viewModel.finishMissionWithoutReading()
+                    } : nil
                 )
                 .transition(.scale.combined(with: .opacity))
 
@@ -157,12 +164,13 @@ struct ContentView: View {
                 .zIndex(101)
             }
         }
+        .buttonStyle(KidPressStyle())
         .animation(.spring(response: 0.4), value: viewModel.currentScreen)
         .animation(.spring(response: 0.4), value: viewModel.showLevelUp)
         .animation(.spring(response: 0.4), value: viewModel.showBadgeUnlock)
         .fullScreenCover(isPresented: $showProfileCreation) {
             ProfileCreationView(onComplete: { profile in
-                viewModel.persistence.saveProfile(profile)
+                viewModel.saveProfile(profile)
                 if !viewModel.persistence.hasOnboarded {
                     viewModel.completeOnboarding(profile: profile)
                 }
@@ -176,10 +184,14 @@ struct ContentView: View {
                 .zoomDestination(id: "settings", in: settingsZoom)
         }
         .fullScreenCover(isPresented: $viewModel.showRewards) {
-            RewardsView(rewards: viewModel.rewardState)
+            RewardsView(viewModel: viewModel)
                 .zoomDestination(id: "rewards", in: rewardsZoom)
         }
         .id(languageManager.current.rawValue)
+        #if DEBUG
+        .uiTestStateOverlay(viewModel)
+        .designPreview(viewModel)
+        #endif
     }
 }
 

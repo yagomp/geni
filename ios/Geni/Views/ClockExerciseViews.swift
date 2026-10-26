@@ -1,0 +1,81 @@
+import SwiftUI
+
+struct ClockExerciseView: View {
+    let exercise: Exercise
+    let chapterVM: ChapterViewModel
+    let persistence: PersistenceService
+    @Environment(\.geniExpandedLayout) private var expanded
+    @Environment(\.geniLearningSize) private var availableSize
+    @State private var setTime = ClockTime(hour: 12, minute: 0)
+
+    init(exercise: Exercise, chapterVM: ChapterViewModel, persistence: PersistenceService) {
+        self.exercise = exercise
+        self.chapterVM = chapterVM
+        self.persistence = persistence
+        // Never begin a setting exercise with the answer already on the face.
+        _setTime = State(initialValue: ClockTime(hour: exercise.correctAnswer == 0 ? 6 : 12, minute: 0))
+        #if DEBUG
+        if DesignPreview.screen == "clockSet" {
+            _setTime = State(initialValue: ClockTime(hour: 3, minute: 0))
+        }
+        #endif
+    }
+
+    private var target: ClockTime { exercise.clockTimes?.first ?? ClockTime(totalMinutes: exercise.correctAnswer) }
+
+    var body: some View {
+        VStack(spacing: expanded ? 28 : 20) {
+            Text(L.s(exercise.format == .clockSet ? .clockSet : exercise.format == .clockMatch ? .clockMatch : .clockRead))
+                .font(.system(size: expanded ? 40 : iPadScale.value(28), weight: .black, design: .rounded))
+                .foregroundStyle(GeniColor.border)
+                .multilineTextAlignment(.center)
+            switch exercise.format {
+            case .clockMatch:
+                MatchConnectBoard(chapterVM: chapterVM, persistence: persistence,
+                                  leftLabels: exercise.matchLeftLabels ?? [], rightLabels: exercise.matchRightLabels ?? [],
+                                  leftClocks: exercise.clockTimes)
+            case .clockSet:
+                Text(target.digital)
+                    .font(.system(size: expanded ? 80 : iPadScale.value(48), weight: .black, design: .monospaced))
+                    .foregroundStyle(GeniColor.blue)
+                    .accessibilityIdentifier("clock.target")
+                ClockFaceView(time: setTime, minuteStep: exercise.clockMinuteStep) { setTime = $0 }
+                    .frame(maxWidth: expanded ? clockSize : iPadScale.value(280))
+                    .allowsHitTesting(!chapterVM.showFeedback && !chapterVM.isAwaitingAdvance)
+                    .disabled(chapterVM.showFeedback || chapterVM.isAwaitingAdvance)
+                Button(L.s(.clockCheck)) { chapterVM.submitClockTime(setTime, persistence: persistence) }
+                    .buttonStyle(BrutalistButton(color: GeniColor.blue, fontSize: expanded ? 32 : nil, verticalPadding: expanded ? 24 : nil))
+                    .disabled(chapterVM.showFeedback || chapterVM.isAwaitingAdvance)
+                    .accessibilityIdentifier("clock.check")
+            default:
+                ClockFaceView(time: target)
+                    .frame(maxWidth: expanded ? clockSize : iPadScale.value(260))
+                    .accessibilityIdentifier("clock.face")
+                LazyVGrid(columns: [GridItem(.flexible(), spacing: expanded ? 24 : nil), GridItem(.flexible())], spacing: expanded ? 24 : 16) {
+                    ForEach(exercise.options, id: \.self) { answer in
+                        Button { chapterVM.submitAnswer(answer, persistence: persistence) } label: {
+                            Text(ClockTime(totalMinutes: answer).digital)
+                                .font(.system(size: expanded ? 40 : iPadScale.value(28), weight: .black, design: .monospaced))
+                                .frame(maxWidth: .infinity, minHeight: expanded ? 104 : 64)
+                                .foregroundStyle(GeniColor.border)
+                                .brutalistCard(color: answerColor(answer))
+                        }
+                        .buttonStyle(KidPressStyle())
+                        .disabled(chapterVM.showFeedback || chapterVM.isAwaitingAdvance)
+                        .accessibilityIdentifier("answer.\(answer)")
+                    }
+                }
+            }
+        }
+    }
+
+    private var clockSize: CGFloat { availableSize.height < 1100 ? 420 : 500 }
+
+    private func answerColor(_ answer: Int) -> Color {
+        if chapterVM.showFeedback {
+            if answer == exercise.correctAnswer && (chapterVM.feedbackCorrect || chapterVM.showAnswer) { return GeniColor.green.soft(0.3) }
+            if answer == chapterVM.selectedAnswer { return GeniColor.pink.soft(0.25) }
+        }
+        return .white
+    }
+}

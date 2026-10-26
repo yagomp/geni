@@ -35,10 +35,14 @@ enum ExerciseGenerator {
         while i < 20 {
             let difficulty = ExerciseDifficulty.forIndex(i)
             let format = pickFormat(index: i, age: profile.age, ageGroup: profile.ageGroup, chapterType: chapterType)
-            if format == .matchConnect {
+            // Six-year-olds don't get topic chapters, so clocks come through the daily mission.
+            if profile.age == 6, chapterType == .daily, let clockFormat = ageSixClockSlots[i] {
+                exercises.append(generateClockExercise(format: clockFormat, age: profile.age, difficulty: difficulty))
+                i += 1
+            } else if format == .matchConnect {
                 let exercise = generateMatchConnectExercise(difficulty: difficulty, ageGroup: profile.ageGroup, ops: ops)
                 exercises.append(exercise)
-                i += 3
+                i += 1
             } else if emojiFormats.contains(format) {
                 exercises.append(generateEmojiExercise(format: format, difficulty: difficulty))
                 i += 1
@@ -57,6 +61,9 @@ enum ExerciseGenerator {
 
         return exercises
     }
+
+    /// One read-the-clock in the first half and one in the second half of each daily chapter.
+    private static let ageSixClockSlots: [Int: ExerciseFormat] = [6: .clockRead, 14: .clockRead]
 
     static func generateTopicChapter(profile: ChildProfile, topic: MathTopic) -> [Exercise] {
         var exercises: [Exercise] = []
@@ -64,16 +71,25 @@ enum ExerciseGenerator {
         let emojiFormats: Set<ExerciseFormat> = [.countingObjects, .visualAddition, .compareGroups, .tenFrame]
         let middleFormats: Set<ExerciseFormat> = [.numberBonds, .diceAddition, .evenOddSort, .visualSubtraction]
         let olderFormats: Set<ExerciseFormat> = [.multiStep, .numberSequence, .areaPerimeter, .fractionPick, .longDivision]
-        let topicFormats = topic.formats(for: profile.ageGroup)
+        let topicFormats = topic.formats(for: profile.age)
 
         var i = 0
         while i < 20 {
             let difficulty = ExerciseDifficulty.forIndex(i)
-            let format = topicFormats[Int.random(in: 0..<topicFormats.count)]
+            // Four clock activities and one number activity in each difficulty block.
+            let clockSchedule: [ExerciseFormat] = [.clockRead, .clockSet, .clockRead, .clockSet, .solveResult]
+            var format = topic == .timeAndCalendar && profile.age >= 6
+                ? clockSchedule[i % clockSchedule.count] : topicFormats.randomElement()!
+            if profile.age == 6 && format == .clockSet && difficulty != .warmup { format = .clockRead }
+            if format.isClock {
+                exercises.append(generateClockExercise(format: format, age: profile.age, difficulty: difficulty))
+                i += 1
+                continue
+            }
 
             if format == .matchConnect {
                 exercises.append(generateMatchConnectExercise(difficulty: difficulty, ageGroup: profile.ageGroup, ops: ops))
-                i += 3
+                i += 1
             } else if emojiFormats.contains(format) {
                 exercises.append(generateEmojiExercise(format: format, difficulty: difficulty))
                 i += 1
@@ -92,9 +108,18 @@ enum ExerciseGenerator {
         return exercises
     }
 
+    static func generateClockExercise(format: ExerciseFormat, age: Int, difficulty: ExerciseDifficulty) -> Exercise {
+        guard let step = ClockRules.minuteStep(age: age, difficulty: difficulty, format: format) else {
+            return generateExercise(operation: .addition, difficulty: difficulty, ageGroup: .young)
+        }
+        let count = format == .clockMatch ? (age == 6 ? 2 : 3) : 1
+        let times = Array(stride(from: 0, to: 720, by: step)).shuffled().prefix(count).map { ClockTime(totalMinutes: $0) }
+        return Exercise(clockFormat: format, times: times, minuteStep: step, difficulty: difficulty)
+    }
+
     static func generateSpotlightChapter(profile: ChildProfile, operation: MathOperation) -> [Exercise] {
         if profile.age <= 5 {
-            return generateAgeFiveChapter(chapterType: .operationSpotlight)
+            return generateAgeFiveChapter(chapterType: .operationSpotlight, spotlightOp: operation)
         }
 
         var exercises: [Exercise] = []
@@ -129,11 +154,16 @@ enum ExerciseGenerator {
         return exercises
     }
 
-    private static func generateAgeFiveChapter(chapterType: ChapterType) -> [Exercise] {
+    private static func generateAgeFiveChapter(chapterType: ChapterType, spotlightOp: MathOperation? = nil) -> [Exercise] {
         var exercises: [Exercise] = []
 
         for i in 0..<20 {
             let difficulty = ExerciseDifficulty.forIndex(i)
+            if let spotlightOp, spotlightOp != .addition {
+                let (op1, op2) = ageFiveOperands(for: spotlightOp, difficulty: difficulty)
+                exercises.append(Exercise(operand1: op1, operand2: op2, operation: spotlightOp, difficulty: difficulty, format: .solveResult))
+                continue
+            }
             let format = pickAgeFiveFormat(index: i, chapterType: chapterType)
 
             switch format {
@@ -205,6 +235,34 @@ enum ExerciseGenerator {
             )
         default:
             fatalError("Unsupported age 5 format: \(format)")
+        }
+    }
+
+    private static func ageFiveOperands(for operation: MathOperation, difficulty: ExerciseDifficulty) -> (Int, Int) {
+        switch operation {
+        case .addition:
+            return fingerFriendlyAdditionOperands(difficulty: difficulty)
+        case .subtraction:
+            let (total, part) = fingerFriendlyAdditionOperands(difficulty: difficulty)
+            return (total + part, part)
+        case .multiplication:
+            let maxFactor: Int
+            switch difficulty {
+            case .warmup: maxFactor = 2
+            case .normal: maxFactor = 3
+            case .harder, .challenge: maxFactor = 4
+            }
+            return (Int.random(in: 1...maxFactor), Int.random(in: 1...maxFactor))
+        case .division:
+            let maxQuotient: Int
+            switch difficulty {
+            case .warmup: maxQuotient = 2
+            case .normal: maxQuotient = 3
+            case .harder, .challenge: maxQuotient = 5
+            }
+            let divisor = Int.random(in: 1...2)
+            let quotient = Int.random(in: 1...maxQuotient)
+            return (divisor * quotient, divisor)
         }
     }
 
@@ -597,39 +655,23 @@ enum ExerciseGenerator {
 
     static func generateMatchConnectExercise(difficulty: ExerciseDifficulty, ageGroup: AgeGroup, ops: [MathOperation]) -> Exercise {
         let pairCount = difficulty == .warmup ? 3 : 4
-        var leftLabels: [String] = []
-        var rightLabels: [String] = []
-        var answers: [Int] = []
+        let availableOps = ops.isEmpty ? [.addition] : ops
+        var pairs: [(label: String, answer: Int)] = []
+        var usedAnswers = Set<Int>()
 
         for _ in 0..<pairCount {
-            let op = ops[Int.random(in: 0..<ops.count)]
-            let (a, b) = generateOperands(operation: op, difficulty: difficulty, ageGroup: ageGroup)
-            let result: Int
-            switch op {
-            case .addition: result = a + b
-            case .subtraction: result = a - b
-            case .multiplication: result = a * b
-            case .division: result = a / b
-            }
-            leftLabels.append("\(a) \(op.symbol) \(b)")
-            answers.append(result)
+            let pair = generateUniqueMatchConnectPair(
+                difficulty: difficulty,
+                ageGroup: ageGroup,
+                ops: availableOps,
+                usedAnswers: usedAnswers
+            )
+            pairs.append(pair)
+            usedAnswers.insert(pair.answer)
         }
 
-        // Ensure unique answers - regenerate if duplicates
-        var seen = Set<Int>()
-        for i in 0..<answers.count {
-            while seen.contains(answers[i]) {
-                answers[i] += 1
-                let op = ops[Int.random(in: 0..<ops.count)]
-                let newA = answers[i]
-                let newB = Int.random(in: 1...3)
-                leftLabels[i] = "\(newA - newB) \(op.symbol) \(newB)"
-                answers[i] = newA
-            }
-            seen.insert(answers[i])
-        }
-
-        rightLabels = answers.map { "\($0)" }
+        let leftLabels = pairs.map { $0.label }
+        let rightLabels = pairs.map { "\($0.answer)" }
 
         // Shuffle right side and build index mapping
         var shuffledIndices = Array(0..<pairCount)
@@ -641,6 +683,55 @@ enum ExerciseGenerator {
         }
 
         return Exercise(matchLeft: leftLabels, matchRight: shuffledRight, correctIndices: correctIndices, difficulty: difficulty)
+    }
+
+    private static func generateUniqueMatchConnectPair(
+        difficulty: ExerciseDifficulty,
+        ageGroup: AgeGroup,
+        ops: [MathOperation],
+        usedAnswers: Set<Int>
+    ) -> (label: String, answer: Int) {
+        for _ in 0..<100 {
+            let operation = ops.randomElement() ?? .addition
+            let (lhs, rhs) = generateOperands(operation: operation, difficulty: difficulty, ageGroup: ageGroup)
+            let answer = evaluate(lhs, rhs, using: operation)
+
+            guard !usedAnswers.contains(answer) else { continue }
+            return ("\(lhs) \(operation.symbol) \(rhs)", answer)
+        }
+
+        return fallbackMatchConnectPair(usedAnswers: usedAnswers, preferredOperations: ops)
+    }
+
+    private static func fallbackMatchConnectPair(
+        usedAnswers: Set<Int>,
+        preferredOperations: [MathOperation]
+    ) -> (label: String, answer: Int) {
+        let operations = preferredOperations.isEmpty ? [.addition] : preferredOperations
+
+        for answer in 0...500 where !usedAnswers.contains(answer) {
+            let operation = operations.first ?? .addition
+            return (matchConnectLabel(for: answer, operation: operation), answer)
+        }
+
+        let answer = (usedAnswers.max() ?? -1) + 1
+        let operation = operations.first ?? .addition
+        return (matchConnectLabel(for: answer, operation: operation), answer)
+    }
+
+    private static func matchConnectLabel(for answer: Int, operation: MathOperation) -> String {
+        switch operation {
+        case .addition:
+            let rhs = answer == 0 ? 0 : min(answer, 3)
+            return "\(answer - rhs) \(operation.symbol) \(rhs)"
+        case .subtraction:
+            let rhs = max(1, min(3, answer + 1))
+            return "\(answer + rhs) \(operation.symbol) \(rhs)"
+        case .multiplication:
+            return "\(answer) \(operation.symbol) 1"
+        case .division:
+            return "\(answer) \(operation.symbol) 1"
+        }
     }
 
     static func generateNumberBondExercise(difficulty: ExerciseDifficulty) -> Exercise {
@@ -711,6 +802,19 @@ enum ExerciseGenerator {
             return multiplicationOperands(difficulty: difficulty, ageGroup: ageGroup)
         case .division:
             return divisionOperands(difficulty: difficulty, ageGroup: ageGroup)
+        }
+    }
+
+    private static func evaluate(_ lhs: Int, _ rhs: Int, using operation: MathOperation) -> Int {
+        switch operation {
+        case .addition:
+            lhs + rhs
+        case .subtraction:
+            lhs - rhs
+        case .multiplication:
+            lhs * rhs
+        case .division:
+            lhs / rhs
         }
     }
 

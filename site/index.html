@@ -3,150 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Geni - Fun Learning App for Kids | Math & Reading</title>
-<meta name="description" content="Geni makes math and reading fun for kids aged 5-10. Daily missions, speech recognition, rewards, and parent controls. Download free on the App Store.">
+<title>Math and reading for kids 4–10 | Geni</title>
+<meta name="description" content="Math and reading for kids 4–10. Daily picture games, guided reading and rewards. No ads, works offline.">
 <meta name="keywords" content="kids learning app, math for kids, reading app children, educational game, daily missions, speech recognition, parent controls">
 <meta name="robots" content="index, follow">
-<meta name="theme-color" content="#0433FF">
+<meta name="theme-color" content="#FFF7E0">
 <meta name="apple-mobile-web-app-title" content="Geni">
-<meta property="og:title" content="Geni - Fun Learning App for Kids">
-<meta property="og:description" content="Daily math and reading missions that make learning an adventure. For kids aged 5-10.">
+<meta property="og:title" content="Math and reading for kids 4–10 | Geni">
+<meta property="og:description" content="Math and reading for kids 4–10. Daily picture games, guided reading and rewards. No ads, works offline.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://geni.kids/icon-mark.png">
 <meta property="og:url" content="https://geni.kids/">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Geni - Fun Learning App for Kids">
-<meta name="twitter:description" content="Daily math and reading missions that make learning an adventure.">
+<meta name="twitter:title" content="Math and reading for kids 4–10 | Geni">
+<meta name="twitter:description" content="Math and reading for kids 4–10. Daily picture games, guided reading and rewards. No ads, works offline.">
 <meta name="twitter:image" content="https://geni.kids/icon-mark.png">
 <link rel="icon" type="image/png" href="icon-mark.png">
 <link rel="apple-touch-icon" href="icon-mark.png">
-<link rel="preload" as="image" href="icon-hero-tight-960.webp" imagesrcset="icon-hero-tight-640.webp 640w, icon-hero-tight-960.webp 960w, icon-hero-tight.webp 1024w" imagesizes="(max-width: 600px) 82vw, (max-width: 1120px) 46vw, 560px">
 <link rel="canonical" href="https://geni.kids/">
 <link rel="alternate" hreflang="en" href="https://geni.kids/">
 <link rel="alternate" hreflang="nb" href="https://geni.kids/?lang=nb">
 <link rel="alternate" hreflang="es" href="https://geni.kids/?lang=es">
 <link rel="alternate" hreflang="pt" href="https://geni.kids/?lang=pt">
 <link rel="alternate" hreflang="x-default" href="https://geni.kids/">
-<style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
---yellow:#0433FF;--blue:#0066FF;--pink:#FF2E54;--green:#33C75A;
---purple:#B052DE;--orange:#FF9400;--cyan:#66D9F2;--peach:#F5D1B8;
---bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000;--border:#000000;--gray:#E6E6E6;
---shadow:6px 6px 0 #000;--shadow-sm:4px 4px 0 #000;
---font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;
-}
-body[data-theme="standard"]{--bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000}
-body[data-theme="ocean"]{--bg:#E6F2FF;--card:#F2F7FF;--accent:#2E73D1;--on-bg:#000000}
-body[data-theme="blossom"]{--bg:#FFEDEF;--card:#FFF7FA;--accent:#E0487A;--on-bg:#000000}
-html{scroll-behavior:smooth;font-size:16px}
-body{font-family:var(--font);background:var(--bg);color:var(--on-bg);line-height:1.6;-webkit-font-smoothing:antialiased}
-a{color:#000;text-decoration:none}
-a:hover{text-decoration:underline}
-a:focus-visible,button:focus-visible{outline:4px solid #000;outline-offset:2px}
-img{max-width:100%;height:auto;display:block}
-
-.container{max-width:800px;margin:0 auto;padding:0 20px}
-
-/* HERO */
-.hero{padding:clamp(24px,4vh,40px) 0 clamp(20px,3vh,28px);position:relative;min-height:calc(100svh - var(--nav-height));display:flex;align-items:center}
-.hero .container{max-width:1120px;display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,46vw);align-items:center;gap:clamp(20px,3vw,36px);width:100%}
-.hero-copy{display:flex;flex-direction:column;align-items:flex-start;text-align:left;padding-top:0}
-.hero-title{margin-bottom:20px}
-.hero h1{font-weight:900;font-size:clamp(3.4rem,8vw,5.6rem);line-height:0.95;text-transform:uppercase;letter-spacing:-2.5px;max-width:6ch;color:var(--on-bg)}
-.hero-meta{display:flex;flex-direction:column;align-items:flex-start}
-.hero .app-store-badge{margin-bottom:24px}
-.hero p{font-size:1.2rem;max-width:520px;font-weight:700;color:#000;border:4px solid #000;background:#fff;padding:14px 20px;box-shadow:var(--shadow)}
-.hero-visual{display:flex;justify-content:flex-end;align-items:flex-start}
-.hero-icon{width:100%;max-width:560px;aspect-ratio:1024 / 1108;height:auto;max-height:none;object-fit:contain;display:block;transform-origin:center center;transition:transform 0.28s ease}
-.hero-visual:hover .hero-icon{transform:scale(1.06)}
-.app-store-badge{display:inline-block;transition:opacity 0.2s}
-.app-store-badge:hover{opacity:0.85;text-decoration:none}
-.app-store-badge:active{opacity:0.7}
-.app-store-badge img{height:54px;width:auto;display:block}
-
-/* FEATURES */
-.features{padding:56px 0;background:#fff;color:#000;border-top:4px solid #000;border-bottom:4px solid #000;overflow:hidden}
-.features .container{max-width:1120px}
-.features h2{font-weight:900;font-size:2.2rem;text-align:center;margin-bottom:16px;text-transform:uppercase;letter-spacing:-1px;color:#000}
-.features-intro{max-width:760px;margin:0 auto 36px;text-align:center;font-size:1rem;font-weight:700;color:#000}
-.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:stretch}
-.feature-card{background:var(--card);border:4px solid var(--border);box-shadow:var(--shadow);padding:22px;display:flex;flex-direction:column;gap:18px;min-height:0;transition:transform 0.1s,box-shadow 0.1s}
-.feature-card:hover{transform:translate(-3px,-3px);box-shadow:9px 9px 0 #000}
-.feature-card:nth-child(1){background:#FFF3B0}
-.feature-card:nth-child(2){background:#E8F4FD}
-.feature-card:nth-child(3){background:#E8FDE8}
-.feature-card:nth-child(4){background:#FDE8F0}
-.feature-card:nth-child(5){background:#F0E8FD}
-.feature-card:nth-child(6){background:#FDF0E8}
-.feature-card:nth-child(7){background:#E8FBF7}
-.feature-copy{display:flex;flex-direction:column;gap:8px}
-.feature-label{display:inline-flex;align-items:center;gap:8px;font-size:0.72rem;font-weight:900;letter-spacing:0.8px;text-transform:uppercase}
-.feature-emoji{font-size:1.15rem;line-height:1}
-.feature-copy h3{font-weight:900;font-size:1.15rem;line-height:1.1;text-transform:uppercase;letter-spacing:0.3px}
-.feature-copy p{font-size:0.95rem;color:#000;font-weight:600}
-@media(prefers-reduced-motion:reduce){
-.hero-icon,.hero-visual:hover .hero-icon{transform:none;transition:none}
-html{scroll-behavior:auto}
-}
-
-/* AGE TABLE */
-.age-table-section{padding:48px 0}
-.age-table-section .container{max-width:1120px}
-.age-table-card{background:#fff;color:#000;border:4px solid var(--border);box-shadow:8px 8px 0 #000;padding:32px 28px}
-.age-table-card h2{font-weight:900;font-size:1.8rem;margin-bottom:12px;text-transform:uppercase;letter-spacing:-0.5px;color:#000}
-.age-table-card p{margin-bottom:22px;font-size:1rem;font-weight:600;color:#000;max-width:none}
-.age-table-wrap{overflow:visible}
-.age-table{width:100%;border-collapse:collapse;background:#fff;table-layout:fixed}
-.age-table th,.age-table td{border:3px solid #000;padding:14px 12px;text-align:left;vertical-align:top}
-.age-table th{background:#FFF3B0;font-size:0.78rem;font-weight:900;text-transform:uppercase;letter-spacing:0.8px}
-.age-table td{font-size:0.95rem;font-weight:600;color:#000}
-.age-table td:first-child{font-weight:900;white-space:nowrap;width:88px}
-.age-cell-label{display:none}
-
-/* FOOTER */
-footer{background:var(--bg);color:var(--on-bg);padding:20px 0;font-size:0.85rem;border-top:4px solid #000}
-footer .container{max-width:1120px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:16px}
-footer a{color:var(--on-bg);font-weight:700;text-decoration:underline}
-footer a:hover{color:#FFE566}
-.footer-brand{display:flex;align-items:center;gap:10px;color:var(--on-bg);font-weight:800;text-decoration:none}
-.footer-brand:hover{text-decoration:none}
-.footer-copy{max-width:620px;font-size:0.92rem;line-height:1.5;color:var(--on-bg)}
-.footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px;justify-content:center;text-align:center}
-
-/* MOBILE */
-@media(max-width:1024px){
-.feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:600px){
-.feature-grid{grid-template-columns:1fr}
-.hero{padding:20px 0 24px;min-height:calc(100svh - var(--nav-height))}
-.hero .container{grid-template-columns:1fr;gap:20px}
-.hero-copy{align-items:center;text-align:center;padding-top:10px}
-.hero-title{margin-bottom:16px}
-.hero h1{font-size:clamp(2.6rem,11vw,3.4rem);max-width:none}
-.hero-meta{align-items:center}
-.hero p{margin:0 auto}
-.hero-visual{justify-content:center;margin-top:0}
-.hero-icon{width:min(360px,82vw);max-width:100%;height:auto}
-.parents-card{padding:28px 20px}
-footer .container{flex-direction:column;text-align:center}
-.footer-brand,.footer-copy,.footer-links{width:100%;justify-content:center;text-align:center}
-.footer-links{flex-wrap:wrap;gap:12px 20px}
-.feature-card{padding:18px}
-.age-table-card{padding:22px 18px}
-.age-table-card p{margin-bottom:16px}
-.age-table thead{display:none}
-.age-table,.age-table tbody,.age-table tr,.age-table td{display:block;width:100%}
-.age-table tr{border:3px solid #000;background:#fff;margin-bottom:14px}
-.age-table tr:last-child{margin-bottom:0}
-.age-table td{border-width:0 0 2px 0;padding:12px 14px}
-.age-table td:last-child{border-bottom:0}
-.age-table td:first-child{width:auto;background:#FFF3B0;font-size:1rem}
-.age-cell-label{display:block;font-size:0.72rem;font-weight:900;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px}
-}
-</style>
 <script type="application/ld+json">
 [
 {
@@ -156,7 +36,7 @@ footer .container{flex-direction:column;text-align:center}
 "url":"https://geni.kids/",
 "operatingSystem":"iOS",
 "applicationCategory":"EducationalApplication",
-"description":"Fun math and reading learning app for kids aged 5-10 with daily missions and rewards.",
+"description":"Math and reading for kids 4–10. Daily picture games, guided reading and rewards. No ads, works offline.",
 "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},
 "author":{"@type":"Organization","name":"Geni App","url":"https://geni.kids/"}
 },
@@ -165,7 +45,7 @@ footer .container{flex-direction:column;text-align:center}
 "@type":"WebSite",
 "name":"Geni",
 "url":"https://geni.kids/",
-"description":"Geni is a fun math and reading app for kids aged 5-10. Daily missions, speech recognition, rewards, and parent controls.",
+"description":"Math and reading for kids 4–10. Daily picture games, guided reading and rewards. No ads, works offline.",
 "inLanguage":"en"
 },
 {
@@ -178,6 +58,33 @@ footer .container{flex-direction:column;text-align:center}
 }
 ]
 </script>
+<link rel="preload" href="fonts/nunito-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="geni.css">
+<style>
+/* Landing layout */
+.hero{padding:var(--s-7) 0;min-height:calc(100svh - var(--nav-height));display:flex;align-items:center}
+.hero .container{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,46vw);align-items:center;gap:clamp(24px,4vw,48px)}
+.hero-copy{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s-5)}.hero h1{font-size:var(--fs-display);line-height:var(--lh-tight);max-width:14ch}
+/* Both CTAs use the official badge's 119.66407:40 proportions. */
+.hero .cta-row{display:grid;grid-template-columns:repeat(2,200px);align-items:stretch;margin-top:var(--s-4)}.br-desk{display:none}@media(min-width:1025px){.br-desk{display:inline}.hero-copy{padding-bottom:56px}.hero .lead{max-width:none}.hero h1{max-width:12ch}.hero .container{grid-template-columns:minmax(560px,1fr) minmax(320px,40vw)}}
+.hero .cta-row>*{width:100%;height:auto;min-height:0;aspect-ratio:119.66407/40}
+.hero .app-store-badge img{width:100%;height:100%;object-fit:contain}
+.hero .cta-row .btn{padding:8px 10px;font-size:1.15rem;white-space:nowrap;border-radius:var(--r-sm)}
+.hero-visual{display:flex;justify-content:center;min-width:0}
+.iphone-mockup{width:100%;max-width:340px;margin:0;position:relative;aspect-ratio:450/920}
+.iphone-frame{position:absolute;inset:0;pointer-events:none;z-index:3}.iphone-frame img{width:100%;height:100%;display:block}
+.iphone-screen{position:absolute;top:2.3%;right:4.9%;bottom:2.4%;left:4.9%;background:var(--bg);border-radius:44px;overflow:hidden;z-index:1}.iphone-screen img{width:100%;height:100%;object-fit:cover}
+.demo-dialog{position:fixed;inset:0;margin:auto;width:min(440px,calc(100% - 32px));max-height:calc(100dvh - 32px);padding:var(--s-4);border:0;border-radius:var(--r-xl);background:var(--card);color:var(--ink);box-shadow:var(--shadow-lift);overflow:auto}
+.demo-dialog::backdrop{background:rgba(0,0,0,.65)}.demo-close{display:flex;margin:0 0 var(--s-3) auto;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:var(--r-md);background:var(--bg);color:var(--ink);font:800 1.5rem/1 var(--font);cursor:pointer}
+.demo-video{display:block;width:100%;max-height:calc(100dvh - 124px);aspect-ratio:9/16;object-fit:contain;border-radius:var(--r-lg);background:var(--bg)}
+body.demo-open{overflow:hidden}
+.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s-5)}.feature-emoji{display:block;font-size:3.5rem;line-height:1;margin-bottom:var(--s-4)}.feature-copy h3{margin-bottom:var(--s-3)}
+.age-table-card{padding:32px 28px}.age-table-card h2{margin-bottom:var(--s-6);text-align:left}.age-table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}.age-table th,.age-table td{border:0;padding:16px 14px;text-align:left;vertical-align:top}.age-table th{background:var(--yellow-soft);font-size:var(--fs-small);font-weight:700}.age-table th:first-child{width:80px;border-radius:var(--r-sm) 0 0 var(--r-sm)}.age-table th:last-child{border-radius:0 var(--r-sm) var(--r-sm) 0}.age-table td{font-size:1rem;line-height:1.7;border-bottom:1px solid var(--hairline)}.age-table tr:last-child td{border:0}.age-pill{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--r-sm);background:var(--blue-soft);font-size:1.25rem;font-weight:900}.age-cell-label{display:none}
+@media(max-width:1024px){.feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero .container{grid-template-columns:minmax(0,1fr) minmax(280px,42vw)}}
+@media(min-width:601px) and (max-width:1024px){.hero .cta-row{grid-template-columns:200px}}
+@media(max-width:600px){.hero{padding:var(--s-5) 0;align-items:flex-start}.hero .container{gap:var(--s-5)}.hero-copy{gap:var(--s-4)}.hero h1{font-size:clamp(2rem,9.6vw,2.5rem);max-width:none}.hero .lead{font-size:1.125rem;line-height:1.45}.hero .cta-row{grid-template-columns:repeat(2,minmax(0,156px));gap:var(--s-3);justify-content:center}.hero .iphone-mockup{width:100%;max-width:none;height:auto;flex:none}.hero-visual{display:block;width:60vw;max-width:240px;margin-inline:auto;aspect-ratio:450/700;overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,#000 84%,transparent 100%);mask-image:linear-gradient(to bottom,#000 84%,transparent 100%)}.hero .cta-row .btn{font-size:.95rem;padding:6px 8px}}
+@media(max-width:600px){.hero .container{grid-template-columns:1fr}.hero-copy{align-items:center;text-align:center}.hero h1{max-width:14ch}.cta-row{justify-content:center}.feature-grid{grid-template-columns:1fr}.age-table-card{padding:var(--s-5) var(--s-4)}.age-table thead{display:none}.age-table,.age-table tbody,.age-table tr,.age-table td{display:block;width:100%}.age-table tr{position:relative;padding:16px 0 16px 60px;border-bottom:1px solid var(--hairline)}.age-table tr:last-child{border:0}.age-table td{border:0;padding:0}.age-table td:first-child{position:absolute;left:0;top:16px;width:44px}.age-table td+td+td{margin-top:var(--s-4)}.age-cell-label{display:block;font-size:var(--fs-meta);font-weight:700;color:var(--ink-2);margin-bottom:var(--s-1)}}
+</style>
 </head>
 <body id="top">
 
@@ -189,82 +96,85 @@ footer .container{flex-direction:column;text-align:center}
 <div class="container">
 <div class="hero-copy">
 <div class="hero-title">
-<h1 data-i18n="hero_title">Learning is an adventure</h1>
+<h1 data-i18n="hero_title">Math and reading for kids 4–10</h1>
 </div>
-<div class="hero-meta">
-<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="app-store-badge" id="appStoreLink">
-<img src="appstore-badge.svg" alt="Download on the App Store" width="160" height="54" loading="eager">
-</a>
-<p data-i18n="hero_sub">Daily math and reading missions for kids aged 5-10. Learn, play, repeat!</p>
+<p class="lead" data-i18n="hero_sub">Geni Kids is a free math and reading app for kids aged 4–10. <br class="br-desk">With fun math games, counting, times tables and guided reading, your child practices a little every day – with no ads, even offline.</p>
+<div class="cta-row">
+<a href="https://apps.apple.com/app/geni-kids/id6761134405" class="app-store-badge" id="appStoreLink"><img src="appstore-badge.svg" alt="Download on the App Store" width="160" height="54" loading="eager"></a>
+<button class="btn btn--secondary" id="demoOpen" type="button" aria-haspopup="dialog" aria-controls="demoDialog" data-i18n="hero_more">See how it works</button>
 </div>
 </div>
 <div class="hero-visual">
-<picture>
-<source type="image/webp" srcset="icon-hero-tight-640.webp 640w, icon-hero-tight-960.webp 960w, icon-hero-tight.webp 1024w" sizes="(max-width: 600px) 82vw, (max-width: 1120px) 46vw, 560px">
-<img class="hero-icon" src="icon-hero-tight.png" alt="Geni mascot icon with a smiling brain, glasses, and a light bulb" width="1024" height="1108" loading="eager" fetchpriority="high" decoding="async">
-</picture>
+<div class="iphone-mockup">
+<div class="iphone-frame"><img src="img/iphone-bezel.webp" srcset="img/iphone-bezel.webp 1x, img/iphone-bezel-2x.webp 2x" alt="" aria-hidden="true" width="450" height="920" loading="eager" decoding="async" fetchpriority="high"></div>
+<div class="iphone-screen"><img id="heroGame" src="img/hero-game-en-standard.webp" width="603" height="1311" data-i18n-alt="hero_math_alt" alt="Match each sum to its answer – a matching game in Geni" loading="eager" decoding="async" fetchpriority="high"></div>
+</div>
 </div>
 </div>
 </section>
 
-<section class="features" aria-labelledby="features-heading">
+<dialog class="demo-dialog" id="demoDialog" aria-label="See how it works" data-i18n-aria-label="hero_more">
+<button class="demo-close" id="demoClose" type="button" aria-label="Close video" data-i18n-aria-label="demo_close" autofocus><span aria-hidden="true">✕</span></button>
+<video class="demo-video" id="demoVideo" width="1080" height="1920" playsinline muted controls preload="none" poster="media/geni-demo-en.webp" aria-label="See how it works" data-i18n-aria-label="hero_more"><source data-type="av1" type='video/mp4; codecs="av01.0.08M.08"'><source data-type="h264" type="video/mp4"></video>
+</dialog>
+
+<section class="features section" aria-labelledby="features-heading">
 <div class="container">
 <h2 id="features-heading" data-i18n="features_title">What makes Geni special</h2>
-<p class="features-intro" data-i18n="features_intro">Parents can see the rhythm of the app before downloading: quick wins, guided reading, rewards, privacy, and a setup built for family life.</p>
 <div class="feature-grid">
 
-<article class="feature-card">
+<article class="feature-card card">
 <div class="feature-copy">
-<div class="feature-label"><span class="feature-emoji" aria-hidden="true">🔢</span><span data-i18n="f1_label">Math flow</span></div>
-<h3 data-i18n="f1_title">Math Missions</h3>
+<span class="feature-emoji" aria-hidden="true">🔢</span>
+<h3 data-i18n="f1_title">Math missions</h3>
 <p data-i18n="f1_desc">Short exercises feel fast and game-like, with progress, instant feedback, and the next challenge ready right away.</p>
 </div>
 </article>
 
-<article class="feature-card">
+<article class="feature-card card">
 <div class="feature-copy">
-<div class="feature-label"><span class="feature-emoji" aria-hidden="true">📖</span><span data-i18n="f2_label">Reading flow</span></div>
-<h3 data-i18n="f2_title">Reading Adventures</h3>
+<span class="feature-emoji" aria-hidden="true">📖</span>
+<h3 data-i18n="f2_title">Reading adventures</h3>
 <p data-i18n="f2_desc">Words stay large and focused, with read-to-me, read-by-myself, and read-aloud modes that guide attention line by line.</p>
 </div>
 </article>
 
-<article class="feature-card">
+<article class="feature-card card">
 <div class="feature-copy">
-<div class="feature-label"><span class="feature-emoji" aria-hidden="true">🏆</span><span data-i18n="f3_label">Reward loop</span></div>
-<h3 data-i18n="f3_title">Rewards & Badges</h3>
+<span class="feature-emoji" aria-hidden="true">🏆</span>
+<h3 data-i18n="f3_title">Rewards & badges</h3>
 <p data-i18n="f3_desc">Coins, XP, streaks, and badge unlocks turn steady practice into momentum that kids want to keep going.</p>
 </div>
 </article>
 
-<article class="feature-card">
+<article class="feature-card card">
 <div class="feature-copy">
-<div class="feature-label"><span class="feature-emoji" aria-hidden="true">🔒</span><span data-i18n="f4_label">Parent side</span></div>
-<h3 data-i18n="f4_title">Parent Controls</h3>
+<span class="feature-emoji" aria-hidden="true">🔒</span>
+<h3 data-i18n="f4_title">Parent controls</h3>
 <p data-i18n="f4_desc">A protected parent area keeps setup simple: enter the PIN, switch profiles, review progress, and change settings.</p>
 </div>
 </article>
 
-<article class="feature-card">
+<article class="feature-card card">
 <div class="feature-copy">
-<div class="feature-label"><span class="feature-emoji" aria-hidden="true">📱</span><span data-i18n="f5_label">Private by design</span></div>
-<h3 data-i18n="f5_title">Offline & Private</h3>
+<span class="feature-emoji" aria-hidden="true">📱</span>
+<h3 data-i18n="f5_title">Offline & private</h3>
 <p data-i18n="f5_desc">The app works without internet and keeps data on the device, so the experience stays focused, fast, and ad-free.</p>
 </div>
 </article>
 
-<article class="feature-card">
+<article class="feature-card card">
 <div class="feature-copy">
-<div class="feature-label"><span class="feature-emoji" aria-hidden="true">👶</span><span data-i18n="f6_label">Family setup</span></div>
-<h3 data-i18n="f6_title">Multiple Profiles</h3>
+<span class="feature-emoji" aria-hidden="true">👶</span>
+<h3 data-i18n="f6_title">Multiple profiles</h3>
 <p data-i18n="f6_desc">Siblings can share one app while keeping their own avatars, level progress, and age-appropriate difficulty.</p>
 </div>
 </article>
 
-<article class="feature-card">
+<article class="feature-card card">
 <div class="feature-copy">
-<div class="feature-label"><span class="feature-emoji" aria-hidden="true">🌍</span><span data-i18n="f7_label">Language support</span></div>
-<h3 data-i18n="f7_title">Supported Languages</h3>
+<span class="feature-emoji" aria-hidden="true">🌍</span>
+<h3 data-i18n="f7_title">Supported languages</h3>
 <p data-i18n="f7_desc">English, Norwegian, Spanish, and Portuguese are built into the app, so families can choose the language that fits them best.</p>
 </div>
 </article>
@@ -273,11 +183,10 @@ footer .container{flex-direction:column;text-align:center}
 </div>
 </section>
 
-<section class="age-table-section" aria-labelledby="age-table-heading">
+<section class="age-table-section section" aria-labelledby="age-table-heading">
 <div class="container">
-<div class="age-table-card">
+<div class="age-table-card card">
 <h2 id="age-table-heading" data-i18n="age_table_title">Math and reading by age</h2>
-<p data-i18n="age_table_intro">Examples from the current app build, based on the exercise formats and reading content available now.</p>
 <div class="age-table-wrap">
 <table class="age-table">
 <thead>
@@ -289,33 +198,38 @@ footer .container{flex-direction:column;text-align:center}
 </thead>
 <tbody>
 <tr>
-<td data-i18n="age_row_1_age">5</td>
-<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_1_math">🍎 How many? Count the objects<br>⚖️ Which is bigger?<br>🔟 Fill the ten-frame<br>➕ Add the emoji groups</span></td>
-<td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_1_reading">Hidden for age 5 so the first experience stays math-first.</span></td>
+<td><span class="age-pill" data-i18n="age_row_0_age">4</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_0_math">🍎 Count pictures<br>⚖️ More or fewer?<br>➕ Tiny sums within 5</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_0_reading">Hidden for ages 4 and 5; math comes first.</span></td>
 </tr>
 <tr>
-<td data-i18n="age_row_2_age">6</td>
-<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_2_math">➕ Solve the answer<br>➖ Try simple subtraction<br>❓ Find the missing number<br>✅ True or false?<br>🔟 Ten-frame warmups</span></td>
+<td><span class="age-pill" data-i18n="age_row_1_age">5</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_1_math">🍎 How many? Count the objects<br>⚖️ Which is bigger?<br>🔟 Fill the ten-frame<br>➕ Add the emoji groups</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_1_reading">Hidden for ages 4 and 5; math comes first.</span></td>
+</tr>
+<tr>
+<td><span class="age-pill" data-i18n="age_row_2_age">6</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_2_math">➕ Solve the answer<br>➖ Try simple subtraction<br>❓ Find the missing number<br>✅ True or false?<br>🔟 Ten-frame warmups<br>🕐 Telling time: o'clock and half past</span></td>
 <td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_2_reading">📖 Optional reading<br>🐱 Short, simple stories with read-to-me, read myself, and read aloud</span></td>
 </tr>
 <tr>
-<td data-i18n="age_row_3_age">7</td>
-<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_3_math">✖️ Multiplication facts<br>❓ Find the missing number<br>🧩 Number bonds<br>🎲 Dice addition<br>🔗 Match the pairs</span></td>
+<td><span class="age-pill" data-i18n="age_row_3_age">7</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_3_math">✖️ Multiplication facts<br>❓ Find the missing number<br>🧩 Number bonds<br>🎲 Dice addition<br>🔗 Match the pairs<br>🕒 Telling time: quarter past and to</span></td>
 <td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_3_reading">🌿 Guided story passages<br>🗣️ Line-by-line reading support</span></td>
 </tr>
 <tr>
-<td data-i18n="age_row_4_age">8</td>
-<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_4_math">✖️ Multiplication facts<br>✅ True or false?<br>➖ Visual subtraction<br>↔️ Which is bigger?<br>🎲 Dice addition</span></td>
+<td><span class="age-pill" data-i18n="age_row_4_age">8</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_4_math">✖️ Multiplication facts<br>✅ True or false?<br>➖ Visual subtraction<br>↔️ Which is bigger?<br>🎲 Dice addition<br>🕒 Telling time: quarter past and to</span></td>
 <td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_4_reading">📚 Longer stories and simple fact texts<br>🔊 Stronger independent reading</span></td>
 </tr>
 <tr>
-<td data-i18n="age_row_5_age">9</td>
-<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_5_math">✖️ Multiplication facts<br>➗ Division practice<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter</span></td>
+<td><span class="age-pill" data-i18n="age_row_5_age">9</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_5_math">✖️ Multiplication facts<br>➗ Division practice<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter<br>🕔 Telling time to the minute</span></td>
 <td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_5_reading">🚀 Longer fiction and nonfiction texts<br>📚 Stronger comprehension practice</span></td>
 </tr>
 <tr>
-<td data-i18n="age_row_6_age">10</td>
-<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_6_math">➗ Long division<br>🍕 Pick the right fraction<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter</span></td>
+<td><span class="age-pill" data-i18n="age_row_6_age">10</span></td>
+<td><span class="age-cell-label" data-i18n="age_table_col_math">Math</span><span data-i18n="age_row_6_math">➗ Long division<br>🍕 Pick the right fraction<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter<br>🕔 Telling time to the minute</span></td>
 <td><span class="age-cell-label" data-i18n="age_table_col_reading">Reading</span><span data-i18n="age_row_6_reading">🪐 Denser passages with stronger recall<br>📖 Confident reading across fiction and facts</span></td>
 </tr>
 </tbody>
@@ -333,10 +247,13 @@ footer .container{flex-direction:column;text-align:center}
 
 var T={
 en:{
-nav_features:"Features",nav_math:"Math",nav_reading:"Reading",nav_parents:"For Parents",nav_privacy:"Privacy",nav_download:"Download",
+hero_home_alt:"Geni home with math, reading and daily challenges",hero_math_alt:"Match each sum to its answer – a matching game in Geni",
+hero_more:"See how it works",
+nav_features:"Features",nav_math:"Math",nav_reading:"Reading",nav_parents:"For parents",nav_privacy:"Privacy",nav_download:"Download",
 theme_label:"Theme",theme_standard:"Standard",theme_ocean:"Ocean",theme_blossom:"Blossom",
-hero_title:'Learning is an adventure',
-hero_sub:"Daily math and reading missions for kids aged 5\u201310. Learn, play, repeat!",
+hero_title:"Math and reading for kids 4–10",
+hero_sub:"Geni Kids is a free math and reading app for kids aged 4–10. <br class='br-desk'>With fun math games, counting, times tables and guided reading, your child practices a little every day – with no ads, even offline.",
+demo_close:"Close video",
 features_title:"What makes Geni special",
 features_intro:"Parents can see the rhythm of the app before downloading: quick wins, guided reading, rewards, privacy, and a setup built for family life.",
 age_table_title:"Math and reading by age",
@@ -344,33 +261,36 @@ age_table_intro:"A clearer view of what kids actually see in Geni at each age, b
 age_table_col_age:"Age",
 age_table_col_math:"Math",
 age_table_col_reading:"Reading",
+age_row_0_age:"4",
+age_row_0_math:"🍎 Count pictures<br>⚖️ More or fewer?<br>➕ Tiny sums within 5",
+age_row_0_reading:"Hidden for ages 4 and 5; math comes first.",
 age_row_1_age:"5",
 age_row_1_math:"🍎 How many? Count the objects<br>⚖️ Which is bigger?<br>🔟 Fill the ten-frame<br>➕ Add the emoji groups",
-age_row_1_reading:"Hidden for age 5 so the first experience stays math-first.",
+age_row_1_reading:"Hidden for ages 4 and 5; math comes first.",
 age_row_2_age:"6",
-age_row_2_math:"➕ Solve the answer<br>➖ Try simple subtraction<br>❓ Find the missing number<br>✅ True or false?<br>🔟 Ten-frame warmups",
+age_row_2_math:"➕ Solve the answer<br>➖ Try simple subtraction<br>❓ Find the missing number<br>✅ True or false?<br>🔟 Ten-frame warmups<br>🕐 Telling time: o'clock and half past",
 age_row_2_reading:"📖 Optional reading<br>🐱 Short, simple stories with read-to-me, read myself, and read aloud",
 age_row_3_age:"7",
-age_row_3_math:"✖️ Multiplication facts<br>❓ Find the missing number<br>🧩 Number bonds<br>🎲 Dice addition<br>🔗 Match the pairs",
+age_row_3_math:"✖️ Multiplication facts<br>❓ Find the missing number<br>🧩 Number bonds<br>🎲 Dice addition<br>🔗 Match the pairs<br>🕒 Telling time: quarter past and to",
 age_row_3_reading:"🌿 Guided story passages<br>🗣️ Line-by-line reading support",
 age_row_4_age:"8",
-age_row_4_math:"✖️ Multiplication facts<br>✅ True or false?<br>➖ Visual subtraction<br>↔️ Which is bigger?<br>🎲 Dice addition",
+age_row_4_math:"✖️ Multiplication facts<br>✅ True or false?<br>➖ Visual subtraction<br>↔️ Which is bigger?<br>🎲 Dice addition<br>🕒 Telling time: quarter past and to",
 age_row_4_reading:"📚 Longer stories and simple fact texts<br>🔊 Stronger independent reading",
 age_row_5_age:"9",
-age_row_5_math:"✖️ Multiplication facts<br>➗ Division practice<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter",
+age_row_5_math:"✖️ Multiplication facts<br>➗ Division practice<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter<br>🕔 Telling time to the minute",
 age_row_5_reading:"🚀 Longer fiction and nonfiction texts<br>📚 Stronger comprehension practice",
 age_row_6_age:"10",
-age_row_6_math:"➗ Long division<br>🍕 Pick the right fraction<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter",
+age_row_6_math:"➗ Long division<br>🍕 Pick the right fraction<br>🧠 Multi-step problems<br>🔢 Number sequences<br>📐 Area and perimeter<br>🕔 Telling time to the minute",
 age_row_6_reading:"🪐 Denser passages with stronger recall<br>📖 Confident reading across fiction and facts",
-footer_copy:"Geni is a kids learning app for ages 5-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.",
-footer_home:"Home",footer_parents:"For Parents",footer_privacy:"Privacy",
-f1_label:"Math flow",f1_title:"Math Missions",f1_desc:"Short exercises feel fast and game-like, with progress, instant feedback, and the next challenge ready right away.",
-f2_label:"Reading flow",f2_title:"Reading Adventures",f2_desc:"Words stay large and focused, with read-to-me, read-by-myself, and read-aloud modes that guide attention line by line.",
-f3_label:"Reward loop",f3_title:"Rewards & Badges",f3_desc:"Coins, XP, streaks, and badge unlocks turn steady practice into momentum that kids want to keep going.",
-f4_label:"Parent side",f4_title:"Parent Controls",f4_desc:"A protected parent area keeps setup simple: enter the PIN, switch profiles, review progress, and change settings.",
-f5_label:"Private by design",f5_title:"Offline & Private",f5_desc:"The app works without internet and keeps data on the device, so the experience stays focused, fast, and ad-free.",
-f6_label:"Family setup",f6_title:"Multiple Profiles",f6_desc:"Siblings can share one app while keeping their own avatars, level progress, and age-appropriate difficulty.",
-f7_label:"Language support",f7_title:"Supported Languages",f7_desc:"English, Norwegian, Spanish, and Portuguese are built into the app, so families can choose the language that fits them best.",
+footer_copy:"Geni is a kids learning app for ages 4-10 with math practice, optional reading, offline play, parent controls, and no ads or tracking.",
+footer_home:"Home",footer_parents:"For parents",footer_privacy:"Privacy",
+f1_label:"Math flow",f1_title:"Math missions",f1_desc:"Short exercises feel fast and game-like, with progress, instant feedback, and the next challenge ready right away.",
+f2_label:"Reading flow",f2_title:"Reading adventures",f2_desc:"Words stay large and focused, with read-to-me, read-by-myself, and read-aloud modes that guide attention line by line.",
+f3_label:"Reward loop",f3_title:"Rewards & badges",f3_desc:"Coins, XP, streaks, and badge unlocks turn steady practice into momentum that kids want to keep going.",
+f4_label:"Parent side",f4_title:"Parent controls",f4_desc:"A protected parent area keeps setup simple: enter the PIN, switch profiles, review progress, and change settings.",
+f5_label:"Private by design",f5_title:"Offline & private",f5_desc:"The app works without internet and keeps data on the device, so the experience stays focused, fast, and ad-free.",
+f6_label:"Family setup",f6_title:"Multiple profiles",f6_desc:"Siblings can share one app while keeping their own avatars, level progress, and age-appropriate difficulty.",
+f7_label:"Language support",f7_title:"Supported languages",f7_desc:"English, Norwegian, Spanish, and Portuguese are built into the app, so families can choose the language that fits them best.",
 preview_math_progress:"12 of 20",preview_math_done:"Nice work",preview_math_next:"Next: 9 + 7",
 preview_reading_mode:"Read aloud",preview_reading_time:"0:48 / 1:30",preview_reading_word_1:"The",preview_reading_word_2:"sun",preview_reading_word_3:"wakes",preview_reading_word_4:"up",preview_reading_line_2:"and the little birds sing along",preview_reading_feedback:"Listening and matching words",
 preview_rewards_coins:"Coins",preview_rewards_level:"Level",preview_rewards_streak:"Streak",preview_rewards_ready:"Almost there",preview_rewards_new:"New badge",preview_rewards_focus:"Focus",preview_rewards_boss:"Boss",
@@ -380,10 +300,13 @@ preview_profiles_title:"Choose profile",preview_profiles_switch:"Tap to switch",
 preview_language_picker:"Language",preview_language_parent:"Parent dashboard",preview_language_english:"🇬🇧 English",preview_language_norwegian:"🇳🇴 Norwegian",preview_language_spanish:"🇪🇸 Spanish",preview_language_portuguese:"🇵🇹 Portuguese",preview_language_note:"Switch in seconds and keep each family comfortable"
 },
 nb:{
+hero_home_alt:"Genis startside med matte, lesing og daglige utfordringer",hero_math_alt:"Koble hvert regnestykke til svaret – et koblingsspill i Geni",
+hero_more:"Slik fungerer det",
 nav_features:"Funksjoner",nav_math:"Matte",nav_reading:"Lesing",nav_parents:"For foreldre",nav_privacy:"Personvern",nav_download:"Last ned",
 theme_label:"Tema",theme_standard:"Standard",theme_ocean:"Hav",theme_blossom:"Blomst",
-hero_title:'L\u00e6ring er et eventyr',
-hero_sub:"Daglige matte- og leseoppdrag for barn 5\u201310 \u00e5r. L\u00e6r, lek, gjenta!",
+hero_title:"Matte og lesing for barn 4–10 år",
+hero_sub:"Geni Kids er en gratis matte- og leseapp for barn 4–10 år. <br class='br-desk'>Med morsomme mattespill, telling, gangetabell og lesetrening øver barnet litt hver dag – uten reklame, også uten nett.",
+demo_close:"Lukk video",
 features_title:"Hva gj\u00f8r Geni spesiell",
 features_intro:"Foreldre kan se rytmen i appen før nedlasting: raske mestringsøyeblikk, guidet lesing, belønninger, personvern og oppsett laget for familieliv.",
 age_table_title:"Matte og lesing etter alder",
@@ -391,25 +314,28 @@ age_table_intro:"En tydeligere oversikt over hva barn faktisk møter i Geni på 
 age_table_col_age:"Alder",
 age_table_col_math:"Matte",
 age_table_col_reading:"Lesing",
+age_row_0_age:"4",
+age_row_0_math:"🍎 Tell bildene<br>⚖️ Flere eller færre?<br>➕ Små summer opptil 5",
+age_row_0_reading:"Skjult for 4- og 5-åringer; matte først.",
 age_row_1_age:"5",
 age_row_1_math:"🍎 Hvor mange? Tell tingene<br>⚖️ Hvilken er størst?<br>🔟 Fyll tier-rammen<br>➕ Legg sammen emoji-grupper",
-age_row_1_reading:"Skjult for 5-åringer så den første opplevelsen holder seg matte-først.",
+age_row_1_reading:"Skjult for 4- og 5-åringer; matte først.",
 age_row_2_age:"6",
-age_row_2_math:"➕ Finn svaret<br>➖ Prøv enkel subtraksjon<br>❓ Finn tallet som mangler<br>✅ Sant eller usant?<br>🔟 Oppvarming med tier-ramme",
+age_row_2_math:"➕ Finn svaret<br>➖ Prøv enkel subtraksjon<br>❓ Finn tallet som mangler<br>✅ Sant eller usant?<br>🔟 Oppvarming med tier-ramme<br>🕐 Klokka: hele og halve timer",
 age_row_2_reading:"📖 Valgfri lesing<br>🐱 Korte, enkle historier med les for meg, les selv og les høyt",
 age_row_3_age:"7",
-age_row_3_math:"✖️ Gangeoppgaver<br>❓ Finn tallet som mangler<br>🧩 Tallvenner<br>🎲 Terning-addisjon<br>🔗 Koble riktige par",
+age_row_3_math:"✖️ Gangeoppgaver<br>❓ Finn tallet som mangler<br>🧩 Tallvenner<br>🎲 Terning-addisjon<br>🔗 Koble riktige par<br>🕒 Klokka: kvart over og kvart på",
 age_row_3_reading:"🌿 Guidede fortellinger<br>🗣️ Lesestøtte linje for linje",
 age_row_4_age:"8",
-age_row_4_math:"✖️ Gangeoppgaver<br>✅ Sant eller usant?<br>➖ Visuell subtraksjon<br>↔️ Hvilken er størst?<br>🎲 Terning-addisjon",
+age_row_4_math:"✖️ Gangeoppgaver<br>✅ Sant eller usant?<br>➖ Visuell subtraksjon<br>↔️ Hvilken er størst?<br>🎲 Terning-addisjon<br>🕒 Klokka: kvart over og kvart på",
 age_row_4_reading:"📚 Lengre historier og enkle faktatekster<br>🔊 Mer selvstendig lesing",
 age_row_5_age:"9",
-age_row_5_math:"✖️ Gangeoppgaver<br>➗ Delingsoppgaver<br>🧠 Flerstegsoppgaver<br>🔢 Tallrekker<br>📐 Areal og omkrets",
+age_row_5_math:"✖️ Gangeoppgaver<br>➗ Delingsoppgaver<br>🧠 Flerstegsoppgaver<br>🔢 Tallrekker<br>📐 Areal og omkrets<br>🕔 Klokka på minuttet",
 age_row_5_reading:"🚀 Lengre skjønnlitterære og faglige tekster<br>📚 Mer arbeid med forståelse",
 age_row_6_age:"10",
-age_row_6_math:"➗ Lang divisjon<br>🍕 Velg riktig brøk<br>🧠 Flerstegsoppgaver<br>🔢 Tallrekker<br>📐 Areal og omkrets",
+age_row_6_math:"➗ Lang divisjon<br>🍕 Velg riktig brøk<br>🧠 Flerstegsoppgaver<br>🔢 Tallrekker<br>📐 Areal og omkrets<br>🕔 Klokka på minuttet",
 age_row_6_reading:"🪐 Tettere tekster med sterkere gjenfortelling<br>📖 Trygg lesing i både fortelling og fakta",
-footer_copy:"Geni er en læringsapp for barn 5-10 år med matteøving, valgfri lesing, offline bruk, foreldrekontroll og ingen reklame eller sporing.",
+footer_copy:"Geni er en læringsapp for barn 4-10 år med matteøving, valgfri lesing, offline bruk, foreldrekontroll og ingen reklame eller sporing.",
 footer_home:"Hjem",footer_parents:"For foreldre",footer_privacy:"Personvern",
 f1_label:"Matteflyt",f1_title:"Matteoppdrag",f1_desc:"Korte oppgaver føles raske og lekne, med fremgang, tilbakemelding med en gang og neste utfordring klar med én gang.",
 f2_label:"Leseflyt",f2_title:"Leseeventyr",f2_desc:"Ordene holder seg store og tydelige, med høytlesing, egenlesing og les-høyt-modus som leder oppmerksomheten linje for linje.",
@@ -427,10 +353,13 @@ preview_profiles_title:"Velg profil",preview_profiles_switch:"Trykk for å bytte
 preview_language_picker:"Språk",preview_language_parent:"Foreldrepanel",preview_language_english:"🇬🇧 Engelsk",preview_language_norwegian:"🇳🇴 Norsk",preview_language_spanish:"🇪🇸 Spansk",preview_language_portuguese:"🇵🇹 Portugisisk",preview_language_note:"Bytt på sekunder og gjør appen komfortabel for hele familien"
 },
 es:{
+hero_home_alt:"Inicio de Geni con matemáticas, lectura y desafíos diarios",hero_math_alt:"Une cada suma con su resultado: un juego de parejas en Geni",
+hero_more:"Cómo funciona",
 nav_features:"Funciones",nav_math:"Matem\u00E1ticas",nav_reading:"Lectura",nav_parents:"Para padres",nav_privacy:"Privacidad",nav_download:"Descargar",
 theme_label:"Tema",theme_standard:"Estándar",theme_ocean:"Océano",theme_blossom:"Floración",
-hero_title:'Aprender es una aventura',
-hero_sub:"Misiones diarias de matem\u00E1ticas y lectura para ni\u00F1os de 5 a 10 a\u00F1os. \u00A1Aprende, juega y repite!",
+hero_title:"Matemáticas y lectura para niños de 4 a 10 años",
+hero_sub:"Geni Kids es una app gratuita de matemáticas y lectura para niños de 4 a 10 años. <br class='br-desk'>Con juegos de matemáticas, sumas, tablas de multiplicar y lectura guiada, tu hijo practica un poco cada día, sin anuncios e incluso sin conexión.",
+demo_close:"Cerrar vídeo",
 features_title:"Qu\u00E9 hace especial a Geni",
 features_intro:"Los padres pueden ver el ritmo de la app antes de descargarla: logros rápidos, lectura guiada, recompensas, privacidad y una configuración pensada para la vida en familia.",
 age_table_title:"Matemáticas y lectura por edad",
@@ -438,25 +367,28 @@ age_table_intro:"Una vista más clara de lo que los niños ven de verdad en Geni
 age_table_col_age:"Edad",
 age_table_col_math:"Matemáticas",
 age_table_col_reading:"Lectura",
+age_row_0_age:"4",
+age_row_0_math:"🍎 Cuenta imágenes<br>⚖️ ¿Más o menos?<br>➕ Sumas sencillas hasta 5",
+age_row_0_reading:"Oculta a los 4 y 5 años; primero las matemáticas.",
 age_row_1_age:"5",
 age_row_1_math:"🍎 ¿Cuántos hay? Cuenta los objetos<br>⚖️ ¿Cuál es mayor?<br>🔟 Completa el marco de diez<br>➕ Suma los grupos de emojis",
-age_row_1_reading:"Oculta a los 5 años para que la primera experiencia siga centrada en matemáticas.",
+age_row_1_reading:"Oculta a los 4 y 5 años; primero las matemáticas.",
 age_row_2_age:"6",
-age_row_2_math:"➕ Resuelve el resultado<br>➖ Prueba restas simples<br>❓ Encuentra el número que falta<br>✅ ¿Verdadero o falso?<br>🔟 Calentamiento con marco de diez",
+age_row_2_math:"➕ Resuelve el resultado<br>➖ Prueba restas simples<br>❓ Encuentra el número que falta<br>✅ ¿Verdadero o falso?<br>🔟 Calentamiento con marco de diez<br>🕐 La hora: en punto, y media",
 age_row_2_reading:"📖 Lectura opcional<br>🐱 Historias cortas y simples con leer para mí, leer solo y leer en voz alta",
 age_row_3_age:"7",
-age_row_3_math:"✖️ Multiplicaciones<br>❓ Encuentra el número que falta<br>🧩 Parejas de números<br>🎲 Suma con dados<br>🔗 Une las parejas correctas",
+age_row_3_math:"✖️ Multiplicaciones<br>❓ Encuentra el número que falta<br>🧩 Parejas de números<br>🎲 Suma con dados<br>🔗 Une las parejas correctas<br>🕒 La hora: y cuarto, menos cuarto",
 age_row_3_reading:"🌿 Pasajes guiados<br>🗣️ Apoyo de lectura línea por línea",
 age_row_4_age:"8",
-age_row_4_math:"✖️ Multiplicaciones<br>✅ ¿Verdadero o falso?<br>➖ Resta visual<br>↔️ ¿Cuál es mayor?<br>🎲 Suma con dados",
+age_row_4_math:"✖️ Multiplicaciones<br>✅ ¿Verdadero o falso?<br>➖ Resta visual<br>↔️ ¿Cuál es mayor?<br>🎲 Suma con dados<br>🕒 La hora: y cuarto, menos cuarto",
 age_row_4_reading:"📚 Historias más largas y textos sencillos<br>🔊 Lectura más independiente",
 age_row_5_age:"9",
-age_row_5_math:"✖️ Multiplicaciones<br>➗ Práctica de división<br>🧠 Problemas de varios pasos<br>🔢 Secuencias numéricas<br>📐 Área y perímetro",
+age_row_5_math:"✖️ Multiplicaciones<br>➗ Práctica de división<br>🧠 Problemas de varios pasos<br>🔢 Secuencias numéricas<br>📐 Área y perímetro<br>🕔 La hora al minuto",
 age_row_5_reading:"🚀 Textos más largos de ficción y no ficción<br>📚 Mayor trabajo de comprensión",
 age_row_6_age:"10",
-age_row_6_math:"➗ División larga<br>🍕 Elige la fracción correcta<br>🧠 Problemas de varios pasos<br>🔢 Secuencias numéricas<br>📐 Área y perímetro",
+age_row_6_math:"➗ División larga<br>🍕 Elige la fracción correcta<br>🧠 Problemas de varios pasos<br>🔢 Secuencias numéricas<br>📐 Área y perímetro<br>🕔 La hora al minuto",
 age_row_6_reading:"🪐 Pasajes más densos con mejor recuerdo<br>📖 Lectura segura en ficción y textos informativos",
-footer_copy:"Geni es una app educativa para niños de 5 a 10 años con matemáticas, lectura opcional, juego sin conexión, controles parentales y sin anuncios ni rastreo.",
+footer_copy:"Geni es una app educativa para niños de 4 a 10 años con matemáticas, lectura opcional, juego sin conexión, controles parentales y sin anuncios ni rastreo.",
 footer_home:"Inicio",footer_parents:"Para padres",footer_privacy:"Privacidad",
 f1_label:"Flujo matemático",f1_title:"Misiones de matemáticas",f1_desc:"Los ejercicios cortos se sienten rápidos y como un juego, con progreso visible, feedback al instante y el siguiente reto listo enseguida.",
 f2_label:"Flujo de lectura",f2_title:"Aventuras de lectura",f2_desc:"Las palabras se mantienen grandes y claras, con modos para escuchar, leer solo o leer en voz alta que guían la atención línea por línea.",
@@ -474,10 +406,13 @@ preview_profiles_title:"Elegir perfil",preview_profiles_switch:"Toca para cambia
 preview_language_picker:"Idioma",preview_language_parent:"Panel para padres",preview_language_english:"🇬🇧 Inglés",preview_language_norwegian:"🇳🇴 Noruego",preview_language_spanish:"🇪🇸 Español",preview_language_portuguese:"🇵🇹 Portugués",preview_language_note:"Cambia en segundos y haz que la app se sienta cómoda para toda la familia"
 },
 pt:{
+hero_home_alt:"Início do Geni com matemática, leitura e desafios diários",hero_math_alt:"Liga cada conta ao resultado: um jogo de pares no Geni",
+hero_more:"Como funciona",
 nav_features:"Recursos",nav_math:"Matem\u00E1tica",nav_reading:"Leitura",nav_parents:"Para pais",nav_privacy:"Privacidade",nav_download:"Baixar",
 theme_label:"Tema",theme_standard:"Padrão",theme_ocean:"Oceano",theme_blossom:"Florescer",
-hero_title:'Aprender \u00E9 uma aventura',
-hero_sub:"Miss\u00F5es di\u00E1rias de matem\u00E1tica e leitura para crian\u00E7as de 5 a 10 anos. Aprenda, brinque e repita!",
+hero_title:"Matemática e leitura para crianças dos 4 aos 10 anos",
+hero_sub:"O Geni Kids é uma app gratuita de matemática e leitura para crianças dos 4 aos 10 anos. <br class='br-desk'>Com jogos de matemática, contagem, tabuada e leitura guiada, o seu filho pratica um pouco todos os dias, sem anúncios e mesmo sem internet.",
+demo_close:"Fechar vídeo",
 features_title:"O que torna Geni especial",
 features_intro:"Os pais conseguem ver o ritmo do app antes de baixar: vitórias rápidas, leitura guiada, recompensas, privacidade e uma configuração pensada para a vida em família.",
 age_table_title:"Matemática e leitura por idade",
@@ -485,25 +420,28 @@ age_table_intro:"Uma visão mais clara do que as crianças realmente veem no Gen
 age_table_col_age:"Idade",
 age_table_col_math:"Matemática",
 age_table_col_reading:"Leitura",
+age_row_0_age:"4",
+age_row_0_math:"🍎 Conte imagens<br>⚖️ Mais ou menos?<br>➕ Pequenas somas até 5",
+age_row_0_reading:"Oculta aos 4 e 5 anos; matemática primeiro.",
 age_row_1_age:"5",
 age_row_1_math:"🍎 Quantos há? Conte os objetos<br>⚖️ Qual é maior?<br>🔟 Complete o quadro de dez<br>➕ Some os grupos de emojis",
-age_row_1_reading:"Oculta aos 5 anos para que a primeira experiência continue focada em matemática.",
+age_row_1_reading:"Oculta aos 4 e 5 anos; matemática primeiro.",
 age_row_2_age:"6",
-age_row_2_math:"➕ Resolva o resultado<br>➖ Tente subtrações simples<br>❓ Encontre o número que falta<br>✅ Verdadeiro ou falso?<br>🔟 Aquecimento com quadro de dez",
+age_row_2_math:"➕ Resolva o resultado<br>➖ Tente subtrações simples<br>❓ Encontre o número que falta<br>✅ Verdadeiro ou falso?<br>🔟 Aquecimento com quadro de dez<br>🕐 As horas: em ponto, e meia",
 age_row_2_reading:"📖 Leitura opcional<br>🐱 Histórias curtas e simples com ler para mim, ler sozinho e ler em voz alta",
 age_row_3_age:"7",
-age_row_3_math:"✖️ Multiplicações<br>❓ Encontre o número que falta<br>🧩 Pares numéricos<br>🎲 Soma com dados<br>🔗 Ligue os pares corretos",
+age_row_3_math:"✖️ Multiplicações<br>❓ Encontre o número que falta<br>🧩 Pares numéricos<br>🎲 Soma com dados<br>🔗 Ligue os pares corretos<br>🕒 As horas: e um quarto, menos um quarto",
 age_row_3_reading:"🌿 Passagens guiadas<br>🗣️ Apoio de leitura linha por linha",
 age_row_4_age:"8",
-age_row_4_math:"✖️ Multiplicações<br>✅ Verdadeiro ou falso?<br>➖ Subtração visual<br>↔️ Qual é maior?<br>🎲 Soma com dados",
+age_row_4_math:"✖️ Multiplicações<br>✅ Verdadeiro ou falso?<br>➖ Subtração visual<br>↔️ Qual é maior?<br>🎲 Soma com dados<br>🕒 As horas: e um quarto, menos um quarto",
 age_row_4_reading:"📚 Histórias mais longas e textos simples<br>🔊 Leitura mais independente",
 age_row_5_age:"9",
-age_row_5_math:"✖️ Multiplicações<br>➗ Prática de divisão<br>🧠 Problemas com vários passos<br>🔢 Sequências numéricas<br>📐 Área e perímetro",
+age_row_5_math:"✖️ Multiplicações<br>➗ Prática de divisão<br>🧠 Problemas com vários passos<br>🔢 Sequências numéricas<br>📐 Área e perímetro<br>🕔 As horas ao minuto",
 age_row_5_reading:"🚀 Textos mais longos de ficção e não ficção<br>📚 Compreensão mais forte",
 age_row_6_age:"10",
-age_row_6_math:"➗ Divisão longa<br>🍕 Escolha a fração certa<br>🧠 Problemas com vários passos<br>🔢 Sequências numéricas<br>📐 Área e perímetro",
+age_row_6_math:"➗ Divisão longa<br>🍕 Escolha a fração certa<br>🧠 Problemas com vários passos<br>🔢 Sequências numéricas<br>📐 Área e perímetro<br>🕔 As horas ao minuto",
 age_row_6_reading:"🪐 Passagens mais densas com melhor recordação<br>📖 Leitura confiante em ficção e fatos",
-footer_copy:"Geni é um app educativo para crianças de 5 a 10 anos com matemática, leitura opcional, uso offline, controles parentais e sem anúncios nem rastreamento.",
+footer_copy:"Geni é um app educativo para crianças de 4 a 10 anos com matemática, leitura opcional, uso offline, controles parentais e sem anúncios nem rastreamento.",
 footer_home:"Início",footer_parents:"Para pais",footer_privacy:"Privacidade",
 f1_label:"Fluxo de matemática",f1_title:"Missões de matemática",f1_desc:"Exercícios curtos parecem rápidos e divertidos, com progresso visível, feedback imediato e o próximo desafio pronto em seguida.",
 f2_label:"Fluxo de leitura",f2_title:"Aventuras de leitura",f2_desc:"As palavras ficam grandes e focadas, com modos para ouvir, ler sozinho e ler em voz alta que guiam a atenção linha por linha.",
@@ -523,10 +461,34 @@ preview_language_picker:"Idioma",preview_language_parent:"Painel dos pais",previ
 };
 
 var LANG_META={
-en:{code:"EN",flag:"🇬🇧",title:"Geni - Fun Learning App for Kids | Math & Reading",description:"Geni makes math and reading fun for kids aged 5-10. Daily missions, speech recognition, rewards, and parent controls. Download free on the App Store."},
-nb:{code:"NO",flag:"🇳🇴",title:"Geni - Morsom l\u00E6ringsapp for barn | Matte og lesing",description:"Geni gj\u00F8r matte og lesing morsomt for barn 5-10 \u00E5r. Daglige oppdrag, talegjenkjenning, bel\u00F8nninger og foreldrekontroll."},
-es:{code:"ES",flag:"🇪🇸",title:"Geni - App educativa divertida para ni\u00F1os | Matem\u00E1ticas y lectura",description:"Geni hace que las matem\u00E1ticas y la lectura sean divertidas para ni\u00F1os de 5 a 10 a\u00F1os. Misiones diarias, reconocimiento de voz, recompensas y controles parentales."},
-pt:{code:"PT",flag:"🇵🇹",title:"Geni - App divertida de aprendizagem para crian\u00E7as | Matem\u00E1tica e leitura",description:"Geni torna matem\u00E1tica e leitura divertidas para crian\u00E7as de 5 a 10 anos. Miss\u00F5es di\u00E1rias, reconhecimento de fala, recompensas e controles parentais."}
+  "en": {
+    "code": "EN",
+    "flag": "🇬🇧",
+    "title": "Math and reading for kids 4–10 | Geni",
+    "description": "Math and reading for kids 4–10. Daily picture games, guided reading and rewards. No ads, works offline.",
+    "locale": "en_US"
+  },
+  "nb": {
+    "code": "NO",
+    "flag": "🇳🇴",
+    "title": "Matte og lesing for barn 4–10 år | Geni",
+    "description": "Matte og lesing for barn 4–10 år. Daglige mattespill, lesetrening og belønninger. Uten reklame, fungerer uten nett.",
+    "locale": "nb_NO"
+  },
+  "es": {
+    "code": "ES",
+    "flag": "🇪🇸",
+    "title": "Matemáticas y lectura para niños de 4 a 10 años | Geni",
+    "description": "Matemáticas y lectura para niños de 4 a 10 años. Juegos diarios con imágenes, lectura guiada y premios. Sin anuncios, funciona sin conexión.",
+    "locale": "es_ES"
+  },
+  "pt": {
+    "code": "PT",
+    "flag": "🇵🇹",
+    "title": "Matemática e leitura para crianças dos 4 aos 10 anos | Geni",
+    "description": "Matemática e leitura para crianças dos 4 aos 10 anos. Jogos diários com imagens, leitura guiada e recompensas. Sem anúncios, funciona sem internet.",
+    "locale": "pt_PT"
+  }
 };
 
 function normalizeLang(value){
@@ -537,10 +499,10 @@ if(value.indexOf("pt")===0)return"pt";
 return"en";
 }
 
-var lang='en';
+var lang=normalizeLang(navigator.language||'en');
 try{var s=localStorage.getItem('geni_lang');if(s)lang=normalizeLang(s)}catch(e){}
 try{var p=new URLSearchParams(location.search);if(p.get('lang'))lang=normalizeLang(p.get('lang'))}catch(e){}
-if(!lang||lang==='en')lang=normalizeLang(navigator.language||'en');
+
 
 function applyLang(l){
 lang=normalizeLang(l);
@@ -553,6 +515,11 @@ for(var i=0;i<els.length;i++){
 var k=els[i].getAttribute('data-i18n');
 if(T[lang]&&T[lang][k])els[i].innerHTML=T[lang][k];
 }
+var imageEls=document.querySelectorAll('[data-i18n-alt]');
+for(var n=0;n<imageEls.length;n++){
+var imageKey=imageEls[n].getAttribute('data-i18n-alt');
+if(T[lang]&&T[lang][imageKey])imageEls[n].alt=T[lang][imageKey];
+}
 var ariaEls=document.querySelectorAll('[data-i18n-aria-label]');
 for(var j=0;j<ariaEls.length;j++){
 var ak=ariaEls[j].getAttribute('data-i18n-aria-label');
@@ -561,10 +528,33 @@ if(T[lang]&&T[lang][ak])ariaEls[j].setAttribute('aria-label',T[lang][ak]);
 document.title=LANG_META[lang].title;
 var meta=document.querySelector('meta[name="description"]');
 if(meta)meta.content=LANG_META[lang].description;
+['og:title','twitter:title','og:description','twitter:description','og:locale'].forEach(function(key){
+var element=document.querySelector('meta[property="'+key+'"],meta[name="'+key+'"]');
+if(element)element.content=key==='og:locale'?LANG_META[lang].locale:LANG_META[lang][key.endsWith('title')?'title':'description'];
+});
+var structured=document.querySelector('script[type="application/ld+json"]');
+var data=JSON.parse(structured.textContent);
+data.forEach(function(item){if(item.description){item.description=LANG_META[lang].description;item.inLanguage=lang;}});
+structured.textContent=JSON.stringify(data);
+window.geniHeroLang=lang;updateHeroShot();
+
 }
 
+// The hero phone shows the app in the page's colour theme (standard, ocean, blossom) and language
+function updateHeroShot(){
+var theme=document.body.getAttribute('data-theme')||'standard';
+if(['standard','ocean','blossom'].indexOf(theme)<0)theme='standard';
+var shot='img/hero-game-'+(window.geniHeroLang==='nb'?'no':'en')+'-'+theme+'.webp';
+var img=document.getElementById('heroGame');
+if(img.getAttribute('src')!==shot)img.setAttribute('src',shot);
+}
+new MutationObserver(updateHeroShot).observe(document.body,{attributes:true,attributeFilter:['data-theme']});
+// Warm the other colour versions after load so switching theme never shows an empty phone
+window.addEventListener('load',function(){var l=window.geniHeroLang==='nb'?'no':'en';['standard','ocean','blossom'].forEach(function(t){(new Image()).src='img/hero-game-'+l+'-'+t+'.webp'})});
 applyLang(lang);
 </script>
+
+<script src="hero-demo.js"></script>
 
 </body>
 </html>

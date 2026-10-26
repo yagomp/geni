@@ -5,26 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Thank You - Geni App</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#0433FF">
+<meta name="theme-color" content="#FFF7E0">
 <link rel="icon" type="image/png" href="icon-mark.png">
 <link rel="apple-touch-icon" href="icon-mark.png">
+<link rel="preload" href="fonts/nunito-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="geni.css">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000;--border:#000;--shadow:6px 6px 0 #000;--shadow-sm:4px 4px 0 #000;--font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif}
-body[data-theme="ocean"]{--bg:#E6F2FF;--card:#F2F7FF;--accent:#2E73D1}
-body[data-theme="blossom"]{--bg:#FFEDEF;--card:#FFF7FA;--accent:#E0487A}
-html{font-size:16px}
-body{font-family:var(--font);background:var(--bg);color:var(--on-bg);line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
-a{color:#000;text-decoration:none}
-a:hover{text-decoration:underline}
-.container{max-width:800px;margin:0 auto;padding:0 20px}
-.content{flex:1;display:flex;align-items:center;justify-content:center;padding:60px 20px}
-.card{background:var(--card);border:4px solid var(--border);box-shadow:var(--shadow);padding:48px 40px;text-align:center;max-width:480px;width:100%}
-.icon{font-size:56px;margin-bottom:20px}
-h1{font-weight:900;font-size:1.8rem;text-transform:uppercase;letter-spacing:-0.5px;margin-bottom:12px}
-p{font-size:0.95rem;color:#333;margin-bottom:28px}
-.btn{display:inline-block;padding:14px 28px;background:var(--accent);color:#fff;font-family:var(--font);font-weight:900;font-size:0.9rem;text-transform:uppercase;letter-spacing:1px;border:3px solid var(--border);box-shadow:var(--shadow-sm);transition:transform 0.1s,box-shadow 0.1s}
-.btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 #000;text-decoration:none}
+/* Confirmation layout */
+.content{display:flex;align-items:center;justify-content:center;padding:var(--s-7) var(--gutter)}.content>.card{width:100%;max-width:480px;border-radius:var(--r-xl);padding:var(--s-7);text-align:center}.emoji-hero{margin-bottom:var(--s-5)}.content h1{margin-bottom:var(--s-4)}.content p{margin-bottom:var(--s-5)}
+@media(max-width:600px){.content>.card{padding:var(--s-6) var(--s-5)}}
 </style>
 </head>
 <body>
@@ -33,10 +22,10 @@ p{font-size:0.95rem;color:#333;margin-bottom:28px}
 
 <main class="content">
 <div class="card">
-<div class="icon">✅</div>
-<h1 id="ty-title">Message Sent!</h1>
+<div class="emoji-hero" aria-hidden="true">✅</div>
+<h1 id="ty-title">Message sent!</h1>
 <p id="ty-msg">Thanks for reaching out. We'll get back to you as soon as we can.</p>
-<a href="/" class="btn" id="ty-btn">Back to Home</a>
+<a href="/" class="btn btn--primary" id="ty-btn">Back to home</a>
 </div>
 </main>
 
@@ -44,7 +33,7 @@ p{font-size:0.95rem;color:#333;margin-bottom:28px}
 
 <script>
 var msgs={
-en:{title:'Message Sent!',msg:"Thanks for reaching out. We'll get back to you as soon as we can.",btn:'Back to Home'},
+en:{title:'Message sent!',msg:"Thanks for reaching out. We'll get back to you as soon as we can.",btn:'Back to home'},
 nb:{title:'Melding sendt!',msg:'Takk for at du tok kontakt. Vi svarer deg s\u00E5 snart vi kan.',btn:'Tilbake til forsiden'},
 es:{title:'¡Mensaje enviado!',msg:'Gracias por ponerte en contacto. Te responderemos lo antes posible.',btn:'Volver al inicio'},
 pt:{title:'Mensagem enviada!',msg:'Obrigado por entrar em contato. Responderemos o mais r\u00E1pido poss\u00EDvel.',btn:'Voltar ao in\u00EDcio'}

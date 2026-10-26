@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Geni Blog | Tips for Parents on Kids Learning Apps</title>
-<meta name="description" content="Practical guides and honest advice for parents choosing educational apps for kids ages 5-10. From the team behind Geni.">
+<meta name="description" content="Practical guides and honest advice for parents choosing educational apps for kids ages 4-10. From the team behind Geni.">
 <meta name="robots" content="index, follow">
-<meta name="theme-color" content="#0433FF">
+<meta name="theme-color" content="#FFF7E0">
 <meta property="og:title" content="Geni Blog | Tips for Parents on Kids Learning Apps">
-<meta property="og:description" content="Practical guides and honest advice for parents choosing educational apps for kids ages 5-10.">
+<meta property="og:description" content="Practical guides and honest advice for parents choosing educational apps for kids ages 4-10.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://geni.kids/icon-mark.png">
 <meta property="og:url" content="https://geni.kids/blog/">
@@ -18,56 +18,12 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Blog","name":"Geni Blog","description":"Practical guides and honest advice for parents choosing educational apps for kids.","url":"https://geni.kids/blog/","publisher":{"@type":"Organization","name":"Geni App","url":"https://geni.kids","logo":{"@type":"ImageObject","url":"https://geni.kids/icon-mark.png"}}}
 </script>
+<link rel="preload" href="../fonts/nunito-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../geni.css">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
---yellow:#0433FF;--blue:#0066FF;--pink:#FF2E54;--green:#33C75A;
---purple:#B052DE;--orange:#FF9400;--cyan:#66D9F2;--peach:#F5D1B8;
---bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000;--border:#000000;--gray:#E6E6E6;
---shadow:6px 6px 0 #000;--shadow-sm:4px 4px 0 #000;
---font:-apple-system,system-ui,'Segoe UI',Roboto,sans-serif;
-}
-body[data-theme="standard"]{--bg:#FFF7E0;--card:#FFFFFF;--accent:#0066FF;--on-bg:#000000}
-body[data-theme="ocean"]{--bg:#E6F2FF;--card:#F2F7FF;--accent:#2E73D1;--on-bg:#000000}
-body[data-theme="blossom"]{--bg:#FFEDEF;--card:#FFF7FA;--accent:#E0487A;--on-bg:#000000}
-html{scroll-behavior:smooth;font-size:16px}
-body{font-family:var(--font);background:var(--bg);color:var(--on-bg);line-height:1.6;-webkit-font-smoothing:antialiased}
-a{color:#000;text-decoration:none}
-a:hover{text-decoration:underline}
-a:focus-visible,button:focus-visible{outline:4px solid #000;outline-offset:2px}
-img{max-width:100%;height:auto;display:block}
-.container{max-width:1120px;margin:0 auto;padding:0 20px}
-
-/* FOOTER */
-footer{background:var(--bg);color:var(--on-bg);padding:20px 0;font-size:0.85rem;border-top:4px solid #000}
-footer .container{max-width:1120px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:16px}
-footer a{color:var(--on-bg);font-weight:700;text-decoration:underline}
-footer a:hover{color:#FFE566}
-.footer-brand{display:flex;align-items:center;gap:10px;color:var(--on-bg);font-weight:800;text-decoration:none}
-.footer-brand:hover{text-decoration:none}
-.footer-copy{max-width:620px;font-size:0.92rem;line-height:1.5;color:var(--on-bg)}
-.footer-links{display:flex;gap:20px;font-weight:700;text-transform:uppercase;font-size:0.8rem;letter-spacing:0.5px;justify-content:center;text-align:center}
-
-/* BLOG INDEX */
-.blog-header{padding:48px 0 32px}
-.blog-header h1{font-size:clamp(2.4rem,6vw,4rem);font-weight:900;line-height:1;text-transform:uppercase;letter-spacing:-2px;margin-bottom:16px}
-.blog-header p{font-size:1.1rem;max-width:540px;font-weight:600}
-.post-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;padding-bottom:80px}
-.post-card{background:var(--card);border:3px solid #000;box-shadow:var(--shadow);padding:28px;display:flex;flex-direction:column;gap:12px;transition:transform 0.15s ease,box-shadow 0.15s ease}
-.post-card:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 #000;text-decoration:none}
-.post-tag{display:inline-block;background:#000;color:#fff;font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:3px 10px}
-.post-card h2{font-size:1.3rem;font-weight:900;line-height:1.2;color:#000}
-.post-card p{font-size:0.95rem;color:#333;line-height:1.5;flex:1}
-.post-meta{font-size:0.8rem;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:0.5px}
-
-@media(max-width:600px){
-
-footer .container{flex-direction:column;text-align:center}
-.footer-brand,.footer-copy,.footer-links{width:100%;justify-content:center;text-align:center}
-.footer-links{flex-wrap:wrap;gap:12px 20px}
-
-.post-grid{grid-template-columns:1fr}
-}
+/* Blog listing */
+.blog-header{padding:var(--s-7) 0 var(--s-6)}.blog-header h1{font-size:var(--fs-display);line-height:var(--lh-tight);}.post-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:var(--s-5);padding-bottom:var(--s-9)}.post-card{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s-4)}.post-card h2{font-size:1.375rem}.post-card .post-meta{margin-top:auto;padding-top:var(--s-2)}
+@media(max-width:600px){.post-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -78,26 +34,25 @@ footer .container{flex-direction:column;text-align:center}
 <div class="container">
 
 <header class="blog-header">
-<h1>Geni Blog</h1>
-<p>Practical guides for parents choosing learning apps that are safe, effective, and actually fun for kids.</p>
+<h1>Geni blog</h1>
 </header>
 
 <div class="post-grid">
-<a href="math-apps-for-5-year-olds.html" class="post-card">
-<span class="post-tag">Math Apps</span>
-<h2>Best Math Apps for 5 Year Olds (2026): What Actually Works</h2>
+<a href="math-apps-for-5-year-olds.html" class="post-card card">
+<span class="chip">Math apps</span>
+<h2>Best math apps for 5 year olds (2026): what actually works</h2>
 <p>Most math apps for young kids are either too hard or too boring. Here's what to look for — and what 5 year olds actually respond to.</p>
 <p class="post-meta">April 7, 2026 &middot; 5 min read</p>
 </a>
-<a href="educational-apps-no-ads-kids.html" class="post-card">
-<span class="post-tag">App Guide</span>
-<h2>Educational Apps for Kids With No Ads: What Parents Need to Know (2026)</h2>
+<a href="educational-apps-no-ads-kids.html" class="post-card card">
+<span class="chip">App guide</span>
+<h2>Educational apps for kids with no ads: what parents need to know (2026)</h2>
 <p>Ads in kids apps aren't just annoying — they're designed to manipulate. Here's how to find genuinely ad-free educational apps.</p>
 <p class="post-meta">April 7, 2026 &middot; 5 min read</p>
 </a>
-<a href="free-learning-apps-kids-no-subscription.html" class="post-card">
-<span class="post-tag">App Guide</span>
-<h2>The Best Free Learning Apps for Kids With No Subscription (2026)</h2>
+<a href="free-learning-apps-kids-no-subscription.html" class="post-card card">
+<span class="chip">App guide</span>
+<h2>The best free learning apps for kids with no subscription (2026)</h2>
 <p>Most kids apps lock the good stuff behind a monthly fee. Here's how to spot the ones that are genuinely free — and what to look for beyond price.</p>
 <p class="post-meta">April 6, 2026 &middot; 6 min read</p>
 </a>

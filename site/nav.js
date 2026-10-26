@@ -20,9 +20,9 @@ nav[aria-label="Main navigation"]>.container{display:flex;align-items:center;jus
 .nav-links>a,.lang-btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 10px;border:0;border-radius:var(--r-md);background:none;color:var(--ink);font:700 1rem/1.4 var(--font);white-space:nowrap;cursor:pointer}
 .lang-btn{gap:8px}
 .nav-links>a:hover,.lang-btn:hover{color:var(--accent-ink)}.nav-links>a[aria-current="page"]{background:var(--card);box-shadow:var(--shadow)}
-.nav-store-desktop,.nav-store-mobile-wrap{display:inline-flex;opacity:0;visibility:hidden;pointer-events:none;transform:scale(.92);transition:opacity .2s ease-out,transform .2s ease-out,visibility .2s ease-out}
-nav.is-store-visible .nav-store-desktop,nav.is-store-visible .nav-store-mobile-wrap{opacity:1;visibility:visible;pointer-events:auto;transform:scale(1)}
-.nav-store-mobile{white-space:nowrap}.nav-store-mobile-wrap{display:none}
+.nav-store-desktop{display:inline-flex;opacity:0;visibility:hidden;pointer-events:none;transform:scale(.92);transition:opacity .2s ease-out,transform .2s ease-out,visibility .2s ease-out}
+nav.is-store-visible .nav-store-desktop{opacity:1;visibility:visible;pointer-events:auto;transform:scale(1)}
+.nav-store-mobile{white-space:nowrap;gap:8px}.nav-store-mobile svg{width:18px;height:18px;flex:none;margin-top:-2px}
 .nav-menu-btn{display:none;align-items:center;justify-content:center;width:48px;height:48px;border:0;border-radius:var(--r-md);background:var(--card);box-shadow:var(--shadow);cursor:pointer;flex:none}
 .nav-menu-btn span{display:block;position:relative;width:18px;height:2px;background:var(--ink);border-radius:var(--r-pill)}.nav-menu-btn span::before,.nav-menu-btn span::after{content:"";position:absolute;left:0;width:18px;height:2px;background:var(--ink);border-radius:var(--r-pill)}.nav-menu-btn span::before{top:-6px}.nav-menu-btn span::after{top:6px}
 .lang-dropdown{position:relative}.lang-menu{display:none;position:absolute;right:0;top:100%;padding-top:var(--s-1);min-width:168px;z-index:20}.lang-menu.is-open{display:block}
@@ -30,7 +30,7 @@ nav.is-store-visible .nav-store-desktop,nav.is-store-visible .nav-store-mobile-w
 .theme-picker,.theme-options{display:flex;align-items:center}.theme-label{display:none}.theme-dot{display:flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:var(--r-md);background:none;cursor:pointer;flex:none}.theme-dot::before{content:"";display:block;width:22px;height:22px;border-radius:var(--r-pill);background:var(--theme-standard);box-shadow:0 0 0 2px var(--card),var(--shadow)}.theme-dot[data-theme="ocean"]::before{background:var(--theme-ocean)}.theme-dot[data-theme="blossom"]::before{background:var(--theme-blossom)}.theme-dot.is-active::before{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--accent)}
 .nav-mobile{display:none}
 @media(min-width:1025px) and (max-width:1199px){.nav-links>a,.lang-btn{padding-inline:8px}}
-@media(max-width:1024px){.nav-links,.nav-store-desktop{display:none}.nav-menu-btn{display:inline-flex}.nav-store-mobile-wrap{display:inline-flex;position:absolute;left:0;right:0;top:0;bottom:0;width:max-content;margin:auto;align-items:center;transform:scale(.92)}nav.is-store-visible .nav-store-mobile-wrap{transform:scale(1)}.nav-mobile{position:absolute;top:100%;left:0;right:0;background:var(--card);border-radius:0 0 var(--r-lg) var(--r-lg);box-shadow:var(--shadow-lift);padding:8px 20px 20px;max-height:calc(100dvh - var(--nav-height));overflow:auto}.nav-mobile.is-open{display:block}.nav-mobile-inner{max-width:var(--container);margin:auto;display:flex;flex-direction:column}.nav-mobile-inner>a,.nav-mobile-inner>button{display:flex;align-items:center;min-height:52px;width:100%;padding:10px 14px;border:0;border-radius:var(--r-md);background:none;color:var(--ink);font:700 var(--fs-body)/1.4 var(--font);text-align:left;cursor:pointer}.nav-mobile-inner>a:hover,.nav-mobile-inner>button:hover,.nav-mobile-inner>a[aria-current="page"]{background:var(--accent-soft)}.nav-mobile-inner>button:first-of-type{border-top:1px solid var(--hairline);border-radius:0;margin-top:var(--s-2);padding-top:var(--s-4)}.theme-picker-mobile{padding:var(--s-2) 0 0}}
+@media(max-width:1024px){.nav-links{display:none}.nav-store-desktop{flex:1;justify-content:center}.nav-menu-btn{display:inline-flex}.nav-mobile{position:absolute;top:100%;left:0;right:0;background:var(--card);border-radius:0 0 var(--r-lg) var(--r-lg);box-shadow:var(--shadow-lift);padding:8px 20px 20px;max-height:calc(100dvh - var(--nav-height));overflow:auto}.nav-mobile.is-open{display:block}.nav-mobile-inner{max-width:var(--container);margin:auto;display:flex;flex-direction:column}.nav-mobile-inner>a,.nav-mobile-inner>button{display:flex;align-items:center;min-height:52px;width:100%;padding:10px 14px;border:0;border-radius:var(--r-md);background:none;color:var(--ink);font:700 var(--fs-body)/1.4 var(--font);text-align:left;cursor:pointer}.nav-mobile-inner>a:hover,.nav-mobile-inner>button:hover,.nav-mobile-inner>a[aria-current="page"]{background:var(--accent-soft)}.nav-mobile-inner>button:first-of-type{border-top:1px solid var(--hairline);border-radius:0;margin-top:var(--s-2);padding-top:var(--s-4)}.theme-picker-mobile{padding:var(--s-2) 0 0}}
 `;
 
   var styleEl = document.createElement('style');
@@ -48,6 +48,7 @@ nav.is-store-visible .nav-store-desktop,nav.is-store-visible .nav-store-mobile-w
     return '<a href="' + STORE_URL + '" class="nav-store-mobile btn btn--primary btn--sm"' +
            (tabindex ? ' tabindex="-1"' : '') +
            ' aria-label="Download on the App Store">' +
+           '<svg viewBox="0 0 384 512" aria-hidden="true" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>' +
            '<span data-i18n="nav_download">Download</span></a>';
   }
 
@@ -82,7 +83,6 @@ nav.is-store-visible .nav-store-desktop,nav.is-store-visible .nav-store-mobile-w
         '<div class="nav-store-desktop" aria-hidden="true">' + dlBtn(true) + '</div>' +
         '<button class="nav-menu-btn" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu"><span aria-hidden="true"></span></button>' +
       '</div>' +
-      '<div class="nav-store-mobile-wrap" aria-hidden="true">' + dlBtn(true) + '</div>' +
       '<div class="nav-mobile" id="mobileMenu">' +
         '<div class="nav-mobile-inner">' +
           '<a href="' + featHref + '" data-i18n="nav_features" onclick="closeMenu()">Features</a>' +
@@ -175,7 +175,7 @@ nav.is-store-visible .nav-store-desktop,nav.is-store-visible .nav-store-mobile-w
     updateNav();
     function updateDownload() {
       var visible = nav.classList.contains('is-store-visible');
-      nav.querySelectorAll('.nav-store-desktop, .nav-store-mobile-wrap').forEach(function (wrap) {
+      nav.querySelectorAll('.nav-store-desktop').forEach(function (wrap) {
         wrap.setAttribute('aria-hidden', String(!visible));
         wrap.querySelector('a').tabIndex = visible ? 0 : -1;
       });
@@ -235,11 +235,12 @@ nav.is-store-visible .nav-store-desktop,nav.is-store-visible .nav-store-mobile-w
 
     // Scroll-triggered download button (landing page only)
     if (isLanding && nav) {
-      var hero = document.getElementById('hero');
-      if (hero && 'IntersectionObserver' in window) {
+      // Show the nav button the moment the hero's App Store badge is hidden behind the nav or scrolled away
+      var badge = document.getElementById('appStoreLink') || document.getElementById('hero');
+      if (badge && 'IntersectionObserver' in window) {
         new IntersectionObserver(function (entries) {
           nav.classList.toggle('is-store-visible', !entries[0].isIntersecting);
-        }, { rootMargin: '-80px 0px 0px 0px', threshold: 0 }).observe(hero);
+        }, { rootMargin: '-' + nav.offsetHeight + 'px 0px 0px 0px', threshold: 0 }).observe(badge);
       }
     }
   });

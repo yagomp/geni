@@ -30,7 +30,7 @@
 [{"@context":"https://schema.org","@type":"MobileApplication","name":"Geni – Kids Learning App","operatingSystem":"iOS","applicationCategory":"EducationApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"https://apps.apple.com/app/geni-kids/id6761134405","description":"Reading app for kids ages 6-10 with on-device speech recognition, three reading modes, and no data collected."},{"@context":"https://schema.org","@type":"WebPage","name":"Geni Reading App for Kids","description":"Reading app for kids ages 6-10 with read-aloud, read-to-me, and read-myself modes. Apple on-device speech recognition. No data collected.","url":"https://geni.kids/reading.html","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"Geni","url":"https://geni.kids"}}]
 </script>
 <link rel="preload" href="fonts/nunito-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="geni.css?v=907e5716b7">
+<link rel="stylesheet" href="geni.css?v=2b84f8487c">
 </head>
 <body>
 
@@ -250,10 +250,9 @@ if(value.indexOf("es")===0)return"es";
 if(value.indexOf("pt")===0)return"pt";
 return"en";
 }
-var lang='en';
+var lang=normalizeLang(navigator.language||'en');
 try{var s=localStorage.getItem('geni_lang');if(s)lang=normalizeLang(s)}catch(e){}
 try{var p=new URLSearchParams(location.search);if(p.get('lang'))lang=normalizeLang(p.get('lang'))}catch(e){}
-if(!lang||lang==='en')lang=normalizeLang(navigator.language||'en');
 function applyLang(l){
 lang=normalizeLang(l);
 try{localStorage.setItem('geni_lang',lang)}catch(e){}

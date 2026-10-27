@@ -9,7 +9,7 @@
 <link rel="icon" type="image/png" href="icon-mark.png">
 <link rel="apple-touch-icon" href="icon-mark.png">
 <link rel="preload" href="fonts/nunito-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="geni.css?v=907e5716b7">
+<link rel="stylesheet" href="geni.css?v=2b84f8487c">
 <style>
 /* Confirmation layout */
 .content{display:flex;align-items:center;justify-content:center;padding:var(--s-7) var(--gutter)}.content>.card{width:100%;max-width:480px;border-radius:var(--r-xl);padding:var(--s-7);text-align:center}.emoji-hero{margin-bottom:var(--s-5)}.content h1{margin-bottom:var(--s-4)}.content p{margin-bottom:var(--s-5)}
@@ -45,9 +45,8 @@ if(v.indexOf('es')===0)return'es';
 if(v.indexOf('pt')===0)return'pt';
 return'en';
 }
-var lang='en';
+var lang=normalizeLang(navigator.language||'en');
 try{var s=localStorage.getItem('geni_lang');if(s)lang=normalizeLang(s)}catch(e){}
-if(lang==='en')lang=normalizeLang(navigator.language||'en');
 var m=msgs[lang]||msgs.en;
 document.getElementById('ty-title').textContent=m.title;
 document.getElementById('ty-msg').textContent=m.msg;

@@ -31,7 +31,7 @@
 }
 </script>
 <link rel="preload" href="../fonts/nunito-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../geni.css?v=907e5716b7">
+<link rel="stylesheet" href="../geni.css?v=2b84f8487c">
 </head>
 <body>
 
@@ -163,7 +163,7 @@ document.documentElement.lang=lang;
 var btn=document.getElementById('langBtn');
 if(btn)btn.innerHTML='<span aria-hidden="true">'+langFlags[lang]+'</span> '+langCodes[lang];
 }
-var savedLang='en';
+var savedLang=normalizeLang(navigator.language||'en');
 try{var s=localStorage.getItem('geni_lang');if(s)savedLang=normalizeLang(s);}catch(e){}
 applyLang(savedLang);
 </script>

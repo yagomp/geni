@@ -30,7 +30,7 @@
 {"@context":"https://schema.org","@type":"WebPage","name":"Privacy Policy","description":"Geni privacy policy. No data collection, safe for children.","url":"https://geni.kids/privacy.html","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"Geni","url":"https://geni.kids"}}
 </script>
 <link rel="preload" href="fonts/nunito-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="geni.css?v=907e5716b7">
+<link rel="stylesheet" href="geni.css?v=2b84f8487c">
 <style>
 /* Privacy prose */
 .content-card{padding:40px 32px}.content-card h1{margin-bottom:var(--s-3)}.updated{text-align:center;margin-bottom:var(--s-6)}.content-card h2{font-size:var(--fs-h3);line-height:1.25;margin:var(--s-6) 0 var(--s-3)}.content-card ul{padding-left:var(--s-5);margin-top:var(--s-3)}.content-card li+li{margin-top:var(--s-2)}
@@ -242,10 +242,9 @@ if(value.indexOf("es")===0)return"es";
 if(value.indexOf("pt")===0)return"pt";
 return"en";
 }
-var lang='en';
+var lang=normalizeLang(navigator.language||'en');
 try{var s=localStorage.getItem('geni_lang');if(s)lang=normalizeLang(s)}catch(e){}
 try{var p=new URLSearchParams(location.search);if(p.get('lang'))lang=normalizeLang(p.get('lang'))}catch(e){}
-if(!lang||lang==='en')lang=normalizeLang(navigator.language||'en');
 function applyLang(l){
 lang=normalizeLang(l);
 try{localStorage.setItem('geni_lang',lang)}catch(e){}

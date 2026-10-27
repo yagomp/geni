@@ -594,13 +594,6 @@ private struct ExerciseViewLayout: View {
         let leftLabels = exercise.matchLeftLabels ?? []
         let rightLabels = exercise.matchRightLabels ?? []
         return VStack(spacing: 16) {
-            if !expanded {
-                Text(L.s(.matchConnectInstruction))
-                    .font(.system(size: scaled(18), weight: .semibold, design: .rounded))
-                    .foregroundStyle(GeniColor.border)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
             Text(L.s(.matchThePairs))
                 .font(.system(size: scaled(28), weight: .bold, design: .rounded))
                 .foregroundStyle(GeniColor.border)

@@ -61,6 +61,27 @@ private struct MoneyPriceTag: View {
     }
 }
 
+#if DEBUG
+/// `-designPreviewMoneyPrefill`: website/App Store shots start with the price almost paid
+/// (largest pieces first, one smallest piece short), so the game reads "in action".
+enum MoneyPreviewPrefill {
+    static var isOn: Bool { ProcessInfo.processInfo.arguments.contains("-designPreviewMoneyPrefill") }
+
+    static func pieces(price: Int, tray: [MoneyDenomination]) -> [MoneyDenomination] {
+        let sorted = tray.sorted { $0.value > $1.value }
+        guard let smallest = sorted.last else { return [] }
+        var remaining = price - smallest.value
+        var result: [MoneyDenomination] = []
+        for piece in sorted where remaining > 0 {
+            while remaining >= piece.value, result.count < MoneyCounter.capacity - 1 {
+                result.append(piece); remaining -= piece.value
+            }
+        }
+        return result
+    }
+}
+#endif
+
 struct MoneyPayView: View {
     @Environment(\.geniExpandedLayout) private var expanded
     let spec: GameSpec
@@ -72,6 +93,16 @@ struct MoneyPayView: View {
     private func scaled(_ value: CGFloat) -> CGFloat { expanded ? value * 1.6 : iPadScale.value(value) }
 
     var body: some View {
+        content
+        #if DEBUG
+            .onAppear {
+                guard MoneyPreviewPrefill.isOn, counter.pieces.isEmpty else { return }
+                MoneyPreviewPrefill.pieces(price: payload.item.price, tray: payload.tray).forEach { counter.add($0) }
+            }
+        #endif
+    }
+
+    private var content: some View {
         VStack(spacing: scaled(12)) {
             GameQuestion(text: spec.prompt)
             GameSceneCard {

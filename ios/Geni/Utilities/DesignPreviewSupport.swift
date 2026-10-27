@@ -14,8 +14,9 @@ enum DesignPreview {
     /// Normal DEBUG launches and every Release launch keep the production dependencies.
     @MainActor
     static func makeViewModel() -> AppViewModel {
-        guard screen != nil else { return AppViewModel() }
-        let suite = "com.yagomp.geni.designPreview"
+        let demo = ProcessInfo.processInfo.arguments.contains("-demoRecording")
+        guard screen != nil || demo else { return AppViewModel() }
+        let suite = demo ? "com.yagomp.geni.demoRecording" : "com.yagomp.geni.designPreview"
         let defaults = UserDefaults(suiteName: suite)!
         defaults.removePersistentDomain(forName: suite)
         let persistence = PersistenceService(defaults: defaults)
@@ -60,7 +61,7 @@ enum DesignPreview {
         if !store { vm.completeOnboarding(profile: profile) }
         var chapter = ChapterProgress(childId: profile.id, date: vm.persistence.todayString())
         let count = profile.dailyExerciseCount
-        let fixture = store ? storeGame(kind) : nil
+        let fixture = store ? captureGame(kind) : nil
         let exercises = (0..<count).map { fixture ?? GameFactory.make(kind, age: age, difficulty: ExerciseGenerator.rampDifficulty(at: $0, of: count)) }
         let start = store ? (age <= 5 ? 3 : 7) : 0
         chapter.completedExerciseCount = start
@@ -72,8 +73,20 @@ enum DesignPreview {
     }
 
     /// Fixed store examples render the actual game views and keep both languages comparable.
-    private static func storeGame(_ kind: GameKind) -> Exercise? {
+    static func captureGame(_ kind: GameKind) -> Exercise? {
         switch kind {
+        case .tenFriends:
+            let choices = [3, 4, 6, 5].map { GameChoice(label: "\($0)", value: $0) }
+            return Exercise(game: GameSpec(kind: kind,
+                prompt: L.t("How many more to make 10?", no: "Hvor mange mangler til 10?", es: "¿Cuántos faltan para 10?", pt: "Quantos faltam para 10?"),
+                answerText: "4", payload: TenFramePayload(filled: 6, emoji: "🍓", showsFrame: true, equation: [], choices: choices)),
+                correctAnswer: 4, options: choices.map(\.value), difficulty: .normal)
+        case .doubles:
+            let choices = [5, 8, 6, 7].map { GameChoice(label: "\($0)", value: $0) }
+            return Exercise(game: GameSpec(kind: kind,
+                prompt: L.t("How many in all?", no: "Hvor mange til sammen?", es: "¿Cuántos hay en total?", pt: "Quantos são ao todo?"),
+                answerText: "6", payload: DoublesPayload(left: 3, right: 3, picture: .ladybird, tint: 0, equation: [], choices: choices)),
+                correctAnswer: 6, options: choices.map(\.value), difficulty: .normal)
         case .ordinal:
             return Exercise(game: GameSpec(kind: kind,
                 prompt: L.t("Who is first?", no: "Hvem er først?", es: "¿Quién va primero?", pt: "Quem vai em primeiro?"),
@@ -111,9 +124,21 @@ enum DesignPreview {
         }
     }
 
+    /// `-designPreviewTheme standard|ocean|blossom`: the seeded child's colour theme (screenshots).
+    @MainActor
+    static func applyTheme(to vm: AppViewModel) {
+        let args = ProcessInfo.processInfo.arguments
+        guard let i = args.firstIndex(of: "-designPreviewTheme"), i + 1 < args.count,
+              let theme = AppTheme(rawValue: args[i + 1]), var profile = vm.persistence.activeProfile else { return }
+        profile.theme = theme
+        vm.persistence.saveProfile(profile)
+        ThemeManager.shared.apply(profile)
+    }
+
     @MainActor
     static func apply(to vm: AppViewModel) {
         guard let screen else { return }
+        defer { applyTheme(to: vm) }
         if onboardingStep != nil {
             vm.currentScreen = .onboarding
             return

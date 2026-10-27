@@ -5,6 +5,7 @@
 #        scripts/geni-build.sh archive     -> Release archive at /tmp/geni-release/Geni.xcarchive + App Store .ipa
 #        scripts/geni-build.sh test [Only] -> unit tests on the one shared simulator, serially
 #                                            (Only e.g. GeniTests/AgeFourTests)
+#        scripts/geni-build.sh test-run <xctestrun> [Only] -> run a prepared capture/test configuration
 # Waits for any other Geni build to finish, uses one shared DerivedData and 4 compile jobs.
 set -u
 lock=/tmp/geni-build.lock
@@ -22,6 +23,16 @@ if [[ "${1:-}" == test ]]; then
   # The single shared simulator; never let Xcode clone it for parallel testing.
   destination='id=B0B5D7B2-D70D-4621-8B4A-23A0F1E03067'
   action=(test -parallel-testing-enabled NO -only-testing:"${2:-GeniTests}")
+fi
+if [[ "${1:-}" == test-run ]]; then
+  [[ -f "${2:-}" ]] || { echo 'Usage: scripts/geni-build.sh test-run <absolute xctestrun path> [Only]'; exit 2; }
+  xcodebuild test-without-building -xctestrun "$2" \
+    -destination 'id=B0B5D7B2-D70D-4621-8B4A-23A0F1E03067' \
+    -derivedDataPath "${GENI_DD:-/tmp/geni-dd}" -jobs 4 -parallel-testing-enabled NO \
+    -only-testing:"${3:-GeniTests}" > /tmp/geni-build.log 2>&1
+  rc=$?
+  grep -E ' error:|failed|TEST EXECUTE (SUCCEEDED|FAILED)' /tmp/geni-build.log | tail -20
+  exit $rc
 fi
 if [[ "${1:-}" == archive ]]; then
   out=/tmp/geni-release; rm -rf "$out"; mkdir -p "$out"

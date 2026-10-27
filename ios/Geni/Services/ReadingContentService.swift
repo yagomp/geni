@@ -4,6 +4,13 @@ enum ReadingContentService {
     static func textForToday(profile: ChildProfile, date: String) -> ReadingText {
         let texts = allTexts.filter { $0.ageGroup == profile.ageGroup }
         guard !texts.isEmpty else { return allTexts[0] }
+#if DEBUG
+        // Both localized demo takes use the same real passage and speech/highlighting path.
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains("-demoRecording"), arguments.contains("-demoReading") {
+            return texts[0]
+        }
+#endif
         // FNV-1a stays stable across launches, unlike Swift's randomized hashValue.
         let hash = (date + ":" + profile.id).utf8.reduce(UInt64(14695981039346656037)) {
             ($0 ^ UInt64($1)) &* 1099511628211

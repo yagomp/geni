@@ -63,7 +63,10 @@ extension AppViewModel {
             "rewardsOpen=\(showRewards)",
             "settingsOpen=\(showParentSettings)"
         ]
-        if let chapterViewModel { parts.append("ex=\(chapterViewModel.uiTestAnswerKey)") }
+        if let chapterViewModel {
+            parts.append("ex=\(chapterViewModel.uiTestAnswerKey)")
+            parts.append("feedbackCorrect=\(chapterViewModel.feedbackCorrect)")
+        }
         if let vm = readingViewModel {
             parts.append("rd=\(vm.mode.rawValue),\(vm.currentWordIndex),\(vm.words.count),playing:\(vm.isPlaying),paused:\(vm.isPaused),done:\(vm.isCompleted),matched:\(vm.matchedWordCount),err:\(vm.feedbackTone == .error ? vm.feedbackMessage : "")")
         }

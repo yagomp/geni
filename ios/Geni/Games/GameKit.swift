@@ -123,14 +123,30 @@ enum GameCurriculum {
         return focused.isEmpty ? forAge : focused
     }
 
-    /// UI tests drive chapters by tapping `answer.<value>`; games stay out of them.
-    static var isEnabled: Bool { !ProcessInfo.processInfo.arguments.contains("-uiTest") }
+    /// Regular UI tests keep their existing curriculum; the opt-in demo records games.
+    static var isEnabled: Bool {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-demoGames") { return true }
+        #endif
+        return !ProcessInfo.processInfo.arguments.contains("-uiTest")
+    }
 
     /// Replaces the game slots of a daily chapter with this child's games, round-robin from a random start.
     static func insertGames(into exercises: [Exercise], profile: ChildProfile) -> [Exercise] {
         let kinds = kinds(for: profile)
         guard isEnabled, !kinds.isEmpty else { return exercises }
         var result = exercises
+        #if DEBUG
+        // A short, repeatable opening for the opt-in marketing recording. Keep the
+        // normal chapter length, feedback, persistence and remaining curriculum.
+        if ProcessInfo.processInfo.arguments.contains("-demoRecording"), profile.age == 6, result.count >= 4 {
+            result[0] = Exercise(operand1: 2, operand2: 3, operation: .addition, difficulty: .warmup)
+            if let game = DesignPreview.captureGame(.tenFriends) { result[1] = game }
+            if let game = DesignPreview.captureGame(.doubles) { result[2] = game }
+            result[3] = Exercise(operand1: 9, operand2: 4, operation: .subtraction, difficulty: .warmup)
+            return result
+        }
+        #endif
         let start = Int.random(in: 0..<kinds.count)
         for (n, slot) in slots(chapterLength: exercises.count).enumerated() where slot < result.count {
             let kind = kinds[(start + n) % kinds.count]

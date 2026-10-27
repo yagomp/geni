@@ -36,15 +36,9 @@ private struct ReadingCompleteViewLayout: View {
             }
 
             ScrollView {
-                VStack(spacing: expanded ? 40 : 28) {
-                    Spacer().frame(height: 20)
-
-                    Text("📖")
-                        .font(.system(size: expanded ? 84 : 56))
-                        .foregroundStyle(GeniColor.green)
-                        .opacity(appeared ? 1 : 0)
-                        .scaleEffect(appeared ? 1 : 0.5)
-                        .animation(.spring(response: 0.5, dampingFraction: 0.6), value: appeared)
+                VStack(spacing: expanded ? 40 : 24) {
+                    MascotPoseView(pose: .book, height: expanded ? 200 : 120)
+                        .padding(.top, 12)
 
                     Text(L.s(.readingComplete))
                         .font(.system(size: expanded ? 48 : 32, weight: .black, design: .rounded))

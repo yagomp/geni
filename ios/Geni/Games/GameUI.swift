@@ -28,6 +28,12 @@ enum GameStyle {
     static func gap(_ base: CGFloat, expanded: Bool) -> CGFloat { expanded ? base * 1.5 : base }
 }
 
+extension EnvironmentValues {
+    /// Space the exercise screen leaves for the current exercise's content: the scroll area under the
+    /// header, minus the content's own padding and the footer reserve. `.zero` outside an exercise.
+    @Entry var geniExerciseViewport: CGSize = .zero
+}
+
 /// A white (theme card) surface: rounded, hairline, soft shadow. For picture cards, counters, trays.
 struct GameSurface: ViewModifier {
     @Environment(\.geniExpandedLayout) private var expanded

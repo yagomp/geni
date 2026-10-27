@@ -1,12 +1,12 @@
 import SwiftUI
 
-/// A queue of animals walking to a house. `animals[0]` stands at the door; answer tile i has value i + 1.
+/// A queue of animals walking left. `animals[0]` leads the queue; answer tile i has value i + 1.
 nonisolated struct OrdinalPayload: GamePayload {
     let animals: [String]
 }
 
 extension EarlyYearsGames {
-    /// Apple's full-body animal emoji face left, so the house sits on the left and they walk toward it.
+    /// Apple's full-body animal emoji face left, so the queue walks left and the front is on the left.
     static let queueAnimals = ["🐕", "🐈", "🐖", "🐄", "🐑", "🐓", "🦆", "🐘", "🐢", "🐁", "🦔", "🐐", "🦒", "🦓", "🐅", "🦛"]
 
     private enum Place: CaseIterable { case first, second, third, middle, last }
@@ -59,7 +59,7 @@ extension EarlyYearsGames {
     }
 }
 
-/// The house on the left and an arrow under the queue make its direction explicit.
+/// Only the selectable animals form the row; an arrow under them points to the front of the queue.
 struct OrdinalGameView: View {
     @Environment(\.geniExpandedLayout) private var expanded
     let exercise: Exercise
@@ -76,11 +76,6 @@ struct OrdinalGameView: View {
             GameSceneCard {
                 VStack(spacing: 0) {
                     HStack(alignment: .bottom, spacing: expanded ? 10 : 4) {
-                        Text("🏠")
-                            .font(.system(size: size * 1.25))
-                            .minimumScaleFactor(0.5)
-                            .frame(maxWidth: .infinity)
-                            .accessibilityHidden(true)
                         ForEach(Array(payload.animals.enumerated()), id: \.offset) { _, animal in
                             Text(animal)
                                 .font(.system(size: size))
@@ -89,23 +84,22 @@ struct OrdinalGameView: View {
                                 .frame(maxWidth: .infinity, minHeight: size * 1.3)
                         }
                     }
-                    // A bold arrow pointing to the house: the front of the queue is next to it
+                    // A bold arrow pointing left: the front of the queue is on the left
                     HStack(spacing: 0) {
                         Image(systemName: "arrowtriangle.left.fill")
                             .font(.system(size: expanded ? 30 : 20, weight: .black))
                         GeniShape(scale: 0.25).frame(height: expanded ? 8 : 6)
                     }
                     .foregroundStyle(GeniColor.orange)
-                    .padding(.leading, size * 0.9)
-                    .padding(.trailing, size * 0.3)
+                    .padding(.horizontal, size * 0.3)
                     .padding(.top, 6)
                 }
                 .padding(.top, 12)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(L.t("Animals going to the house, from first to last: \(payload.animals.joined(separator: ", "))",
-                                        no: "Dyrene på vei til huset, fra først til sist: \(payload.animals.joined(separator: ", "))",
-                                        es: "Animales que van a la casa, del primero al último: \(payload.animals.joined(separator: ", "))",
-                                        pt: "Animais a caminho da casa, do primeiro ao último: \(payload.animals.joined(separator: ", "))"))
+                .accessibilityLabel(L.t("Animals in a line, from first to last: \(payload.animals.joined(separator: ", "))",
+                                        no: "Dyrene på rekke, fra først til sist: \(payload.animals.joined(separator: ", "))",
+                                        es: "Animales en fila, del primero al último: \(payload.animals.joined(separator: ", "))",
+                                        pt: "Animais em fila, do primeiro ao último: \(payload.animals.joined(separator: ", "))"))
                 .allowsHitTesting(false)
             }
             GameChoices(choices: exercise.options.map { GameChoice(label: payload.animals[$0 - 1], value: $0) },

@@ -51,7 +51,7 @@ enum DesignPreview {
     /// `game.<kind>`: a chapter of that game only. `-designPreviewAge 7` picks the child's age
     /// (default: the youngest age that gets the game); `-geniStoreRegion BR` the money/units/season region.
     @MainActor
-    static func applyGame(_ kind: GameKind, to vm: AppViewModel) {
+    static func applyGame(_ kind: GameKind, to vm: AppViewModel, fixed override: Exercise? = nil) {
         let args = ProcessInfo.processInfo.arguments
         let age = args.firstIndex(of: "-designPreviewAge").flatMap { $0 + 1 < args.count ? Int(args[$0 + 1]) : nil }
             ?? kind.ages.lowerBound
@@ -61,7 +61,7 @@ enum DesignPreview {
         if !store { vm.completeOnboarding(profile: profile) }
         var chapter = ChapterProgress(childId: profile.id, date: vm.persistence.todayString())
         let count = profile.dailyExerciseCount
-        let fixture = store ? captureGame(kind) : nil
+        let fixture = override ?? (store || args.contains("-designPreviewFixed") ? captureGame(kind) : nil)
         let exercises = (0..<count).map { fixture ?? GameFactory.make(kind, age: age, difficulty: ExerciseGenerator.rampDifficulty(at: $0, of: count)) }
         let start = store ? (age <= 5 ? 3 : 7) : 0
         chapter.completedExerciseCount = start
@@ -92,6 +92,13 @@ enum DesignPreview {
                 prompt: L.t("Who is first?", no: "Hvem er først?", es: "¿Quién va primero?", pt: "Quem vai em primeiro?"),
                 answerText: "🐕", payload: OrdinalPayload(animals: ["🐕", "🐈", "🐘"])),
                 correctAnswer: 1, options: [2, 1, 3], difficulty: .normal)
+        case .barChart:
+            let bars = [BarItem(emoji: "🍓", value: 1), BarItem(emoji: "🍇", value: 8), BarItem(emoji: "🍌", value: 6)]
+            let choices = bars.indices.map { GameChoice(label: bars[$0].emoji, value: $0) }
+            return Exercise(game: GameSpec(kind: kind,
+                prompt: L.t("Which is tallest?", no: "Hvilken er høyest?", es: "¿Cuál es la más alta?", pt: "Qual é a mais alta?"),
+                answerText: "🍇", payload: BarPayload(bars: bars, axisMax: 8, choices: choices)),
+                correctAnswer: 1, options: choices.map(\.value), difficulty: .normal)
         case .moneyShopping:
             let currency = MoneyCurrency.storefront
             let choices = [10, 12, 8, 14].map { GameChoice(label: currency.format($0), value: $0) }
@@ -135,6 +142,27 @@ enum DesignPreview {
         ThemeManager.shared.apply(profile)
     }
 
+    /// `ordinalMiddle`: the ordinal game with a fixed duck/tiger/goat queue asking who is in the middle.
+    @MainActor
+    private static func applyOrdinalMiddle(to vm: AppViewModel) {
+        let fixture = Exercise(game: GameSpec(kind: .ordinal,
+            prompt: L.t("Who is in the middle?", no: "Hvem er i midten?", es: "¿Quién va en el medio?", pt: "Quem vai no meio?"),
+            answerText: "🐅", payload: OrdinalPayload(animals: ["🦆", "🐅", "🐐"])),
+            correctAnswer: 2, options: [1, 2, 3], difficulty: .harder)
+        applyGame(.ordinal, to: vm, fixed: fixture)
+    }
+
+    /// `profilePicker`: four fixed children on the real picker, in the isolated preview store.
+    @MainActor
+    private static func applyProfilePicker(to vm: AppViewModel) {
+        let children = [("Eva", 6, "star"), ("Dani", 8, "bear"), ("Marte", 10, "fox"), ("Lucas", 5, "rainbow")]
+        for (i, child) in children.enumerated() {
+            let profile = ChildProfile(nickname: child.0, age: child.1, avatarId: child.2)
+            if i == 0 { vm.completeOnboarding(profile: profile) } else { vm.persistence.saveProfile(profile) }
+        }
+        vm.currentScreen = .profilePicker
+    }
+
     @MainActor
     static func apply(to vm: AppViewModel) {
         guard let screen else { return }
@@ -153,6 +181,14 @@ enum DesignPreview {
         }
         if screen.hasPrefix("game."), let kind = GameKind(rawValue: String(screen.dropFirst("game.".count))) {
             applyGame(kind, to: vm)
+            return
+        }
+        if screen == "ordinalMiddle" {
+            applyOrdinalMiddle(to: vm)
+            return
+        }
+        if screen == "profilePicker" {
+            applyProfilePicker(to: vm)
             return
         }
         if screen == "rewards" || screen == "rewardsEmpty" {

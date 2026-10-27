@@ -245,53 +245,24 @@ private struct DoublesPictureView: View {
         [GeniColor.pink, GeniColor.orange, GeniColor.yellow][payload.tint % 3]
     }
 
-    /// Two wings split down the middle under a round black head; spots mirror across the split.
+    /// Two plain tiles of identical dots, side by side: nothing round but the dots to count.
     private var ladybird: some View {
-        let wingWidth = pictureSize(104, expanded: expanded)
-        let wingHeight = pictureSize(140, expanded: expanded)
-        let head = wingWidth * 0.5
-        let dot = wingWidth * (max(payload.left, payload.right) > 6 ? 0.14 : 0.2)
-        return ZStack(alignment: .top) {
-            HStack(spacing: 0) {
-                wing(payload.left, mirrored: true, dot: dot, headOverlap: head * 0.25)
-                wing(payload.right, mirrored: false, dot: dot, headOverlap: head * 0.25)
-            }
-            .frame(width: wingWidth * 2, height: wingHeight)
-            .padding(.top, head * 0.75)
-            Circle()
-                .fill(GeniColor.border)
-                .frame(width: head, height: head)
+        let width = pictureSize(104, expanded: expanded)
+        let height = pictureSize(140, expanded: expanded)
+        let dot = width * (max(payload.left, payload.right) > 6 ? 0.16 : 0.22)
+        return HStack(spacing: width * 0.25) {
+            group(payload.left, mirrored: true, size: CGSize(width: width, height: height), dot: dot)
+            group(payload.right, mirrored: false, size: CGSize(width: width, height: height), dot: dot)
         }
     }
 
-    private func wing(_ n: Int, mirrored: Bool, dot: CGFloat, headOverlap: CGFloat) -> some View {
-        ZStack {
-            HalfOval(rightSide: !mirrored).fill(wingColor)
-            HalfOval(rightSide: !mirrored).stroke(GameStyle.hairline, lineWidth: 1.5)
-            // Keep spots inside the curve: the outer edge narrows, so pull them toward the split.
-            Dots(count: n, mirrored: mirrored, dot: dot)
-                .padding(.top, dot + headOverlap)
-                .padding(.bottom, dot)
-                .padding(mirrored ? .trailing : .leading, dot * 0.3)
-                .padding(mirrored ? .leading : .trailing, dot * 1.1)
-        }
-    }
-}
-
-/// One half of an oval, flat side at the split.
-private struct HalfOval: Shape {
-    let rightSide: Bool
-
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        let flatX = rightSide ? rect.minX : rect.maxX
-        let outerX = rightSide ? rect.maxX : rect.minX
-        path.move(to: CGPoint(x: flatX, y: rect.minY))
-        path.addCurve(to: CGPoint(x: flatX, y: rect.maxY),
-                      control1: CGPoint(x: outerX + (outerX - flatX) * 0.25, y: rect.minY - rect.height * 0.02),
-                      control2: CGPoint(x: outerX + (outerX - flatX) * 0.25, y: rect.maxY + rect.height * 0.1))
-        path.closeSubpath()
-        return path
+    private func group(_ n: Int, mirrored: Bool, size: CGSize, dot: CGFloat) -> some View {
+        let shape = GeniShape(radius: GameStyle.cellRadius(size.width, 0.2))
+        return Dots(count: n, mirrored: mirrored, dot: dot)
+            .padding(dot * 0.7)
+            .frame(width: size.width, height: size.height)
+            .background(wingColor, in: shape)
+            .overlay(shape.stroke(GameStyle.hairline, lineWidth: 1.5))
     }
 }
 

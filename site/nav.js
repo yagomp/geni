@@ -19,6 +19,7 @@ nav[aria-label="Main navigation"]>.container{display:flex;align-items:center;jus
 .nav-links{display:flex;align-items:center;gap:0;margin-left:auto}
 .nav-links>a,.lang-btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 10px;border:0;border-radius:var(--r-md);background:none;color:var(--ink);font:700 1rem/1.4 var(--font);white-space:nowrap;cursor:pointer}
 .lang-btn{gap:8px}
+.flag{display:inline-block;width:20px;height:14px;border-radius:3px;object-fit:cover;box-shadow:0 0 0 1px rgba(0,0,0,.08);vertical-align:-2px;flex:none}
 .nav-links>a:hover,.lang-btn:hover{color:var(--accent-ink)}.nav-links>a[aria-current="page"]{background:var(--card);box-shadow:var(--shadow)}
 .nav-store-desktop{display:inline-flex;opacity:0;visibility:hidden;pointer-events:none;transform:scale(.92);transition:opacity .2s ease-out,transform .2s ease-out,visibility .2s ease-out}
 nav.is-store-visible .nav-store-desktop{opacity:1;visibility:visible;pointer-events:auto;transform:scale(1)}
@@ -72,12 +73,12 @@ body[data-theme="standard"] .nav-store-mobile{background:var(--card);color:var(-
             '</div>' +
           '</div>' +
           '<div class="lang-dropdown">' +
-            '<button class="lang-btn" id="langBtn" type="button" aria-expanded="false" aria-controls="langMenu" aria-label="Language"><span aria-hidden="true">\uD83C\uDDEC\uD83C\uDDE7</span> EN</button>' +
+            '<button class="lang-btn" id="langBtn" type="button" aria-expanded="false" aria-controls="langMenu" aria-label="Language"><img class="flag" src="' + base + 'img/flags/gb.svg" alt="" width="20" height="14"> EN</button>' +
             '<div class="lang-menu" id="langMenu"><div class="lang-menu-inner">' +
-              '<button onclick="applyLang(\'en\')"><span aria-hidden="true">\uD83C\uDDEC\uD83C\uDDE7</span> English</button>' +
-              '<button onclick="applyLang(\'nb\')"><span aria-hidden="true">\uD83C\uDDF3\uD83C\uDDF4</span> Norsk</button>' +
-              '<button onclick="applyLang(\'es\')"><span aria-hidden="true">\uD83C\uDDEA\uD83C\uDDF8</span> Espa\u00F1ol</button>' +
-              '<button onclick="applyLang(\'pt\')"><span aria-hidden="true">\uD83C\uDDF5\uD83C\uDDF9</span> Portugu\u00EAs</button>' +
+              '<button onclick="applyLang(\'en\')"><img class="flag" src="' + base + 'img/flags/gb.svg" alt="" width="20" height="14"> English</button>' +
+              '<button onclick="applyLang(\'nb\')"><img class="flag" src="' + base + 'img/flags/no.svg" alt="" width="20" height="14"> Norsk</button>' +
+              '<button onclick="applyLang(\'es\')"><img class="flag" src="' + base + 'img/flags/es.svg" alt="" width="20" height="14"> Espa\u00F1ol</button>' +
+              '<button onclick="applyLang(\'pt\')"><img class="flag" src="' + base + 'img/flags/pt.svg" alt="" width="20" height="14"> Portugu\u00EAs</button>' +
             '</div></div>' +
           '</div>' +
         '</div>' +
@@ -92,10 +93,10 @@ body[data-theme="standard"] .nav-store-mobile{background:var(--card);color:var(-
           '<a href="' + base + 'parents.html" data-i18n="nav_parents" onclick="closeMenu()">For parents</a>' +
           '<a href="' + base + 'privacy.html" data-i18n="nav_privacy" onclick="closeMenu()">Privacy</a>' +
           '<a href="' + base + 'blog/" onclick="closeMenu()">Blog</a>' +
-          '<button type="button" onclick="applyLang(\'en\')"><span aria-hidden="true">\uD83C\uDDEC\uD83C\uDDE7</span> English</button>' +
-          '<button type="button" onclick="applyLang(\'nb\')"><span aria-hidden="true">\uD83C\uDDF3\uD83C\uDDF4</span> Norsk</button>' +
-          '<button type="button" onclick="applyLang(\'es\')"><span aria-hidden="true">\uD83C\uDDEA\uD83C\uDDF8</span> Espa\u00F1ol</button>' +
-          '<button type="button" onclick="applyLang(\'pt\')"><span aria-hidden="true">\uD83C\uDDF5\uD83C\uDDF9</span> Portugu\u00EAs</button>' +
+          '<button type="button" onclick="applyLang(\'en\')"><img class="flag" src="' + base + 'img/flags/gb.svg" alt="" width="20" height="14"> English</button>' +
+          '<button type="button" onclick="applyLang(\'nb\')"><img class="flag" src="' + base + 'img/flags/no.svg" alt="" width="20" height="14"> Norsk</button>' +
+          '<button type="button" onclick="applyLang(\'es\')"><img class="flag" src="' + base + 'img/flags/es.svg" alt="" width="20" height="14"> Espa\u00F1ol</button>' +
+          '<button type="button" onclick="applyLang(\'pt\')"><img class="flag" src="' + base + 'img/flags/pt.svg" alt="" width="20" height="14"> Portugu\u00EAs</button>' +
           '<div class="theme-picker-mobile">' +
             '<div class="theme-options">' +
               '<button class="theme-dot" type="button" data-theme="standard" data-i18n-aria-label="theme_standard" aria-label="Standard theme"></button>' +
@@ -233,6 +234,21 @@ body[data-theme="standard"] .nav-store-mobile{background:var(--card);color:var(-
       themeBtns[i].addEventListener('click', function () { window.applyTheme(this.getAttribute('data-theme')); });
     }
     try { window.applyTheme(localStorage.getItem('geni_theme') || 'standard'); } catch (e) { window.applyTheme('standard'); }
+
+
+    // Windows has no flag emoji: show SVG flags wherever a page writes one into the language button
+    var FLAG_FILES = { '\uD83C\uDDEC\uD83C\uDDE7': 'gb', '\uD83C\uDDF3\uD83C\uDDF4': 'no', '\uD83C\uDDEA\uD83C\uDDF8': 'es', '\uD83C\uDDF5\uD83C\uDDF9': 'pt' };
+    function svgFlags(el) {
+      if (!el) return;
+      var html = el.innerHTML, out = html;
+      Object.keys(FLAG_FILES).forEach(function (e) {
+        out = out.split(e).join('<img class="flag" src="' + base + 'img/flags/' + FLAG_FILES[e] + '.svg" alt="" width="20" height="14">');
+      });
+      if (out !== html) el.innerHTML = out;
+    }
+    var langBtnEl = document.getElementById('langBtn');
+    svgFlags(langBtnEl);
+    if (langBtnEl) new MutationObserver(function () { svgFlags(langBtnEl); }).observe(langBtnEl, { childList: true, characterData: true, subtree: true });
 
     // Scroll-triggered download button (landing page only)
     if (isLanding && nav) {

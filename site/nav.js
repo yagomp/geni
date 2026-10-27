@@ -44,7 +44,6 @@ body[data-theme="standard"] .nav-store-mobile{background:var(--card);color:var(-
   var STORE_URL    = 'https://apps.apple.com/app/geni-kids/id6761134405';
   var logoHref     = isLanding ? '#top' : (isBlog ? '../' : '/');
   var featHref     = isLanding ? '#features-heading' : (base || './') + '#features-heading';
-  var storeVisible = isLanding ? '' : ' class="is-store-visible"';
 
   function dlBtn(tabindex) {
     return '<a href="' + STORE_URL + '" class="nav-store-mobile btn btn--primary btn--sm"' +
@@ -55,7 +54,7 @@ body[data-theme="standard"] .nav-store-mobile{background:var(--card);color:var(-
   }
 
   var html =
-    '<nav aria-label="Main navigation"' + storeVisible + '>' +
+    '<nav aria-label="Main navigation">' +
       '<div class="container">' +
         '<a href="' + logoHref + '" class="nav-logo" aria-label="Geni home" onclick="closeMenu()"><img src="' + base + 'icon-mark.png" alt="" width="40" height="40"><span>Geni</span></a>' +
         '<div class="nav-links">' +
@@ -250,14 +249,18 @@ body[data-theme="standard"] .nav-store-mobile{background:var(--card);color:var(-
     svgFlags(langBtnEl);
     if (langBtnEl) new MutationObserver(function () { svgFlags(langBtnEl); }).observe(langBtnEl, { childList: true, characterData: true, subtree: true });
 
-    // Scroll-triggered download button (landing page only)
-    if (isLanding && nav) {
-      // Show the nav button the moment the hero's App Store badge is hidden behind the nav or scrolled away
-      var badge = document.getElementById('appStoreLink') || document.getElementById('hero');
-      if (badge && 'IntersectionObserver' in window) {
-        new IntersectionObserver(function (entries) {
-          nav.classList.toggle('is-store-visible', !entries[0].isIntersecting);
-        }, { rootMargin: '-' + nav.offsetHeight + 'px 0px 0px 0px', threshold: 0 }).observe(badge);
+    // The nav download button shows whenever no App Store badge is on screen
+    if (nav) {
+      var badges = document.querySelectorAll('main .app-store-badge');
+      if (!badges.length || !('IntersectionObserver' in window)) {
+        nav.classList.add('is-store-visible');
+      } else {
+        var onScreen = new Set();
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) { if (e.isIntersecting) onScreen.add(e.target); else onScreen.delete(e.target); });
+          nav.classList.toggle('is-store-visible', onScreen.size === 0);
+        }, { rootMargin: '-' + nav.offsetHeight + 'px 0px 0px 0px', threshold: 0 });
+        badges.forEach(function (b) { io.observe(b); });
       }
     }
   });

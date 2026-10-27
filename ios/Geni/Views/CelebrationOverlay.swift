@@ -10,6 +10,14 @@ private extension View {
             .compositingGroup()
     }
 
+    /// Geni holding up a star, standing on the card's top edge; springs up once the card has landed.
+    func geniOnTop(expanded: Bool) -> some View {
+        VStack(spacing: expanded ? -10 : -6) {
+            MascotPoseView(pose: .star, height: expanded ? 180 : 110, delay: 0.35)
+            self
+        }
+    }
+
     /// Slow-in entrance: scale + fade, or fade only under Reduce Motion.
     func popupEntrance(appeared: Bool, reduceMotion: Bool) -> some View {
         self
@@ -62,6 +70,7 @@ private struct LevelUpOverlayLayout: View {
                 .accessibilityIdentifier("levelUp.dismiss")
             }
             .popupCard(expanded: expanded)
+            .geniOnTop(expanded: expanded)
             .popupEntrance(appeared: appeared, reduceMotion: reduceMotion)
         }
         .onAppear {
@@ -150,6 +159,7 @@ struct BadgeUnlockOverlay: View {
                     .padding(.top, 8)
                 }
                 .popupCard(expanded: expanded)
+                .geniOnTop(expanded: expanded)
                 .popupEntrance(appeared: appeared, reduceMotion: reduceMotion)
             }
             .frame(width: geo.size.width, height: geo.size.height)

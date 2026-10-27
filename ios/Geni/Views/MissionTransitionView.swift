@@ -62,16 +62,23 @@ private struct MissionTransitionViewLayout: View {
                 .opacity(appeared ? 1 : 0)
                 .offset(y: appeared ? 0 : 20)
 
-                VStack(spacing: 8) {
-                    Text("📖")
-                        .font(.system(size: expanded ? 54 : 36))
-                        .foregroundStyle(GeniColor.green)
+                HStack(spacing: expanded ? 24 : 12) {
+                    // Geni points at the next mission once the card has landed.
+                    MascotPoseView(pose: .point, height: expanded ? 160 : 100, delay: 1.2)
 
-                    Text(L.s(.nowLetsRead))
-                        .font(.system(expanded ? .largeTitle : .title2, design: .rounded, weight: .black))
-                        .foregroundStyle(GeniColor.border)
+                    VStack(spacing: 8) {
+                        Text("📖")
+                            .font(.system(size: expanded ? 54 : 36))
+                            .foregroundStyle(GeniColor.green)
+
+                        Text(L.s(.nowLetsRead))
+                            .font(.system(expanded ? .largeTitle : .title2, design: .rounded, weight: .black))
+                            .foregroundStyle(GeniColor.border)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(24)
+                .padding(expanded ? 24 : 16)
                 .frame(maxWidth: .infinity)
                 .softSurface(GeniColor.card)
                 .opacity(showButton ? 1 : 0)

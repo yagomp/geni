@@ -103,3 +103,54 @@ textarea{min-height:160px;resize:vertical}.field{margin-bottom:20px}.form-row{di
 .article-wrap{width:100%;max-width:calc(var(--content) + 2*var(--gutter));margin-inline:auto;padding:var(--s-7) var(--gutter)}.breadcrumb{margin-bottom:var(--s-5)}.breadcrumb a{display:inline-flex;align-items:center;min-height:44px;text-decoration:underline;text-underline-offset:3px}.breadcrumb a:hover{color:var(--ink)}.article-wrap>.chip{margin-bottom:var(--s-4)}.article-wrap>h1{margin-bottom:var(--s-5)}.article-wrap>.post-meta{padding-bottom:var(--s-5);border-bottom:1px solid var(--hairline);margin-bottom:var(--s-6)}.article-body p,.article-body li{font-size:1.125rem;line-height:1.75}.article-body p{margin-bottom:var(--s-5)}.article-body h2{font-size:1.75rem;margin:var(--s-7) 0 var(--s-4)}.article-body h3{margin:var(--s-6) 0 var(--s-3)}.article-body ul,.article-body ol{padding-left:var(--s-5);margin-bottom:var(--s-5)}.article-body li+li{margin-top:var(--s-2)}.callout{border-radius:var(--r-md);padding:var(--s-5);margin:var(--s-6) 0}.callout>strong{display:block;font-size:var(--fs-body);font-weight:800;margin-bottom:var(--s-2)}.callout p:last-child{margin-bottom:0}.article-body .cta{margin:var(--s-7) 0 var(--s-6)}.article-body .cta h2{font-size:var(--fs-h2);margin:0}
 
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;transform:none!important}html{scroll-behavior:auto}}
+
+/* Hero: copy + animated phone (landing, math, reading) */
+.hero{padding:var(--s-7) 0;min-height:calc(100svh - var(--nav-height));display:flex;align-items:center}
+.hero .container{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,46vw);align-items:center;gap:clamp(24px,4vw,48px)}
+.hero-copy{display:flex;flex-direction:column;align-items:flex-start;gap:var(--s-5)}.hero h1{font-size:var(--fs-display);line-height:var(--lh-tight);max-width:14ch}
+.hero .cta-row{display:grid;grid-template-columns:200px;align-items:stretch;margin-top:var(--s-4)}.br-desk{display:none}
+.hero .cta-row>*{width:100%;height:auto;min-height:0;aspect-ratio:119.66407/40}.hero .app-store-badge img{width:100%;height:100%;object-fit:contain}
+.hero .cta-row .btn{padding:8px 10px;font-size:1.15rem;white-space:nowrap;border-radius:var(--r-sm)}
+.hero-visual{display:flex;justify-content:center;min-width:0}
+.iphone-mockup{width:100%;max-width:340px;margin:0;position:relative;aspect-ratio:450/920}
+.iphone-frame{position:absolute;inset:0;pointer-events:none;z-index:3}.iphone-frame img{width:100%;height:100%;display:block}
+.iphone-screen{position:absolute;top:2.3%;right:4.9%;bottom:2.4%;left:4.9%;background:var(--bg);border-radius:44px;overflow:hidden;z-index:1;container-type:inline-size}.iphone-screen img{width:100%;height:100%;object-fit:cover}
+.hero-replay{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;width:100%;padding:0;border:0;background:radial-gradient(circle at 50% 50%,rgba(30,25,10,.16),rgba(30,25,10,.05) 38%,rgba(255,255,255,.1) 70%);cursor:pointer;opacity:0;transition:opacity .4s ease}.hero-replay[hidden]{display:none}.hero-replay.is-shown{opacity:1}.glass-play{position:relative;width:108px;height:108px;transform:scale(.9);transition:transform .35s cubic-bezier(.2,1.4,.4,1)}.hero-replay.is-shown .glass-play{transform:scale(1)}.hero-replay:hover .glass-play{transform:scale(1.06)}.hero-replay:active .glass-play{transform:scale(.95)}.glass-play svg,.gp-glass{position:absolute;inset:0;width:100%;height:100%}.gp-shadow{fill:rgba(40,30,0,.28);filter:blur(8px);transform:translateY(7px)}.hero-replay:focus-visible{outline:none}.hero-replay:focus-visible .glass-play{outline:3px solid var(--accent);outline-offset:6px;border-radius:24px}
+@media(min-width:1025px){.br-desk{display:inline}.hero-copy{padding-bottom:56px}.hero .lead{max-width:none}.hero h1{max-width:12ch}.hero .container{grid-template-columns:minmax(560px,1fr) minmax(320px,40vw)}}
+@media(max-width:1024px){.hero .container{grid-template-columns:minmax(0,1fr) minmax(280px,42vw)}}
+@media(max-width:600px){.hero{padding:var(--s-5) 0;align-items:flex-start}.hero .container{grid-template-columns:1fr;gap:var(--s-5)}.hero-copy{gap:var(--s-4);align-items:center;text-align:center}.hero h1{font-size:clamp(2rem,9.6vw,2.5rem);max-width:14ch}.hero .lead{font-size:1.125rem;line-height:1.45}.hero .cta-row{grid-template-columns:156px;gap:var(--s-3);justify-content:center}.hero .iphone-mockup{width:100%;max-width:none;height:auto;flex:none}.hero-visual{display:block;width:60vw;max-width:240px;margin-inline:auto;aspect-ratio:450/770;overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,#000 93%,transparent 100%);mask-image:linear-gradient(to bottom,#000 93%,transparent 100%)}}
+.hero--page{min-height:0}.hero--page h1{font-size:clamp(2.25rem,4.4vw,3.5rem);max-width:16ch}.hero-text{display:flex;flex-direction:column;gap:var(--s-5)}
+@media(min-width:1025px){.hero--page h1{max-width:16ch}}
+@media(max-width:600px){.hero--page h1{font-size:clamp(2rem,9vw,2.4rem)}.hero-text{gap:var(--s-4)}}
+
+/* Phone demos: app screens drawn in SVG (603 × 1311, the app's own point grid) */
+.dm{display:block;width:100%;height:100%;font-family:ui-rounded,"SF Pro Rounded",var(--font)}
+.dm text{fill:#111}.dm-bg{fill:var(--bg)}.dm-ink{fill:#111}.dm-wifi{fill:none;stroke:#111;stroke-width:3.5;stroke-linecap:round}
+.dm-time{font-size:26px;font-weight:700;text-anchor:middle}.dm-prog-t{font-size:24px;font-weight:800;text-anchor:middle}
+.dm-pill{fill:var(--card);stroke:rgba(0,0,0,.07);stroke-width:2}
+.dm-star{font-size:26px;font-weight:900;text-anchor:middle;transition:opacity .3s}.dm-star.b{opacity:0}
+.dm-bar{fill:#22A447;transform-origin:31px 226px;transition:transform .6s ease-out}
+.dm-fb{transform:translateY(200px);opacity:0;transition:transform .45s cubic-bezier(.2,1.3,.4,1),opacity .2s}.dm .dm-fb-t{fill:#fff;font-size:30px;font-weight:800}
+.dm.done .dm-fb{transform:none;opacity:1}.dm.done .dm-star.a{opacity:0}.dm.done .dm-star.b{opacity:1}
+
+/* Math demo: how many more to make 10 */
+.mg-bar{transform:scaleX(.2)}.mg.done .mg-bar{transform:scaleX(.25)}
+.mg-q{font-size:40px;font-weight:900;text-anchor:middle}.mg-berry{font-size:44px;text-anchor:middle}
+.mg-slot{fill:none;stroke:#B9B4A8;stroke-width:2.5;stroke-dasharray:7 6;transition:opacity .2s}
+.mg-new{transform:scale(0);transform-box:fill-box;transform-origin:center;transition:transform .4s cubic-bezier(.2,1.6,.4,1)}
+.mg.f1 .n1,.mg.f2 .n2,.mg.f3 .n3,.mg.f4 .n4{transform:scale(1)}.mg.f1 .s1,.mg.f2 .s2,.mg.f3 .s3,.mg.f4 .s4{opacity:0}
+.mg-tile{transform-box:fill-box;transform-origin:center;transition:transform .15s}
+.mg-tile-base{fill:#E3DFD4}.mg-tile-top{fill:#fff;stroke:rgba(0,0,0,.06);stroke-width:2}.mg-tile-n{font-size:62px;font-weight:900;text-anchor:middle}
+.mg-tile-base,.mg-tile-top,.mg .mg-tile-n{transition:fill .25s}
+.mg.press .c1{transform:scale(.95)}
+.mg.pick .c1 .mg-tile-top{fill:#22A447;stroke:#1A8A3A}.mg.pick .c1 .mg-tile-base{fill:#167A33}.mg.pick .c1 .mg-tile-n{fill:#fff}
+.mg.pick .mg-tile:not(.c1) .mg-tile-top{fill:#FBF8EF}.mg.pick .mg-tile:not(.c1) .mg-tile-base{fill:#ECE8DE}.mg.pick .mg-tile:not(.c1) .mg-tile-n{fill:#8A8578}
+@media(max-width:600px){.mg-fb{transform:translateY(-826px)}.mg.done .mg-fb{transform:translateY(-866px)}}
+
+/* Reading demo: Read to me */
+.rg-mode{font-size:21px;font-weight:800;text-anchor:middle}.rg-time{font-size:26px;font-weight:900;text-anchor:middle}
+.rg-bar{transform:scaleX(.02)}.rg.go .rg-bar{transform:scaleX(.19);transition:transform 5.5s linear}
+.rg-text{--u:calc(100cqw / 603);position:absolute;inset:0;font-family:ui-rounded,"SF Pro Rounded",var(--font);pointer-events:none}
+.rg-title{position:absolute;left:calc(36 * var(--u));top:calc(266 * var(--u));margin:0;font-size:calc(28 * var(--u));line-height:1.2;font-weight:900;color:#111}
+.rg-story{position:absolute;left:calc(36 * var(--u));top:calc(333 * var(--u));width:calc(540 * var(--u));max-height:calc(800 * var(--u));overflow:hidden;margin:0;font-size:calc(39 * var(--u));line-height:calc(74.5 * var(--u));font-weight:800;color:rgba(60,50,20,.2);text-wrap:pretty}
+.rg-story span{transition:color .15s}.rg-story .r{color:#111}.rg-story .c{color:#0A84FF}

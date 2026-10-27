@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// One onboarding step: back | progress dots, a title, centred content, and a 72pt primary
+/// One onboarding step: back | progress dots, Geni's head beside a title, centred content, and a 72pt primary
 /// button pinned above the keyboard. The avatar grid gets the available size without a
 /// scroll view; other steps can scroll if needed at accessibility sizes.
 struct StepScaffold<Content: View>: View {
@@ -30,15 +30,19 @@ struct StepScaffold<Content: View>: View {
         VStack(spacing: expanded ? 20 : 8) {
             topBar
 
-            Text(title)
-                .font(expanded ? .system(size: 40, weight: .black, design: .rounded) : .system(.title, design: .rounded, weight: .black))
-                .foregroundStyle(.black)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .minimumScaleFactor(0.8)
-                .id(title)
-                .transition(.opacity)
-                .accessibilityAddTraits(.isHeader)
+            HStack(spacing: expanded ? 14 : 10) {
+                MascotPoseView(pose: .head, height: expanded ? 52 : 36)
+
+                Text(title)
+                    .font(expanded ? .system(size: 40, weight: .black, design: .rounded) : .system(.title, design: .rounded, weight: .black))
+                    .foregroundStyle(.black)
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.8)
+                    .id(title)
+                    .transition(.opacity)
+                    .accessibilityAddTraits(.isHeader)
+            }
 
             // A single content tree keeps focus stable. Wide iPad steps fit without scrolling.
             GeometryReader { geo in

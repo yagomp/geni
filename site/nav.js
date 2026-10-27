@@ -56,7 +56,7 @@ body[data-theme="standard"] .nav-store-mobile{background:var(--card);color:var(-
   var html =
     '<nav aria-label="Main navigation">' +
       '<div class="container">' +
-        '<a href="' + logoHref + '" class="nav-logo" aria-label="Geni home" onclick="closeMenu()"><img src="' + base + 'icon-mark.png" alt="" width="40" height="40"><span>Geni</span></a>' +
+        '<a href="' + logoHref + '" class="nav-logo" aria-label="Geni home" onclick="closeMenu()"><img src="' + base + 'geni-mark.png" alt="" width="40" height="40"><span>Geni</span></a>' +
         '<div class="nav-links">' +
           '<a href="' + featHref + '" data-i18n="nav_features">Features</a>' +
           '<a href="' + base + 'math.html" data-i18n="nav_math">Math</a>' +

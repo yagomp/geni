@@ -18,7 +18,7 @@ struct WelcomeView: View {
                     Image("HeroMascot")
                         .resizable()
                         .scaledToFit()
-                        .frame(height: min(iPadScale.value(290), geo.size.height * 0.38))
+                        .frame(height: min(iPadScale.value(440), geo.size.height * 0.56))
                         .scaleEffect(appeared ? (mascotTapped ? 1.18 : 1.0) : (reduceMotion ? 1 : 0.3))
                         .rotationEffect(.degrees(reduceMotion ? 0 : (mascotTilt ? 4 : -4)))
                         .offset(y: reduceMotion ? 0 : (mascotBob ? -10 : 8))

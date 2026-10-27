@@ -37,8 +37,10 @@ private struct ChapterCompleteViewLayout: View {
             }
 
             ScrollView {
-                VStack(spacing: expanded ? 40 : 28) {
-                    Spacer().frame(height: 20)
+                VStack(spacing: expanded ? 32 : 20) {
+                    MascotCheerView(height: expanded ? 240 : 130)
+                        .opacity(appeared ? 1 : 0)
+                        .animation(.easeOut(duration: 0.3), value: appeared)
 
                     Text(chapter.stars == 5 ? L.s(.perfectScore) : L.s(.chapterComplete))
                         .font(.system(size: expanded ? 54 : 36, weight: .black, design: .rounded))

@@ -46,14 +46,10 @@ private struct MissionCompleteViewLayout: View {
             }
 
             ScrollView {
-                VStack(spacing: expanded ? 32 : 24) {
-                    Spacer().frame(height: 20)
-
-                    Text("🎉")
-                        .font(.system(size: expanded ? 96 : iPadScale.value(64)))
+                VStack(spacing: expanded ? 32 : 20) {
+                    MascotCheerView(height: expanded ? 240 : 130)
                         .opacity(appeared ? 1 : 0)
-                        .scaleEffect(appeared ? 1 : 0.3)
-                        .animation(.spring(response: 0.5, dampingFraction: 0.6), value: appeared)
+                        .animation(.easeOut(duration: 0.3), value: appeared)
 
                     Text(L.s(.missionComplete))
                         .font(.system(size: expanded ? 48 : iPadScale.value(32), weight: .black, design: .rounded))

@@ -33,7 +33,7 @@ struct ProfilePickerView: View {
                                     .font(.system(.headline, design: .rounded, weight: .bold))
                                     .foregroundStyle(GeniColor.border)
 
-                                Text("\(profile.age) \(L.s(.age).lowercased())")
+                                Text("\(L.s(.age)) \(profile.age)")
                                     .font(.system(.caption, design: .rounded))
                                     .foregroundStyle(.black)
                             }

@@ -45,12 +45,12 @@
 }
 </script>
 <link rel="preload" href="../fonts/nunito-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="../geni.css">
+<link rel="stylesheet" href="../geni.css?v=2b84f8487c">
 <style>.article-body .phone{margin:var(--s-6) auto}</style>
 </head>
 <body>
 
-<script src="../nav.js"></script>
+<script src="../nav.js?v=9d53125aa1"></script>
 
 <main>
 <article class="article-wrap">
@@ -148,7 +148,7 @@
 </article>
 </main>
 
-<script src="../footer.js"></script>
+<script src="../footer.js?v=b85a118bc8"></script>
 
 <script>
 
@@ -162,7 +162,7 @@ document.documentElement.lang=lang;
 var btn=document.getElementById('langBtn');
 if(btn)btn.innerHTML='<span aria-hidden="true">'+langFlags[lang]+'</span> '+langCodes[lang];
 }
-var savedLang='en';
+var savedLang=normalizeLang(navigator.language||'en');
 try{var s=localStorage.getItem('geni_lang');if(s)savedLang=normalizeLang(s);}catch(e){}
 applyLang(savedLang);
 </script>

@@ -321,23 +321,25 @@ class AppViewModel {
         cloudSync.pushToCloud(persistence: persistence)
     }
 
+    /// Today's episode of the profile's story; it only moves on once a day.
+    func readingTextForToday(_ profile: ChildProfile) -> ReadingText {
+        ReadingContentService.textForToday(profile: profile, date: persistence.todayString(),
+                                           history: persistence.loadAllReadingSessions(for: profile.id))
+    }
+
     func startReading() {
-        guard let profile = persistence.activeProfile else { return }
-        let today = persistence.todayString()
-        let text = ReadingContentService.textForToday(profile: profile, date: today)
+        guard persistence.activeProfile != nil else { return }
         currentScreen = .readingMode
         readingViewModel = nil
         completedReadingSession = nil
         readingBonusAwarded = false
         readingBonusCoins = 0
-
-        _ = text
     }
 
     func selectReadingMode(_ mode: ReadingMode) {
         guard let profile = persistence.activeProfile else { return }
         let today = persistence.todayString()
-        let text = ReadingContentService.textForToday(profile: profile, date: today)
+        let text = readingTextForToday(profile)
         readingViewModel = ReadingViewModel(profile: profile, readingText: text, mode: mode, date: today)
         HapticManager.chapterStart()
         currentScreen = .reading
@@ -448,13 +450,10 @@ class AppViewModel {
     }
 
     func continueToMissionReading() {
-        guard let profile = persistence.activeProfile else { return }
-        let today = persistence.todayString()
-        let text = ReadingContentService.textForToday(profile: profile, date: today)
+        guard persistence.activeProfile != nil else { return }
         readingViewModel = nil
         completedReadingSession = nil
         currentScreen = .readingMode
-        _ = text
     }
 
     /// Optional-reading profiles may end the mission after math; the day is already complete.

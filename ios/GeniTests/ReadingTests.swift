@@ -4,19 +4,50 @@ import Testing
 
 @MainActor
 struct ReadingTests {
+    @Test func storyStartsAtFirstEpisode() throws {
+        let child = try profile(id: "reading-tests")
+        #expect(ReadingContentService.textForToday(profile: child, date: "2026-10-25", history: []).id == "y1")
+    }
+
+    @Test func storyMovesOnTheDayAfterAnEpisodeIsFinished() throws {
+        let child = try profile(id: "reading-tests")
+        let history = [session(child, "y1", on: "2026-10-24", completed: true)]
+        #expect(ReadingContentService.textForToday(profile: child, date: "2026-10-25", history: history).id == "y2")
+    }
+
+    @Test func episodeStaysPutForTheRestOfTheDay() throws {
+        let child = try profile(id: "reading-tests")
+        let history = [session(child, "y1", on: "2026-10-25", completed: true)]
+        #expect(ReadingContentService.textForToday(profile: child, date: "2026-10-25", history: history).id == "y1")
+    }
+
+    @Test func unfinishedEpisodeIsOfferedAgain() throws {
+        let child = try profile(id: "reading-tests")
+        let history = [session(child, "y1", on: "2026-10-24", completed: false)]
+        #expect(ReadingContentService.textForToday(profile: child, date: "2026-10-25", history: history).id == "y1")
+    }
+
     @Test(arguments: [
         ("2026-10-25", "y2"),
         ("2026-10-26", "y1"),
         ("2026-10-27", "y4")
     ])
-    func dailyTextUsesStableSelection(date: String, expectedID: String) throws {
+    func finishedStoryRepeatsInStableDailyOrder(date: String, expectedID: String) throws {
         let child = try profile(id: "reading-tests")
-        #expect(ReadingContentService.textForToday(profile: child, date: date).id == expectedID)
+        let history = ["y1", "y2", "y3", "y4"].map { session(child, $0, on: "2026-10-01", completed: true) }
+        #expect(ReadingContentService.textForToday(profile: child, date: date, history: history).id == expectedID)
     }
 
-    @Test func dailyTextIncludesProfileInSelection() throws {
-        let child = try profile(id: "other-child")
-        #expect(ReadingContentService.textForToday(profile: child, date: "2026-10-25").id == "y1")
+    @Test func everyEpisodeIsWrittenInEveryLanguage() {
+        let texts = ReadingContentService.allTexts
+        #expect(Set(texts.map(\.id)).count == texts.count)
+        for text in texts {
+            for value in [text.titleEN, text.titleNO, text.titleES, text.titlePT,
+                          text.contentEN, text.contentNO, text.contentES, text.contentPT] {
+                #expect(!value.isEmpty, "\(text.id)")
+                #expect(!value.contains("  "), "\(text.id): double spaces break word highlighting")
+            }
+        }
     }
 
     @Test(arguments: [["I", "am", "a", "cat"], ["I"], ["a"], ["a", "a"]])
@@ -175,6 +206,13 @@ struct ReadingTests {
         let retried = try await waitUntil { recognition.isListening }
         #expect(retried)
         #expect(!vm.showFeedback)
+    }
+
+    private func session(_ child: ChildProfile, _ textId: String, on date: String, completed: Bool) -> ReadingSession {
+        var session = ReadingSession(childId: child.id, date: date, readingTextId: textId, mode: .readByMyself,
+                                     targetTimeSeconds: 180)
+        if completed { session.complete() }
+        return session
     }
 
     private func profile(id: String) throws -> ChildProfile {

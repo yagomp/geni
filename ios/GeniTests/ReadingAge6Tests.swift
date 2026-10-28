@@ -24,7 +24,7 @@ struct ReadingAge6Tests {
     }
 
     private func todaysSession(_ device: TestDevice, _ profile: ChildProfile) -> ReadingSession {
-        let text = ReadingContentService.textForToday(profile: profile, date: device.persistence.todayString())
+        let text = ReadingContentService.textForToday(profile: profile, date: device.persistence.todayString(), history: [])
         return ReadingSession(
             childId: profile.id,
             date: device.persistence.todayString(),
@@ -139,7 +139,7 @@ struct ReadingAge6Tests {
 
     @Test func youngReadingUsesYoungTextsAndShortTarget() {
         let profile = ChildProfile(nickname: "Kid", age: 6, avatarId: "lion")
-        let text = ReadingContentService.textForToday(profile: profile, date: "2099-01-01")
+        let text = ReadingContentService.textForToday(profile: profile, date: "2099-01-01", history: [])
         #expect(text.ageGroup == .young)
         #expect(!text.words.isEmpty)
         #expect(ReadingText.targetReadingSeconds(for: 6) == 180)

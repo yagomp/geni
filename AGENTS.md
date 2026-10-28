@@ -26,3 +26,9 @@
 - A new test counts only after you've seen it fail for the bug it guards (or deliberately broken the code
   once); a test that can never fail (or never pass) is a bug.
 - Rounded corners everywhere via GeniShape / GameStyle.radius / GameStyle.cellRadius; never hardcoded RoundedRectangle/Capsule/cornerRadius for UI; only real-life round objects keep their own shape.
+
+## Recorded voice
+
+- Reading texts and the questions read to ages 4–5 play recorded Google voices from ios/Geni/Voice/ (device voice only as
+  fallback). After changing a reading text or any spoken question string, re-record with `scripts/voice/record.mjs`
+  (usage in its header); `VoiceLibraryTests` fail until you do.

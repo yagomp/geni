@@ -125,7 +125,7 @@ final class DemoRecordingTests: XCTestCase {
         pause(2)
         try tap("readingMode.readToMe", settle: false)
         XCTAssertTrue(element("reading.playPause").waitForExistence(timeout: 10))
-        mark("Read to me: The Little Cat / Den lille katten")
+        mark("Read to me: Pancake Wants to Bark / Pannekake vil bjeffe")
         let initialWord = readingWordIndex()
         pause(9)
         let finalWord = readingWordIndex()

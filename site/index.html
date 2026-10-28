@@ -68,7 +68,7 @@
 .geni[hidden]{display:none}
 .geni video{position:absolute;left:0;top:0;width:var(--s);height:var(--s);opacity:0}
 .geni video.on{opacity:1}
-.geni button{position:absolute;left:calc(var(--s)*.25);top:calc(var(--s)*.18);width:calc(var(--s)*.51);height:calc(var(--s)*.81);padding:0;border:0;border-radius:var(--r-lg);background:none;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color:transparent}
+.geni button{position:absolute;left:calc(var(--s)*.25);top:calc(var(--s)*.18);width:calc(var(--s)*.51);height:calc(var(--s)*.81);padding:0;border:0;border-radius:var(--r-lg);background:none;cursor:pointer;pointer-events:none;-webkit-tap-highlight-color:transparent}.geni.can-tap button{pointer-events:auto}
 .geni.is-still{background:url(media/geni/idle.webp) 0 0/var(--s) var(--s) no-repeat}
 .geni--peek{overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 20px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 20px),transparent)}
 .hero .cta-row{grid-template-columns:repeat(2,200px)}
@@ -557,7 +557,7 @@ applyLang(lang);
 </script>
 
 <script src="hero-demo.js?v=e8563b8ab5"></script>
-<script src="geni-hero.js?v=2b599c4712"></script>
+<script src="geni-hero.js?v=ca0d7d2a70"></script>
 
 </body>
 </html>

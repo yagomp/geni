@@ -23,6 +23,8 @@
   var WALK_LOOP = 1.6, STEP = 7.74, BRAKE = 16;
 
   var mode, size = 0, left = 0, cur = null, state = '', visible = false, loaded = false;
+  // Only idle Geni takes taps; while he walks past the CTA, clicks go through to the buttons.
+  function setState(s) { state = s; box.classList.toggle('can-tap', s === 'idle'); }
   var loops = 0, lastTime = 0, walkLoops = 0;
 
   function modeNow() { return window.innerWidth > 1024 ? 'walk' : window.innerWidth > 600 ? 'hello' : 'peek'; }
@@ -125,7 +127,7 @@
   function other(v) { return v === A ? B : A; }
 
   function idle(v) {
-    state = 'idle';
+    setState('idle');
     show(v, true, function (old) { stage(old, 'cheer'); });
   }
 
@@ -155,19 +157,19 @@
   }
 
   function start() {
-    state = 'loading';
+    setState('loading');
     place();
     var first = mode === 'walk' ? 'walk' : mode;
     Promise.all([stage(A, first), stage(B, mode === 'walk' ? 'arrive' : 'idle')]).then(function () {
       if (first === 'walk') {
-        state = 'walk';
+        setState('walk');
         setX(walkStart());
         box.hidden = false;
         show(A, true);
         onFrame(A, walkStep);
         A.onended = function () {
           A.onended = null;
-          state = 'arrive';
+          setState('arrive');
           brakeStep(0);
           show(B, false, function () { stage(A, 'idle'); });
           onFrame(B, brakeStep);
@@ -175,7 +177,7 @@
         };
       } else {
         box.hidden = false;
-        state = 'intro';
+        setState('intro');
         show(A);
         A.onended = function () { A.onended = null; idle(B); };
       }
@@ -183,7 +185,7 @@
   }
 
   function toStill() {
-    state = 'still';
+    setState('still');
     box.style.transform = '';
     box.classList.add('is-still');
     button.hidden = true;
@@ -194,7 +196,7 @@
 
   button.addEventListener('click', function () {
     if (state !== 'idle') return;
-    state = 'cheer';
+    setState('cheer');
     var idleV = cur, cheerV = other(cur), t0 = idleV.currentTime;
     // Idle passes the neutral pose (cheer's first frame) at 0 s and 2.2 s. Fast-forward to the next one
     // (at most 0.6 s) and cut there, so the cheer never jumps.

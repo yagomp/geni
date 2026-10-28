@@ -91,8 +91,7 @@ struct ContentView: View {
 
             case .readingMode:
                 if let profile = viewModel.persistence.activeProfile {
-                    let today = viewModel.persistence.todayString()
-                    let text = ReadingContentService.textForToday(profile: profile, date: today)
+                    let text = viewModel.readingTextForToday(profile)
                     ReadingModeSelectionView(
                         profile: profile,
                         readingText: text,

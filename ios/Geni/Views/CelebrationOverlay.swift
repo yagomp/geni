@@ -10,10 +10,12 @@ private extension View {
             .compositingGroup()
     }
 
-    /// Geni holding up a star, standing on the card's top edge; springs up once the card has landed.
+    /// Geni holding up a star, standing on the card's top padding (never over its content);
+    /// springs up once the card has landed.
     func geniOnTop(expanded: Bool) -> some View {
-        VStack(spacing: expanded ? -10 : -6) {
-            MascotPoseView(pose: .star, height: expanded ? 180 : 110, delay: 0.35)
+        VStack(spacing: expanded ? -24 : -14) {
+            MascotPoseView(pose: .star, height: expanded ? 400 : 240, delay: 0.35)
+                .zIndex(1)
             self
         }
     }

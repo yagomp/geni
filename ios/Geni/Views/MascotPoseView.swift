@@ -6,7 +6,6 @@ enum MascotPose: String {
     case book = "MascotBook"
     case star = "MascotStar"
     case point = "MascotPoint"
-    case head = "MascotHead"
 
     /// Width / height of the artwork.
     var aspectRatio: CGFloat {
@@ -14,7 +13,6 @@ enum MascotPose: String {
         case .book: 468.0 / 720.0
         case .star: 352.0 / 720.0
         case .point: 518.0 / 720.0
-        case .head: 384.0 / 318.0
         }
     }
 }

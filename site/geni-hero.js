@@ -12,43 +12,59 @@
 
   var phone = hero.querySelector('.iphone-mockup');
   var visual = hero.querySelector('.hero-visual');
-  var cta = hero.querySelector('.cta-row');
+  var copy = hero.querySelectorAll('h1, .lead, .cta-row');
   var button = box.querySelector('button');
   var vids = box.querySelectorAll('video');
   var A = vids[0], B = vids[1];
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // walk.* is two 1 s step cycles in place; at 1.4x, three loops take 4.3 s.
-  var WALK_RATE = 1.4, WALK_LOOPS = 3, WALK_LEN = 2;
-  // Stance foot travel per second of clip, as a share of the clip width (measured from the frames).
-  var STRIDE = 46.5 / 720;
+  // Foot-locked travel, in clip pixels (720 per side) at 30 fps: walk.* is a 1.6 s loop whose planted
+  // foot slides 7.74 px a frame; arrive.* keeps sliding for 16 frames while it slows to a stop.
+  var WALK_LOOP = 1.6, STEP = 7.74, BRAKE = 16;
 
   var mode, size = 0, left = 0, cur = null, state = '', visible = false, loaded = false;
-  var loops = 0, lastTime = 0;
+  var loops = 0, lastTime = 0, walkLoops = 0;
 
   function modeNow() { return window.innerWidth > 1024 ? 'walk' : window.innerWidth > 600 ? 'hello' : 'peek'; }
 
-  // Geometry in clip pixels (720 per side): body x 180–545, head top ~130, feet at 712.
+  // Does Geni's widest pose (clip x 105–576, head top 122, feet 712) touch the headline, lead or CTA?
+  // `right` is where clip x 545 (his body's right side) lands.
+  function hitsCopy(s, right, base) {
+    var u = s / 720, l = right - 440 * u, t = base - 590 * u, r = right + 31 * u;
+    for (var i = 0; i < copy.length; i++) {
+      var range = document.createRange();
+      range.selectNodeContents(copy[i]);
+      var rects = copy[i].classList.contains('cta-row') ? [copy[i].getBoundingClientRect()] : range.getClientRects();
+      for (var j = 0; j < rects.length; j++) {
+        var q = rects[j];
+        if (q.right > l - 8 && q.left < r && q.bottom > t - 8 && q.top < base) return true;
+      }
+    }
+    return false;
+  }
+
   function place() {
     var h = hero.getBoundingClientRect(), p = phone.getBoundingClientRect(), u, top;
     mode = modeNow();
     box.classList.toggle('geni--peek', mode === 'peek');
     if (mode === 'peek') {
-      // Cropped phone: in front of its lower-left corner, below the game; the hero's faded bottom edge
-      // hides the lower 35 % of the clip (peek starts fully below it).
+      // Cropped phone: in front of its lower-left corner, below the game and left of its banner; the
+      // hero's faded bottom edge hides the lower 35 % of the clip (peek starts fully below it).
       var v = visual.getBoundingClientRect();
-      size = Math.round(v.width * 0.66); u = size / 720;
-      left = v.left - h.left + v.width * 0.07 - 541 * u;
+      size = Math.round(v.width * 0.75); u = size / 720;
+      left = v.left - h.left + v.width * 0.085 - 541 * u;
       top = v.bottom - h.top - 470 * u;
       box.style.height = Math.round(470 * u) + 'px';
     } else {
-      // Feet on the hero's baseline, body just overlapping the phone's left bezel.
-      var base = Math.min(h.bottom - 4, p.bottom + p.height * 0.1);
-      size = Math.min(p.height * 0.36, 260);
-      // The walk passes under the call-to-action row: keep his head below it.
-      if (mode === 'walk') size = Math.min(size, (base - cta.getBoundingClientRect().bottom - 12) / 0.83);
-      size = Math.round(Math.max(size, 130)); u = size / 720;
-      left = p.left - h.left + p.width * 0.04 - 545 * u;
+      // Feet on the hero's baseline, body in front of the phone's left bezel (a head tilt reaches into
+      // the empty strip of screen between the game and its banner); as big as the copy allows.
+      // (Where the hero runs past the first screen, he stands on the screen's bottom edge instead.)
+      var base = Math.min(h.bottom - 4, p.bottom + p.height * 0.1, window.innerHeight - 4 - window.scrollY);
+      var right = p.left + p.width * 0.05;
+      size = Math.min(p.height * 0.58, 460);
+      while (size > 160 && hitsCopy(size, right, base)) size -= 8;
+      size = Math.round(size); u = size / 720;
+      left = right - h.left - 545 * u;
       top = base - h.top - 712 * u;
       box.style.height = size + 'px';
     }
@@ -83,47 +99,59 @@
     if (p) p.catch(function (e) { if (e.name === 'NotAllowedError') toStill(); });
   }
 
+  // Runs cb with the media time of each frame v presents (per animation frame where unsupported).
+  function onFrame(v, cb) {
+    if (v.requestVideoFrameCallback) v.requestVideoFrameCallback(function (now, m) { cb(m.mediaTime); });
+    else requestAnimationFrame(function () { cb(v.currentTime); });
+  }
+
   // Put v on top and start it; the old video is hidden once v shows frames, then after() may restage it.
-  function show(v, rate, loop, after) {
+  function show(v, loop, after) {
     var old = cur;
     cur = v;
-    v.playbackRate = rate || 1;
     v.loop = !!loop;
     v.style.zIndex = 2;
     if (old) old.style.zIndex = 1;
     v.classList.add('on');
     play(v);
-    function hide() {
+    onFrame(v, function () {
       if (!old || old === cur) return;
       old.classList.remove('on');
       old.pause();
       if (after) after(old);
-    }
-    if (v.requestVideoFrameCallback) v.requestVideoFrameCallback(function () { hide(); });
-    else v.addEventListener('playing', function () { requestAnimationFrame(hide); }, { once: true });
+    });
   }
 
   function other(v) { return v === A ? B : A; }
 
   function idle(v) {
     state = 'idle';
-    show(v, 1, true, function (old) { stage(old, 'cheer'); });
+    show(v, true, function (old) { stage(old, 'cheer'); });
   }
 
-  // Desktop walk: ease from full speed to the stride speed, timed by the clip so the two never drift.
-  function walkStep() {
+  // Desktop walk: the page moves him exactly as far as his planted foot slides back, frame by frame.
+  // He starts off-screen a whole number of loops before the stop, so the walk ends on frame 0, where
+  // arrive.* begins; arrive then brakes over 16 frames: x = v·f − v·f²/32.
+  function stepPx() { return STEP * size / 720; }
+  function walkStart() {
+    var loopPx = stepPx() * 30 * WALK_LOOP, brake = stepPx() * BRAKE / 2;
+    walkLoops = Math.max(1, Math.ceil((left - brake + 540 * size / 720) / loopPx));
+    return left - brake - walkLoops * loopPx;
+  }
+  function setX(x) { box.style.transform = mode === 'walk' ? 'translateX(' + (x - left).toFixed(2) + 'px)' : ''; }
+  function walkStep(t) {
     if (state !== 'walk') return;
-    var t = A.currentTime;
-    if (t + 0.5 < lastTime) loops++;
+    if (t + 0.4 < lastTime) loops++;
     lastTime = t;
-    if (loops >= WALK_LOOPS - 1) A.loop = false;
-    var p = Math.min((loops * WALK_LEN + t) / (WALK_LOOPS * WALK_LEN), 1);
-    var d = left + size + 16;
-    var v1 = STRIDE * size * WALK_LOOPS * WALK_LEN; // px per unit of p at the stride speed
-    var k = Math.min(v1 / (2 * d - v1), 1);
-    var x = mode === 'walk' ? -d + d * (2 * p + (k - 1) * p * p) / (1 + k) : 0;
-    box.style.transform = 'translateX(' + x.toFixed(1) + 'px)';
-    requestAnimationFrame(walkStep);
+    if (loops >= walkLoops - 1) A.loop = false;
+    setX(walkStart() + stepPx() * 30 * (loops * WALK_LOOP + t));
+    onFrame(A, walkStep);
+  }
+  function brakeStep(t) {
+    if (state !== 'arrive') return;
+    var f = Math.min(t * 30, BRAKE), v = stepPx();
+    setX(left - v * BRAKE / 2 + v * f - v * f * f / (2 * BRAKE));
+    if (f < BRAKE) onFrame(B, brakeStep);
   }
 
   function start() {
@@ -131,20 +159,22 @@
     place();
     var first = mode === 'walk' ? 'walk' : mode;
     Promise.all([stage(A, first), stage(B, mode === 'walk' ? 'arrive' : 'idle')]).then(function () {
-      box.hidden = false;
       if (first === 'walk') {
         state = 'walk';
-        box.style.transform = 'translateX(' + -(left + size + 16) + 'px)';
-        show(A, WALK_RATE, true);
-        requestAnimationFrame(walkStep);
+        setX(walkStart());
+        box.hidden = false;
+        show(A, true);
+        onFrame(A, walkStep);
         A.onended = function () {
           A.onended = null;
           state = 'arrive';
-          box.style.transform = '';
-          show(B, 1, false, function () { stage(A, 'idle'); });
-          B.onended = function () { B.onended = null; idle(A); };
+          brakeStep(0);
+          show(B, false, function () { stage(A, 'idle'); });
+          onFrame(B, brakeStep);
+          B.onended = function () { B.onended = null; setX(left); idle(A); };
         };
       } else {
+        box.hidden = false;
         state = 'intro';
         show(A);
         A.onended = function () { A.onended = null; idle(B); };
@@ -174,7 +204,7 @@
         var t = idleV.currentTime;
         if (now || (t0 < 2.2 ? t >= 2.18 : t < t0)) {
           idleV.playbackRate = 1;
-          show(cheerV, 1, false, function () { stage(idleV, 'idle').then(resolve); });
+          show(cheerV, false, function () { stage(idleV, 'idle').then(resolve); });
         } else requestAnimationFrame(wait);
       }());
     });
@@ -196,7 +226,9 @@
     if (document.hidden) cur.pause(); else play(cur);
   });
 
-  if ('ResizeObserver' in window) new ResizeObserver(function () { if (state) place(); }).observe(hero);
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(function () { if (state && state !== 'walk' && state !== 'arrive') place(); }).observe(hero);
+  }
 
   function ready() {
     loaded = true;

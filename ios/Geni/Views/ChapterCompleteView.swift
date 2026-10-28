@@ -22,126 +22,52 @@ private struct ChapterCompleteViewLayout: View {
     let bonusCoins: Int
     let onContinue: () -> Void
 
-    @State private var appeared = false
-    @State private var starsBounce = 0
-    @State private var showConfetti = false
-
     var body: some View {
-        ZStack {
-            GeniColor.background.ignoresSafeArea()
+        CompletionScaffold(mascot: .cheer, title: chapter.stars == 5 ? L.s(.perfectScore) : L.s(.chapterComplete)) {
+            CompletionStars(stars: chapter.stars)
 
-            if showConfetti {
-                ConfettiView()
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
+            VStack(spacing: expanded ? 24 : 14) {
+                RewardRow(
+                    icon: "✅",
+                    color: GeniColor.green,
+                    label: L.s(.correct),
+                    value: "\(chapter.correctCount)/\(chapter.completedExerciseCount)"
+                )
+
+                RewardRow(
+                    icon: "🪙",
+                    color: GeniColor.yellow,
+                    label: L.s(.coinsEarned),
+                    value: "+\(chapter.coinsEarned)"
+                )
+
+                RewardRow(
+                    icon: "⚡",
+                    color: GeniColor.cyan,
+                    label: L.s(.xpEarned),
+                    value: "+\(xpEarned)"
+                )
+
+                RewardRow(
+                    icon: "🔥",
+                    color: GeniColor.orange,
+                    label: L.s(.streak),
+                    value: "\(rewards.streakCount) \(rewards.streakCount == 1 ? L.s(.day) : L.s(.days))"
+                )
             }
+            .completionCard()
 
-            ScrollView {
-                VStack(spacing: expanded ? 32 : 20) {
-                    MascotCheerView(height: expanded ? 240 : 130)
-                        .opacity(appeared ? 1 : 0)
-                        .animation(.easeOut(duration: 0.3), value: appeared)
-
-                    Text(chapter.stars == 5 ? L.s(.perfectScore) : L.s(.chapterComplete))
-                        .font(.system(size: expanded ? 54 : 36, weight: .black, design: .rounded))
-                        .foregroundStyle(GeniColor.border)
-                        .multilineTextAlignment(.center)
-                        .opacity(appeared ? 1 : 0)
-                        .scaleEffect(appeared ? 1 : 0.5)
-                        .animation(.spring(response: 0.5, dampingFraction: 0.6), value: appeared)
-
-                    HStack(spacing: 10) {
-                        ForEach(1...5, id: \.self) { star in
-                            Text(star <= chapter.stars ? "⭐" : "☆")
-                                .font(.system(size: expanded ? 54 : 36))
-                                .foregroundStyle(star <= chapter.stars ? GeniColor.yellow : .gray.opacity(0.3))
-                        }
-                    }
-                    .opacity(appeared ? 1 : 0)
-                    .animation(.spring(response: 0.5).delay(0.3), value: appeared)
-
-                    VStack(spacing: expanded ? 28 : 16) {
-                        RewardRow(
-                            icon: "✅",
-                            color: GeniColor.green,
-                            label: L.s(.correct),
-                            value: "\(chapter.correctCount)/\(chapter.completedExerciseCount)"
-                        )
-
-                        RewardRow(
-                            icon: "🪙",
-                            color: GeniColor.yellow,
-                            label: L.s(.coinsEarned),
-                            value: "+\(chapter.coinsEarned)"
-                        )
-
-                        RewardRow(
-                            icon: "⚡",
-                            color: GeniColor.cyan,
-                            label: L.s(.xpEarned),
-                            value: "+\(xpEarned)"
-                        )
-
-                        RewardRow(
-                            icon: "🔥",
-                            color: GeniColor.orange,
-                            label: L.s(.streak),
-                            value: "\(rewards.streakCount) \(rewards.streakCount == 1 ? L.s(.day) : L.s(.days))"
-                        )
-                    }
-                    .padding(expanded ? 32 : 20)
-                    .softSurface(GeniColor.card)
-                    .opacity(appeared ? 1 : 0)
-                    .offset(y: appeared ? 0 : 40)
-                    .animation(.spring(response: 0.5).delay(0.5), value: appeared)
-
-                    if bonusCoins > 0 {
-                        DailyBonusCard(coins: bonusCoins, playsHaptics: false)
-                            .opacity(appeared ? 1 : 0)
-                            .offset(y: appeared ? 0 : 40)
-                            .animation(.spring(response: 0.5).delay(0.6), value: appeared)
-                    }
-
-                    Text(L.s(.greatJob))
-                        .font(.system(expanded ? .title : .title3, design: .rounded, weight: .bold))
-                        .foregroundStyle(.black)
-                        .opacity(appeared ? 1 : 0)
-                        .animation(.spring(response: 0.5).delay(0.7), value: appeared)
-
-                    Button {
-                        HapticManager.impact(.medium)
-                        onContinue()
-                    } label: {
-                        Text(L.s(.done))
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(BrutalistButton(color: GeniColor.blue, fontSize: expanded ? 30 : nil, verticalPadding: expanded ? 26 : nil))
-                    .accessibilityIdentifier("chapterComplete.done")
-                    .padding(.horizontal, 12)
-                    .opacity(appeared ? 1 : 0)
-                    .animation(.spring(response: 0.5).delay(0.9), value: appeared)
-
-                    Spacer().frame(height: 40)
-                }
-                .padding(.horizontal, expanded ? 40 : 20)
-                .frame(maxWidth: expanded ? 800 : .infinity)
-                .frame(maxWidth: .infinity)
-                .foregroundStyle(.black)
+            if bonusCoins > 0 {
+                DailyBonusCard(coins: bonusCoins, playsHaptics: false)
             }
+        } actions: {
+            CompletionButton(title: L.s(.done), color: GeniColor.blue, identifier: "chapterComplete.done", action: onContinue)
         }
         .task {
             do { try await Task.sleep(for: .seconds(0.5)) } catch { return }
             HapticManager.coinRipple(count: chapter.coinsEarned + bonusCoins)
         }
-        .onAppear {
-            appeared = true
-            HapticManager.correctAnswer()
-            Task {
-                try? await Task.sleep(for: .seconds(0.5))
-                starsBounce += 1
-                showConfetti = true
-            }
-        }
+        .onAppear { HapticManager.correctAnswer() }
     }
 }
 

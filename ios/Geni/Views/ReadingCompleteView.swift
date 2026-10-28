@@ -22,112 +22,50 @@ private struct ReadingCompleteViewLayout: View {
     let bonusCoins: Int
     let onContinue: () -> Void
 
-    @State private var appeared = false
-    @State private var showConfetti = false
-
     var body: some View {
-        ZStack {
-            GeniColor.background.ignoresSafeArea()
+        CompletionScaffold(mascot: .pose(.book), title: L.s(.readingComplete)) {
+            VStack(spacing: expanded ? 24 : 14) {
+                RewardRow(
+                    icon: "🕐",
+                    color: GeniColor.green,
+                    label: L.s(.readingTime),
+                    value: formattedTime(session.readingTimeSeconds)
+                )
 
-            if showConfetti {
-                ConfettiView()
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
+                RewardRow(
+                    icon: "🪙",
+                    color: GeniColor.yellow,
+                    label: L.s(.coinsEarned),
+                    value: "+\(session.coinsEarned)"
+                )
+
+                RewardRow(
+                    icon: "⚡",
+                    color: GeniColor.cyan,
+                    label: L.s(.xpEarned),
+                    value: "+50"
+                )
+
+                RewardRow(
+                    icon: "🔥",
+                    color: GeniColor.orange,
+                    label: L.s(.streak),
+                    value: "\(rewards.streakCount) \(rewards.streakCount == 1 ? L.s(.day) : L.s(.days))"
+                )
             }
+            .completionCard()
 
-            ScrollView {
-                VStack(spacing: expanded ? 40 : 24) {
-                    MascotPoseView(pose: .book, height: expanded ? 200 : 120)
-                        .padding(.top, 12)
-
-                    Text(L.s(.readingComplete))
-                        .font(.system(size: expanded ? 48 : 32, weight: .black, design: .rounded))
-                        .foregroundStyle(GeniColor.border)
-                        .multilineTextAlignment(.center)
-                        .opacity(appeared ? 1 : 0)
-                        .animation(.spring(response: 0.5).delay(0.2), value: appeared)
-
-                    VStack(spacing: expanded ? 28 : 16) {
-                        RewardRow(
-                            icon: "🕐",
-                            color: GeniColor.green,
-                            label: L.s(.readingTime),
-                            value: formattedTime(session.readingTimeSeconds)
-                        )
-
-                        RewardRow(
-                            icon: "🪙",
-                            color: GeniColor.yellow,
-                            label: L.s(.coinsEarned),
-                            value: "+\(session.coinsEarned)"
-                        )
-
-                        RewardRow(
-                            icon: "⚡",
-                            color: GeniColor.cyan,
-                            label: L.s(.xpEarned),
-                            value: "+50"
-                        )
-
-                        RewardRow(
-                            icon: "🔥",
-                            color: GeniColor.orange,
-                            label: L.s(.streak),
-                            value: "\(rewards.streakCount) \(rewards.streakCount == 1 ? L.s(.day) : L.s(.days))"
-                        )
-                    }
-                    .padding(expanded ? 32 : 20)
-                    .softSurface(GeniColor.card)
-                    .opacity(appeared ? 1 : 0)
-                    .offset(y: appeared ? 0 : 40)
-                    .animation(.spring(response: 0.5).delay(0.4), value: appeared)
-
-                    if bonusAwarded {
-                        DailyBonusCard(coins: bonusCoins, playsHaptics: false)
-                            .opacity(appeared ? 1 : 0)
-                            .offset(y: appeared ? 0 : 40)
-                            .animation(.spring(response: 0.5).delay(0.6), value: appeared)
-                    }
-
-                    Text(L.s(.greatJob))
-                        .font(.system(expanded ? .title : .title3, design: .rounded, weight: .bold))
-                        .foregroundStyle(.black)
-                        .opacity(appeared ? 1 : 0)
-                        .animation(.spring(response: 0.5).delay(0.7), value: appeared)
-
-                    Button {
-                        HapticManager.impact(.medium)
-                        onContinue()
-                    } label: {
-                        Text(L.s(.done))
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(BrutalistButton(color: GeniColor.green, fontSize: expanded ? 30 : nil, verticalPadding: expanded ? 26 : nil))
-                    .accessibilityIdentifier("readingComplete.done")
-                    .padding(.horizontal, 12)
-                    .opacity(appeared ? 1 : 0)
-                    .animation(.spring(response: 0.5).delay(0.9), value: appeared)
-
-                    Spacer().frame(height: 40)
-                }
-                .padding(.horizontal, expanded ? 40 : 20)
-                .frame(maxWidth: expanded ? 800 : .infinity)
-                .frame(maxWidth: .infinity)
-                .foregroundStyle(.black)
+            if bonusAwarded {
+                DailyBonusCard(coins: bonusCoins, playsHaptics: false)
             }
+        } actions: {
+            CompletionButton(title: L.s(.done), color: GeniColor.green, identifier: "readingComplete.done", action: onContinue)
         }
         .task {
             do { try await Task.sleep(for: .seconds(0.5)) } catch { return }
             HapticManager.coinRipple(count: session.coinsEarned + bonusCoins)
         }
-        .onAppear {
-            appeared = true
-            HapticManager.correctAnswer()
-            Task {
-                try? await Task.sleep(for: .seconds(0.5))
-                showConfetti = true
-            }
-        }
+        .onAppear { HapticManager.correctAnswer() }
     }
 
     private func formattedTime(_ seconds: Int) -> String {

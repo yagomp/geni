@@ -11,7 +11,7 @@ import re
 import sys
 
 SITE = pathlib.Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else pathlib.Path(__file__).resolve().parent.parent / "site"
-ASSETS = ["geni.css", "nav.js", "footer.js", "phone-demo.js", "hero-demo.js"]
+ASSETS = ["geni.css", "nav.js", "footer.js", "phone-demo.js", "hero-demo.js", "geni-hero.js"]
 
 versions = {
     name: hashlib.sha256((SITE / name).read_bytes()).hexdigest()[:10]

@@ -62,6 +62,15 @@
 <link rel="stylesheet" href="geni.css?v=2b84f8487c">
 <style>
 /* Landing layout */
+/* Geni mascot beside the hero phone (geni-hero.js sets --s, left, top) */
+.hero{position:relative}
+.geni{position:absolute;z-index:5;width:var(--s);pointer-events:none}
+.geni[hidden]{display:none}
+.geni video{position:absolute;left:0;top:0;width:var(--s);height:var(--s);opacity:0}
+.geni video.on{opacity:1}
+.geni button{position:absolute;left:calc(var(--s)*.25);top:calc(var(--s)*.18);width:calc(var(--s)*.51);height:calc(var(--s)*.81);padding:0;border:0;border-radius:var(--r-lg);background:none;cursor:pointer;pointer-events:none;-webkit-tap-highlight-color:transparent}.geni.can-tap button{pointer-events:auto}
+.geni.is-still{background:url(media/geni/idle.webp) 0 0/var(--s) var(--s) no-repeat}
+.geni--peek{overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 20px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 20px),transparent)}
 .hero .cta-row{grid-template-columns:repeat(2,200px)}
 @media(min-width:601px) and (max-width:1024px){.hero .cta-row{grid-template-columns:200px}}
 .hero-game{display:block;width:100%;height:100%;font-family:ui-rounded,"SF Pro Rounded",var(--font)}.hg-bg{fill:var(--bg)}.hg-ink{fill:#111}.hg-wifi{fill:none;stroke:#111;stroke-width:3.5;stroke-linecap:round}.hero-game text{fill:#111}.hg-time{font-size:26px;font-weight:700;text-anchor:middle}.hg-prog-t{font-size:24px;font-weight:800;text-anchor:middle}.hg-star{font-size:26px;font-weight:900;text-anchor:middle;transition:opacity .3s}.hg-star.c8{opacity:0}.hg-bar{fill:#22A447;transform-origin:31px 230px;transform:scaleX(.35);transition:transform .6s ease-out}.hg-title{font-size:40px;font-weight:800}.hg-n{font-size:31px;font-weight:900;text-anchor:middle}.hg-pill{fill:var(--card);stroke:rgba(0,0,0,.07);stroke-width:2;transition:fill .25s,stroke .25s}.hg-dot{fill:#FFCC00;transition:fill .25s}.hg-line{fill:none;stroke:#22A447;stroke-width:9;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .45s ease-out}.hg-fb{transform:translateY(160px);opacity:0;transition:transform .45s cubic-bezier(.2,1.3,.4,1),opacity .2s}.hero-game .hg-fb-t{fill:#fff;font-size:28px;font-weight:800}.hero-game.done .hg-fb{transform:none;opacity:1}.hero-game.done .c7{opacity:0}.hero-game.done .c8{opacity:1}.hero-game.done .hg-bar{transform:scaleX(.4)}.hero-game.t1 .l0{stroke:#0A84FF;stroke-width:4}.hero-game.m1 .l0,.hero-game.m1 .r2{fill:#DDF0E2;stroke:#22A447;stroke-width:3}.hero-game.m1 .dl0,.hero-game.m1 .dr2{fill:#22A447}.hero-game.m1 .k0{stroke-dashoffset:0}.hero-game.t2 .l1{stroke:#0A84FF;stroke-width:4}.hero-game.m2 .l1,.hero-game.m2 .r0{fill:#DDF0E2;stroke:#22A447;stroke-width:3}.hero-game.m2 .dl1,.hero-game.m2 .dr0{fill:#22A447}.hero-game.m2 .k1{stroke-dashoffset:0}.hero-game.t3 .l2{stroke:#0A84FF;stroke-width:4}.hero-game.m3 .l2,.hero-game.m3 .r3{fill:#DDF0E2;stroke:#22A447;stroke-width:3}.hero-game.m3 .dl2,.hero-game.m3 .dr3{fill:#22A447}.hero-game.m3 .k2{stroke-dashoffset:0}.hero-game.t4 .l3{stroke:#0A84FF;stroke-width:4}.hero-game.m4 .l3,.hero-game.m4 .r1{fill:#DDF0E2;stroke:#22A447;stroke-width:3}.hero-game.m4 .dl3,.hero-game.m4 .dr1{fill:#22A447}.hero-game.m4 .k3{stroke-dashoffset:0}
@@ -100,6 +109,11 @@ body.demo-open{overflow:hidden}
 <div class="iphone-screen"><svg class="hero-game" id="heroGame" viewBox="0 0 603 1311" role="img" data-i18n-aria-label="hero_math_alt" aria-label="Match each sum to its answer – a matching game in Geni"><defs><filter id="hgs" x="-10%" y="-20%" width="120%" height="150%"><feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000" flood-opacity=".07"/></filter></defs><rect class="hg-bg" width="603" height="1311"/><text class="hg-time" x="112" y="58">09:41</text><g class="hg-ink"><rect x="432" y="50" width="5" height="8" rx="1.5"/><rect x="440" y="46" width="5" height="12" rx="1.5"/><rect x="448" y="42" width="5" height="16" rx="1.5"/><rect x="456" y="38" width="5" height="20" rx="1.5"/></g><path class="hg-wifi" d="M473 46a17 17 0 0 1 24 0M477 51a11 11 0 0 1 16 0"/><circle class="hg-ink" cx="485" cy="56" r="3"/><rect x="510" y="39" width="36" height="20" rx="6" fill="none" stroke="#8BC79A" stroke-width="2"/><rect x="513" y="42" width="30" height="14" rx="3.5" fill="#34C759"/><rect x="548" y="45" width="3" height="8" rx="1.5" fill="#8BC79A"/><rect class="hg-pill" x="31" y="124" width="64" height="64" rx="18" filter="url(#hgs)"/><text x="63" y="168" font-size="34" text-anchor="middle">◀️</text><text class="hg-prog-t" x="290" y="166" data-i18n="hero_g_progress">8 of 20</text><rect class="hg-pill" x="487" y="133" width="86" height="48" rx="24" filter="url(#hgs)"/><text x="518" y="166" font-size="25" text-anchor="middle">⭐</text><text class="hg-star c7" x="550" y="166">7</text><text class="hg-star c8" x="550" y="166">8</text><rect x="31" y="220" width="541" height="20" rx="10" fill="#ECECEC"/><rect class="hg-bar" x="31" y="220" width="541" height="20" rx="10"/><text class="hg-title" x="31" y="480" data-i18n="hero_g_title">Match the pairs</text><path class="hg-line k0" pathLength="1" d="M236 569C301 569 301 761 366 761"/><path class="hg-line k1" pathLength="1" d="M236 665C301 665 301 569 366 569"/><path class="hg-line k2" pathLength="1" d="M236 761C301 761 301 856 366 856"/><path class="hg-line k3" pathLength="1" d="M236 856C301 856 301 665 366 665"/><rect class="hg-pill l0" x="31" y="531" width="205" height="76" rx="22" filter="url(#hgs)"/><text class="hg-n" x="133" y="580">3 + 2</text><rect class="hg-pill r0" x="367" y="531" width="205" height="76" rx="22" filter="url(#hgs)"/><text class="hg-n" x="469" y="580">8</text><rect class="hg-pill l1" x="31" y="627" width="205" height="76" rx="22" filter="url(#hgs)"/><text class="hg-n" x="133" y="676">4 + 4</text><rect class="hg-pill r1" x="367" y="627" width="205" height="76" rx="22" filter="url(#hgs)"/><text class="hg-n" x="469" y="676">10</text><rect class="hg-pill l2" x="31" y="723" width="205" height="76" rx="22" filter="url(#hgs)"/><text class="hg-n" x="133" y="772">6 + 1</text><rect class="hg-pill r2" x="367" y="723" width="205" height="76" rx="22" filter="url(#hgs)"/><text class="hg-n" x="469" y="772">5</text><rect class="hg-pill l3" x="31" y="818" width="205" height="76" rx="22" filter="url(#hgs)"/><text class="hg-n" x="133" y="867">5 + 5</text><rect class="hg-pill r3" x="367" y="818" width="205" height="76" rx="22" filter="url(#hgs)"/><text class="hg-n" x="469" y="867">7</text><circle class="hg-dot dl0" cx="236" cy="569" r="11"/><circle class="hg-dot dr0" cx="366" cy="569" r="11"/><circle class="hg-dot dl1" cx="236" cy="665" r="11"/><circle class="hg-dot dr1" cx="366" cy="665" r="11"/><circle class="hg-dot dl2" cx="236" cy="761" r="11"/><circle class="hg-dot dr2" cx="366" cy="761" r="11"/><circle class="hg-dot dl3" cx="236" cy="856" r="11"/><circle class="hg-dot dr3" cx="366" cy="856" r="11"/><g class="hg-fb"><rect x="31" y="1166" width="541" height="80" rx="24" fill="#1FA84A"/><text x="64" y="1218" font-size="28">✅</text><text class="hg-fb-t" x="108" y="1217" data-i18n="hero_g_done">Nice job!</text></g></svg></div>
 </div>
 </div>
+</div>
+<div class="geni" id="geni" hidden>
+<video muted playsinline preload="none" aria-hidden="true"><source type='video/quicktime; codecs="hvc1"'><source type="video/webm"></video>
+<video muted playsinline preload="none" aria-hidden="true"><source type='video/quicktime; codecs="hvc1"'><source type="video/webm"></video>
+<button type="button" aria-label="Geni cheers" data-i18n-aria-label="geni_cheer"></button>
 </div>
 </section>
 
@@ -239,7 +253,7 @@ body.demo-open{overflow:hidden}
 var T={
 en:{
 hero_home_alt:"Geni home with math, reading and daily challenges",hero_replay:"Play again",hero_g_progress:"8 of 20",hero_g_title:"Match the pairs",hero_g_done:"Nice job!",hero_math_alt:"Match each sum to its answer – a matching game in Geni",
-hero_more:"See how it works",
+hero_more:"See how it works",geni_cheer:"Geni cheers",
 nav_features:"Features",nav_math:"Math",nav_reading:"Reading",nav_parents:"For parents",nav_privacy:"Privacy",nav_download:"Download",
 theme_label:"Theme",theme_standard:"Standard",theme_ocean:"Ocean",theme_blossom:"Blossom",
 hero_title:"Math and reading for kids 4–10",
@@ -292,7 +306,7 @@ preview_language_picker:"Language",preview_language_parent:"Parent dashboard",pr
 },
 nb:{
 hero_home_alt:"Genis startside med matte, lesing og daglige utfordringer",hero_replay:"Spill igjen",hero_g_progress:"8 av 20",hero_g_title:"Koble sammen parene",hero_g_done:"Bra jobba!",hero_math_alt:"Koble hvert regnestykke til svaret – et koblingsspill i Geni",
-hero_more:"Slik fungerer det",
+hero_more:"Slik fungerer det",geni_cheer:"Geni jubler",
 nav_features:"Funksjoner",nav_math:"Matte",nav_reading:"Lesing",nav_parents:"For foreldre",nav_privacy:"Personvern",nav_download:"Last ned",
 theme_label:"Tema",theme_standard:"Standard",theme_ocean:"Hav",theme_blossom:"Blomst",
 hero_title:"Matte og lesing for barn 4–10 år",
@@ -345,7 +359,7 @@ preview_language_picker:"Språk",preview_language_parent:"Foreldrepanel",preview
 },
 es:{
 hero_home_alt:"Inicio de Geni con matemáticas, lectura y desafíos diarios",hero_replay:"Reproducir de nuevo",hero_g_progress:"8 de 20",hero_g_title:"Une las parejas",hero_g_done:"¡Buen trabajo!",hero_math_alt:"Une cada suma con su resultado: un juego de parejas en Geni",
-hero_more:"Cómo funciona",
+hero_more:"Cómo funciona",geni_cheer:"Geni celebra",
 nav_features:"Funciones",nav_math:"Matem\u00E1ticas",nav_reading:"Lectura",nav_parents:"Para padres",nav_privacy:"Privacidad",nav_download:"Descargar",
 theme_label:"Tema",theme_standard:"Estándar",theme_ocean:"Océano",theme_blossom:"Floración",
 hero_title:"Matemáticas y lectura para niños de 4 a 10 años",
@@ -398,7 +412,7 @@ preview_language_picker:"Idioma",preview_language_parent:"Panel para padres",pre
 },
 pt:{
 hero_home_alt:"Início do Geni com matemática, leitura e desafios diários",hero_replay:"Reproduzir novamente",hero_g_progress:"8 de 20",hero_g_title:"Liga os pares",hero_g_done:"Bom trabalho!",hero_math_alt:"Liga cada conta ao resultado: um jogo de pares no Geni",
-hero_more:"Como funciona",
+hero_more:"Como funciona",geni_cheer:"O Geni festeja",
 nav_features:"Recursos",nav_math:"Matem\u00E1tica",nav_reading:"Leitura",nav_parents:"Para pais",nav_privacy:"Privacidade",nav_download:"Baixar",
 theme_label:"Tema",theme_standard:"Padrão",theme_ocean:"Oceano",theme_blossom:"Florescer",
 hero_title:"Matemática e leitura para crianças dos 4 aos 10 anos",
@@ -543,6 +557,7 @@ applyLang(lang);
 </script>
 
 <script src="hero-demo.js?v=e8563b8ab5"></script>
+<script src="geni-hero.js?v=ca0d7d2a70"></script>
 
 </body>
 </html>

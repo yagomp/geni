@@ -127,6 +127,9 @@ enum DesignPreview {
             return Exercise(game: GameSpec(kind: kind,
                 prompt: L.t("Which picture finishes the mirror?", no: "Hvilket bilde fullfører speilet?", es: "¿Qué dibujo completa el espejo?", pt: "Que desenho completa o espelho?"),
                 answerText: "🪞", payload: payload), correctAnswer: 2, options: choices.map(\.value), difficulty: .harder)
+        case .weekdays:
+            // The question from a parent's photo: which day comes after Wednesday?
+            return CalendarGames.weekdayGame(.after, anchor: 3, difficulty: .normal, distractors: [2, 0, 1])
         default: return nil
         }
     }

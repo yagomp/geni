@@ -6,15 +6,21 @@ nonisolated enum WeekRelation: Sendable, CaseIterable {
 }
 
 nonisolated struct WeekCell: Sendable, Equatable {
-    enum State: Sendable { case shown, anchor, blank, missing }
+    /// `missing` is the gap the child fills; its label is the answer, shown once it's solved.
+    enum State: Sendable { case shown, anchor, missing }
     let label: String
     let state: State
 }
 
 extension CalendarGames {
     static func makeWeekdays(age: Int, difficulty: ExerciseDifficulty) -> Exercise {
-        let relation = weekRelation(age: age, difficulty: difficulty)
-        let anchor = Int.random(in: 0..<7)
+        weekdayGame(weekRelation(age: age, difficulty: difficulty), anchor: Int.random(in: 0..<7), difficulty: difficulty)
+    }
+
+    /// One weekday question about `anchor` (0 = Sunday). `distractors` fixes the wrong tiles and their order
+    /// (design previews); otherwise they are random.
+    static func weekdayGame(_ relation: WeekRelation, anchor: Int, difficulty: ExerciseDifficulty,
+                            distractors: [Int]? = nil) -> Exercise {
         let anchors: [Int]
         let answer: Int
         switch relation {
@@ -27,23 +33,21 @@ extension CalendarGames {
 
         let calendar = weekCalendar()
         let full = fullWeekdayNames()
-        let short = shortWeekdayNames()
-        // Full week for the youngest and the easy rounds; later only the days the question names.
-        let showAll = difficulty == .warmup || (age <= 6 && difficulty == .normal)
+        // The whole week in the locale's order, every day named in full; only the asked day is a gap
+        // (its cell keeps the name so the view can fill it in once answered).
         let order = (0..<7).map { (calendar.firstWeekday - 1 + $0) % 7 }
-        let cells = order.map { day -> WeekCell in
-            if day == answer { return WeekCell(label: "?", state: .missing) }
-            if anchors.contains(day) { return WeekCell(label: short[day], state: .anchor) }
-            return WeekCell(label: showAll ? short[day] : "", state: showAll ? .shown : .blank)
+        let cells = order.map { day in
+            WeekCell(label: full[day], state: day == answer ? .missing : anchors.contains(day) ? .anchor : .shown)
         }
 
         let wrongCount = difficulty == .warmup ? 2 : 3
         let wrong = (0..<7).filter { $0 != answer && !anchors.contains($0) }.shuffled().prefix(wrongCount)
-        let choices = ([answer] + wrong).shuffled().map { GameChoice(label: short[$0], value: $0) }
+        let choices = (distractors.map { [answer] + $0 } ?? ([answer] + wrong).shuffled())
+            .map { GameChoice(label: full[$0], value: $0) }
         let payload = CalendarPayload(scene: .week(cells), style: .text, choices: choices,
                                       fact: .weekday(relation, anchors: anchors, answer: answer))
         return exercise(.weekdays, prompt: weekdayPrompt(relation, names: anchors.map { full[$0] }),
-                        answerText: short[answer], payload: payload, correct: answer, difficulty: difficulty)
+                        answerText: full[answer], payload: payload, correct: answer, difficulty: difficulty)
     }
 
     static func weekRelation(age: Int, difficulty: ExerciseDifficulty) -> WeekRelation {
@@ -54,9 +58,12 @@ extension CalendarGames {
         }
     }
 
+    /// Weeks start on Sunday in English (US) and on Monday in Norwegian, Spanish and Portuguese
+    /// (pt_PT's locale says Sunday, but Portuguese school weeks start on Monday).
     static func weekCalendar() -> Calendar {
         var calendar = Calendar(identifier: .gregorian)
         calendar.locale = locale
+        calendar.firstWeekday = L.selectedLanguage == .english ? 1 : 2
         return calendar
     }
 
@@ -66,14 +73,10 @@ extension CalendarGames {
         return formatter
     }
 
-    /// "Monday" / "mandag" / "lunes" / "segunda-feira", indexed 0 = Sunday.
+    /// "Monday" / "mandag" / "lunes" / "segunda-feira", indexed 0 = Sunday. Full names everywhere:
+    /// children learning the week need the word they hear, in the same spelling as the question.
     static func fullWeekdayNames() -> [String] {
         formatter().standaloneWeekdaySymbols
-    }
-
-    /// "Mon" / "Man" / "Lun" / "Seg" for the cards and tiles, indexed 0 = Sunday.
-    static func shortWeekdayNames() -> [String] {
-        formatter().shortStandaloneWeekdaySymbols.map { capitalized($0.replacingOccurrences(of: ".", with: "")) }
     }
 
     static func weekdayPrompt(_ relation: WeekRelation, names n: [String]) -> String {

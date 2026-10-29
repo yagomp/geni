@@ -140,7 +140,21 @@ struct GameEmojiRow: View {
     }
 }
 
+/// Where a tile can be dropped to answer (a gap in the picture), in global coordinates.
+struct GameDropTarget {
+    let frame: CGRect
+    /// Told whether a dragged tile is over the target, so the target can light up.
+    var hover: (Bool) -> Void = { _ in }
+
+    /// Generous for small fingers: the finger only has to land near the gap.
+    func contains(_ point: CGPoint) -> Bool {
+        !frame.isEmpty && frame.insetBy(dx: -24, dy: -24).contains(point)
+    }
+}
+
 /// A tile that answers with `value` when tapped, and turns green/pink with the feedback.
+/// With a `dropTarget` it can also be dragged: released over the target it answers like a tap,
+/// anywhere else it springs back.
 struct GameChoiceTile<Label: View>: View {
     @Environment(\.geniExpandedLayout) private var expanded
     let value: Int
@@ -148,16 +162,16 @@ struct GameChoiceTile<Label: View>: View {
     let chapterVM: ChapterViewModel
     let persistence: PersistenceService
     var height: CGFloat = 88
+    var dropTarget: GameDropTarget? = nil
     @ViewBuilder let label: Label
+    @State private var dragOffset: CGSize = .zero
 
     private enum Feedback { case idle, correct, wrong, faded }
 
     var body: some View {
         let feedback = self.feedback
         Button {
-            guard !chapterVM.showFeedback else { return }
-            HapticManager.impact(.medium)
-            chapterVM.submitAnswer(value, persistence: persistence)
+            answer()
         } label: {
             label
                 .frame(maxWidth: .infinity)
@@ -168,7 +182,30 @@ struct GameChoiceTile<Label: View>: View {
         .opacity(feedback == .faded ? 0.5 : 1)
         .scaleEffect(feedback == .correct ? 1.04 : 1)
         .animation(.spring(response: 0.35, dampingFraction: 0.6), value: feedback)
+        .offset(dragOffset)
+        .zIndex(dragOffset == .zero ? 0 : 1)
+        // A tap stays a tap (the drag needs 10 pt of movement); without a target the tile only taps.
+        .highPriorityGesture(drag, including: dropTarget == nil || chapterVM.showFeedback ? .subviews : .all)
         .accessibilityIdentifier("answer.\(value)")
+    }
+
+    private func answer() {
+        guard !chapterVM.showFeedback else { return }
+        HapticManager.impact(.medium)
+        chapterVM.submitAnswer(value, persistence: persistence)
+    }
+
+    private var drag: some Gesture {
+        DragGesture(minimumDistance: 10, coordinateSpace: .global)
+            .onChanged { drag in
+                dragOffset = drag.translation
+                dropTarget?.hover(dropTarget?.contains(drag.location) == true)
+            }
+            .onEnded { drag in
+                dropTarget?.hover(false)
+                if dropTarget?.contains(drag.location) == true { answer() }
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) { dragOffset = .zero }
+            }
     }
 
     private var feedback: Feedback {

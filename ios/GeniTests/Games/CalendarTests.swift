@@ -62,12 +62,9 @@ struct CalendarTests {
 
     // MARK: Weekdays
 
-    @Test("Weekdays: the answer follows from the question and the row has one gap")
+    @Test("Weekdays: the answer follows from the question")
     func weekdays() {
-        eachLanguage { language in
-            let calendar = CalendarGames.weekCalendar()
-            let short = CalendarGames.shortWeekdayNames()
-            #expect(Set(short).count == 7, "short names distinct \(language)")
+        eachLanguage { _ in
             for age in GameKind.weekdays.ages {
                 for difficulty in Self.difficulties {
                     for _ in 0..<100 {
@@ -91,13 +88,41 @@ struct CalendarTests {
                         #expect(cells.filter { $0.state == .missing }.count == 1)
                         #expect(cells.filter { $0.state == .anchor }.count == anchors.count)
                         if age <= 6 { #expect(relation == .after || relation == .before) }
-                        // The row starts on the locale's first weekday.
-                        let first = (calendar.firstWeekday - 1) % 7
-                        if cells[0].state != .blank && cells[0].state != .missing { #expect(cells[0].label == short[first]) }
-                        // Tiles are day names; the right tile is the day that fits.
-                        #expect(p.choices.first { $0.value == answer }?.label == short[answer])
-                        if difficulty == .warmup { #expect(cells.filter { $0.state == .blank }.isEmpty) }
-                        if age >= 7 && difficulty.rawValue >= ExerciseDifficulty.harder.rawValue { #expect(!cells.filter { $0.state == .blank }.isEmpty) }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test("Weekdays: the whole week in full names, only the asked day missing, tiles are full names")
+    func weekdaysFilledWeek() {
+        eachLanguage { language in
+            let calendar = CalendarGames.weekCalendar()
+            let full = CalendarGames.fullWeekdayNames()
+            #expect(Set(full).count == 7, "full names distinct \(language)")
+            let first = (calendar.firstWeekday - 1) % 7
+            for age in GameKind.weekdays.ages {
+                for difficulty in Self.difficulties {
+                    for _ in 0..<100 {
+                        let p = payload(CalendarGames.make(.weekdays, age: age, difficulty: difficulty))
+                        guard case let .weekday(_, anchors, answer) = p.fact, case let .week(cells) = p.scene else {
+                            Issue.record("weekday fact and week scene")
+                            continue
+                        }
+                        // Every day is in its place and named in full; the one gap is the answer.
+                        #expect(cells.count == 7)
+                        for (i, cell) in cells.enumerated() {
+                            let day = (first + i) % 7
+                            #expect(cell.label == full[day], "\(language) \(difficulty) cell \(i): \(cell.label)")
+                            #expect((cell.state == .missing) == (day == answer))
+                            #expect((cell.state == .anchor) == anchors.contains(day))
+                        }
+                        // Tiles: full names, no duplicates, the answer once, never the day the question names.
+                        let labels = p.choices.map(\.label)
+                        #expect(Set(labels).count == labels.count && Set(p.choices.map(\.value)).count == labels.count)
+                        #expect(p.choices.allSatisfy { full.indices.contains($0.value) && $0.label == full[$0.value] })
+                        #expect(p.choices.filter { $0.value == answer }.count == 1)
+                        #expect(p.choices.allSatisfy { !anchors.contains($0.value) })
                     }
                 }
             }
@@ -120,8 +145,11 @@ struct CalendarTests {
         #expect(CalendarGames.weekCalendar().firstWeekday == 2)
         L.selectedLanguage = .spanish
         #expect(CalendarGames.fullWeekdayNames()[1] == "lunes")
+        #expect(CalendarGames.weekCalendar().firstWeekday == 2)
         L.selectedLanguage = .portuguese
         #expect(CalendarGames.fullWeekdayNames()[1] == "segunda-feira")
+        // School weeks start on Monday in Portugal, although the pt_PT locale starts on Sunday.
+        #expect(CalendarGames.weekCalendar().firstWeekday == 2)
     }
 
     // MARK: Seasons

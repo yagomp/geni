@@ -55,7 +55,7 @@ footer .container{display:flex;flex-direction:column;gap:var(--s-4);padding-top:
         '<div class="container">' +
           '<div class="footer-top">' +
             '<a href="' + (base || './') + '" class="footer-brand" aria-label="Geni home">' +
-              '<img src="' + base + 'icon-mark.png" alt="" width="36" height="36"><span>Geni</span>' +
+              '<img src="' + base + 'geni-mark.png" alt="" width="36" height="36"><span>Geni</span>' +
             '</a>' +
             '<nav class="footer-links" aria-label="Footer">' +
               '<a href="' + base + 'math.html" id="footer-math">' + t.math + '</a>' +

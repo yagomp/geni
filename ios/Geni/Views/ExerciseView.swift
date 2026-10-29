@@ -91,6 +91,8 @@ private struct ExerciseViewLayout: View {
                     GeometryReader { remaining in
                         ScrollView {
                             currentContent
+                                .environment(\.geniExerciseViewport,
+                                             CGSize(width: remaining.size.width - 80, height: remaining.size.height - 172))
                                 .frame(maxWidth: .infinity)
                                 .padding(.horizontal, 40)
                                 .padding(.vertical, 36)
@@ -111,6 +113,8 @@ private struct ExerciseViewLayout: View {
                     GeometryReader { remaining in
                         ScrollView {
                             currentContent
+                                .environment(\.geniExerciseViewport,
+                                             CGSize(width: remaining.size.width - iPadScale.padding * 2, height: remaining.size.height - 32))
                                 .frame(maxWidth: .infinity)
                                 .padding(.horizontal, iPadScale.padding)
                                 .padding(.vertical, 16)

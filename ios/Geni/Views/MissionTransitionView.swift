@@ -22,110 +22,38 @@ private struct MissionTransitionViewLayout: View {
     /// Set when reading is optional: offers ending the mission after math.
     var onFinish: (() -> Void)? = nil
 
-    @State private var appeared = false
-    @State private var showButton = false
-    @State private var checkBounce = 0
-
     var body: some View {
-        ZStack {
-            GeniColor.lightYellow.ignoresSafeArea()
+        CompletionScaffold(mascot: .pose(.point), title: L.s(.greatJobMath), background: GeniColor.lightYellow, confetti: false) {
+            VStack(spacing: expanded ? 12 : 8) {
+                CompletionStars(stars: mathStars)
 
-            VStack(spacing: 32) {
-                Spacer()
-
-                Text("✅").font(.system(size: expanded ? 108 : 72))
-                    .opacity(appeared ? 1 : 0)
-                    .scaleEffect(appeared ? 1 : 0.3)
-
-                VStack(spacing: 8) {
-                    Text(L.s(.greatJobMath))
-                        .font(.system(size: expanded ? 48 : 32, weight: .black, design: .rounded))
-                        .foregroundStyle(GeniColor.border)
-
-                    HStack(spacing: 6) {
-                        ForEach(1...5, id: \.self) { star in
-                            Text(star <= mathStars ? "⭐" : "☆")
-                                .font(.system(size: expanded ? 36 : 24))
-                                .foregroundStyle(star <= mathStars ? GeniColor.yellow : .gray.opacity(0.3))
-                        }
-                    }
-
-                    HStack(spacing: 4) {
-                        Text("🪙")
-                            .foregroundStyle(GeniColor.yellow)
-                        Text("+\(mathCoins)")
-                            .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
-                            .foregroundStyle(GeniColor.border)
-                    }
-                    .padding(.top, 4)
-                }
-                .opacity(appeared ? 1 : 0)
-                .offset(y: appeared ? 0 : 20)
-
-                VStack(spacing: 8) {
-                    Text("📖")
-                        .font(.system(size: expanded ? 54 : 36))
-                        .foregroundStyle(GeniColor.green)
-
-                    Text(L.s(.nowLetsRead))
-                        .font(.system(expanded ? .largeTitle : .title2, design: .rounded, weight: .black))
+                HStack(spacing: 4) {
+                    Text("🪙")
+                    Text("+\(mathCoins)")
+                        .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
                         .foregroundStyle(GeniColor.border)
                 }
-                .padding(24)
-                .frame(maxWidth: .infinity)
-                .softSurface(GeniColor.card)
-                .opacity(showButton ? 1 : 0)
-                .offset(y: showButton ? 0 : 30)
-
-                Spacer()
-
-                VStack(spacing: expanded ? 28 : 16) {
-                    Button {
-                        HapticManager.impact(.medium)
-                        onContinue()
-                    } label: {
-                        HStack(spacing: 10) {
-                            Text(L.s(onFinish == nil ? .continueToReading : .startReading))
-                            Text("▶️").font(.system(size: expanded ? 24 : 16))
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(BrutalistButton(color: GeniColor.green, fontSize: expanded ? 30 : nil, verticalPadding: expanded ? 26 : nil))
-                    .accessibilityIdentifier("missionTransition.continue")
-
-                    if let onFinish {
-                        Button {
-                            HapticManager.selection()
-                            onFinish()
-                        } label: {
-                            Text(L.s(.done))
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(BrutalistButton(color: GeniColor.card, textColor: GeniColor.border))
-                        .accessibilityIdentifier("missionTransition.finish")
-                    }
-                }
-                .padding(.horizontal, 20)
-                .opacity(showButton ? 1 : 0)
-                .offset(y: showButton ? 0 : 20)
-
-                Spacer().frame(height: 40)
             }
-            .padding(.horizontal, 20)
-            .frame(maxWidth: expanded ? 800 : .infinity)
-            .frame(maxWidth: .infinity)
-        }
-        .animation(.spring(response: 0.5, dampingFraction: 0.7), value: appeared)
-        .animation(.spring(response: 0.5).delay(0.5), value: showButton)
-        .onAppear {
-            appeared = true
-            HapticManager.notification(.success)
-            Task {
-                try? await Task.sleep(for: .seconds(0.3))
-                checkBounce += 1
-                try? await Task.sleep(for: .seconds(0.5))
-                showButton = true
+
+            VStack(spacing: 8) {
+                Text("📖")
+                    .font(.system(size: expanded ? 54 : 36))
+
+                Text(L.s(.nowLetsRead))
+                    .font(.system(expanded ? .largeTitle : .title2, design: .rounded, weight: .black))
+                    .foregroundStyle(GeniColor.border)
+                    .multilineTextAlignment(.center)
+            }
+            .completionCard()
+        } actions: {
+            CompletionButton(title: L.s(onFinish == nil ? .continueToReading : .startReading), color: GeniColor.green,
+                             showsPlay: true, identifier: "missionTransition.continue", action: onContinue)
+
+            if let onFinish {
+                CompletionButton(title: L.s(.done), color: GeniColor.card, textColor: GeniColor.border,
+                                 isPrimary: false, identifier: "missionTransition.finish", action: onFinish)
             }
         }
+        .onAppear { HapticManager.notification(.success) }
     }
 }

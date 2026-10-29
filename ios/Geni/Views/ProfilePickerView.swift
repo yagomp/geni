@@ -16,7 +16,7 @@ struct ProfilePickerView: View {
                     .font(.system(.largeTitle, design: .rounded, weight: .black))
                     .foregroundStyle(GeniColor.border)
 
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 20)], spacing: 20) {
+                CenteredWrapLayout(minTileWidth: 140, maxTileWidth: 180, spacing: 20) {
                     ForEach(Array(profiles.enumerated()), id: \.element.id) { index, profile in
                         let avatar = AvatarOption.find(profile.avatarId)
                         Button {
@@ -33,7 +33,7 @@ struct ProfilePickerView: View {
                                     .font(.system(.headline, design: .rounded, weight: .bold))
                                     .foregroundStyle(GeniColor.border)
 
-                                Text("\(profile.age) \(L.s(.age).lowercased())")
+                                Text("\(L.s(.age)) \(profile.age)")
                                     .font(.system(.caption, design: .rounded))
                                     .foregroundStyle(.black)
                             }
@@ -76,5 +76,60 @@ struct ProfilePickerView: View {
             }
         }
         .onAppear { appeared = true }
+    }
+}
+
+/// Wraps tiles into rows that fit the width and centres every row, including a short last row.
+private struct CenteredWrapLayout: Layout {
+    let minTileWidth: CGFloat
+    let maxTileWidth: CGFloat
+    let spacing: CGFloat
+
+    private struct Arrangement {
+        var tileWidth: CGFloat
+        var rows: [Range<Int>]
+    }
+
+    private func arrange(count: Int, width: CGFloat) -> Arrangement {
+        let columns = max(1, Int((width + spacing) / (minTileWidth + spacing)))
+        let tileWidth = min(maxTileWidth, (width - CGFloat(columns - 1) * spacing) / CGFloat(columns))
+        let rows = stride(from: 0, to: count, by: columns).map { $0..<min($0 + columns, count) }
+        return Arrangement(tileWidth: tileWidth, rows: rows)
+    }
+
+    private func rowHeights(_ arrangement: Arrangement, _ subviews: Subviews) -> [CGFloat] {
+        let proposal = ProposedViewSize(width: arrangement.tileWidth, height: nil)
+        return arrangement.rows.map { row in
+            row.map { subviews[$0].sizeThatFits(proposal).height }.max() ?? 0
+        }
+    }
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let width = proposal.width ?? maxTileWidth * CGFloat(subviews.count) + spacing * CGFloat(max(subviews.count - 1, 0))
+        let arrangement = arrange(count: subviews.count, width: width)
+        let heights = rowHeights(arrangement, subviews)
+        let height = heights.reduce(0, +) + spacing * CGFloat(max(heights.count - 1, 0))
+        let widest = arrangement.rows.map(\.count).max() ?? 0
+        let usedWidth = CGFloat(widest) * arrangement.tileWidth + spacing * CGFloat(max(widest - 1, 0))
+        return CGSize(width: usedWidth, height: height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        let arrangement = arrange(count: subviews.count, width: bounds.width)
+        let heights = rowHeights(arrangement, subviews)
+        var y = bounds.minY
+        for (row, height) in zip(arrangement.rows, heights) {
+            let rowWidth = CGFloat(row.count) * arrangement.tileWidth + spacing * CGFloat(row.count - 1)
+            var x = bounds.midX - rowWidth / 2
+            for index in row {
+                subviews[index].place(
+                    at: CGPoint(x: x, y: y),
+                    anchor: .topLeading,
+                    proposal: ProposedViewSize(width: arrangement.tileWidth, height: height)
+                )
+                x += arrangement.tileWidth + spacing
+            }
+            y += height + spacing
+        }
     }
 }

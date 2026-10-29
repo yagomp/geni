@@ -23,7 +23,6 @@ nonisolated enum LocaleKey: String, Sendable {
     case startChapter
     case continueChapter
     case chapterComplete
-    case greatJob
     case keepGoing
     case almostThere
     case tryAgain
@@ -392,7 +391,6 @@ nonisolated enum L {
         case .startChapter: return "Start"
         case .continueChapter: return "Continue"
         case .chapterComplete: return "Chapter Complete!"
-        case .greatJob: return "Great job!"
         case .keepGoing: return "Keep going!"
         case .almostThere: return "Almost!"
         case .tryAgain: return "Try again!"
@@ -657,7 +655,6 @@ nonisolated enum L {
         case .startChapter: return "Start"
         case .continueChapter: return "Fortsett"
         case .chapterComplete: return "Kapittel fullf\u{00F8}rt!"
-        case .greatJob: return "Kjempebra!"
         case .keepGoing: return "Fortsett!"
         case .almostThere: return "Nesten!"
         case .tryAgain: return "Pr\u{00F8}v igjen!"
@@ -922,7 +919,6 @@ nonisolated enum L {
         case .startChapter: return "Empezar"
         case .continueChapter: return "Continuar"
         case .chapterComplete: return "\u{00A1}Cap\u{00ED}tulo completado!"
-        case .greatJob: return "\u{00A1}Muy bien!"
         case .keepGoing: return "\u{00A1}Sigue as\u{00ED}!"
         case .almostThere: return "\u{00A1}Casi!"
         case .tryAgain: return "\u{00A1}Int\u{00E9}ntalo de nuevo!"
@@ -1187,7 +1183,6 @@ nonisolated enum L {
         case .startChapter: return "Come\u{00E7}ar"
         case .continueChapter: return "Continuar"
         case .chapterComplete: return "Cap\u{00ED}tulo conclu\u{00ED}do!"
-        case .greatJob: return "Muito bem!"
         case .keepGoing: return "Continua!"
         case .almostThere: return "Quase!"
         case .tryAgain: return "Tenta outra vez!"

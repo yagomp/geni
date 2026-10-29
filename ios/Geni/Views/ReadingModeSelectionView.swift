@@ -44,9 +44,8 @@ private struct ReadingModeSelectionViewLayout: View {
                 Spacer()
 
                 VStack(spacing: 8) {
-                    Text("📖")
-                        .font(.system(size: expanded ? 72 : 48))
-                        .foregroundStyle(GeniColor.green)
+                    MascotPoseView(pose: .book, height: expanded ? 180 : 110)
+                        .padding(.bottom, 4)
 
                     Text(L.s(.readingTime))
                         .font(.system(size: expanded ? 48 : 32, weight: .black, design: .rounded))

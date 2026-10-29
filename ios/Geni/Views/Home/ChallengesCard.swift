@@ -52,13 +52,10 @@ struct ChallengesCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                HStack(spacing: 8) {
-                    Text("🎮").font(.system(size: expanded ? 44 : 30))
-                    Text(L.s(.challengesTitle))
-                        .font(.system(expanded ? .largeTitle : .title2, design: .rounded, weight: .black))
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.75)
-                }
+                Text(L.s(.challengesTitle))
+                    .font(.system(expanded ? .largeTitle : .title2, design: .rounded, weight: .black))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.75)
                 Spacer(minLength: 8)
                 if summary.showsExtras {
                     ChallengeCountdown(viewModel: viewModel)

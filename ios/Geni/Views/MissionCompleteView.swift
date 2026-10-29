@@ -26,220 +26,108 @@ private struct MissionCompleteViewLayout: View {
     let rewards: RewardState
     let onContinue: () -> Void
 
-    @State private var appeared = false
-    @State private var showConfetti = false
-    @State private var starsBounce = 0
-    @State private var showBonus = false
-
     private var totalCoins: Int {
         mathCoins + readingCoins + bonusCoins
     }
 
     var body: some View {
-        ZStack {
-            GeniColor.background.ignoresSafeArea()
+        CompletionScaffold(mascot: .cheer, title: L.s(.missionComplete)) {
+            CompletionStars(stars: mathStars)
 
-            if showConfetti {
-                ConfettiView()
-                    .ignoresSafeArea()
-                    .allowsHitTesting(false)
-            }
+            VStack(spacing: expanded ? 24 : 10) {
+                CoinLine(icon: "➕", tint: GeniColor.blue, label: L.s(.mathDone), coins: mathCoins)
+                divider
+                CoinLine(icon: "📖", tint: GeniColor.green, label: L.s(.readingDone2), coins: readingCoins)
 
-            ScrollView {
-                VStack(spacing: expanded ? 32 : 24) {
-                    Spacer().frame(height: 20)
-
-                    Text("🎉")
-                        .font(.system(size: expanded ? 96 : iPadScale.value(64)))
-                        .opacity(appeared ? 1 : 0)
-                        .scaleEffect(appeared ? 1 : 0.3)
-                        .animation(.spring(response: 0.5, dampingFraction: 0.6), value: appeared)
-
-                    Text(L.s(.missionComplete))
-                        .font(.system(size: expanded ? 48 : iPadScale.value(32), weight: .black, design: .rounded))
-                        .foregroundStyle(GeniColor.border)
-                        .multilineTextAlignment(.center)
-                        .opacity(appeared ? 1 : 0)
-                        .animation(.spring(response: 0.5).delay(0.2), value: appeared)
-
-                    HStack(spacing: 10) {
-                        ForEach(1...5, id: \.self) { star in
-                            Text(star <= mathStars ? "⭐" : "☆")
-                                .font(.system(size: expanded ? 42 : 28))
-                                .foregroundStyle(star <= mathStars ? GeniColor.yellow : .gray.opacity(0.3))
-                        }
-                    }
-                    .opacity(appeared ? 1 : 0)
-                    .animation(.spring(response: 0.5).delay(0.3), value: appeared)
-
-                    VStack(spacing: expanded ? 28 : 16) {
-                        HStack(spacing: 12) {
-                            Text("➕")
-                                .font(.title3)
-                                .frame(width: 36, height: 36)
-                                .softSurface(GeniColor.blue, radiusScale: 0.5)
-
-                            Text(L.s(.mathDone))
-                                .font(.system(expanded ? .title2 : .body, design: .rounded, weight: .semibold))
-                                .foregroundStyle(GeniColor.border)
-
-                            Spacer()
-
-                            Text("+\(mathCoins) 🪙")
-                                .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
-                                .foregroundStyle(GeniColor.border)
-                        }
-
-                        Rectangle()
-                            .fill(GeniColor.border.opacity(0.1))
-                            .frame(height: 2)
-
-                        HStack(spacing: 12) {
-                            Text("📖")
-                                .font(.title3)
-                                .foregroundStyle(.white)
-                                .frame(width: 36, height: 36)
-                                .softSurface(GeniColor.green, radiusScale: 0.5)
-
-                            Text(L.s(.readingDone2))
-                                .font(.system(expanded ? .title2 : .body, design: .rounded, weight: .semibold))
-                                .foregroundStyle(GeniColor.border)
-
-                            Spacer()
-
-                            Text("+\(readingCoins) 🪙")
-                                .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
-                                .foregroundStyle(GeniColor.border)
-                        }
-
-                        if bonusCoins > 0 {
-                            Rectangle()
-                                .fill(GeniColor.border.opacity(0.1))
-                                .frame(height: 2)
-
-                            HStack(spacing: 12) {
-                                Text("✨")
-                                    .font(.title3)
-                                    .frame(width: 36, height: 36)
-                                    .softSurface(GeniColor.yellow, radiusScale: 0.5)
-
-                                Text(L.s(.bonusEarned))
-                                    .font(.system(expanded ? .title2 : .body, design: .rounded, weight: .semibold))
-                                    .foregroundStyle(GeniColor.border)
-
-                                Spacer()
-
-                                Text("+\(bonusCoins) 🪙")
-                                    .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
-                                    .foregroundStyle(GeniColor.border)
-                            }
-                        }
-
-                        Rectangle()
-                            .fill(GeniColor.hairline)
-                            .frame(height: 3)
-
-                        HStack {
-                            Text(L.s(.total))
-                                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
-                                .foregroundStyle(GeniColor.border)
-
-                            Spacer()
-
-                            Text("+\(totalCoins) 🪙")
-                                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
-                                .foregroundStyle(GeniColor.border)
-                        }
-                    }
-                    .padding(expanded ? 32 : 20)
-                    .softSurface(GeniColor.card)
-                    .opacity(appeared ? 1 : 0)
-                    .offset(y: appeared ? 0 : 40)
-                    .animation(.spring(response: 0.5).delay(0.5), value: appeared)
-
-                    HStack(spacing: 16) {
-                        VStack(spacing: 4) {
-                            Text("🔥")
-                                .font(.title2)
-                                .foregroundStyle(GeniColor.orange)
-                            Text("\(rewards.streakCount)")
-                                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
-                                .foregroundStyle(GeniColor.border)
-                            Text(rewards.streakCount == 1 ? L.s(.day) : L.s(.days))
-                                .font(.system(expanded ? .subheadline : .caption2, design: .rounded, weight: .medium))
-                                .foregroundStyle(.black)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .softSurface(GeniColor.card)
-
-                        VStack(spacing: 4) {
-                            Text("⭐")
-                                .font(.title2)
-                                .foregroundStyle(GeniColor.yellow)
-                            Text("\(mathStars)/5")
-                                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
-                                .foregroundStyle(GeniColor.border)
-                            Text(L.s(.stars))
-                                .font(.system(expanded ? .subheadline : .caption2, design: .rounded, weight: .medium))
-                                .foregroundStyle(.black)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .softSurface(GeniColor.card)
-
-                        VStack(spacing: 4) {
-                            Text("🪙")
-                                .font(.title2)
-                                .foregroundStyle(GeniColor.yellow)
-                            Text("\(rewards.coins)")
-                                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
-                                .foregroundStyle(GeniColor.border)
-                            Text(L.s(.coins))
-                                .font(.system(expanded ? .subheadline : .caption2, design: .rounded, weight: .medium))
-                                .foregroundStyle(.black)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 12)
-                        .softSurface(GeniColor.card)
-                    }
-                    .opacity(appeared ? 1 : 0)
-                    .offset(y: appeared ? 0 : 40)
-                    .animation(.spring(response: 0.5).delay(0.7), value: appeared)
-
-                    Button {
-                        HapticManager.impact(.medium)
-                        onContinue()
-                    } label: {
-                        Text(L.s(.done))
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(BrutalistButton(color: GeniColor.blue, fontSize: expanded ? 30 : nil, verticalPadding: expanded ? 26 : nil))
-                    .accessibilityIdentifier("missionComplete.done")
-                    .padding(.horizontal, 12)
-                    .opacity(appeared ? 1 : 0)
-                    .animation(.spring(response: 0.5).delay(0.9), value: appeared)
-
-                    Spacer().frame(height: iPadScale.value(40))
+                if bonusCoins > 0 {
+                    divider
+                    CoinLine(icon: "✨", tint: GeniColor.yellow, label: L.s(.bonusEarned), coins: bonusCoins)
                 }
-                .padding(.horizontal, iPadScale.padding)
-                .frame(maxWidth: expanded ? 840 : .infinity)
-                .frame(maxWidth: .infinity)
-                .foregroundStyle(.black)
+
+                Rectangle()
+                    .fill(GeniColor.hairline)
+                    .frame(height: 3)
+
+                HStack {
+                    Text(L.s(.total))
+                    Spacer()
+                    Text("+\(totalCoins) 🪙")
+                }
+                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
+                .foregroundStyle(GeniColor.border)
             }
+            .completionCard()
+
+            HStack(spacing: expanded ? 16 : 12) {
+                StatTile(icon: "🔥", value: "\(rewards.streakCount)", label: rewards.streakCount == 1 ? L.s(.day) : L.s(.days))
+                StatTile(icon: "⭐", value: "\(mathStars)/5", label: L.s(.stars))
+                StatTile(icon: "🪙", value: "\(rewards.coins)", label: L.s(.coins))
+            }
+        } actions: {
+            CompletionButton(title: L.s(.done), color: GeniColor.blue, identifier: "missionComplete.done", action: onContinue)
         }
         .task {
             do { try await Task.sleep(for: .seconds(0.5)) } catch { return }
             HapticManager.coinRipple(count: totalCoins)
         }
-        .onAppear {
-            appeared = true
-            HapticManager.correctAnswer()
-            Task {
-                try? await Task.sleep(for: .seconds(0.5))
-                starsBounce += 1
-                showConfetti = true
-            }
+        .onAppear { HapticManager.correctAnswer() }
+    }
+
+    private var divider: some View {
+        Rectangle()
+            .fill(GeniColor.border.opacity(0.1))
+            .frame(height: 2)
+    }
+}
+
+/// One mission part and the coins it earned.
+private struct CoinLine: View {
+    @Environment(\.geniExpandedLayout) private var expanded
+    let icon: String
+    let tint: Color
+    let label: String
+    let coins: Int
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(icon)
+                .font(.title3)
+                .frame(width: 36, height: 36)
+                .softSurface(tint, radiusScale: 0.5)
+
+            Text(label)
+                .font(.system(expanded ? .title2 : .body, design: .rounded, weight: .semibold))
+                .foregroundStyle(GeniColor.border)
+
+            Spacer()
+
+            Text("+\(coins) 🪙")
+                .font(.system(expanded ? .title2 : .headline, design: .rounded, weight: .black))
+                .foregroundStyle(GeniColor.border)
         }
+    }
+}
+
+/// A small card with an icon, a number and its unit.
+private struct StatTile: View {
+    @Environment(\.geniExpandedLayout) private var expanded
+    let icon: String
+    let value: String
+    let label: String
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(icon)
+                .font(.title2)
+            Text(value)
+                .font(.system(expanded ? .title : .title3, design: .rounded, weight: .black))
+                .foregroundStyle(GeniColor.border)
+            Text(label)
+                .font(.system(expanded ? .subheadline : .caption2, design: .rounded, weight: .medium))
+                .foregroundStyle(.black)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, expanded ? 16 : 10)
+        .softSurface(GeniColor.card)
     }
 }

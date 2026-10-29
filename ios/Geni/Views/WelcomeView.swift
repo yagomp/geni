@@ -3,9 +3,7 @@ import SwiftUI
 struct WelcomeView: View {
     let onGetStarted: () -> Void
     @State private var appeared = false
-    @State private var mascotBob = false
-    @State private var mascotTilt = false
-    @State private var mascotTapped = false
+    @State private var cheers = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private let heroBackground = Color(red: 1.0, green: 247 / 255, blue: 224 / 255)
 
@@ -15,24 +13,24 @@ struct WelcomeView: View {
                 Spacer()
 
                 VStack(spacing: 16) {
-                    Image("HeroMascot")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: min(iPadScale.value(290), geo.size.height * 0.38))
-                        .scaleEffect(appeared ? (mascotTapped ? 1.18 : 1.0) : (reduceMotion ? 1 : 0.3))
-                        .rotationEffect(.degrees(reduceMotion ? 0 : (mascotTilt ? 4 : -4)))
-                        .offset(y: reduceMotion ? 0 : (mascotBob ? -10 : 8))
-                        .opacity(appeared ? 1 : 0)
-                        .animation(.spring(response: 0.6, dampingFraction: 0.6), value: appeared)
-                        .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: mascotBob)
-                        .animation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true), value: mascotTilt)
-                        .animation(.spring(response: 0.3, dampingFraction: 0.45), value: mascotTapped)
-                        .onTapGesture {
-                            mascotTapped = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.22) {
-                                mascotTapped = false
-                            }
+                    // The clips frame Geni a little looser than the old still did; 1.04 keeps Geni the same size.
+                    let height = min(iPadScale.value(440), geo.size.height * 0.56) * 1.04
+                    Group {
+                        if reduceMotion {
+                            Image("HeroMascot")
+                                .resizable()
+                                .scaledToFit()
+                        } else {
+                            MascotVideoView(cheers: cheers)
                         }
+                    }
+                    .frame(width: height * MascotVideoView.aspectRatio, height: height)
+                    .scaleEffect(appeared || reduceMotion ? 1 : 0.3)
+                    .opacity(appeared ? 1 : 0)
+                    .animation(.spring(response: 0.6, dampingFraction: 0.6), value: appeared)
+                    .contentShape(Rectangle())
+                    .onTapGesture { cheers += 1 }
+                    .accessibilityHidden(true)
 
                     Text(L.s(.appName))
                         .font(.system(size: iPadScale.value(56), weight: .black, design: .rounded))
@@ -68,9 +66,13 @@ struct WelcomeView: View {
         .background(heroBackground.ignoresSafeArea())
         .onAppear {
             appeared = true
-            guard !reduceMotion else { return }
-            mascotBob = true
-            mascotTilt = true
+            #if DEBUG
+            // Demo recordings: `-mascotDemoCheerAfter 8` cheers 8 s after the screen appears.
+            let demoCheer = UserDefaults.standard.double(forKey: "mascotDemoCheerAfter")
+            if demoCheer > 0 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + demoCheer) { cheers += 1 }
+            }
+            #endif
         }
     }
 }

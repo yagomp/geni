@@ -93,10 +93,8 @@ private struct WeekRow: View {
         ViewThatFits(in: .horizontal) {
             row(widest: widest, size: big)
             row(widest: widest, size: expanded ? 21 : iPadScale.value(15))
-            Grid(horizontalSpacing: gap, verticalSpacing: gap) {
-                GridRow { cards(0..<4, widest: widest, size: big) }
-                GridRow { cards(4..<7, widest: widest, size: big) }
-            }
+            grid(widest: widest, size: big)
+            if expanded { grid(widest: widest, size: 21) }
             VStack(spacing: 4) { cards(0..<7, widest: widest, size: iPadScale.value(18), height: iPadScale.value(32)) }
                 .frame(maxWidth: 320)
         }
@@ -107,6 +105,13 @@ private struct WeekRow: View {
     private var gap: CGFloat { expanded ? 10 : 6 }
     private var missingDay: String {
         L.t("missing day", no: "dagen som mangler", es: "el día que falta", pt: "o dia que falta")
+    }
+
+    private func grid(widest: String, size: CGFloat) -> some View {
+        Grid(horizontalSpacing: gap, verticalSpacing: gap) {
+            GridRow { cards(0..<4, widest: widest, size: size) }
+            GridRow { cards(4..<7, widest: widest, size: size) }
+        }
     }
 
     private func row(widest: String, size: CGFloat) -> some View {

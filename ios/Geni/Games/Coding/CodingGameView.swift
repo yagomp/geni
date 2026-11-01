@@ -11,14 +11,17 @@ struct CodingGameView: View {
         if let payload = spec.payload as? CodingGridPayload {
             VStack(spacing: GameStyle.gap(24, expanded: expanded)) {
                 GameQuestion(text: spec.prompt)
-                GameSceneCard(framed: false) { RobotGrid(board: payload.board) }
-                VStack(spacing: GameStyle.gap(8, expanded: expanded)) {
-                    ForEach(Array(payload.choices.enumerated()), id: \.element.value) { i, choice in
-                        GameChoiceTile(value: choice.value, exercise: exercise, chapterVM: chapterVM,
-                                       persistence: persistence, height: 64) {
-                            ProgramStrip(program: payload.programs[i])
+                ExercisePictureAndAnswers(spacing: GameStyle.gap(24, expanded: expanded)) {
+                    GameSceneCard(framed: false) { RobotGrid(board: payload.board) }
+                } answers: {
+                    VStack(spacing: GameStyle.gap(8, expanded: expanded)) {
+                        ForEach(Array(payload.choices.enumerated()), id: \.element.value) { i, choice in
+                            GameChoiceTile(value: choice.value, exercise: exercise, chapterVM: chapterVM,
+                                           persistence: persistence, height: 64) {
+                                ProgramStrip(program: payload.programs[i])
+                            }
+                            .accessibilityLabel(CodingGames.spoken(payload.programs[i]))
                         }
-                        .accessibilityLabel(CodingGames.spoken(payload.programs[i]))
                     }
                 }
             }

@@ -6,6 +6,7 @@ struct ClockExerciseView: View {
     let persistence: PersistenceService
     @Environment(\.geniExpandedLayout) private var expanded
     @Environment(\.geniLearningSize) private var availableSize
+    @Environment(\.geniExerciseViewport) private var viewport
     @State private var setTime = ClockTime(hour: 12, minute: 0)
 
     init(exercise: Exercise, chapterVM: ChapterViewModel, persistence: PersistenceService) {
@@ -35,37 +36,51 @@ struct ClockExerciseView: View {
                                   leftLabels: exercise.matchLeftLabels ?? [], rightLabels: exercise.matchRightLabels ?? [],
                                   leftClocks: exercise.clockTimes)
             case .clockSet:
-                Text(target.digital)
-                    .font(.system(size: expanded ? 80 : iPadScale.value(48), weight: .black, design: .monospaced))
-                    .foregroundStyle(GeniColor.blue)
-                    .accessibilityIdentifier("clock.target")
-                ClockFaceView(time: setTime, minuteStep: exercise.clockMinuteStep) { setTime = $0 }
-                    .frame(maxWidth: expanded ? clockSize : iPadScale.value(280))
-                    .allowsHitTesting(!chapterVM.showFeedback && !chapterVM.isAwaitingAdvance)
-                    .disabled(chapterVM.showFeedback || chapterVM.isAwaitingAdvance)
-                Button(L.s(.clockCheck)) { chapterVM.submitClockTime(setTime, persistence: persistence) }
-                    .buttonStyle(BrutalistButton(color: GeniColor.blue, fontSize: expanded ? 32 : nil, verticalPadding: expanded ? 24 : nil))
-                    .disabled(chapterVM.showFeedback || chapterVM.isAwaitingAdvance)
-                    .accessibilityIdentifier("clock.check")
-            default:
-                ClockFaceView(time: target)
-                    .frame(maxWidth: expanded ? clockSize : iPadScale.value(260))
-                    .accessibilityIdentifier("clock.face")
-                LazyVGrid(columns: [GridItem(.flexible(), spacing: expanded ? 24 : nil), GridItem(.flexible())], spacing: expanded ? 24 : 16) {
-                    ForEach(exercise.options, id: \.self) { answer in
-                        Button { chapterVM.submitAnswer(answer, persistence: persistence) } label: {
-                            Text(ClockTime(totalMinutes: answer).digital)
-                                .font(.system(size: expanded ? 40 : iPadScale.value(28), weight: .black, design: .monospaced))
-                                .frame(maxWidth: .infinity, minHeight: expanded ? 104 : 64)
-                                .feedbackSurface(answerColor(answer))
-                        }
-                        .buttonStyle(KidPressStyle())
+                let sideBySide = viewport.isWideExerciseArea
+                if !sideBySide { setTarget }
+                ExercisePictureAndAnswers(spacing: expanded ? 28 : 20) {
+                    ClockFaceView(time: setTime, minuteStep: exercise.clockMinuteStep) { setTime = $0 }
+                        .frame(maxWidth: expanded ? clockSize : iPadScale.value(280))
+                        .allowsHitTesting(!chapterVM.showFeedback && !chapterVM.isAwaitingAdvance)
                         .disabled(chapterVM.showFeedback || chapterVM.isAwaitingAdvance)
-                        .accessibilityIdentifier("answer.\(answer)")
+                } answers: {
+                    VStack(spacing: expanded ? 28 : 20) {
+                        if sideBySide { setTarget }
+                        Button(L.s(.clockCheck)) { chapterVM.submitClockTime(setTime, persistence: persistence) }
+                            .buttonStyle(BrutalistButton(color: GeniColor.blue, fontSize: expanded ? 32 : nil, verticalPadding: expanded ? 24 : nil))
+                            .disabled(chapterVM.showFeedback || chapterVM.isAwaitingAdvance)
+                            .accessibilityIdentifier("clock.check")
+                    }
+                }
+            default:
+                ExercisePictureAndAnswers(spacing: expanded ? 28 : 20) {
+                    ClockFaceView(time: target)
+                        .frame(maxWidth: expanded ? clockSize : iPadScale.value(260))
+                        .accessibilityIdentifier("clock.face")
+                } answers: {
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: expanded ? 24 : nil), GridItem(.flexible())], spacing: expanded ? 24 : 16) {
+                        ForEach(exercise.options, id: \.self) { answer in
+                            Button { chapterVM.submitAnswer(answer, persistence: persistence) } label: {
+                                Text(ClockTime(totalMinutes: answer).digital)
+                                    .font(.system(size: expanded ? 40 : iPadScale.value(28), weight: .black, design: .monospaced))
+                                    .frame(maxWidth: .infinity, minHeight: expanded ? 104 : 64)
+                                    .feedbackSurface(answerColor(answer))
+                            }
+                            .buttonStyle(KidPressStyle())
+                            .disabled(chapterVM.showFeedback || chapterVM.isAwaitingAdvance)
+                            .accessibilityIdentifier("answer.\(answer)")
+                        }
                     }
                 }
             }
         }
+    }
+
+    private var setTarget: some View {
+        Text(target.digital)
+            .font(.system(size: expanded ? 80 : iPadScale.value(48), weight: .black, design: .monospaced))
+            .foregroundStyle(GeniColor.blue)
+            .accessibilityIdentifier("clock.target")
     }
 
     private var clockSize: CGFloat { availableSize.height < 1100 ? 420 : 500 }

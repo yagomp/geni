@@ -16,6 +16,7 @@ ios/ExportOptions.plist
 
 # Cloudflare local state
 .wrangler/
+.cloudflare/
 
 # Build artifacts
 build/

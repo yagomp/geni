@@ -261,7 +261,7 @@ private final class ReadingTestSpeechService: SpeechService {
 @MainActor
 private final class ReadingTestRecognitionService: SpeechRecognitionService {
     var holdPermission = false
-    var pendingPermission: CheckedContinuation<Bool, Never>?
+    var pendingPermission: CheckedContinuation<Permission, Never>?
     var startCalls = 0
 
     override init() {
@@ -269,15 +269,15 @@ private final class ReadingTestRecognitionService: SpeechRecognitionService {
         isAvailable = true
     }
 
-    override func requestPermissions() async -> Bool {
+    override func requestPermissions() async -> Permission {
         if holdPermission {
             return await withCheckedContinuation { pendingPermission = $0 }
         }
-        return true
+        return .granted
     }
 
     func resolvePermission(_ granted: Bool) {
-        pendingPermission?.resume(returning: granted)
+        pendingPermission?.resume(returning: granted ? .granted : .denied)
         pendingPermission = nil
     }
 

@@ -127,7 +127,7 @@ struct ParentDashboardView: View {
 
                     profilesSection
                     languageSection
-                    progressOverviewSection
+                    ParentProgressOverview(viewModel: viewModel)
                         #if DEBUG
                         .id("designPreview.parentProgress")
                         #endif
@@ -392,162 +392,6 @@ struct ParentDashboardView: View {
             }
             .accessibilityIdentifier("parent.add")
         }
-    }
-
-    private var progressOverviewSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(L.s(.progress))
-                .font(.system(.headline, design: .rounded, weight: .bold))
-
-            ForEach(viewModel.persistence.profiles) { profile in
-                let avatar = AvatarOption.find(profile.avatarId)
-                let rewards = viewModel.persistence.loadRewardState(for: profile.id)
-                let chapters = viewModel.persistence.loadAllChapters(for: profile.id)
-                let completedChapters = chapters.filter { $0.status == .completed }
-
-                VStack(spacing: 12) {
-                    HStack(spacing: 10) {
-                        Text(avatar.emoji)
-                            .font(.system(size: 28))
-                            .frame(width: 36, height: 36)
-
-                        Text(profile.nickname)
-                            .font(.system(.body, design: .rounded, weight: .bold))
-                            .foregroundStyle(GeniColor.border)
-
-                        Spacer()
-
-                        Text("\(L.s(.level)) \(rewards.level)")
-                            .font(.system(.caption, design: .rounded, weight: .bold))
-                            .foregroundStyle(GeniColor.purple)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 4)
-                            .background(GeniColor.purple.opacity(0.1))
-                            .clipShape(GeniShape(scale: 0.5))
-                            .overlay(
-                                GeniShape(scale: 0.5)
-                                    .stroke(GeniColor.purple.opacity(0.3), lineWidth: 2)
-                                    .allowsHitTesting(false)
-                            )
-                    }
-
-                    ParentChildInsights(
-                        viewModel: viewModel, profile: profile,
-                        chapters: chapters, rewards: rewards
-                    )
-
-                    if !completedChapters.isEmpty {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(L.s(.recentChapters))
-                                .font(.system(.caption2, design: .rounded, weight: .bold))
-                                .foregroundStyle(.black)
-                                .textCase(.uppercase)
-
-                            let recent = completedChapters.sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }.prefix(5)
-                            ForEach(Array(recent)) { ch in
-                                HStack(spacing: 8) {
-                                    Text(chapterTypeEmoji(ch.chapterType))
-                                        .font(.system(size: 12))
-                                        .frame(width: 20)
-
-                                    Text(chapterDateLabel(ch.date))
-                                        .font(.system(.caption, design: .rounded, weight: .semibold))
-                                        .foregroundStyle(GeniColor.border)
-
-                                    if ch.chapterType != .daily {
-                                        Text(chapterTypeName(ch.chapterType))
-                                            .font(.system(.caption2, design: .rounded, weight: .bold))
-                                            .foregroundStyle(chapterTypeColor(ch.chapterType))
-                                            .padding(.horizontal, 6)
-                                            .padding(.vertical, 2)
-                                            .background(chapterTypeColor(ch.chapterType).opacity(0.1))
-                                            .clipShape(GeniShape(scale: 0.5))
-                                            .overlay(
-                                                GeniShape(scale: 0.5)
-                                                    .stroke(chapterTypeColor(ch.chapterType).opacity(0.3), lineWidth: 1)
-                                                    .allowsHitTesting(false)
-                                            )
-                                    }
-
-                                    Spacer()
-
-                                    HStack(spacing: 1) {
-                                        ForEach(0..<5, id: \.self) { i in
-                                            Text(i < ch.stars ? "⭐" : "☆")
-                                                .font(.system(size: 10))
-                                                .foregroundStyle(i < ch.stars ? .primary : Color.gray.opacity(0.3))
-                                        }
-                                    }
-
-                                    Text("\(ch.correctCount)/\(ch.completedExerciseCount)")
-                                        .font(.system(.caption2, design: .monospaced, weight: .bold))
-                                        .foregroundStyle(.black)
-                                }
-                            }
-                        }
-                        .padding(.top, 4)
-                    } else {
-                        Text(L.s(.noChaptersYet))
-                            .font(.system(.caption, design: .rounded))
-                            .foregroundStyle(.black)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                }
-                .padding(12)
-                .softSurface(GeniColor.card)
-            }
-        }
-    }
-
-    private func chapterTypeEmoji(_ type: ChapterType) -> String {
-        switch type {
-        case .daily: return "📘"
-        case .timeAttack: return "⏱️"
-        case .perfectRun: return "👑"
-        case .boss: return "🛡️"
-        case .streak: return "🔥"
-        case .operationSpotlight: return "🔍"
-        }
-    }
-
-    private func chapterTypeColor(_ type: ChapterType) -> Color {
-        switch type {
-        case .daily: return GeniColor.blue
-        case .timeAttack: return GeniColor.orange
-        case .perfectRun: return GeniColor.purple
-        case .boss: return GeniColor.pink
-        case .streak: return GeniColor.orange
-        case .operationSpotlight: return GeniColor.cyan
-        }
-    }
-
-    private func chapterTypeName(_ type: ChapterType) -> String {
-        switch type {
-        case .daily: return L.s(.dailyChapter)
-        case .timeAttack: return L.s(.timeAttack)
-        case .perfectRun: return L.s(.perfectRun)
-        case .boss: return L.s(.bossChapter)
-        case .streak: return L.s(.streakBonus)
-        case .operationSpotlight: return L.s(.spotlightChapter)
-        }
-    }
-
-    private func chapterDateLabel(_ dateStr: String) -> String {
-        let today = viewModel.persistence.todayString()
-        if dateStr == today { return L.s(.today) }
-
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy-MM-dd"
-        if let date = fmt.date(from: dateStr) {
-            let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
-            let yesterdayStr = fmt.string(from: yesterday)
-            if dateStr == yesterdayStr { return L.s(.yesterday) }
-
-            let display = DateFormatter()
-            display.dateStyle = .short
-            return display.string(from: date)
-        }
-        return dateStr
     }
 
     private var vibrationSection: some View {
@@ -926,6 +770,168 @@ struct ParentDashboardView: View {
                 }
             }
         }
+    }
+}
+
+/// Decodes every child's chapter history, so it lives in its own view: sync status and toggles
+/// elsewhere on the settings page re-render the page without re-reading this from storage.
+private struct ParentProgressOverview: View {
+    @Bindable var viewModel: AppViewModel
+
+    private static let storageFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L.s(.progress))
+                .font(.system(.headline, design: .rounded, weight: .bold))
+
+            ForEach(viewModel.persistence.profiles) { profile in
+                let avatar = AvatarOption.find(profile.avatarId)
+                let rewards = viewModel.persistence.loadRewardState(for: profile.id)
+                let chapters = viewModel.persistence.loadAllChapters(for: profile.id)
+                let completedChapters = chapters.filter { $0.status == .completed }
+
+                VStack(spacing: 12) {
+                    HStack(spacing: 10) {
+                        Text(avatar.emoji)
+                            .font(.system(size: 28))
+                            .frame(width: 36, height: 36)
+
+                        Text(profile.nickname)
+                            .font(.system(.body, design: .rounded, weight: .bold))
+                            .foregroundStyle(GeniColor.border)
+
+                        Spacer()
+
+                        Text("\(L.s(.level)) \(rewards.level)")
+                            .font(.system(.caption, design: .rounded, weight: .bold))
+                            .foregroundStyle(GeniColor.purple)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(GeniColor.purple.opacity(0.1))
+                            .clipShape(GeniShape(scale: 0.5))
+                            .overlay(
+                                GeniShape(scale: 0.5)
+                                    .stroke(GeniColor.purple.opacity(0.3), lineWidth: 2)
+                                    .allowsHitTesting(false)
+                            )
+                    }
+
+                    ParentChildInsights(
+                        viewModel: viewModel, profile: profile,
+                        chapters: chapters, rewards: rewards
+                    )
+
+                    if !completedChapters.isEmpty {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(L.s(.recentChapters))
+                                .font(.system(.caption2, design: .rounded, weight: .bold))
+                                .foregroundStyle(.black)
+                                .textCase(.uppercase)
+
+                            let recent = completedChapters.sorted { ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) }.prefix(5)
+                            ForEach(Array(recent)) { ch in
+                                HStack(spacing: 8) {
+                                    Text(chapterTypeEmoji(ch.chapterType))
+                                        .font(.system(size: 12))
+                                        .frame(width: 20)
+
+                                    Text(chapterDateLabel(ch.date))
+                                        .font(.system(.caption, design: .rounded, weight: .semibold))
+                                        .foregroundStyle(GeniColor.border)
+
+                                    if ch.chapterType != .daily {
+                                        Text(chapterTypeName(ch.chapterType))
+                                            .font(.system(.caption2, design: .rounded, weight: .bold))
+                                            .foregroundStyle(chapterTypeColor(ch.chapterType))
+                                            .padding(.horizontal, 6)
+                                            .padding(.vertical, 2)
+                                            .background(chapterTypeColor(ch.chapterType).opacity(0.1))
+                                            .clipShape(GeniShape(scale: 0.5))
+                                            .overlay(
+                                                GeniShape(scale: 0.5)
+                                                    .stroke(chapterTypeColor(ch.chapterType).opacity(0.3), lineWidth: 1)
+                                                    .allowsHitTesting(false)
+                                            )
+                                    }
+
+                                    Spacer()
+
+                                    HStack(spacing: 1) {
+                                        ForEach(0..<5, id: \.self) { i in
+                                            Text(i < ch.stars ? "⭐" : "☆")
+                                                .font(.system(size: 10))
+                                                .foregroundStyle(i < ch.stars ? .primary : Color.gray.opacity(0.3))
+                                        }
+                                    }
+
+                                    Text("\(ch.correctCount)/\(ch.completedExerciseCount)")
+                                        .font(.system(.caption2, design: .monospaced, weight: .bold))
+                                        .foregroundStyle(.black)
+                                }
+                            }
+                        }
+                        .padding(.top, 4)
+                    } else {
+                        Text(L.s(.noChaptersYet))
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundStyle(.black)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .padding(12)
+                .softSurface(GeniColor.card)
+            }
+        }
+    }
+
+    private func chapterTypeEmoji(_ type: ChapterType) -> String {
+        switch type {
+        case .daily: return "📘"
+        case .timeAttack: return "⏱️"
+        case .perfectRun: return "👑"
+        case .boss: return "🛡️"
+        case .streak: return "🔥"
+        case .operationSpotlight: return "🔍"
+        }
+    }
+
+    private func chapterTypeColor(_ type: ChapterType) -> Color {
+        switch type {
+        case .daily: return GeniColor.blue
+        case .timeAttack: return GeniColor.orange
+        case .perfectRun: return GeniColor.purple
+        case .boss: return GeniColor.pink
+        case .streak: return GeniColor.orange
+        case .operationSpotlight: return GeniColor.cyan
+        }
+    }
+
+    private func chapterTypeName(_ type: ChapterType) -> String {
+        switch type {
+        case .daily: return L.s(.dailyChapter)
+        case .timeAttack: return L.s(.timeAttack)
+        case .perfectRun: return L.s(.perfectRun)
+        case .boss: return L.s(.bossChapter)
+        case .streak: return L.s(.streakBonus)
+        case .operationSpotlight: return L.s(.spotlightChapter)
+        }
+    }
+
+    private func chapterDateLabel(_ dateStr: String) -> String {
+        let today = viewModel.persistence.todayString()
+        if dateStr == today { return L.s(.today) }
+
+        if let date = Self.storageFormatter.date(from: dateStr) {
+            let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+            if dateStr == Self.storageFormatter.string(from: yesterday) { return L.s(.yesterday) }
+            return date.formatted(date: .numeric, time: .omitted)
+        }
+        return dateStr
     }
 }
 

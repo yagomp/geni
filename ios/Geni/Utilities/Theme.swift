@@ -183,11 +183,16 @@ struct SoftSurface: ViewModifier {
     var color: Color
     var radiusScale: CGFloat
 
+    // The shadow is cast by the plain shape, not the clipped content: blurring a shape stays cheap
+    // while scrolling long pages, blurring text and emoji every frame does not.
     func body(content: Content) -> some View {
         content
-            .background(color, in: GeniShape(scale: radiusScale))
             .clipShape(GeniShape(scale: radiusScale))
-            .shadow(color: GeniColor.border.opacity(0.08), radius: 10, x: 0, y: 4)
+            .background {
+                GeniShape(scale: radiusScale)
+                    .fill(color)
+                    .shadow(color: GeniColor.border.opacity(0.08), radius: 10, x: 0, y: 4)
+            }
     }
 }
 

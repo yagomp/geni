@@ -25,16 +25,38 @@ class SpeechRecognitionService {
         isAvailable = recognizer?.isAvailable ?? false
     }
 
-    func requestPermissions() async -> Bool {
+    enum Permission {
+        case granted
+        /// The user said no; the toggles live on Geni's page in Settings.
+        case denied
+        /// Screen Time or device management blocks speech recognition; Settings can't fix it.
+        case restricted
+    }
+
+    func requestPermissions() async -> Permission {
+        await Self.requestPermissions()
+    }
+
+    /// Prompts only for what is still undecided, otherwise returns the stored answer.
+    static func requestPermissions() async -> Permission {
+        let micGranted = await AVAudioApplication.requestRecordPermission()
         let speechStatus = await withCheckedContinuation { continuation in
-            SFSpeechRecognizer.requestAuthorization { status in
+            SFSpeechRecognizer.requestAuthorization { @Sendable status in
                 continuation.resume(returning: status)
             }
         }
 
-        let audioStatus = await AVAudioApplication.requestRecordPermission()
+        if speechStatus == .restricted { return .restricted }
+        return micGranted && speechStatus == .authorized ? .granted : .denied
+    }
 
-        return speechStatus == .authorized && audioStatus
+    /// True until both prompts have been answered; automation runs never ask up front.
+    static var shouldAskUpFront: Bool {
+        let args = ProcessInfo.processInfo.arguments
+        guard !args.contains("-uiTest"), !args.contains("-designPreview"), !args.contains("-demoRecording"),
+              ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" else { return false }
+        return AVAudioApplication.shared.recordPermission == .undetermined
+            || SFSpeechRecognizer.authorizationStatus() == .notDetermined
     }
 
     func startListening() {

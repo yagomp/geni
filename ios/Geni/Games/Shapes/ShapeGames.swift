@@ -89,18 +89,17 @@ enum ShapeGames {
                        difficulty: difficulty)
     }
 
-    // MARK: Which one does not belong? (three from one group, one from another)
+    // MARK: Which one does not belong? (three from one everyday group, one from an unrelated group)
 
-    /// Pictures that belong together. Every rule's odd group is disjoint from its three-picture group.
+    /// Everyday groups a young child can name. No picture is in two groups, so a question built from
+    /// one group plus a picture from another has exactly one answer, and no colour or shape rule competes.
     private static let pictureGroups: [String: [String]] = [
-        "red": ["🍎", "🍓", "🍒", "🚒", "🌹", "🔴"],
-        "blue": ["🌊", "💙", "🔵", "🟦"],
         "fruit": ["🍎", "🍌", "🍇", "🍓", "🍊", "🍐", "🍉", "🍑"],
         "vegetable": ["🥕", "🥦", "🌽", "🥔", "🍆", "🥒"],
-        "animal": ["🐸", "🐶", "🐱", "🐰", "🐥", "🐻", "🐷", "🐵", "🦁", "🐘"],
-        "vehicle": ["🚗", "🚕", "🚌", "🚒", "🚲", "🚂", "🚜", "🚀"],
-        "circle": colourPairs.map(\.circle),
-        "square": colourPairs.map(\.square)
+        "animal": ["🐶", "🐱", "🐰", "🐷", "🐮", "🦁", "🐘", "🐴"],
+        "sea": ["🐟", "🐙", "🐳", "🦀", "🐬", "🐠"],
+        "vehicle": ["🚗", "🚕", "🚌", "🚒", "🚲", "🚂", "🚜"],
+        "clothes": ["👕", "👖", "👗", "🧦", "🧢", "👟", "🧤"]
     ]
 
     /// Which picture groups a picture belongs to. Tests use it to check each question has one odd one out.
@@ -108,37 +107,27 @@ enum ShapeGames {
         Set(pictureGroups.filter { $0.value.contains(label) }.keys)
     }
 
+    /// Ages 4–5 compare groups that look nothing alike; age 6 compares close groups (fruit and vegetables).
     private static func oddRules(age: Int) -> [(group: String, odd: String)] {
         switch age {
         case ...4:
-            return [(group: "red", odd: "blue"), (group: "fruit", odd: "animal"), (group: "animal", odd: "vehicle")]
+            return [(group: "fruit", odd: "animal"), (group: "animal", odd: "vehicle"), (group: "vehicle", odd: "fruit")]
         case 5:
-            return [(group: "fruit", odd: "animal"), (group: "animal", odd: "vehicle"), (group: "square", odd: "circle")]
+            return [(group: "fruit", odd: "animal"), (group: "animal", odd: "vehicle"),
+                    (group: "clothes", odd: "fruit"), (group: "vehicle", odd: "clothes")]
         default:
-            return [(group: "fruit", odd: "vegetable"), (group: "vehicle", odd: "animal"), (group: "square", odd: "circle")]
+            return [(group: "fruit", odd: "vegetable"), (group: "vegetable", odd: "fruit"),
+                    (group: "animal", odd: "sea"), (group: "sea", odd: "animal")]
         }
     }
 
     private static func oddOneOut(age: Int, difficulty: ExerciseDifficulty) -> Exercise {
         let rule = oddRules(age: age).randomElement()!
-        let picks = rule.group == "square"
-            ? squaresAndCircle(difficulty: difficulty)
-            : threeAndOne(group: rule.group, odd: rule.odd)
+        let three = Array((pictureGroups[rule.group] ?? []).shuffled().prefix(3))
+        let odd = (pictureGroups[rule.odd] ?? []).randomElement()!
         return pickOne(.oddOneOut,
                        prompt: L.t("Which one does not belong?", no: "Hvilken hører ikke hjemme?", es: "¿Cuál no pertenece?", pt: "Qual não pertence?"),
-                       labels: picks.three + [picks.odd], correct: 3, difficulty: difficulty)
-    }
-
-    private static func threeAndOne(group: String, odd: String) -> (three: [String], odd: String) {
-        let three = Array((pictureGroups[group] ?? []).shuffled().prefix(3))
-        return (three: three, odd: (pictureGroups[odd] ?? []).randomElement()!)
-    }
-
-    private static func squaresAndCircle(difficulty: ExerciseDifficulty) -> (three: [String], odd: String) {
-        let pairs = colourPairs.shuffled()
-        // Harder: the circle is the colour of one of the squares, so only the shape tells them apart.
-        let odd = difficulty.rawValue >= ExerciseDifficulty.harder.rawValue ? pairs[0].circle : pairs[3].circle
-        return (three: pairs.prefix(3).map(\.square), odd: odd)
+                       labels: three + [odd], correct: 3, difficulty: difficulty)
     }
 
     // MARK: Shared

@@ -482,13 +482,17 @@ private struct DesignPreviewModifier: ViewModifier {
     @ViewBuilder
     private func framed(_ content: Content) -> some View {
         if let size = DesignPreview.frameSize {
-            content
-                .safeAreaInset(edge: .top, spacing: 0) { Color.black.frame(height: 20) }
-                .frame(width: size.width, height: size.height)
-                .clipped()
-                .overlay(Rectangle().stroke(Color.red, lineWidth: 1))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.gray.ignoresSafeArea())
+            // Frames bigger than the simulator (iPad landscape on a portrait simulator) are drawn scaled down.
+            GeometryReader { window in
+                content
+                    .safeAreaInset(edge: .top, spacing: 0) { Color.black.frame(height: 20) }
+                    .frame(width: size.width, height: size.height)
+                    .clipped()
+                    .overlay(Rectangle().stroke(Color.red, lineWidth: 1))
+                    .scaleEffect(min(1, window.size.width / size.width, window.size.height / size.height))
+                    .frame(width: window.size.width, height: window.size.height)
+            }
+            .background(Color.gray.ignoresSafeArea())
         } else {
             content
         }

@@ -134,17 +134,14 @@ struct ShapeTests {
             let others = payload.choices.filter { $0 != correct }
             guard others.count == 3 else { continue }
 
-            // Some group holds all three others and not the odd one out.
+            // All three others share a group, and the odd one out shares no group with any of them.
             let shared = others.dropFirst().reduce(ShapeGames.groupNames(of: others[0].label)) {
                 $0.intersection(ShapeGames.groupNames(of: $1.label))
             }
-            #expect(!shared.subtracting(ShapeGames.groupNames(of: correct.label)).isEmpty)
-
-            // Harder squares-and-circle: the odd circle's colour is one of the squares.
-            let squaresAndCircle = others.allSatisfy { ShapeGames.groupNames(of: $0.label).contains("square") }
-            if sample.difficulty.rawValue >= ExerciseDifficulty.harder.rawValue, squaresAndCircle,
-               let pair = ShapeGames.colourPairs.first(where: { $0.circle == correct.label }) {
-                #expect(others.contains { $0.label == pair.square })
+            #expect(!shared.isEmpty)
+            #expect(!ShapeGames.groupNames(of: correct.label).isEmpty)
+            for other in others {
+                #expect(ShapeGames.groupNames(of: other.label).isDisjoint(with: ShapeGames.groupNames(of: correct.label)))
             }
         }
     }

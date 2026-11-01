@@ -28,6 +28,7 @@ class ReadingViewModel {
     var feedbackMessage: String = ""
     var showFeedback: Bool = false
     var feedbackTone: FeedbackTone = .success
+    var showsSettingsButton = false
 
     private var timerTask: Task<Void, Never>?
     private var highlightTask: Task<Void, Never>?
@@ -274,15 +275,17 @@ class ReadingViewModel {
         feedbackMessage = ""
         showFeedback = false
         feedbackTone = .success
+        showsSettingsButton = false
 
         let generation = sessionGeneration
         permissionTask = Task {
-            let granted = await recognitionService.requestPermissions()
+            let permission = await recognitionService.requestPermissions()
             guard !Task.isCancelled, generation == sessionGeneration, isPlaying else { return }
-            guard granted else {
+            guard permission == .granted else {
                 pause()
-                feedbackMessage = L.s(.micPermissionNeeded)
+                feedbackMessage = L.s(permission == .restricted ? .speechBlockedByScreenTime : .micPermissionNeeded)
                 feedbackTone = .error
+                showsSettingsButton = permission == .denied
                 showFeedback = true
                 return
             }

@@ -14,6 +14,7 @@ struct GuidedReadingView: View {
 
 private struct GuidedReadingViewLayout: View {
     @Environment(\.geniExpandedLayout) private var expanded
+    @Environment(\.openURL) private var openURL
     let readingVM: ReadingViewModel
     let onComplete: (ReadingSession) -> Void
     let onExit: () -> Void
@@ -279,6 +280,19 @@ private struct GuidedReadingViewLayout: View {
                 .accessibilityIdentifier("reading.feedback")
 
             Spacer()
+
+            if readingVM.showsSettingsButton, let url = URL(string: UIApplication.openSettingsURLString) {
+                Button(L.s(.settings)) {
+                    HapticManager.selection()
+                    openURL(url)
+                }
+                .font(.system(expanded ? .title3 : .subheadline, design: .rounded, weight: .heavy))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .softSurface(GeniColor.blue)
+                .accessibilityIdentifier("reading.openSettings")
+            }
         }
         .padding(16)
         .softSurface(feedbackColor)

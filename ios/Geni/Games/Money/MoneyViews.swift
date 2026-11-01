@@ -105,44 +105,49 @@ struct MoneyPayView: View {
     private var content: some View {
         VStack(spacing: scaled(12)) {
             GameQuestion(text: spec.prompt)
-            GameSceneCard {
-                VStack(spacing: scaled(10)) {
-                    HStack(spacing: scaled(20)) {
-                        Text(payload.item.emoji)
-                            .font(.system(size: scaled(44)))
-                        MoneyPriceTag(amount: payload.item.price, currency: payload.currency, size: scaled(24))
+            ExercisePictureAndAnswers(spacing: scaled(12)) {
+                GameSceneCard {
+                    VStack(spacing: scaled(10)) {
+                        HStack(spacing: scaled(20)) {
+                            Text(payload.item.emoji)
+                                .font(.system(size: scaled(44)))
+                            MoneyPriceTag(amount: payload.item.price, currency: payload.currency, size: scaled(24))
+                        }
+                        Rectangle().fill(GameStyle.hairline).frame(height: 2)
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: scaled(4)), count: 5), spacing: scaled(4)) {
+                            ForEach(0..<MoneyCounter.capacity, id: \.self) { index in
+                                counterSlot(index)
+                            }
+                        }
+                        .accessibilityElement(children: .contain)
+                        .accessibilityLabel(L.t("On the counter: \(payload.currency.format(counter.total))", no: "På disken: \(payload.currency.format(counter.total))",
+                                                es: "En el mostrador: \(payload.currency.format(counter.total))", pt: "No balcão: \(payload.currency.format(counter.total))"))
                     }
-                    Rectangle().fill(GameStyle.hairline).frame(height: 2)
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: scaled(4)), count: 5), spacing: scaled(4)) {
-                        ForEach(0..<MoneyCounter.capacity, id: \.self) { index in
-                            counterSlot(index)
+                }
+            } answers: {
+                VStack(spacing: scaled(12)) {
+                    HStack(spacing: scaled(6)) {
+                        ForEach(payload.tray, id: \.value) { denomination in
+                            Button {
+                                HapticManager.coinDrop(note: denomination.form == .note)
+                                counter.add(denomination)
+                            } label: {
+                                MoneyToken(denomination: denomination, currency: payload.currency, size: scaled(46))
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: scaled(64))
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(GameTileStyle())
+                            .disabled(chapterVM.showFeedback || counter.pieces.count == MoneyCounter.capacity)
+                            .accessibilityLabel(L.t("Add \(payload.currency.format(denomination.value))", no: "Legg til \(payload.currency.format(denomination.value))",
+                                                    es: "Añadir \(payload.currency.format(denomination.value))", pt: "Adicionar \(payload.currency.format(denomination.value))"))
+                            .accessibilityIdentifier("money.tray.\(denomination.value)")
                         }
                     }
-                    .accessibilityElement(children: .contain)
-                    .accessibilityLabel(L.t("On the counter: \(payload.currency.format(counter.total))", no: "På disken: \(payload.currency.format(counter.total))",
-                                            es: "En el mostrador: \(payload.currency.format(counter.total))", pt: "No balcão: \(payload.currency.format(counter.total))"))
+                    GameSubmitButton(value: counter.total, chapterVM: chapterVM, persistence: persistence, isEnabled: !counter.pieces.isEmpty)
+                        .accessibilityIdentifier("answer.\(counter.total)")
                 }
             }
-            HStack(spacing: scaled(6)) {
-                ForEach(payload.tray, id: \.value) { denomination in
-                    Button {
-                        HapticManager.coinDrop(note: denomination.form == .note)
-                        counter.add(denomination)
-                    } label: {
-                        MoneyToken(denomination: denomination, currency: payload.currency, size: scaled(46))
-                            .frame(maxWidth: .infinity)
-                            .frame(height: scaled(64))
-                            .contentShape(Rectangle())
-                    }
-                    .buttonStyle(GameTileStyle())
-                    .disabled(chapterVM.showFeedback || counter.pieces.count == MoneyCounter.capacity)
-                    .accessibilityLabel(L.t("Add \(payload.currency.format(denomination.value))", no: "Legg til \(payload.currency.format(denomination.value))",
-                                            es: "Añadir \(payload.currency.format(denomination.value))", pt: "Adicionar \(payload.currency.format(denomination.value))"))
-                    .accessibilityIdentifier("money.tray.\(denomination.value)")
-                }
-            }
-            GameSubmitButton(value: counter.total, chapterVM: chapterVM, persistence: persistence, isEnabled: !counter.pieces.isEmpty)
-                .accessibilityIdentifier("answer.\(counter.total)")
         }
     }
 

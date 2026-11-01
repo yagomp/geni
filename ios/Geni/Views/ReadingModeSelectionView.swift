@@ -105,6 +105,13 @@ private struct ReadingModeSelectionViewLayout: View {
             .foregroundStyle(.black)
         }
         .onAppear { appeared = true }
+        .task {
+            // Ask the first time reading comes up, so the answer is in place before "Listen to me read".
+            guard SpeechRecognitionService.shouldAskUpFront else { return }
+            try? await Task.sleep(for: .seconds(0.6))
+            guard !Task.isCancelled else { return }
+            _ = await SpeechRecognitionService.requestPermissions()
+        }
     }
 }
 

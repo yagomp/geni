@@ -57,6 +57,33 @@ struct ExerciseView: View {
     }
 }
 
+/// Shrinks an exercise that is taller than the space under the header, so every answer and ✓ stays
+/// on screen without scrolling. Below `minimumScale` it stops shrinking and the scroll view takes over.
+private struct FitToViewport<Content: View>: View {
+    let height: CGFloat
+    var minimumScale: CGFloat = 0.55
+    @ViewBuilder let content: Content
+    @State private var naturalHeight: CGFloat = 0
+
+    var body: some View {
+        let scale = naturalHeight > height && height > 0 ? max(minimumScale, height / naturalHeight) : 1
+        content
+            .fixedSize(horizontal: false, vertical: true)
+            // Pixel rounding moves the measured height by half a point when the frame below re-centres
+            // the content; reacting to that would re-layout forever.
+            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { measured in
+                if abs(measured - naturalHeight) > 1 { naturalHeight = measured }
+            }
+            .scaleEffect(scale, anchor: .top)
+            .frame(height: scale < 1 ? naturalHeight * scale : nil, alignment: .top)
+            #if DEBUG
+            .onChange(of: scale) { _, scale in
+                print("[fit] natural=\(Int(naturalHeight)) viewport=\(Int(height)) scale=\(String(format: "%.2f", scale))")
+            }
+            #endif
+    }
+}
+
 private struct ExerciseViewLayout: View {
     @Environment(\.geniExpandedLayout) private var expanded
     let chapterVM: ChapterViewModel
@@ -89,15 +116,16 @@ private struct ExerciseViewLayout: View {
                         .padding(.top, 28)
 
                     GeometryReader { remaining in
+                        let viewport = CGSize(width: remaining.size.width - 80, height: remaining.size.height - 172)
                         ScrollView {
-                            currentContent
-                                .environment(\.geniExerciseViewport,
-                                             CGSize(width: remaining.size.width - 80, height: remaining.size.height - 172))
-                                .frame(maxWidth: .infinity)
-                                .padding(.horizontal, 40)
-                                .padding(.vertical, 36)
-                                .frame(minHeight: max(0, remaining.size.height - 100))
-                                .padding(.bottom, 100)
+                            FitToViewport(height: viewport.height) {
+                                currentContent.environment(\.geniExerciseViewport, viewport)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 40)
+                            .padding(.vertical, 36)
+                            .frame(minHeight: max(0, remaining.size.height - 100))
+                            .padding(.bottom, 100)
                         }
                         .scrollBounceBehavior(.basedOnSize)
                     }
@@ -111,14 +139,15 @@ private struct ExerciseViewLayout: View {
                         .padding(.top, iPadScale.padding)
 
                     GeometryReader { remaining in
+                        let viewport = CGSize(width: remaining.size.width - iPadScale.padding * 2, height: remaining.size.height - 32)
                         ScrollView {
-                            currentContent
-                                .environment(\.geniExerciseViewport,
-                                             CGSize(width: remaining.size.width - iPadScale.padding * 2, height: remaining.size.height - 32))
-                                .frame(maxWidth: .infinity)
-                                .padding(.horizontal, iPadScale.padding)
-                                .padding(.vertical, 16)
-                                .frame(minHeight: remaining.size.height)
+                            FitToViewport(height: viewport.height) {
+                                currentContent.environment(\.geniExerciseViewport, viewport)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, iPadScale.padding)
+                            .padding(.vertical, 16)
+                            .frame(minHeight: remaining.size.height)
                         }
                         .scrollBounceBehavior(.basedOnSize)
                         .id(chapterVM.currentIndex)
@@ -914,45 +943,49 @@ private struct ExerciseViewLayout: View {
         let isArea = exercise.operand1 == 1
         let cellSize = scaled(min(36, 200 / CGFloat(max(w, h))))
 
-        return VStack(spacing: 20) {
-            // Label: area or perimeter with visual hint
-            HStack(spacing: 8) {
-                Text(isArea ? "📐" : "📏")
-                    .font(.system(size: 28))
-                Text(isArea ? "\(w) \u{00D7} \(h)" : "2 \u{00D7} (\(w) + \(h))")
-                    .font(.system(size: scaled(28), weight: .black, design: .rounded))
-                    .foregroundStyle(GeniColor.border)
-            }
+        return ExercisePictureAndAnswers(spacing: 20) {
+            VStack(spacing: 20) {
+                // Label: area or perimeter with visual hint
+                HStack(spacing: 8) {
+                    Text(isArea ? "📐" : "📏")
+                        .font(.system(size: 28))
+                    Text(isArea ? "\(w) \u{00D7} \(h)" : "2 \u{00D7} (\(w) + \(h))")
+                        .font(.system(size: scaled(28), weight: .black, design: .rounded))
+                        .foregroundStyle(GeniColor.border)
+                }
 
-            // Grid visualization
-            VStack(spacing: 0) {
-                ForEach(0..<h, id: \.self) { row in
-                    HStack(spacing: 0) {
-                        ForEach(0..<w, id: \.self) { col in
-                            let isEdge = row == 0 || row == h - 1 || col == 0 || col == w - 1
-                            GeniShape(scale: 0.5)
-                                .fill(isArea ? GeniColor.blue.soft(0.2) : (isEdge ? GeniColor.orange.soft(0.3) : GeniColor.card))
-                                .frame(width: cellSize, height: cellSize)
-                                .overlay(GeniShape(scale: 0.5).stroke(GeniColor.hairline, lineWidth: 1))
+                // Grid visualization
+                VStack(spacing: 0) {
+                    ForEach(0..<h, id: \.self) { row in
+                        HStack(spacing: 0) {
+                            ForEach(0..<w, id: \.self) { col in
+                                let isEdge = row == 0 || row == h - 1 || col == 0 || col == w - 1
+                                GeniShape(scale: 0.5)
+                                    .fill(isArea ? GeniColor.blue.soft(0.2) : (isEdge ? GeniColor.orange.soft(0.3) : GeniColor.card))
+                                    .frame(width: cellSize, height: cellSize)
+                                    .overlay(GeniShape(scale: 0.5).stroke(GeniColor.hairline, lineWidth: 1))
+                            }
                         }
                     }
                 }
-            }
-            .overlay(GeniShape(scale: 0.5).stroke(GeniColor.hairline, lineWidth: 1))
-            .shadow(color: GeniColor.border.opacity(0.08), radius: 10, x: 0, y: 4)
+                .overlay(GeniShape(scale: 0.5).stroke(GeniColor.hairline, lineWidth: 1))
+                .shadow(color: GeniColor.border.opacity(0.08), radius: 10, x: 0, y: 4)
 
-            // Width/height labels
-            HStack {
-                Text("\(w)")
-                    .font(.system(size: scaled(20), weight: .bold, design: .rounded))
+                // Width/height labels
+                HStack {
+                    Text("\(w)")
+                        .font(.system(size: scaled(20), weight: .bold, design: .rounded))
+                        .foregroundStyle(GeniColor.border)
+                }
+            }
+        } answers: {
+            VStack(spacing: 20) {
+                Text("= ?")
+                    .font(.system(size: scaled(32), weight: .black, design: .rounded))
                     .foregroundStyle(GeniColor.border)
+
+                tapAnswers(exercise, answers: exercise.options, correctValue: exercise.correctAnswer)
             }
-
-            Text("= ?")
-                .font(.system(size: scaled(32), weight: .black, design: .rounded))
-                .foregroundStyle(GeniColor.border)
-
-            tapAnswers(exercise, answers: exercise.options, correctValue: exercise.correctAnswer)
         }
     }
 

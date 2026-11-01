@@ -34,6 +34,35 @@ extension EnvironmentValues {
     @Entry var geniExerciseViewport: CGSize = .zero
 }
 
+extension CGSize {
+    /// Much wider than tall (iPad landscape): tall pictures go beside their answers.
+    var isWideExerciseArea: Bool { width > height * 1.4 }
+}
+
+/// A tall picture with answers under it: side by side when the exercise area is much wider than tall
+/// (iPad landscape), so neither has to shrink; stacked everywhere else.
+struct ExercisePictureAndAnswers<Picture: View, Answers: View>: View {
+    @Environment(\.geniExerciseViewport) private var viewport
+    @Environment(\.geniExpandedLayout) private var expanded
+    var spacing: CGFloat
+    @ViewBuilder let picture: Picture
+    @ViewBuilder let answers: Answers
+
+    var body: some View {
+        if viewport.isWideExerciseArea {
+            HStack(spacing: expanded ? 48 : 24) {
+                picture.frame(maxWidth: .infinity)
+                answers.frame(maxWidth: .infinity)
+            }
+        } else {
+            VStack(spacing: spacing) {
+                picture
+                answers
+            }
+        }
+    }
+}
+
 /// A white (theme card) surface: rounded, hairline, soft shadow. For picture cards, counters, trays.
 struct GameSurface: ViewModifier {
     @Environment(\.geniExpandedLayout) private var expanded

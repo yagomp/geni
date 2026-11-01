@@ -165,6 +165,7 @@ nonisolated enum LocaleKey: String, Sendable {
     case pause
     case play
     case micPermissionNeeded
+    case speechBlockedByScreenTime
     case amazingReading
     case dailyBonusTitle
     case dailyBonusDesc
@@ -543,6 +544,7 @@ nonisolated enum L {
         case .pause: return "Pause"
         case .play: return "Play"
         case .micPermissionNeeded: return "Microphone access needed"
+        case .speechBlockedByScreenTime: return "Speech recognition is blocked in Screen Time"
         case .amazingReading: return "Amazing reading!"
         case .dailyBonusTitle: return "Daily Full Chapter Bonus!"
         case .dailyBonusDesc: return "Math + Reading complete today"
@@ -807,6 +809,7 @@ nonisolated enum L {
         case .pause: return "Pause"
         case .play: return "Spill"
         case .micPermissionNeeded: return "Mikrofontilgang trengs"
+        case .speechBlockedByScreenTime: return "Talegjenkjenning er blokkert i Skjermtid"
         case .amazingReading: return "Fantastisk lesing!"
         case .dailyBonusTitle: return "Daglig fullkapittelbonus!"
         case .dailyBonusDesc: return "Matte + Lesing fullf\u{00F8}rt i dag"
@@ -1071,6 +1074,7 @@ nonisolated enum L {
         case .pause: return "Pausa"
         case .play: return "Reproducir"
         case .micPermissionNeeded: return "Se necesita acceso al micr\u{00F3}fono"
+        case .speechBlockedByScreenTime: return "El reconocimiento de voz est\u{00E1} bloqueado en Tiempo de uso"
         case .amazingReading: return "\u{00A1}Lectura incre\u{00ED}ble!"
         case .dailyBonusTitle: return "\u{00A1}Bono diario por completar todo el cap\u{00ED}tulo!"
         case .dailyBonusDesc: return "Mates + lectura completadas hoy"
@@ -1335,6 +1339,7 @@ nonisolated enum L {
         case .pause: return "Pausar"
         case .play: return "Reproduzir"
         case .micPermissionNeeded: return "O acesso ao microfone \u{00E9} necess\u{00E1}rio"
+        case .speechBlockedByScreenTime: return "O reconhecimento de fala est\u{00E1} bloqueado no Tempo de ecr\u{00E3}"
         case .amazingReading: return "Leitura incr\u{00ED}vel!"
         case .dailyBonusTitle: return "B\u{00F3}nus di\u{00E1}rio por completar o cap\u{00ED}tulo!"
         case .dailyBonusDesc: return "Matem\u{00E1}tica + leitura conclu\u{00ED}das hoje"
